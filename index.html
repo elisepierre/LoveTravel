@@ -60,16 +60,21 @@
         #notif { position: fixed; top: 130px; left: 50%; transform: translateX(-50%) translateY(-20px); background: white; padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; display: none; font-weight: bold; color: var(--primary); width: 90%; max-width: 300px; text-align: center; opacity: 0; transition: 0.3s; border: 2px solid var(--primary); }
         #notif.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         
-        #btn-enable-notif { width: 100%; padding: 15px; background: #333; color: white; border: none; border-radius: 15px; margin-bottom: 20px; font-weight: bold; display: none; }
-        
-        /* Indicateur Connexion */
+        #btn-enable-notif { width: 100%; padding: 15px; background: #333; color: white; border: none; border-radius: 15px; margin-bottom: 20px; font-weight: bold; display: none; animation: flash 2s infinite;}
+        @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+
+        /* Connexion Status */
         .status-dot { width: 8px; height: 8px; background: #ccc; border-radius: 50%; display: inline-block; margin-right: 8px; transition: all 0.5s; }
-        .status-online { background: #00ff00; box-shadow: 0 0 5px #00ff00; }
+        .status-online { background: #00ff00; box-shadow: 0 0 8px #00ff00; }
     </style>
 </head>
 <body>
 
     <div id="notif">💋 Bisou reçu !</div>
+    
+    <audio id="silent-track" loop>
+        <source src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//oeAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMD//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAASAA8Aq0AAAAAAA//oeAAAAAAAAAAAAAAAAAAAAAAA=" type="audio/mpeg">
+    </audio>
 
     <header id="flight-header">
         <div class="header-top">
@@ -89,7 +94,7 @@
 
     <div class="container">
         
-        <button id="btn-enable-notif" onclick="askPermission()">🔔 CLIQUE ICI POUR ACTIVER LE MODE VOYAGE</button>
+        <button id="btn-enable-notif" onclick="activateHighPerfMode()">⚡️ ACTIVER LE MODE HAUTE VITESSE ⚡️</button>
 
         <div class="identity-selector">
             <p style="font-size: 0.8rem; color:#888; margin: 0 0 10px;">C'est qui ?</p>
@@ -142,7 +147,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, setDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // CONFIG FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns",
             authDomain: "lovetravel-35285.firebaseapp.com",
@@ -155,20 +159,37 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- WAKE LOCK (Anti-Sommeil) ---
+        // --- MODE HAUTE PERFORMANCE (AUDIO + WAKE LOCK) ---
         let wakeLock = null;
         async function requestWakeLock() {
-            try {
-                wakeLock = await navigator.wakeLock.request('screen');
-                document.getElementById('conn-dot').classList.add('status-online');
-            } catch (err) {}
+            try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
         }
+        
+        window.activateHighPerfMode = function() {
+            // 1. Demande Wake Lock
+            requestWakeLock();
+            
+            // 2. Joue le son silencieux (Garde le réseau actif)
+            const audio = document.getElementById('silent-track');
+            audio.play().then(() => {
+                console.log("Mode Haute Vitesse activé 🚀");
+                document.getElementById('conn-dot').classList.add('status-online');
+            }).catch(e => console.log("Audio bloqué par navigateur", e));
+
+            // 3. Permission Notif
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    document.getElementById('btn-enable-notif').style.display = 'none';
+                    if(navigator.vibrate) navigator.vibrate([200]);
+                    alert("Mode Haute Vitesse Activé ! Laisse l'appli en fond, elle restera connectée.");
+                }
+            });
+        }
+        
+        // Relance si l'écran se rallume
         document.addEventListener('visibilitychange', async () => {
-            if (wakeLock !== null && document.visibilityState === 'visible') {
-                await requestWakeLock();
-            }
+            if (wakeLock !== null && document.visibilityState === 'visible') await requestWakeLock();
         });
-        window.addEventListener('click', () => { if(!wakeLock) requestWakeLock(); });
 
         // --- GESTION UTILISATEUR ---
         let currentUser = localStorage.getItem('userRole') || 'tw'; 
@@ -186,44 +207,25 @@
             document.getElementById('btn-user-' + currentUser).classList.add('active');
         }
 
-        // --- PERMISSION ---
-        window.askPermission = function() {
-            requestWakeLock();
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    document.getElementById('btn-enable-notif').style.display = 'none';
-                    if(navigator.vibrate) navigator.vibrate([200]);
-                    alert("C'est tout bon !");
-                }
-            });
-        }
-        
         if (Notification.permission === 'granted') {
-            document.getElementById('btn-enable-notif').style.display = 'none';
-            requestWakeLock();
+             // On garde le bouton visible pour forcer le lancement de l'audio "High Perf"
+             document.getElementById('btn-enable-notif').innerText = "⚡️ RÉACTIVER CONNEXION RAPIDE ⚡️";
         }
 
-        // --- ECOUTE BISOUS (Version "Mémoire") ---
-        // On retient l'heure du dernier bisou reçu dans le téléphone
+        // --- ECOUTE BISOUS (Mémoire + Instantané) ---
         let lastReceivedKissTime = parseInt(localStorage.getItem('lastKissTime')) || 0;
 
         const qBisou = query(collection(db, "actions"), orderBy("timestamp", "desc"), limit(1));
         
         onSnapshot(qBisou, (snapshot) => {
-            document.getElementById('conn-dot').classList.add('status-online');
             if(!snapshot.empty) {
                 const action = snapshot.docs[0].data();
                 
-                // Si le bisou est plus récent que le dernier que j'ai vu
+                // Si c'est un NOUVEAU bisou (jamais vu)
                 if (action.timestamp > lastReceivedKissTime) {
                     
-                    // Et si ce n'est PAS moi qui ai envoyé
                     if (action.from !== currentUser) {
-                        
-                        // Je déclenche le bisou
                         triggerBisouEffect(action.from);
-                        
-                        // Je mets à jour ma mémoire pour ne pas le rejouer en boucle
                         lastReceivedKissTime = action.timestamp;
                         localStorage.setItem('lastKissTime', lastReceivedKissTime);
                     }
@@ -234,16 +236,13 @@
         function triggerBisouEffect(fromWho) {
             const senderName = fromWho === 'fr' ? "Théo" : "Elise";
             
-            // UI
             const notif = document.getElementById("notif");
             notif.innerHTML = `💋 <b>${senderName}</b> t'envoie un bisou !`;
             notif.style.display = "block";
             setTimeout(() => notif.classList.add("show"), 10);
             
-            // Vibration
             if(navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
             
-            // Notification Système
             if (Notification.permission === "granted") {
                 try {
                     new Notification(`💋 Bisou de ${senderName} !`, {
@@ -253,7 +252,6 @@
                     });
                 } catch(e) {}
             }
-
             setTimeout(() => { notif.classList.remove("show"); setTimeout(() => notif.style.display = "none", 300); }, 4000);
         }
 
@@ -281,7 +279,7 @@
             setTimeout(() => { notif.classList.remove("show"); setTimeout(() => notif.style.display = "none", 300); }, 2000);
         }
 
-        // --- RESTE DU CODE ---
+        // --- AUTRES ---
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const data = doc.data();
