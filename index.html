@@ -47,7 +47,6 @@
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
         #notif { position: fixed; top: 130px; left: 50%; transform: translateX(-50%) translateY(-20px); background: white; padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; display: none; font-weight: bold; color: var(--primary); width: 90%; max-width: 300px; text-align: center; opacity: 0; transition: 0.3s; border: 2px solid var(--primary); }
         #notif.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        #btn-enable-notif { width: 100%; padding: 15px; background: #333; color: white; border: none; border-radius: 15px; margin-bottom: 20px; font-weight: bold; display: block; }
     </style>
 </head>
 <body>
@@ -58,8 +57,6 @@
         <div class="progress-track"><div class="progress-fill" id="prog-fill"></div><div class="plane-icon" id="plane" style="left:0">✈️</div></div>
     </header>
     <div class="container">
-        <button id="btn-enable-notif" onclick="askPermission()">🔔 ACTIVER LES NOTIFICATIONS (Obligatoire)</button>
-
         <div class="identity-selector">
             <p style="font-size: 0.8rem; color:#888; margin: 0 0 10px;">C'est qui ?</p>
             <button class="identity-btn" id="btn-user-tw" onclick="setUser('tw')">C'est Moi, Elise (Taïwan 🇹🇼)</button>
@@ -82,11 +79,9 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, setDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, setDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // CONFIG FIREBASE
         const firebaseConfig = { apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns", authDomain: "lovetravel-35285.firebaseapp.com", projectId: "lovetravel-35285", storageBucket: "lovetravel-35285.firebasestorage.app", messagingSenderId: "189902268760", appId: "1:189902268760:web:b461ce15d8c396be479d2d" };
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
@@ -96,32 +91,15 @@
         window.setUser = function(role) { currentUser = role; localStorage.setItem('userRole', role); updateIdentityUI(); }
         function updateIdentityUI() { document.getElementById('btn-user-fr').classList.remove('active'); document.getElementById('btn-user-tw').classList.remove('active'); document.getElementById('btn-user-' + currentUser).classList.add('active'); }
 
-        // --- 1. PERMISSION SYSTEME ---
-        window.askPermission = function() {
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    document.getElementById('btn-enable-notif').style.display = 'none';
-                    alert("Notifications activées !");
-                }
-            });
-        }
-        if (Notification.permission === 'granted') document.getElementById('btn-enable-notif').style.display = 'none';
-
-        // --- 2. ECOUTE BISOUS (NINJA MODE) ---
+        // --- ECOUTE BASE DE DONNEES (Quand l'app est ouverte) ---
         const qBisou = query(collection(db, "actions"), orderBy("timestamp", "desc"), limit(1));
-        
         onSnapshot(qBisou, (snapshot) => {
             if(!snapshot.empty) {
                 const action = snapshot.docs[0].data();
-                
-                // Si le timestamp serveur n'est pas encore là (latence), on ignore
                 if (!action.timestamp) return;
-
                 const actionTime = action.timestamp.toMillis();
                 const now = Date.now();
                 const diff = Math.abs(now - actionTime);
-                
-                // On accepte les bisous de moins de 1 minute
                 if (diff < 60000 && action.from !== currentUser) {
                     triggerBisouEffect(action.from);
                 }
@@ -130,43 +108,43 @@
 
         function triggerBisouEffect(fromWho) {
             const senderName = fromWho === 'fr' ? "Théo" : "Elise";
-            
-            // VISUEL
             const notif = document.getElementById("notif");
             notif.innerHTML = `💋 <b>${senderName}</b> t'envoie un bisou !`;
             notif.style.display = "block";
             setTimeout(() => notif.classList.add("show"), 10);
-            
-            // VIBRATION
             if(navigator.vibrate) navigator.vibrate([200, 100, 200, 500, 200]);
-
-            // NOTIF SYSTEME (Pour tenter de réveiller si autorisé)
-            if (Notification.permission === "granted") {
-                try {
-                    new Notification(`💋 Bisou de ${senderName}`, {
-                        body: "Ouvre l'appli vite ! ❤️",
-                        icon: "https://cdn-icons-png.flaticon.com/512/2530/2530860.png",
-                         // Vibration pour Android
-                        vibrate: [200, 100, 200]
-                    });
-                } catch(e) {}
-            }
-
             setTimeout(() => { notif.classList.remove("show"); setTimeout(() => notif.style.display = "none", 300); }, 4000);
         }
 
-        // ENVOI (Heure Serveur)
+        // --- ENVOI HYBRIDE (DATABASE + NTFY) ---
         window.sendBisou = function() {
             const btn = document.getElementById('bisou-btn');
             btn.style.transform = "scale(1.3)";
             setTimeout(() => btn.style.transform = "scale(1)", 200);
             
+            // 1. Ecrire dans la base de données
             addDoc(collection(db, "actions"), { 
                 type: 'bisou', 
                 from: currentUser, 
                 timestamp: serverTimestamp() 
             });
 
+            // 2. Envoyer la notif PUSH via NTFY (Le Facteur Gratuit)
+            // ⚠️ REMPLACE LE NOM DU CANAL CI-DESSOUS PAR LE TIEN ! ⚠️
+            const channelName = "lovetravel-elisetw-theofr-2026"; 
+            const senderName = currentUser === 'tw' ? "Elise" : "Théo";
+            
+            fetch(`https://ntfy.sh/${channelName}`, {
+                method: 'POST',
+                body: `💋 Bisou de ${senderName} ! Ouvre l'appli !`,
+                headers: {
+                    'Title': 'Love Travel',
+                    'Priority': 'high',
+                    'Tags': 'heart,kiss'
+                }
+            }).catch(e => console.log("Erreur ntfy", e));
+
+            // Feedback
             const notif = document.getElementById("notif");
             notif.innerText = "💋 Bisou envoyé !";
             notif.style.display = "block";
@@ -174,7 +152,7 @@
             setTimeout(() => { notif.classList.remove("show"); setTimeout(() => notif.style.display = "none", 300); }, 2000);
         }
 
-        // MOODS & LIVRES
+        // --- AUTRES ---
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const data = doc.data();
