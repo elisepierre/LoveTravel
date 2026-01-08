@@ -8,9 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Love Travel">
     <meta name="theme-color" content="#ff4b6e">
-    
     <link rel="manifest" href="manifest.json">
-    
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2530/2530860.png">
 
     <title>Love Travel ✈️</title>
@@ -19,11 +17,8 @@
     <style>
         :root { --primary: #ff4b6e; --secondary: #4a90e2; --bg: #f4f7f6; --card-bg: #ffffff; --text: #2c3e50; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        /* Ajustement pour éviter que le header tape dans la barre d'état iPhone */
         body { margin: 0; font-family: 'Montserrat', sans-serif; background-color: var(--bg); color: var(--text); padding-top: 120px; padding-bottom: 90px; }
         
-        /* HEADER */
         #flight-header { position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; padding: 15px 15px 10px; z-index: 1000; box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3); border-bottom: 4px solid white; padding-top: env(safe-area-inset-top); }
         .header-top { display: flex; justify-content: space-between; font-size: 0.75rem; text-transform: uppercase; opacity: 0.95; margin-bottom: 5px; font-weight: bold; }
         .countdown-main { font-size: 1.1rem; font-weight: 700; text-align: center; margin-bottom: 5px; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
@@ -35,12 +30,10 @@
         .card { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .card-title { font-size: 1rem; font-weight: 700; color: var(--secondary); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;}
 
-        /* IDENTITÉ */
         .identity-selector { text-align: center; margin-bottom: 20px; background: white; padding: 15px; border-radius: 15px; margin-top: -10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .identity-btn { padding: 10px 15px; border: 1px solid var(--secondary); background: transparent; border-radius: 20px; margin: 5px; cursor: pointer; font-size: 0.85rem; width: 100%; max-width: 200px; display: block; margin: 5px auto;}
         .identity-btn.active { background: var(--secondary); color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(74, 144, 226, 0.4); }
 
-        /* MOOD */
         .mood-display { display: flex; justify-content: space-between; text-align: center; margin-bottom: 15px; }
         .mood-box { flex: 1; }
         .mood-avatar { font-size: 3rem; margin-bottom: 5px; transition: transform 0.2s; }
@@ -49,7 +42,6 @@
         .mood-opt { font-size: 1.8rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }
         .mood-opt:hover { opacity: 1; transform: scale(1.2); }
 
-        /* LIVRES */
         .book-item { background: #f9f9f9; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--secondary); }
         .book-title { font-weight: 700; font-size: 0.95rem; color: #333; }
         .book-prog { font-size: 0.75rem; color: #777; margin-top: 4px; }
@@ -58,17 +50,16 @@
         .input-field { flex: 1; padding: 12px; border: 1px solid #eee; background: #f8f8f8; border-radius: 12px; font-size: 1rem; }
         .btn-add { background: var(--secondary); color: white; border: none; border-radius: 12px; padding: 0 20px; font-weight: bold; cursor: pointer; }
 
-        /* PLAYLIST */
         .playlist-container iframe { border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
-        /* BISOU BUTTON */
         #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 75px; height: 75px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 32px; box-shadow: 0 8px 25px rgba(255, 75, 110, 0.5); cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; animation: pulse 2s infinite; }
         #bisou-btn:active { transform: scale(0.9); }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
 
-        /* NOTIF POPUP */
         #notif { position: fixed; top: 130px; left: 50%; transform: translateX(-50%) translateY(-20px); background: white; padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; display: none; font-weight: bold; color: var(--primary); width: 90%; max-width: 300px; text-align: center; opacity: 0; transition: 0.3s; border: 2px solid var(--primary); }
         #notif.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        
+        #btn-enable-notif { width: 100%; padding: 15px; background: #333; color: white; border: none; border-radius: 15px; margin-bottom: 20px; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
@@ -81,7 +72,7 @@
             <span>❤️</span>
             <span>Elise (Taïwan) 🇹🇼</span>
         </div>
-        <div class="countdown-main" id="countdown">Calcul du vol...</div>
+        <div class="countdown-main" id="countdown">Calcul...</div>
         <div class="progress-track">
             <div class="progress-fill" id="prog-fill"></div>
             <div class="plane-icon" id="plane" style="left:0">✈️</div>
@@ -90,6 +81,8 @@
 
     <div class="container">
         
+        <button id="btn-enable-notif" onclick="askPermission()">🔔 Activer les bisous (Clique ici !)</button>
+
         <div class="identity-selector">
             <p style="font-size: 0.8rem; color:#888; margin: 0 0 10px;">C'est qui ?</p>
             <button class="identity-btn" id="btn-user-tw" onclick="setUser('tw')">C'est Moi, Elise (Taïwan 🇹🇼)</button>
@@ -109,7 +102,6 @@
                     <div class="mood-label">ELISE (TW)</div>
                 </div>
             </div>
-            <p style="text-align: center; font-size: 0.75rem; color:#aaa; margin-top:5px;">Ton mood actuel :</p>
             <div class="mood-controls">
                 <span class="mood-opt" onclick="updateMood('🥰')">🥰</span>
                 <span class="mood-opt" onclick="updateMood('😴')">😴</span>
@@ -125,9 +117,7 @@
                 <input type="text" id="book-input" class="input-field" placeholder="Titre du livre...">
                 <button onclick="addBook()" class="btn-add">+</button>
             </div>
-            <div id="book-list">
-                <div style="text-align:center; color:#ccc; padding: 20px;">Chargement...</div>
-            </div>
+            <div id="book-list"></div>
         </div>
 
         <div class="card">
@@ -136,7 +126,6 @@
                 <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
         </div>
-        
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
@@ -145,6 +134,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, setDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
+        // CONFIG FIREBASE (Ta config actuelle)
         const firebaseConfig = {
             apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns",
             authDomain: "lovetravel-35285.firebaseapp.com",
@@ -158,14 +148,13 @@
         const db = getFirestore(app);
 
         // GESTION UTILISATEUR
-        let currentUser = localStorage.getItem('userRole') || 'tw'; // Par défaut Elise (tw)
+        let currentUser = localStorage.getItem('userRole') || 'tw'; 
         updateIdentityUI();
 
         window.setUser = function(role) {
             currentUser = role;
             localStorage.setItem('userRole', role);
             updateIdentityUI();
-            alert("Tu es connectée en tant que : " + (role === 'tw' ? "Elise (Taïwan) 🇹🇼" : "Théo (France) 🇫🇷"));
         }
 
         function updateIdentityUI() {
@@ -174,126 +163,131 @@
             document.getElementById('btn-user-' + currentUser).classList.add('active');
         }
 
-        // MOODS
-        onSnapshot(doc(db, "status", "moods"), (doc) => {
-            if (doc.exists()) {
-                const data = doc.data();
-                document.getElementById("mood-display-fr").innerText = data.fr || "😶";
-                document.getElementById("mood-display-tw").innerText = data.tw || "😶";
-            } else {
-                setDoc(doc(db, "status", "moods"), { fr: "❤️", tw: "❤️" });
-            }
-        });
-
-        window.updateMood = function(emoji) {
-            setDoc(doc(db, "status", "moods"), { [currentUser]: emoji }, { merge: true });
+        // --- GESTION NOTIFICATIONS ET BISOUS (Version Database) ---
+        
+        // 1. Demander la permission (Navigateur)
+        window.askPermission = function() {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    document.getElementById('btn-enable-notif').style.display = 'none';
+                    alert("Notifications activées ! Laisse l'appli ouverte en fond pour recevoir les bisous.");
+                }
+            });
+        }
+        
+        if (Notification.permission !== 'granted') {
+            document.getElementById('btn-enable-notif').style.display = 'block';
         }
 
-        // LIVRES
-        const qBooks = query(collection(db, "books"), orderBy("created", "desc"));
-        onSnapshot(qBooks, (snapshot) => {
-            const list = document.getElementById("book-list");
-            list.innerHTML = "";
-            snapshot.forEach((doc) => {
-                const book = doc.data();
-                const addedByLabel = book.by === 'fr' ? 'Théo' : 'Elise';
-                
-                const div = document.createElement('div');
-                div.className = "book-item";
-                div.innerHTML = `
-                    <div>
-                        <div class="book-title">${book.title}</div>
-                        <div class="book-prog">Ajouté par ${addedByLabel}</div>
-                    </div>
-                    <button class="btn-del">✕</button>
-                `;
-                // Suppression
-                div.querySelector('.btn-del').onclick = () => {
-                    if(confirm("Supprimer ce livre ?")) deleteDoc(doc.ref);
-                };
-                list.appendChild(div);
-            });
-        });
-
-        window.addBook = function() {
-            const input = document.getElementById("book-input");
-            if (!input.value) return;
-            addDoc(collection(db, "books"), {
-                title: input.value,
-                by: currentUser,
-                created: serverTimestamp()
-            });
-            input.value = "";
-        }
-
-        // BISOU
+        // 2. ÉCOUTER LA DATABASE EN TEMPS RÉEL (C'est ça la magie)
         const qBisou = query(collection(db, "actions"), orderBy("timestamp", "desc"), limit(1));
+        
         onSnapshot(qBisou, (snapshot) => {
             if(!snapshot.empty) {
                 const action = snapshot.docs[0].data();
-                if (Date.now() - action.timestamp < 5000 && action.from !== currentUser) {
-                    showBisouNotif(action.from);
+                const now = Date.now();
+                
+                // Si le bisou est récent (moins de 5 secondes) ET que ce n'est pas moi qui l'ai envoyé
+                if ((now - action.timestamp < 5000) && (action.from !== currentUser)) {
+                    triggerBisouEffect(action.from);
                 }
             }
         });
 
+        // 3. Déclencher l'effet (Vibration + Notif)
+        function triggerBisouEffect(fromWho) {
+            const senderName = fromWho === 'fr' ? "Théo" : "Elise";
+            
+            // A. Afficher la notif visuelle dans l'app
+            const notif = document.getElementById("notif");
+            notif.innerHTML = `💋 <b>${senderName}</b> t'envoie un bisou !`;
+            notif.style.display = "block";
+            setTimeout(() => notif.classList.add("show"), 10);
+            
+            // B. Faire vibrer le téléphone
+            if(navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
+            
+            // C. Envoyer une notification système (Si l'app est en arrière-plan)
+            if (Notification.permission === "granted") {
+                new Notification(`💋 Bisou de ${senderName} !`, {
+                    body: "Je pense à toi ❤️",
+                    icon: "https://cdn-icons-png.flaticon.com/512/2530/2530860.png"
+                });
+            }
+
+            setTimeout(() => { notif.classList.remove("show"); setTimeout(() => notif.style.display = "none", 300); }, 4000);
+        }
+
+        // 4. Envoyer le bisou
         window.sendBisou = function() {
+            // Animation bouton
             const btn = document.getElementById('bisou-btn');
             btn.style.transform = "scale(1.3)";
             setTimeout(() => btn.style.transform = "scale(1)", 200);
             
+            // Écrire dans la database (ce qui déclenchera l'effet chez l'autre)
             addDoc(collection(db, "actions"), {
                 type: 'bisou',
                 from: currentUser,
                 timestamp: Date.now()
             });
 
+            // Petit feedback pour moi
             const notif = document.getElementById("notif");
-            notif.innerText = "💋 Bisou envoyé à " + (currentUser === 'tw' ? "Théo" : "Elise") + " !";
+            notif.innerText = "💋 Bisou envoyé !";
             notif.style.display = "block";
             setTimeout(() => notif.classList.add("show"), 10);
             setTimeout(() => { notif.classList.remove("show"); setTimeout(() => notif.style.display = "none", 300); }, 2000);
         }
 
-        function showBisouNotif(fromWho) {
-            const notif = document.getElementById("notif");
-            const senderName = fromWho === 'fr' ? "Théo" : "Elise";
-            notif.innerHTML = `💋 <b>${senderName}</b> t'envoie un bisou !`;
-            
-            notif.style.display = "block";
-            setTimeout(() => notif.classList.add("show"), 10);
-            if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-            
-            setTimeout(() => { notif.classList.remove("show"); setTimeout(() => notif.style.display = "none", 300); }, 4000);
+        // --- FONCTIONS CLASSIQUES (Moods, Livres, Compte à rebours) ---
+        onSnapshot(doc(db, "status", "moods"), (doc) => {
+            if (doc.exists()) {
+                const data = doc.data();
+                document.getElementById("mood-display-fr").innerText = data.fr || "😶";
+                document.getElementById("mood-display-tw").innerText = data.tw || "😶";
+            } else { setDoc(doc(db, "status", "moods"), { fr: "❤️", tw: "❤️" }); }
+        });
+
+        window.updateMood = function(emoji) {
+            setDoc(doc(db, "status", "moods"), { [currentUser]: emoji }, { merge: true });
         }
 
-        // COMPTE À REBOURS
+        const qBooks = query(collection(db, "books"), orderBy("created", "desc"));
+        onSnapshot(qBooks, (snapshot) => {
+            const list = document.getElementById("book-list"); list.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const book = doc.data();
+                const div = document.createElement('div'); div.className = "book-item";
+                div.innerHTML = `<div><div class="book-title">${book.title}</div><div class="book-prog">Ajouté par ${book.by === 'fr' ? 'Théo' : 'Elise'}</div></div><button class="btn-del">✕</button>`;
+                div.querySelector('.btn-del').onclick = () => { if(confirm("Supprimer ?")) deleteDoc(doc.ref); };
+                list.appendChild(div);
+            });
+        });
+
+        window.addBook = function() {
+            const input = document.getElementById("book-input"); if (!input.value) return;
+            addDoc(collection(db, "books"), { title: input.value, by: currentUser, created: serverTimestamp() });
+            input.value = "";
+        }
+
         const startDate = new Date("2026-02-14T00:00:00").getTime();
         const endDate = new Date("2026-07-10T00:00:00").getTime();
-
         function updateCountdown() {
-            const now = new Date().getTime();
-            const total = endDate - startDate;
-            const current = now - startDate;
-            
-            let percent = (current / total) * 100;
-            if (percent < 0) percent = 0; if (percent > 100) percent = 100;
-
+            const now = new Date().getTime(); const total = endDate - startDate; const current = now - startDate;
+            let percent = (current / total) * 100; if (percent < 0) percent = 0; if (percent > 100) percent = 100;
             document.getElementById("prog-fill").style.width = percent + "%";
             const planePos = Math.min(Math.max(percent, 0), 100);
             document.getElementById("plane").style.left = `calc(${planePos}% - 14px)`;
-
             const dist = endDate - now;
-            const days = Math.floor(dist / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-
+            const days = Math.floor(dist / (1000 * 60 * 60 * 24)); const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const display = document.getElementById("countdown");
             if (now < startDate) display.innerText = "Décollage le 14 Février... ⏳";
             else if (dist < 0) display.innerText = "Retrouvailles ! ❤️";
             else display.innerText = `${days} jours et ${hours}h restants`;
         }
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+        setInterval(updateCountdown, 1000); updateCountdown();
+
     </script>
 </body>
 </html>
