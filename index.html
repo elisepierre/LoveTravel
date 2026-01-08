@@ -17,7 +17,7 @@
     <style>
         :root { --primary: #ff4b6e; --secondary: #4a90e2; --bg: #f4f7f6; --card-bg: #ffffff; --text: #2c3e50; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background-color: var(--bg); color: var(--text); padding-top: 120px; padding-bottom: 90px; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background-color: var(--bg); color: var(--text); padding-top: 120px; padding-bottom: 150px; }
         
         #flight-header { position: fixed; top: 0; left: 0; width: 100%; background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; padding: 15px 15px 10px; z-index: 1000; box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3); border-bottom: 4px solid white; padding-top: env(safe-area-inset-top); }
         .header-top { display: flex; justify-content: space-between; font-size: 0.75rem; text-transform: uppercase; opacity: 0.95; margin-bottom: 5px; font-weight: bold; }
@@ -60,6 +60,12 @@
         #notif.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         
         #btn-enable-notif { width: 100%; padding: 15px; background: #333; color: white; border: none; border-radius: 15px; margin-bottom: 20px; font-weight: bold; display: none; }
+        
+        /* ZONE DE DIAGNOSTIC (ESPION) */
+        #debug-log { 
+            background: #000; color: #0f0; font-family: monospace; padding: 10px; margin-top: 20px; border-radius: 10px; font-size: 10px;
+            max-height: 150px; overflow-y: scroll;
+        }
     </style>
 </head>
 <body>
@@ -81,13 +87,15 @@
 
     <div class="container">
         
-        <button id="btn-enable-notif" onclick="askPermission()">🔔 Activer les bisous (Clique ici !)</button>
+        <button id="btn-enable-notif" onclick="askPermission()">🔔 CLIQUE ICI POUR ACTIVER VIBRATION/NOTIF</button>
 
         <div class="identity-selector">
             <p style="font-size: 0.8rem; color:#888; margin: 0 0 10px;">C'est qui ?</p>
             <button class="identity-btn" id="btn-user-tw" onclick="setUser('tw')">C'est Moi, Elise (Taïwan 🇹🇼)</button>
             <button class="identity-btn" id="btn-user-fr" onclick="setUser('fr')">C'est Lui, Théo (France 🇫🇷)</button>
         </div>
+        
+        <div id="debug-log">Initialisation Espion...<br></div>
 
         <div class="card">
             <div class="card-title">🌡️ Météo des Cœurs</div>
@@ -134,7 +142,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, setDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // CONFIG FIREBASE (Ta config actuelle)
+        // CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns",
             authDomain: "lovetravel-35285.firebaseapp.com",
@@ -147,14 +155,23 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // LOGGING TOOL
+        function log(msg) {
+            const d = document.getElementById('debug-log');
+            const time = new Date().toLocaleTimeString();
+            d.innerHTML = `[${time}] ${msg}<br>` + d.innerHTML;
+        }
+
         // GESTION UTILISATEUR
         let currentUser = localStorage.getItem('userRole') || 'tw'; 
         updateIdentityUI();
+        log("Démarrage... Rôle actuel : " + currentUser);
 
         window.setUser = function(role) {
             currentUser = role;
             localStorage.setItem('userRole', role);
             updateIdentityUI();
+            log("Changement de rôle -> " + role);
         }
 
         function updateIdentityUI() {
@@ -163,76 +180,104 @@
             document.getElementById('btn-user-' + currentUser).classList.add('active');
         }
 
-        // --- GESTION NOTIFICATIONS ET BISOUS (Version Database) ---
-        
-        // 1. Demander la permission (Navigateur)
+        // PERMISSION
         window.askPermission = function() {
+            log("Demande permission notif...");
             Notification.requestPermission().then(permission => {
+                log("Réponse permission : " + permission);
                 if (permission === "granted") {
                     document.getElementById('btn-enable-notif').style.display = 'none';
-                    alert("Notifications activées ! Laisse l'appli ouverte en fond pour recevoir les bisous.");
+                    alert("Super ! Notifications activées.");
+                    // Test vibration immédiat
+                    if(navigator.vibrate) {
+                        navigator.vibrate([200]);
+                        log("Test vibration : OK");
+                    } else {
+                        log("Erreur: Ce navigateur ne supporte pas la vibration");
+                    }
                 }
             });
         }
         
         if (Notification.permission !== 'granted') {
             document.getElementById('btn-enable-notif').style.display = 'block';
+        } else {
+             log("Permission notif déjà OK au démarrage");
         }
 
-        // 2. ÉCOUTER LA DATABASE EN TEMPS RÉEL (C'est ça la magie)
+        // --- ECOUTE BISOUS ---
+        log("Mise en place de l'écouteur de bisous...");
         const qBisou = query(collection(db, "actions"), orderBy("timestamp", "desc"), limit(1));
         
         onSnapshot(qBisou, (snapshot) => {
             if(!snapshot.empty) {
                 const action = snapshot.docs[0].data();
                 const now = Date.now();
+                const diff = now - action.timestamp;
+
+                log(`Reçu action: ${action.type} de ${action.from} (il y a ${Math.round(diff/1000)}s)`);
                 
-                // Si le bisou est récent (moins de 5 secondes) ET que ce n'est pas moi qui l'ai envoyé
-                if ((now - action.timestamp < 5000) && (action.from !== currentUser)) {
-                    triggerBisouEffect(action.from);
+                // Si le bisou est récent (moins de 10 sec)
+                if (diff < 10000) {
+                    if (action.from !== currentUser) {
+                        log(">>> BISOUS VALIDÉ ! DÉCLENCHEMENT !");
+                        triggerBisouEffect(action.from);
+                    } else {
+                        log("Ignoré : C'est moi qui l'ai envoyé.");
+                    }
+                } else {
+                    log("Ignoré : Trop vieux.");
                 }
             }
+        }, (error) => {
+            log("ERREUR FIREBASE: " + error.message);
         });
 
-        // 3. Déclencher l'effet (Vibration + Notif)
         function triggerBisouEffect(fromWho) {
             const senderName = fromWho === 'fr' ? "Théo" : "Elise";
             
-            // A. Afficher la notif visuelle dans l'app
+            // UI
             const notif = document.getElementById("notif");
             notif.innerHTML = `💋 <b>${senderName}</b> t'envoie un bisou !`;
             notif.style.display = "block";
             setTimeout(() => notif.classList.add("show"), 10);
             
-            // B. Faire vibrer le téléphone
-            if(navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 500]);
+            // VIBRATION
+            if(navigator.vibrate) {
+                log("Vibration lancée...");
+                navigator.vibrate([500, 200, 500]);
+            } else {
+                log("Pas de vibration supportée sur cet appareil");
+            }
             
-            // C. Envoyer une notification système (Si l'app est en arrière-plan)
+            // NOTIF SYSTEME
             if (Notification.permission === "granted") {
-                new Notification(`💋 Bisou de ${senderName} !`, {
-                    body: "Je pense à toi ❤️",
-                    icon: "https://cdn-icons-png.flaticon.com/512/2530/2530860.png"
-                });
+                log("Envoi notif système...");
+                try {
+                    new Notification(`💋 Bisou de ${senderName} !`, {
+                        body: "Je pense à toi ❤️",
+                        icon: "https://cdn-icons-png.flaticon.com/512/2530/2530860.png",
+                        vibrate: [500, 200, 500]
+                    });
+                } catch(e) { log("Erreur notif systeme: " + e); }
             }
 
             setTimeout(() => { notif.classList.remove("show"); setTimeout(() => notif.style.display = "none", 300); }, 4000);
         }
 
-        // 4. Envoyer le bisou
         window.sendBisou = function() {
-            // Animation bouton
             const btn = document.getElementById('bisou-btn');
             btn.style.transform = "scale(1.3)";
             setTimeout(() => btn.style.transform = "scale(1)", 200);
             
-            // Écrire dans la database (ce qui déclenchera l'effet chez l'autre)
+            log("Envoi d'un bisou...");
             addDoc(collection(db, "actions"), {
                 type: 'bisou',
                 from: currentUser,
                 timestamp: Date.now()
             });
 
-            // Petit feedback pour moi
+            // Feedback
             const notif = document.getElementById("notif");
             notif.innerText = "💋 Bisou envoyé !";
             notif.style.display = "block";
@@ -240,7 +285,7 @@
             setTimeout(() => { notif.classList.remove("show"); setTimeout(() => notif.style.display = "none", 300); }, 2000);
         }
 
-        // --- FONCTIONS CLASSIQUES (Moods, Livres, Compte à rebours) ---
+        // AUTO UPDATE
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const data = doc.data();
