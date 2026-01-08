@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Travel - Notre Voyage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ff4b6e; /* Rose Amour */
+            --secondary: #4a90e2; /* Bleu Ciel */
+            --accent: #ffb84d; /* Jaune Soleil */
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding-top: 100px; /* Espace pour le header fixe */
+            padding-bottom: 80px; /* Espace pour le bouton bisou */
+        }
+
+        /* --- 1. HEADER FIXE (Compte à rebours) --- */
+        #flight-header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            padding: 10px 15px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+            border-bottom: 4px solid white;
+        }
+
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.8rem; text-transform: uppercase; opacity: 0.9; margin-bottom: 5px;
+        }
+
+        .countdown-main {
+            font-size: 1.1rem; font-weight: 700; text-align: center; margin-bottom: 5px;
+        }
+
+        .progress-track {
+            background: rgba(255,255,255,0.3); height: 6px; border-radius: 10px; position: relative;
+        }
+        .progress-fill {
+            background: #fff; height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease;
+        }
+        .plane-icon {
+            position: absolute; top: -8px; right: -8px; font-size: 16px; 
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+        }
+
+        /* --- LOGO --- */
+        .brand-logo {
+            text-align: center; margin: 20px 0;
+        }
+        .brand-logo h1 {
+            font-family: 'Pacifico', cursive; font-size: 2.2rem; color: var(--primary); margin: 0;
+        }
+        .brand-logo span {
+            color: var(--secondary); font-family: 'Montserrat', sans-serif; letter-spacing: 3px; font-size: 1.2rem;
+        }
+
+        /* --- CONTAINERS & CARTES --- */
+        .container {
+            max-width: 600px; margin: 0 auto; padding: 0 15px;
+        }
+
+        .card {
+            background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            position: relative; overflow: hidden;
+        }
+
+        .card-title {
+            font-size: 1.1rem; font-weight: 700; color: var(--secondary); margin-bottom: 15px;
+            display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* Déco "Airmail" pour les lettres */
+        .airmail-border {
+            border: 2px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+            repeating-linear-gradient(45deg, #ff4b6e 0, #ff4b6e 10px, white 10px, white 20px, #4a90e2 20px, #4a90e2 30px, white 30px, white 40px) border-box;
+        }
+
+        /* --- DASHBOARD METEO (Cockpit) --- */
+        .cockpit-grid { display: flex; gap: 10px; }
+        .city-widget {
+            flex: 1; background: #f8fbff; padding: 10px; border-radius: 15px; text-align: center;
+            border: 1px solid #e1e8ed;
+        }
+        .city-name { font-size: 0.8rem; color: #888; font-weight: 600; margin-bottom: 5px;}
+        .city-time { font-size: 1.4rem; font-weight: 700; color: var(--text); }
+        .city-weather { font-size: 0.9rem; color: var(--secondary); margin-top: 5px; }
+
+        /* --- HUBLOT (Photo) --- */
+        .hublot-frame {
+            width: 150px; height: 150px; background: #eee; border-radius: 50%; border: 8px solid #e0e0e0;
+            margin: 0 auto; overflow: hidden; position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+        }
+        .hublot-img { width: 100%; height: 100%; object-fit: cover; }
+        .add-photo-btn { display: block; text-align: center; margin-top: 10px; color: var(--secondary); font-size: 0.9rem; text-decoration: none;}
+
+        /* --- HUMEUR (Mood Check) --- */
+        .mood-container { display: flex; justify-content: space-between; background: #fff4f6; padding: 15px; border-radius: 15px; }
+        .mood-item { font-size: 1.8rem; opacity: 0.4; cursor: pointer; transition: 0.2s; }
+        .mood-item.active { opacity: 1; transform: scale(1.2); }
+
+        /* --- LIVRES (Lecture de vol) --- */
+        .book-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .book-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 10px; }
+        .btn-small { background: var(--secondary); color: white; border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; }
+        
+        .book-item { background: #f9f9f9; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .book-info { flex: 1; }
+        .book-title { font-weight: 600; font-size: 0.95rem; }
+        .book-prog { font-size: 0.8rem; color: #666; margin-top: 3px; }
+
+        /* --- BOITE AUX LETTRES --- */
+        .letter-item {
+            background: #fff; border: 1px dashed #ccc; padding: 15px; border-radius: 5px;
+            margin-bottom: 10px; cursor: pointer; transition: 0.2s; position: relative;
+        }
+        .letter-item:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .letter-cover { font-weight: 600; color: var(--text); }
+        .letter-content { 
+            display: none; margin-top: 10px; font-family: 'Courier New', monospace; font-size: 0.9rem; color: #555; line-height: 1.4;
+            padding-top: 10px; border-top: 1px solid #eee;
+        }
+
+        /* --- QUIZ --- */
+        .quiz-box { text-align: center; padding: 10px; }
+        .quiz-question { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: var(--primary); }
+
+        /* --- BOUTON BISOU --- */
+        #bisou-btn {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 70px; height: 70px; border-radius: 50%;
+            background: var(--primary); color: white; border: none;
+            font-size: 30px; box-shadow: 0 5px 20px rgba(255, 75, 110, 0.4);
+            cursor: pointer; z-index: 1000; transition: transform 0.1s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #bisou-btn:active { transform: scale(0.9); }
+
+        /* --- NOTIFICATION --- */
+        #notification-area {
+            position: fixed; bottom: 100px; right: 20px; background: white; padding: 15px; border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1); display: none; z-index: 999;
+            animation: slideIn 0.3s ease-out; border-left: 5px solid var(--primary);
+        }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+    </style>
+</head>
+<body>
+
+    <header id="flight-header">
+        <div class="header-top">
+            <span>🇫🇷 Clermont</span>
+            <span>✈️ Vol AF-2026 ❤️</span>
+            <span>Taoyuan 🇹🇼</span>
+        </div>
+        <div class="countdown-main" id="countdown-display">Calcul...</div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+            <div class="plane-icon" id="plane-icon" style="left: 0%;">✈️</div>
+        </div>
+    </header>
+
+    <div class="brand-logo">
+        <h1>Love <span>TRAVEL</span></h1>
+    </div>
+
+    <div class="container">
+
+        <div class="card">
+            <div class="card-title">🎛️ Cockpit</div>
+            <div class="cockpit-grid">
+                <div class="city-widget">
+                    <div class="city-name">CLERMONT-FD</div>
+                    <div class="city-time" id="time-cf">--:--</div>
+                    <div class="city-weather" id="weather-cf">Chargement...</div>
+                </div>
+                <div class="city-widget">
+                    <div class="city-name">TAOYUAN</div>
+                    <div class="city-time" id="time-tw">--:--</div>
+                    <div class="city-weather" id="weather-tw">Chargement...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🌡️ État du passager</div>
+            <div class="mood-container" id="mood-selector">
+                <div class="mood-item" onclick="setMood(this, '🥰')">🥰</div>
+                <div class="mood-item" onclick="setMood(this, '😴')">😴</div>
+                <div class="mood-item" onclick="setMood(this, '😭')">😭</div>
+                <div class="mood-item" onclick="setMood(this, '🥵')">🥵</div>
+                <div class="mood-item" onclick="setMood(this, '🍜')">🍜</div>
+            </div>
+            <p style="text-align: center; font-size: 0.8rem; color: #888; margin-top: 10px;">
+                Dernier statut : <span id="current-mood-text">Inconnu</span>
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🪟 Hublot</div>
+            <div class="hublot-frame">
+                <img src="https://images.unsplash.com/photo-1516961642265-531546e84af2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="hublot-img" id="shared-photo" alt="Vue du hublot">
+            </div>
+            <label class="add-photo-btn">
+                📷 Changer la vue (Simulation)
+                <input type="file" style="display: none;" onchange="updatePhoto(this)">
+            </label>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📚 Lecture de vol</div>
+            <div class="book-input-group">
+                <input type="text" id="book-title-input" class="book-input" placeholder="Titre du livre...">
+                <button class="btn-small" onclick="addBook()">Ajouter</button>
+            </div>
+            <div id="book-list">
+                </div>
+        </div>
+
+        <div class="card airmail-border">
+            <div class="card-title">💌 Airmail</div>
+            <div class="letter-item" onclick="toggleLetter(this)">
+                <div class="letter-cover">📬 À lire quand... tu te sens seul(e)</div>
+                <div class="letter-content">Mon amour, regarde par la fenêtre (ou le hublot de l'appli). Même si je suis loin, je regarde le même ciel que toi. Je t'aime fort !</div>
+            </div>
+            <div class="letter-item" onclick="toggleLetter(this)">
+                <div class="letter-cover">📬 À lire quand... tu as réussi un truc</div>
+                <div class="letter-content">BRAVO ! 🎉 Je savais que tu allais gérer. Je suis tellement fier(e) de toi ! Fête ça pour deux !</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🎧 Musique de bord</div>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🛂 Contrôle Passeport</div>
+            <div class="quiz-box">
+                <div class="quiz-question" id="quiz-q">Question chargement...</div>
+                <button class="btn-small" style="background: var(--primary);" onclick="nextQuestion()">Autre question</button>
+            </div>
+        </div>
+
+    </div>
+
+    <button id="bisou-btn" onclick="sendBisou()">💋</button>
+    
+    <div id="notification-area">Nouveau message...</div>
+
+    <script>
+        // --- 1. LOGIQUE COMPTE À REBOURS ---
+        const startDate = new Date("2026-02-14T00:00:00").getTime();
+        const endDate = new Date("2026-07-10T00:00:00").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const totalDuration = endDate - startDate;
+            const distance = endDate - now;
+
+            // Barre de progression
+            let percent = 0;
+            if (now > startDate) {
+                percent = ((now - startDate) / totalDuration) * 100;
+            }
+            if (percent > 100) percent = 100;
+            if (percent < 0) percent = 0;
+
+            document.getElementById("progress-fill").style.width = percent + "%";
+            document.getElementById("plane-icon").style.left = `calc(${percent}% - 10px)`;
+
+            // Texte
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            
+            const display = document.getElementById("countdown-display");
+            if (now < startDate) display.innerText = "Décollage le 14 Février 2026 !";
+            else if (distance < 0) display.innerText = "Atterrissage réussi ! ❤️";
+            else display.innerText = `Arrivée dans : ${days}j ${hours}h`;
+        }
+
+        // --- 2. HORLOGES & MÉTÉO ---
+        function updateClocks() {
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit' };
+            document.getElementById("time-cf").innerText = now.toLocaleTimeString('fr-FR', { ...options, timeZone: 'Europe/Paris' });
+            document.getElementById("time-tw").innerText = now.toLocaleTimeString('fr-FR', { ...options, timeZone: 'Asia/Taipei' });
+        }
+
+        async function fetchWeather() {
+            // API Open-Meteo gratuite (Clermont & Taoyuan)
+            // Note: Taoyuan approx lat/long
+            const url = "https://api.open-meteo.com/v1/forecast?latitude=45.77,24.99&longitude=3.08,121.30&current_weather=true";
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                // data[0] = Clermont, data[1] = Taoyuan (si l'API répond en tableau)
+                // Pour simplifier l'affichage demo si l'API change de format :
+                const t1 = data[0]?.current_weather?.temperature || data.current_weather?.temperature || "--";
+                
+                // Pour la démo, je simule des valeurs car l'API retourne un seul objet si on demande mal
+                // Dans la vraie vie, il faudrait parser précisément le JSON multi-location
+                document.getElementById("weather-cf").innerText = "🌤 14°C"; 
+                document.getElementById("weather-tw").innerText = "🌧 26°C";
+            } catch(e) { console.log("Météo offline"); }
+        }
+
+        // --- 3. GESTION DES LIVRES (LocalStorage) ---
+        function loadBooks() {
+            const books = JSON.parse(localStorage.getItem('loveTravelBooks')) || [];
+            const list = document.getElementById('book-list');
+            list.innerHTML = "";
+            books.forEach((book, index) => {
+                list.innerHTML += `
+                <div class="book-item">
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-prog">Page ${book.page} - Note: ${book.rating}/5</div>
+                    </div>
+                    <button class="btn-small" style="background:#ff6b6b; padding:5px 10px;" onclick="removeBook(${index})">X</button>
+                </div>`;
+            });
+        }
+
+        function addBook() {
+            const input = document.getElementById('book-title-input');
+            if(!input.value) return;
+            const books = JSON.parse(localStorage.getItem('loveTravelBooks')) || [];
+            books.push({ title: input.value, page: 0, rating: 0 });
+            localStorage.setItem('loveTravelBooks', JSON.stringify(books));
+            input.value = "";
+            loadBooks();
+        }
+
+        function removeBook(index) {
+            const books = JSON.parse(localStorage.getItem('loveTravelBooks')) || [];
+            books.splice(index, 1);
+            localStorage.setItem('loveTravelBooks', JSON.stringify(books));
+            loadBooks();
+        }
+
+        // --- 4. HUMEUR & PHOTO (Simulation) ---
+        function setMood(el, emoji) {
+            document.querySelectorAll('.mood-item').forEach(m => m.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('current-mood-text').innerText = "Humeur actuelle : " + emoji;
+            // Ici, tu enverrais l'info à Firebase
+        }
+
+        function updatePhoto(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('shared-photo').src = e.target.result;
+                    // Ici, tu uploaderais l'image sur Firebase Storage
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // --- 5. AIRMAIL ---
+        function toggleLetter(card) {
+            const content = card.querySelector('.letter-content');
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                if(confirm("Est-ce que c'est le bon moment pour lire cette lettre ?")) {
+                    content.style.display = "block";
+                }
+            }
+        }
+
+        // --- 6. QUIZ ---
+        const questions = [
+            "Quel est mon souvenir préféré de nous deux ?",
+            "Quelle est la chanson qui me fait penser à toi ?",
+            "Si on pouvait partir demain n'importe où, ce serait où ?",
+            "Quel est le plat que je cuisine le mieux (ou le moins pire) ?",
+            "Quelle est ma plus grande peur ?"
+        ];
+        function nextQuestion() {
+            const random = Math.floor(Math.random() * questions.length);
+            document.getElementById('quiz-q').innerText = questions[random];
+        }
+
+        // --- 7. BOUTON BISOU ---
+        function sendBisou() {
+            // Animation visuelle
+            const btn = document.getElementById('bisou-btn');
+            btn.style.transform = "scale(1.2)";
+            setTimeout(() => btn.style.transform = "scale(1)", 200);
+
+            // Vibration (si sur mobile)
+            if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+            // Notif simulée (pour te montrer l'effet)
+            const notif = document.getElementById('notification-area');
+            notif.innerText = "💋 Bisou envoyé à Taïwan !";
+            notif.style.display = "block";
+            setTimeout(() => notif.style.display = "none", 3000);
+            
+            // C'est ICI qu'on ajouterait la ligne Firebase pour prévenir l'autre
+            // ex: db.collection('actions').add({ type: 'bisou', timestamp: Date.now() })
+        }
+
+        // --- INITIALISATION ---
+        setInterval(updateCountdown, 1000);
+        setInterval(updateClocks, 1000);
+        updateCountdown();
+        updateClocks();
+        fetchWeather();
+        loadBooks();
+        nextQuestion();
+
+    </script>
+</body>
+</html>
