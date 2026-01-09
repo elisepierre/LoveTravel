@@ -38,26 +38,42 @@
         .card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid white; }
         .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
 
-        /* BOITE AUX LETTRES */
-        .letter-form { background: #f9f9f9; padding: 15px; border-radius: 15px; border: 1px dashed #ddd; margin-bottom: 20px; }
+        /* --- BOITE AUX LETTRES V2 --- */
+        .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 10px; border-radius: 12px; border: none; background: #eee; color: #888; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .tab-btn.active { background: var(--secondary); color: white; box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); }
+        
+        .letter-form { background: #f9f9f9; padding: 15px; border-radius: 15px; border: 1px dashed #ddd; margin-bottom: 20px; display: none; } /* Caché par défaut */
+        .letter-form.visible { display: block; animation: slideDown 0.3s; }
         .letter-input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: 'Outfit', sans-serif; }
         .letter-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
         
+        /* Bouton "Nouvelle lettre" */
+        .btn-new-letter { width: 100%; padding: 10px; background: white; border: 2px dashed var(--primary); color: var(--primary); border-radius: 12px; font-weight: bold; margin-bottom: 15px; cursor: pointer; }
+
         .letter-item { 
             background: white; border: 1px solid #eee; padding: 15px; margin-bottom: 10px; 
             border-radius: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;
         }
-        .letter-item:active { transform: scale(0.98); }
+        .letter-header { display: flex; justify-content: space-between; align-items: center; }
+        .letter-info { flex: 1; }
         .letter-icon { font-size: 1.5rem; margin-right: 10px; vertical-align: middle; }
-        .letter-title { font-weight: bold; color: #333; }
+        .letter-title { font-weight: bold; color: #333; font-size: 0.95rem; }
+        .letter-status { font-size: 0.7rem; font-weight: bold; padding: 3px 8px; border-radius: 20px; margin-left: 5px; }
+        .status-unread { background: #eee; color: #888; }
+        .status-read { background: #d4edda; color: #155724; }
+        
         .letter-content { 
             display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #eee; 
             color: #555; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap;
         }
         .letter-item.open { border-left: 5px solid var(--secondary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .letter-item.open .letter-content { display: block; animation: fadeIn 0.5s; }
-        .letter-tag { font-size: 0.7rem; color: #aaa; text-transform: uppercase; margin-top: 5px; display: block; }
+        
+        .btn-delete-letter { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 5px; margin-left: 10px; color: #ffadad; }
+        
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* MOODS */
         .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
@@ -130,18 +146,20 @@
         <div class="card">
             <div class="card-title"><span>💌</span> Boîte aux Lettres</div>
             
-            <div style="margin-bottom:20px;">
-                <p style="font-size:0.8rem; color:#888; margin-bottom:10px;"><b>Écrire une lettre pour l'autre :</b></p>
-                <div class="letter-form">
-                    <input type="text" id="letter-title" class="letter-input" placeholder="Ouvrir quand... (ex: tu es triste)">
-                    <textarea id="letter-content" class="letter-input" rows="3" placeholder="Ton petit mot doux..."></textarea>
-                    <button class="letter-btn" onclick="sendLetter()">📮 Poster la lettre</button>
-                </div>
+            <div class="mailbox-tabs">
+                <button class="tab-btn active" id="tab-received" onclick="switchMailbox('received')">📬 Reçues</button>
+                <button class="tab-btn" id="tab-sent" onclick="switchMailbox('sent')">🚀 Envoyées</button>
             </div>
 
-            <p style="font-size:0.8rem; color:#888; margin-bottom:10px;"><b>Mes lettres à ouvrir :</b></p>
+            <button class="btn-new-letter" onclick="toggleLetterForm()">✍️ Écrire une lettre "Ouvrir quand..."</button>
+            <div class="letter-form" id="form-letter">
+                <input type="text" id="letter-title" class="letter-input" placeholder="Ouvrir quand... (ex: tu es triste)">
+                <textarea id="letter-content" class="letter-input" rows="3" placeholder="Ton message..."></textarea>
+                <button class="letter-btn" onclick="sendLetter()">📮 Poster la lettre</button>
+            </div>
+
             <div id="mailbox-list">
-                <div style="text-align:center; color:#ccc; font-size:0.9rem;">Aucune lettre reçue pour le moment...</div>
+                <div style="text-align:center; color:#ccc; padding:20px;">Chargement...</div>
             </div>
         </div>
 
@@ -189,6 +207,8 @@
         const db = getFirestore(app);
 
         let currentUser = localStorage.getItem('userRole') || 'tw'; 
+        let currentTab = 'received'; // 'received' ou 'sent'
+        
         updateIdentityUI();
 
         window.setUser = function(role) { currentUser = role; localStorage.setItem('userRole', role); updateIdentityUI(); location.reload(); }
@@ -217,17 +237,98 @@
             showLocalNotif("💋 Bisou envoyé !");
         }
 
-        // --- BOITE AUX LETTRES ---
-        // 1. Envoyer
+        // --- BOITE AUX LETTRES PRO ---
+        window.toggleLetterForm = function() { document.getElementById('form-letter').classList.toggle('visible'); }
+        
+        window.switchMailbox = function(type) {
+            currentTab = type;
+            document.getElementById('tab-received').classList.remove('active');
+            document.getElementById('tab-sent').classList.remove('active');
+            document.getElementById('tab-' + type).classList.add('active');
+            loadLetters(); // Recharger la liste
+        }
+
+        function loadLetters() {
+            const list = document.getElementById("mailbox-list");
+            list.innerHTML = `<div style="text-align:center; color:#ccc;">Chargement...</div>`;
+            
+            // On écoute TOUTES les lettres pour simplifier et on filtre en JS (plus simple pour prototype)
+            const q = query(collection(db, "letters"), orderBy("timestamp", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                list.innerHTML = "";
+                let count = 0;
+
+                snapshot.forEach((docSnap) => {
+                    const letter = docSnap.data();
+                    const id = docSnap.id;
+                    let display = false;
+
+                    // Logique de filtrage
+                    if(currentTab === 'received' && letter.to === currentUser) display = true;
+                    if(currentTab === 'sent' && letter.from === currentUser) display = true;
+
+                    if(display) {
+                        count++;
+                        const div = document.createElement('div');
+                        div.className = "letter-item";
+                        
+                        let icon = "📩";
+                        let statusHTML = "";
+                        
+                        // Affichage différent selon Reçu ou Envoyé
+                        if(currentTab === 'received') {
+                            icon = letter.isRead ? "📨" : "📩"; // Ouvert / Fermé
+                            if(letter.isRead) div.classList.add('open'); // Garder ouvert si lu (optionnel, ou juste style)
+                        } else {
+                            // Onglet Envoyé
+                            icon = "🚀";
+                            const statusText = letter.isRead ? "✅ LU" : "⏳ NON LU";
+                            const statusClass = letter.isRead ? "status-read" : "status-unread";
+                            statusHTML = `<span class="letter-status ${statusClass}">${statusText}</span>`;
+                        }
+
+                        div.innerHTML = `
+                            <div class="letter-header">
+                                <div class="letter-info">
+                                    <span class="letter-icon">${icon}</span>
+                                    <span class="letter-title">${letter.title}</span>
+                                    ${statusHTML}
+                                </div>
+                                <button class="btn-delete-letter" onclick="deleteLetter(event, '${id}')">🗑️</button>
+                            </div>
+                            <div class="letter-content">${letter.content}</div>
+                        `;
+                        
+                        // Click pour ouvrir
+                        div.onclick = function(e) {
+                            // Si on clique sur la poubelle, on ne déclenche pas l'ouverture
+                            if(e.target.classList.contains('btn-delete-letter')) return;
+
+                            this.classList.toggle("open");
+                            // Si c'est une lettre reçue et non lue, on marque comme lue
+                            if(currentTab === 'received' && !letter.isRead) {
+                                updateDoc(doc(db, "letters", id), { isRead: true });
+                            }
+                        };
+                        
+                        list.appendChild(div);
+                    }
+                });
+                
+                if(count === 0) list.innerHTML = `<div style="text-align:center; color:#ccc; font-size:0.9rem; padding:10px;">Aucune lettre dans ce dossier.</div>`;
+            });
+        }
+        
+        // Initialisation
+        loadLetters();
+
         window.sendLetter = function() {
             const title = document.getElementById('letter-title').value;
             const content = document.getElementById('letter-content').value;
+            if(!title || !content) return alert("Remplis tout !");
             
-            if(!title || !content) return alert("Remplis le titre et le message !");
-            
-            // Si je suis Elise (tw), j'écris à Théo (fr)
             const target = currentUser === 'tw' ? 'fr' : 'tw';
-            
             addDoc(collection(db, "letters"), {
                 to: target, from: currentUser,
                 title: title, content: content,
@@ -236,52 +337,20 @@
             
             document.getElementById('letter-title').value = "";
             document.getElementById('letter-content').value = "";
+            document.getElementById('form-letter').classList.remove('visible');
             sendNtfy("💌 Nouvelle lettre dans la boîte !", "email");
-            alert("Lettre postée !");
+            showLocalNotif("Lettre envoyée !");
+            
+            // Basculer vers l'onglet envoyés pour voir la lettre
+            switchMailbox('sent');
         }
 
-        // 2. Lire (On écoute les lettres qui me sont destinées)
-        const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
-        onSnapshot(qLetters, (snapshot) => {
-            const list = document.getElementById("mailbox-list");
-            list.innerHTML = "";
-            let count = 0;
-
-            snapshot.forEach((docSnap) => {
-                const letter = docSnap.data();
-                // N'afficher que les lettres pour MOI
-                if(letter.to === currentUser) {
-                    count++;
-                    const div = document.createElement('div');
-                    div.className = "letter-item";
-                    // Icone : Enveloppe fermée ou ouverte
-                    const icon = letter.isRead ? "📨" : "📩";
-                    const statusClass = letter.isRead ? "open" : "";
-                    
-                    div.innerHTML = `
-                        <div>
-                            <span class="letter-icon">${icon}</span>
-                            <span class="letter-title">${letter.title}</span>
-                            <span class="letter-tag">De ${letter.from === 'fr' ? 'Théo' : 'Elise'}</span>
-                        </div>
-                        <div class="letter-content">${letter.content}</div>
-                    `;
-                    
-                    // Click pour ouvrir/fermer
-                    div.onclick = function() {
-                        this.classList.toggle("open");
-                        // Marquer comme lu si c'est la première fois
-                        if(!letter.isRead) {
-                            updateDoc(doc(db, "letters", docSnap.id), { isRead: true });
-                        }
-                    };
-                    
-                    list.appendChild(div);
-                }
-            });
-            
-            if(count === 0) list.innerHTML = `<div style="text-align:center; color:#ccc; font-size:0.9rem; padding:10px;">Aucune lettre reçue pour le moment...</div>`;
-        });
+        window.deleteLetter = function(e, id) {
+            e.stopPropagation(); // Empêcher l'ouverture de la lettre
+            if(confirm("Supprimer cette lettre définitivement ?")) {
+                deleteDoc(doc(db, "letters", id));
+            }
+        }
 
         // --- MOODS ---
         onSnapshot(doc(db, "status", "moods"), (doc) => {
@@ -311,10 +380,8 @@
                 const book = docSnap.data();
                 const id = docSnap.id;
                 const totalPages = book.pages_total || 200;
-                
                 const frPage = book.page_fr || 0; const frRating = book.rating_fr || 0;
                 const twPage = book.page_tw || 0; const twRating = book.rating_tw || 0;
-                
                 const frPercent = Math.min((frPage / totalPages) * 100, 100);
                 const twPercent = Math.min((twPage / totalPages) * 100, 100);
 
