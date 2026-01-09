@@ -17,7 +17,7 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; font-family: 'Outfit', sans-serif; background: linear-gradient(180deg, #fff0f3 0%, #eef2f3 100%); color: var(--text); padding-bottom: 120px; }
 
-        /* HEADER */
+        /* HEADER & LAYOUT */
         #hero-header { background: white; padding: 20px 20px 30px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 25px rgba(255, 75, 110, 0.15); padding-top: max(20px, env(safe-area-inset-top)); }
         .clocks-container { display: flex; justify-content: space-between; margin-bottom: 20px; background: #f8f9fa; padding: 10px 20px; border-radius: 20px; border: 1px solid #eee; }
         .clock-item { text-align: center; }
@@ -42,24 +42,33 @@
         .mood-btn:active { transform: scale(0.95); background: var(--bg); }
         .mood-emoji { font-size: 1.8rem; display: block; margin-bottom: 5px; }
         .mood-text { font-size: 0.6rem; font-weight: bold; color: #666; display: block; line-height: 1.1; }
-        
         .current-moods { display: flex; justify-content: space-around; background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #eee; }
         .one-mood { text-align: center; }
         .mood-big { font-size: 2.5rem; }
         .mood-who { font-size: 0.7rem; font-weight: bold; color: var(--secondary); letter-spacing: 1px; margin-top: 5px; display: block;}
 
-        /* LIVRES */
+        /* LIVRES V4 (PROGRESS BARS) */
         .book-item { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #eee; }
-        .book-title { font-weight: 800; font-size: 1.1rem; color: #333; margin-bottom: 10px; display:flex; justify-content:space-between; }
-        .user-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed #eee; }
+        .book-title { font-weight: 800; font-size: 1.1rem; color: #333; margin-bottom: 5px; display:flex; justify-content:space-between; }
+        .book-total-pages { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; font-weight: 500; }
+        
+        .user-row { display: flex; flex-direction: column; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
         .user-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .user-label { font-size: 0.8rem; font-weight: bold; width: 50px; }
+        
+        .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .user-label { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        
         .user-inputs { display: flex; align-items: center; gap: 10px; }
-        .page-input { width: 50px; padding: 4px; border-radius: 6px; border: 1px solid #ddd; text-align: center; font-weight: bold; }
+        .page-input { width: 50px; padding: 4px; border-radius: 6px; border: 1px solid #ddd; text-align: center; font-weight: bold; font-size: 0.9rem; }
+        
         .star-rating { display: flex; gap: 1px; }
         .star { cursor: pointer; font-size: 1.1rem; color: #eee; transition: 0.2s; }
         .star.filled { color: #ffb84d; }
         .star-reset { font-size: 0.7rem; color: #ccc; cursor: pointer; margin-left: 5px; padding: 2px;}
+
+        /* BARRE DE PROGRESSION LIVRE */
+        .book-progress-track { width: 100%; height: 6px; background: #f0f0f0; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
         /* UTILS */
         .identity-btn { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 12px; border: 2px solid #eee; background: white; color: #999; font-weight: 600; cursor: pointer; }
@@ -106,54 +115,36 @@
 
         <div class="card">
             <div class="card-title"><span>🌡️</span> Météo des Cœurs</div>
-            
             <div class="current-moods">
-                <div class="one-mood">
-                    <span class="mood-big" id="mood-val-fr">😶</span>
-                    <span class="mood-who">THÉO</span>
-                    <div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-fr">...</div>
-                </div>
+                <div class="one-mood"><span class="mood-big" id="mood-val-fr">😶</span><span class="mood-who">THÉO</span><div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-fr">...</div></div>
                 <div style="width:1px; background:#eee;"></div>
-                <div class="one-mood">
-                    <span class="mood-big" id="mood-val-tw">😶</span>
-                    <span class="mood-who" style="color:var(--primary)">ELISE</span>
-                    <div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-tw">...</div>
-                </div>
+                <div class="one-mood"><span class="mood-big" id="mood-val-tw">😶</span><span class="mood-who" style="color:var(--primary)">ELISE</span><div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-tw">...</div></div>
             </div>
-
             <p style="font-size:0.8rem; text-align:center; color:#aaa; margin-bottom:5px;">Change ton statut :</p>
             <div class="mood-grid">
-                <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !')">
-                    <span class="mood-emoji">🥰</span><span class="mood-text">Manque</span>
-                </div>
-                <div class="mood-btn" onclick="updateMood('🎓', 'Je suis en cours')">
-                    <span class="mood-emoji">🎓</span><span class="mood-text">En cours</span>
-                </div>
-                <div class="mood-btn" onclick="updateMood('😴', 'Je dors, chut !')">
-                    <span class="mood-emoji">😴</span><span class="mood-text">Dodo</span>
-                </div>
-                <div class="mood-btn" onclick="updateMood('🔥', 'Envie de toi...')">
-                    <span class="mood-emoji">🔥</span><span class="mood-text">Envie</span>
-                </div>
-                <div class="mood-btn" onclick="updateMood('🍜', 'Je mange')">
-                    <span class="mood-emoji">🍜</span><span class="mood-text">Miam</span>
-                </div>
-                <div class="mood-btn" onclick="customMood()" style="background:white; border:2px dashed #ddd;">
-                    <span class="mood-emoji">✏️</span><span class="mood-text">Perso</span>
-                </div>
+                <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !')"><span class="mood-emoji">🥰</span><span class="mood-text">Manque</span></div>
+                <div class="mood-btn" onclick="updateMood('🎓', 'Je suis en cours')"><span class="mood-emoji">🎓</span><span class="mood-text">En cours</span></div>
+                <div class="mood-btn" onclick="updateMood('😴', 'Je dors, chut !')"><span class="mood-emoji">😴</span><span class="mood-text">Dodo</span></div>
+                <div class="mood-btn" onclick="updateMood('🔥', 'Envie de toi...')"><span class="mood-emoji">🔥</span><span class="mood-text">Envie</span></div>
+                <div class="mood-btn" onclick="updateMood('🍜', 'Je mange')"><span class="mood-emoji">🍜</span><span class="mood-text">Miam</span></div>
+                <div class="mood-btn" onclick="customMood()" style="background:white; border:2px dashed #ddd;"><span class="mood-emoji">✏️</span><span class="mood-text">Perso</span></div>
             </div>
         </div>
 
         <div class="card">
             <div class="card-title"><span>📚</span> Lectures Communes</div>
             <div class="input-group">
-                <input type="text" id="book-input" class="input-field" placeholder="Nouveau livre...">
+                <input type="text" id="book-title" class="input-field" placeholder="Titre...">
+                <input type="number" id="book-pages" class="input-field" placeholder="Nb Pages" style="width:80px; flex:none;">
                 <button onclick="addBook()" class="input-field" style="flex:0; background:var(--secondary); color:white; border:none; font-weight:bold;">+</button>
             </div>
             <div id="book-list"></div>
         </div>
 
-        <div class="card"><div class="card-title"><span>🎧</span> Vibe du moment</div><iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+        <div class="card">
+            <div class="card-title"><span>🎧</span> Vibe du moment</div>
+            <iframe id="spotify-frame" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
@@ -176,38 +167,25 @@
             document.getElementById('btn-user-' + currentUser).classList.add('active'); 
         }
 
-        // --- 1. NOTIFICATIONS INTELLIGENTES (FIX ACCENTS) ---
         function sendNtfy(message, tags) {
             const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
-            const senderName = currentUser === 'tw' ? "Elise" : "Théo"; // Théo avec accent
+            const senderName = currentUser === 'tw' ? "Elise" : "Théo";
 
-            // L'astuce charset=utf-8 pour les accents
             fetch(`https://ntfy.sh/${targetChannel}`, {
                 method: 'POST',
                 body: message,
-                headers: { 
-                    'Title': `Love Travel (${senderName})`, 
-                    'Priority': 'high', 
-                    'Tags': tags,
-                    'Content-Type': 'text/plain; charset=utf-8' 
-                }
+                headers: { 'Title': `Love Travel (${senderName})`, 'Priority': 'high', 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8' }
             }).catch(e => console.log("Erreur ntfy", e));
         }
 
-        // --- 2. BISOUS ---
         window.sendBisou = function() {
             const btn = document.getElementById('bisou-btn');
             btn.style.transform = "scale(1.3)"; setTimeout(() => btn.style.transform = "scale(1)", 200);
-            
-            // Database
             addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
-            
-            // Notif
             sendNtfy("💋 Bisou envoyé !", "kiss,heart");
             showLocalNotif("💋 Bisou envoyé !");
         }
 
-        // --- 3. MOODS + PERSO ---
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
@@ -219,35 +197,30 @@
         });
 
         window.updateMood = function(emoji, text) {
-            const fieldEmoji = currentUser + "_emoji";
-            const fieldText = currentUser + "_text";
-            setDoc(doc(db, "status", "moods"), { [fieldEmoji]: emoji, [fieldText]: text }, { merge: true });
+            setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text }, { merge: true });
             sendNtfy(`${emoji} Nouveau statut : ${text}`, "partly_sunny");
         }
-
-        // Fonction pour le Mood Personnalisé
         window.customMood = function() {
-            // Demande l'émoji
-            const emoji = prompt("Choisis un émoji (copie-colle le ici) :", "🦄");
-            if(!emoji) return; // Annulé
-            
-            // Demande le texte
-            const text = prompt("Ta phrase de statut :", "Je pense à toi");
-            if(!text) return; // Annulé
-
+            const emoji = prompt("Choisis un émoji :", "🦄"); if(!emoji) return;
+            const text = prompt("Ta phrase :", "Je pense à toi"); if(!text) return;
             updateMood(emoji, text);
         }
 
-        // --- 4. LIVRES ---
+        // --- LIVRES V4 (PAGES TOTALES + PROGRESSION) ---
         const qBooks = query(collection(db, "books"), orderBy("created", "desc"));
         onSnapshot(qBooks, (snapshot) => {
-            const list = document.getElementById("book-list"); 
-            list.innerHTML = "";
+            const list = document.getElementById("book-list"); list.innerHTML = "";
+            
             snapshot.forEach((docSnap) => {
                 const book = docSnap.data();
                 const id = docSnap.id;
+                const totalPages = book.pages_total || 100; // Défaut 100 si pas défini
+
                 const frPage = book.page_fr || 0; const frRating = book.rating_fr || 0;
                 const twPage = book.page_tw || 0; const twRating = book.rating_tw || 0;
+
+                const frPercent = Math.min((frPage / totalPages) * 100, 100);
+                const twPercent = Math.min((twPage / totalPages) * 100, 100);
 
                 const makeStars = (role, currentRating) => {
                     let html = '';
@@ -263,25 +236,33 @@
                 const canEditFr = currentUser === 'fr' ? '' : 'disabled';
                 const canEditTw = currentUser === 'tw' ? '' : 'disabled';
 
-                const div = document.createElement('div'); 
-                div.className = "book-item";
+                const div = document.createElement('div'); div.className = "book-item";
                 div.innerHTML = `
                     <div class="book-title">
                         ${book.title} 
                         <button style="border:none; background:none; color:#faa; font-size:0.8rem; cursor:pointer;" onclick="deleteBook('${id}')">✕</button>
                     </div>
+                    <div class="book-total-pages">${totalPages} pages</div>
+                    
                     <div class="user-row">
-                        <span class="user-label">THÉO</span>
-                        <div class="user-inputs">
-                            <input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value)" placeholder="P.">
+                        <div class="row-header">
+                            <span class="user-label">THÉO</span>
                             <div class="star-rating">${makeStars('fr', frRating)}</div>
                         </div>
+                        <div class="user-inputs" style="width:100%">
+                            <input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0">
+                            <div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--secondary);"></div></div>
+                        </div>
                     </div>
+
                     <div class="user-row" style="border:none;">
-                        <span class="user-label" style="color:var(--primary)">ELISE</span>
-                        <div class="user-inputs">
-                            <input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value)" placeholder="P.">
+                        <div class="row-header">
+                            <span class="user-label" style="color:var(--primary)">ELISE</span>
                             <div class="star-rating">${makeStars('tw', twRating)}</div>
+                        </div>
+                        <div class="user-inputs" style="width:100%">
+                            <input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0">
+                            <div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--primary);"></div></div>
                         </div>
                     </div>
                 `;
@@ -290,15 +271,31 @@
         });
 
         window.addBook = function() { 
-            const input = document.getElementById("book-input"); if (!input.value) return; 
-            addDoc(collection(db, "books"), { title: input.value, created: serverTimestamp(), page_fr: 0, rating_fr: 0, page_tw: 0, rating_tw: 0 }); 
-            input.value = ""; 
+            const title = document.getElementById("book-title").value; 
+            const pages = document.getElementById("book-pages").value;
+            if (!title) return; 
+            addDoc(collection(db, "books"), { 
+                title: title, 
+                pages_total: parseInt(pages) || 200, // Par défaut 200 si vide
+                created: serverTimestamp(), page_fr: 0, rating_fr: 0, page_tw: 0, rating_tw: 0 
+            }); 
+            document.getElementById("book-title").value = ""; 
+            document.getElementById("book-pages").value = "";
         }
-        window.updatePage = function(id, role, val) { updateDoc(doc(db, "books", id), { ["page_"+role]: parseInt(val) }); }
+        
+        window.updatePage = function(id, role, val, max, title) {
+            const newPage = parseInt(val);
+            updateDoc(doc(db, "books", id), { ["page_"+role]: newPage });
+            
+            // Notification de fin de livre
+            if(newPage >= max) {
+                sendNtfy(`🎉 J'ai fini de lire ${title} !`, "tada");
+            }
+        }
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
         window.deleteBook = function(id) { if(confirm("Supprimer ce livre ?")) deleteDoc(doc(db, "books", id)); }
 
-        // --- UTILS ---
+        // UTILS
         function showLocalNotif(msg) {
             const notif = document.getElementById("notif");
             notif.innerHTML = msg; notif.classList.add("show");
@@ -328,7 +325,6 @@
         }
         setInterval(updateCountdown, 1000); updateCountdown();
 
-        // Réception Bisou Live
         const qBisou = query(collection(db, "actions"), orderBy("timestamp", "desc"), limit(1));
         onSnapshot(qBisou, (snapshot) => {
             if(!snapshot.empty) {
