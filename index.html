@@ -12,7 +12,6 @@
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2530/2530860.png">
 
     <title>Love Travel ✈️</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Pacifico&display=swap" rel="stylesheet">
     
     <style>
@@ -20,35 +19,45 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; font-family: 'Outfit', sans-serif; background: linear-gradient(180deg, #fff0f3 0%, #eef2f3 100%); color: var(--text); padding-bottom: 120px; }
 
-        /* HEADER DESIGN */
+        /* HEADER */
         #hero-header { background: white; padding: 20px 20px 30px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 25px rgba(255, 75, 110, 0.15); padding-top: max(20px, env(safe-area-inset-top)); }
-        
-        /* HORLOGES */
         .clocks-container { display: flex; justify-content: space-between; margin-bottom: 20px; background: #f8f9fa; padding: 10px 20px; border-radius: 20px; border: 1px solid #eee; }
         .clock-item { text-align: center; }
         .clock-city { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: 700; }
         .clock-time { font-size: 1.2rem; font-weight: 700; color: var(--text); }
-        
-        /* COMPTE À REBOURS */
         .countdown-box { text-align: center; margin-top: 10px; }
         .countdown-title { font-size: 0.8rem; color: #ff8fa3; text-transform: uppercase; letter-spacing: 2px; }
         .countdown-big { font-size: 2.5rem; font-weight: 700; color: var(--primary); line-height: 1; text-shadow: 2px 2px 0px rgba(0,0,0,0.05); }
         .countdown-sub { font-size: 0.9rem; color: #888; margin-top: 5px; }
-        
-        /* BARRE AVION */
         .progress-container { margin-top: 20px; position: relative; height: 40px; }
         .progress-track { background: #eee; height: 6px; border-radius: 10px; position: relative; top: 15px; }
         .progress-fill { background: linear-gradient(90deg, var(--secondary), var(--primary)); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease; }
         .plane-icon { position: absolute; top: -5px; font-size: 24px; transition: left 1s ease; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); transform: rotate(90deg); }
 
-        /* CONTAINERS */
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid white; }
         .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
 
-        /* BOUTONS IDENTITÉ */
-        .identity-btn { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 12px; border: 2px solid #eee; background: white; color: #999; font-weight: 600; cursor: pointer; transition:0.2s; }
-        .identity-btn.active { background: var(--secondary); color: white; border-color: var(--secondary); box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); }
+        /* BOITE AUX LETTRES */
+        .letter-form { background: #f9f9f9; padding: 15px; border-radius: 15px; border: 1px dashed #ddd; margin-bottom: 20px; }
+        .letter-input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: 'Outfit', sans-serif; }
+        .letter-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+        
+        .letter-item { 
+            background: white; border: 1px solid #eee; padding: 15px; margin-bottom: 10px; 
+            border-radius: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .letter-item:active { transform: scale(0.98); }
+        .letter-icon { font-size: 1.5rem; margin-right: 10px; vertical-align: middle; }
+        .letter-title { font-weight: bold; color: #333; }
+        .letter-content { 
+            display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #eee; 
+            color: #555; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap;
+        }
+        .letter-item.open { border-left: 5px solid var(--secondary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .letter-item.open .letter-content { display: block; animation: fadeIn 0.5s; }
+        .letter-tag { font-size: 0.7rem; color: #aaa; text-transform: uppercase; margin-top: 5px; display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* MOODS */
         .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
@@ -56,7 +65,6 @@
         .mood-btn:active { transform: scale(0.95); background: var(--bg); }
         .mood-emoji { font-size: 1.8rem; display: block; margin-bottom: 5px; }
         .mood-text { font-size: 0.6rem; font-weight: bold; color: #666; display: block; line-height: 1.1; }
-        
         .current-moods { display: flex; justify-content: space-around; background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #eee; }
         .one-mood { text-align: center; }
         .mood-big { font-size: 2.5rem; }
@@ -66,34 +74,27 @@
         .book-item { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #eee; }
         .book-title { font-weight: 800; font-size: 1.1rem; color: #333; margin-bottom: 5px; display:flex; justify-content:space-between; }
         .book-total-pages { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; font-weight: 500; }
-        
         .user-row { display: flex; flex-direction: column; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
         .user-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        
         .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         .user-label { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
-        
         .user-inputs { display: flex; align-items: center; gap: 10px; }
         .page-input { width: 50px; padding: 4px; border-radius: 6px; border: 1px solid #ddd; text-align: center; font-weight: bold; font-size: 0.9rem; }
-        
         .star-rating { display: flex; gap: 1px; }
         .star { cursor: pointer; font-size: 1.1rem; color: #eee; transition: 0.2s; }
         .star.filled { color: #ffb84d; }
         .star-reset { font-size: 0.7rem; color: #ccc; cursor: pointer; margin-left: 5px; padding: 2px;}
-
-        /* BARRE PROGRESSION LIVRE */
         .book-progress-track { width: 100%; height: 6px; background: #f0f0f0; border-radius: 4px; overflow: hidden; margin-top: 5px; }
         .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
-        /* BOUTON BISOU FLOTTANT */
+        /* UTILS */
+        .identity-btn { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 12px; border: 2px solid #eee; background: white; color: #999; font-weight: 600; cursor: pointer; transition:0.2s; }
+        .identity-btn.active { background: var(--secondary); color: white; border-color: var(--secondary); box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); }
         #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 80px; height: 80px; border-radius: 40px; background: linear-gradient(135deg, #ff758c, #ff4b6e); color: white; border: none; font-size: 35px; box-shadow: 0 10px 25px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; }
         #bisou-btn:active { transform: scale(0.9); }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 20px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
-        
-        /* POPUP NOTIFICATION INTERNE */
         #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-150px); background: white; padding: 15px 20px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; font-weight: bold; color: var(--primary); width: 90%; max-width: 300px; text-align: center; border: 2px solid #fff0f3; transition: 0.5s; display: flex; align-items: center; justify-content: center; gap: 10px;}
         #notif.show { transform: translateX(-50%) translateY(0); }
-        
         iframe { border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
         .input-field { flex: 1; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-family: 'Outfit', sans-serif; }
@@ -127,23 +128,30 @@
         </div>
 
         <div class="card">
-            <div class="card-title"><span>🌡️</span> Météo des Cœurs</div>
+            <div class="card-title"><span>💌</span> Boîte aux Lettres</div>
             
-            <div class="current-moods">
-                <div class="one-mood">
-                    <span class="mood-big" id="mood-val-fr">😶</span>
-                    <span class="mood-who">THÉO</span>
-                    <div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-fr">...</div>
-                </div>
-                <div style="width:1px; background:#eee;"></div>
-                <div class="one-mood">
-                    <span class="mood-big" id="mood-val-tw">😶</span>
-                    <span class="mood-who" style="color:var(--primary)">ELISE</span>
-                    <div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-tw">...</div>
+            <div style="margin-bottom:20px;">
+                <p style="font-size:0.8rem; color:#888; margin-bottom:10px;"><b>Écrire une lettre pour l'autre :</b></p>
+                <div class="letter-form">
+                    <input type="text" id="letter-title" class="letter-input" placeholder="Ouvrir quand... (ex: tu es triste)">
+                    <textarea id="letter-content" class="letter-input" rows="3" placeholder="Ton petit mot doux..."></textarea>
+                    <button class="letter-btn" onclick="sendLetter()">📮 Poster la lettre</button>
                 </div>
             </div>
 
-            <p style="font-size:0.8rem; text-align:center; color:#aaa; margin-bottom:5px;">Change ton statut :</p>
+            <p style="font-size:0.8rem; color:#888; margin-bottom:10px;"><b>Mes lettres à ouvrir :</b></p>
+            <div id="mailbox-list">
+                <div style="text-align:center; color:#ccc; font-size:0.9rem;">Aucune lettre reçue pour le moment...</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span>🌡️</span> Météo des Cœurs</div>
+            <div class="current-moods">
+                <div class="one-mood"><span class="mood-big" id="mood-val-fr">😶</span><span class="mood-who">THÉO</span><div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-fr">...</div></div>
+                <div style="width:1px; background:#eee;"></div>
+                <div class="one-mood"><span class="mood-big" id="mood-val-tw">😶</span><span class="mood-who" style="color:var(--primary)">ELISE</span><div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-tw">...</div></div>
+            </div>
             <div class="mood-grid">
                 <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !')"><span class="mood-emoji">🥰</span><span class="mood-text">Manque</span></div>
                 <div class="mood-btn" onclick="updateMood('🎓', 'Je suis en cours')"><span class="mood-emoji">🎓</span><span class="mood-text">En cours</span></div>
@@ -155,7 +163,7 @@
         </div>
 
         <div class="card">
-            <div class="card-title"><span>📚</span> Lectures Communes</div>
+            <div class="card-title"><span>📚</span> Lectures</div>
             <div class="input-group">
                 <input type="text" id="book-title" class="input-field" placeholder="Titre...">
                 <input type="number" id="book-pages" class="input-field" placeholder="Total P." style="width:80px; flex:none;">
@@ -165,10 +173,8 @@
         </div>
 
         <div class="card">
-            <div class="card-title"><span>🎧</span> Vibe du moment</div>
-            
-            <iframe id="spotify-frame" style="border-radius:12px" src="Https://open.spotify.com/playlist/20Gmofuoy7FuEydcKOhpOH?si=c8vohg2aSRWu6DXdzSq-UA" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-        
+            <div class="card-title"><span>🎵</span> Playlist YouTube</div>
+            <iframe width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=PLw-VjHDlEOgvWkYtWJjC2Vvj9Gqj-Rz6R" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius:12px;"></iframe>
         </div>
     </div>
 
@@ -176,9 +182,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // CONFIG FIREBASE
         const firebaseConfig = { apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns", authDomain: "lovetravel-35285.firebaseapp.com", projectId: "lovetravel-35285", storageBucket: "lovetravel-35285.firebasestorage.app", messagingSenderId: "189902268760", appId: "1:189902268760:web:b461ce15d8c396be479d2d" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -186,43 +191,99 @@
         let currentUser = localStorage.getItem('userRole') || 'tw'; 
         updateIdentityUI();
 
-        window.setUser = function(role) { currentUser = role; localStorage.setItem('userRole', role); updateIdentityUI(); }
+        window.setUser = function(role) { currentUser = role; localStorage.setItem('userRole', role); updateIdentityUI(); location.reload(); }
         function updateIdentityUI() { 
             document.getElementById('btn-user-fr').classList.remove('active'); 
             document.getElementById('btn-user-tw').classList.remove('active'); 
             document.getElementById('btn-user-' + currentUser).classList.add('active'); 
         }
 
-        // --- 1. NOTIFICATIONS NTFY (CORRIGÉE: "Theo" sans accent) ---
+        // --- NTFY ---
         function sendNtfy(message, tags) {
             const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
-            
-            // ICI LE FIX : On force "Theo" sans accent pour éviter les bugs de l'API
-            const senderName = currentUser === 'tw' ? "Elise" : "Theo"; // "Theo" au lieu de "Théo"
-
+            const senderName = currentUser === 'tw' ? "Elise" : "Theo";
             fetch(`https://ntfy.sh/${targetChannel}`, {
-                method: 'POST',
-                body: message,
-                headers: { 
-                    'Title': `Love Travel (${senderName})`, 
-                    'Priority': 'high', 
-                    'Tags': tags,
-                    'Content-Type': 'text/plain; charset=utf-8' 
-                }
+                method: 'POST', body: message,
+                headers: { 'Title': `Love Travel (${senderName})`, 'Priority': 'high', 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8' }
             }).catch(e => console.log("Erreur ntfy", e));
         }
 
-        // --- 2. BISOUS ---
+        // --- BISOUS ---
         window.sendBisou = function() {
             const btn = document.getElementById('bisou-btn');
             btn.style.transform = "scale(1.3)"; setTimeout(() => btn.style.transform = "scale(1)", 200);
-            
             addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
             sendNtfy("💋 Bisou envoyé !", "kiss,heart");
             showLocalNotif("💋 Bisou envoyé !");
         }
 
-        // --- 3. MOODS ---
+        // --- BOITE AUX LETTRES ---
+        // 1. Envoyer
+        window.sendLetter = function() {
+            const title = document.getElementById('letter-title').value;
+            const content = document.getElementById('letter-content').value;
+            
+            if(!title || !content) return alert("Remplis le titre et le message !");
+            
+            // Si je suis Elise (tw), j'écris à Théo (fr)
+            const target = currentUser === 'tw' ? 'fr' : 'tw';
+            
+            addDoc(collection(db, "letters"), {
+                to: target, from: currentUser,
+                title: title, content: content,
+                timestamp: serverTimestamp(), isRead: false
+            });
+            
+            document.getElementById('letter-title').value = "";
+            document.getElementById('letter-content').value = "";
+            sendNtfy("💌 Nouvelle lettre dans la boîte !", "email");
+            alert("Lettre postée !");
+        }
+
+        // 2. Lire (On écoute les lettres qui me sont destinées)
+        const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
+        onSnapshot(qLetters, (snapshot) => {
+            const list = document.getElementById("mailbox-list");
+            list.innerHTML = "";
+            let count = 0;
+
+            snapshot.forEach((docSnap) => {
+                const letter = docSnap.data();
+                // N'afficher que les lettres pour MOI
+                if(letter.to === currentUser) {
+                    count++;
+                    const div = document.createElement('div');
+                    div.className = "letter-item";
+                    // Icone : Enveloppe fermée ou ouverte
+                    const icon = letter.isRead ? "📨" : "📩";
+                    const statusClass = letter.isRead ? "open" : "";
+                    
+                    div.innerHTML = `
+                        <div>
+                            <span class="letter-icon">${icon}</span>
+                            <span class="letter-title">${letter.title}</span>
+                            <span class="letter-tag">De ${letter.from === 'fr' ? 'Théo' : 'Elise'}</span>
+                        </div>
+                        <div class="letter-content">${letter.content}</div>
+                    `;
+                    
+                    // Click pour ouvrir/fermer
+                    div.onclick = function() {
+                        this.classList.toggle("open");
+                        // Marquer comme lu si c'est la première fois
+                        if(!letter.isRead) {
+                            updateDoc(doc(db, "letters", docSnap.id), { isRead: true });
+                        }
+                    };
+                    
+                    list.appendChild(div);
+                }
+            });
+            
+            if(count === 0) list.innerHTML = `<div style="text-align:center; color:#ccc; font-size:0.9rem; padding:10px;">Aucune lettre reçue pour le moment...</div>`;
+        });
+
+        // --- MOODS ---
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
@@ -232,7 +293,6 @@
                 document.getElementById("mood-msg-tw").innerText = d.tw_text || "";
             } else { setDoc(doc(db, "status", "moods"), { fr_emoji: "❤️", tw_emoji: "❤️" }); }
         });
-
         window.updateMood = function(emoji, text) {
             setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text }, { merge: true });
             sendNtfy(`${emoji} Nouveau statut : ${text}`, "partly_sunny");
@@ -243,7 +303,7 @@
             updateMood(emoji, text);
         }
 
-        // --- 4. LIVRES V5 ---
+        // --- LIVRES ---
         const qBooks = query(collection(db, "books"), orderBy("created", "desc"));
         onSnapshot(qBooks, (snapshot) => {
             const list = document.getElementById("book-list"); list.innerHTML = "";
@@ -255,7 +315,6 @@
                 const frPage = book.page_fr || 0; const frRating = book.rating_fr || 0;
                 const twPage = book.page_tw || 0; const twRating = book.rating_tw || 0;
                 
-                // Calcul pourcentages
                 const frPercent = Math.min((frPage / totalPages) * 100, 100);
                 const twPercent = Math.min((twPage / totalPages) * 100, 100);
 
@@ -280,7 +339,6 @@
                         <button style="border:none; background:none; color:#faa; font-size:0.8rem; cursor:pointer;" onclick="deleteBook('${id}')">✕</button>
                     </div>
                     <div class="book-total-pages">${totalPages} pages</div>
-                    
                     <div class="user-row">
                         <div class="row-header"><span class="user-label">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div>
                         <div class="user-inputs" style="width:100%">
@@ -288,7 +346,6 @@
                             <div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--secondary);"></div></div>
                         </div>
                     </div>
-
                     <div class="user-row" style="border:none;">
                         <div class="row-header"><span class="user-label" style="color:var(--primary)">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div>
                         <div class="user-inputs" style="width:100%">
@@ -305,14 +362,9 @@
             const title = document.getElementById("book-title").value; 
             const pages = document.getElementById("book-pages").value;
             if (!title) return; 
-            addDoc(collection(db, "books"), { 
-                title: title, pages_total: parseInt(pages) || 200, created: serverTimestamp(),
-                page_fr: 0, rating_fr: 0, page_tw: 0, rating_tw: 0 
-            }); 
-            document.getElementById("book-title").value = ""; 
-            document.getElementById("book-pages").value = "";
+            addDoc(collection(db, "books"), { title: title, pages_total: parseInt(pages) || 200, created: serverTimestamp(), page_fr: 0, rating_fr: 0, page_tw: 0, rating_tw: 0 }); 
+            document.getElementById("book-title").value = ""; document.getElementById("book-pages").value = "";
         }
-        
         window.updatePage = function(id, role, val, max, title) {
             const newPage = parseInt(val);
             updateDoc(doc(db, "books", id), { ["page_"+role]: newPage });
@@ -321,13 +373,11 @@
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
         window.deleteBook = function(id) { if(confirm("Supprimer ce livre ?")) deleteDoc(doc(db, "books", id)); }
 
-        // UTILS
         function showLocalNotif(msg) {
             const notif = document.getElementById("notif");
             notif.innerHTML = msg; notif.classList.add("show");
             setTimeout(() => notif.classList.remove("show"), 3000);
         }
-
         function updateClocks() {
             const now = new Date();
             document.getElementById('clock-fr').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' });
