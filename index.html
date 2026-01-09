@@ -38,37 +38,15 @@
         .card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid white; }
         .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
 
-        /* BOITE AUX LETTRES */
-        .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; border-radius: 12px; border: none; background: #eee; color: #888; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .tab-btn.active { background: var(--secondary); color: white; box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); }
-        .letter-form { background: #f9f9f9; padding: 15px; border-radius: 15px; border: 1px dashed #ddd; margin-bottom: 20px; display: none; }
-        .letter-form.visible { display: block; animation: slideDown 0.3s; }
-        .letter-input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: 'Outfit', sans-serif; }
-        .letter-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
-        .btn-new-letter { width: 100%; padding: 10px; background: white; border: 2px dashed var(--primary); color: var(--primary); border-radius: 12px; font-weight: bold; margin-bottom: 15px; cursor: pointer; }
-        .letter-item { background: white; border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 15px; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
-        .letter-header { display: flex; justify-content: space-between; align-items: center; }
-        .letter-info { flex: 1; }
-        .letter-icon { font-size: 1.5rem; margin-right: 10px; vertical-align: middle; }
-        .letter-title { font-weight: bold; color: #333; font-size: 0.95rem; }
-        .letter-status { font-size: 0.7rem; font-weight: bold; padding: 3px 8px; border-radius: 20px; margin-left: 5px; }
-        .status-unread { background: #eee; color: #888; }
-        .status-read { background: #d4edda; color: #155724; }
-        .letter-content { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #eee; color: #555; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; }
-        .letter-item.open { border-left: 5px solid var(--secondary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .letter-item.open .letter-content { display: block; animation: fadeIn 0.5s; }
-        .btn-delete-letter { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 5px; margin-left: 10px; color: #ffadad; }
+        /* GARDE-ROBE (AVATARS) */
+        .avatars-row { display: flex; justify-content: space-around; align-items: flex-end; }
+        .avatar-box { display: flex; flex-direction: column; align-items: center; width: 45%; }
+        .avatar-img { width: 100%; max-width: 120px; height: auto; image-rendering: pixelated; /* Pour garder le style pixel art net */ filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); transition: transform 0.3s ease; }
+        .avatar-controls { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-outfit { background: white; border: 1px solid #ddd; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .btn-outfit:active { transform: scale(0.9); background: #eee; }
 
-        /* BUCKET LIST (NOUVEAU) */
-        .bucket-item { display: flex; align-items: center; background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #eee; transition: 0.2s; }
-        .bucket-checkbox { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--secondary); margin-right: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-weight: bold; font-size: 14px; flex-shrink: 0; }
-        .bucket-checkbox.checked { background: var(--secondary); border-color: var(--secondary); }
-        .bucket-text { flex: 1; font-weight: 500; color: #333; transition: 0.2s; }
-        .bucket-text.checked { text-decoration: line-through; color: #aaa; }
-        .bucket-delete { color: #ffadad; background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 10px; }
-
-        /* MOODS & LIVRES */
+        /* MOODS */
         .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
         .mood-btn { background: #f8f9fa; border: 1px solid #eee; border-radius: 12px; padding: 10px 5px; text-align: center; cursor: pointer; transition: 0.2s; }
         .mood-btn:active { transform: scale(0.95); background: var(--bg); }
@@ -78,6 +56,8 @@
         .one-mood { text-align: center; }
         .mood-big { font-size: 2.5rem; }
         .mood-who { font-size: 0.7rem; font-weight: bold; color: var(--secondary); letter-spacing: 1px; margin-top: 5px; display: block;}
+
+        /* LIVRES */
         .book-item { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #eee; }
         .book-title { font-weight: 800; font-size: 1.1rem; color: #333; margin-bottom: 5px; display:flex; justify-content:space-between; }
         .book-total-pages { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; font-weight: 500; }
@@ -97,16 +77,17 @@
         /* UTILS */
         .identity-btn { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 12px; border: 2px solid #eee; background: white; color: #999; font-weight: 600; cursor: pointer; transition:0.2s; }
         .identity-btn.active { background: var(--secondary); color: white; border-color: var(--secondary); box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); }
+        
         #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 80px; height: 80px; border-radius: 40px; background: linear-gradient(135deg, #ff758c, #ff4b6e); color: white; border: none; font-size: 35px; box-shadow: 0 10px 25px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; }
         #bisou-btn:active { transform: scale(0.9); }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 20px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
+        
         #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-150px); background: white; padding: 15px 20px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; font-weight: bold; color: var(--primary); width: 90%; max-width: 300px; text-align: center; border: 2px solid #fff0f3; transition: 0.5s; display: flex; align-items: center; justify-content: center; gap: 10px;}
         #notif.show { transform: translateX(-50%) translateY(0); }
+        
         iframe { border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
         .input-field { flex: 1; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-family: 'Outfit', sans-serif; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -137,27 +118,26 @@
         </div>
 
         <div class="card">
-            <div class="card-title"><span>🌟</span> Notre Bucket List 2026</div>
-            <div class="input-group">
-                <input type="text" id="bucket-input" class="input-field" placeholder="Notre rêve (ex: Manger une raclette)">
-                <button onclick="addBucket()" class="input-field" style="flex:0; background:var(--secondary); color:white; border:none; font-weight:bold;">+</button>
-            </div>
-            <div id="bucket-list"></div>
-        </div>
+            <div class="card-title"><span>👗</span> Garde-Robe</div>
+            <div class="avatars-row">
+                <div class="avatar-box">
+                    <img src="" id="avatar-img-fr" class="avatar-img" alt="Theo">
+                    <div class="avatar-controls">
+                        <button class="btn-outfit" onclick="changeOutfit('fr', -1)">◀</button>
+                        <button class="btn-outfit" onclick="changeOutfit('fr', 1)">▶</button>
+                    </div>
+                    <div style="font-size:0.7rem; font-weight:bold; margin-top:5px; color:#888;">THÉO</div>
+                </div>
 
-        <div class="card">
-            <div class="card-title"><span>💌</span> Boîte aux Lettres</div>
-            <div class="mailbox-tabs">
-                <button class="tab-btn active" id="tab-received" onclick="switchMailbox('received')">📬 Reçues</button>
-                <button class="tab-btn" id="tab-sent" onclick="switchMailbox('sent')">🚀 Envoyées</button>
+                <div class="avatar-box">
+                    <img src="" id="avatar-img-tw" class="avatar-img" alt="Elise">
+                    <div class="avatar-controls">
+                        <button class="btn-outfit" onclick="changeOutfit('tw', -1)">◀</button>
+                        <button class="btn-outfit" onclick="changeOutfit('tw', 1)">▶</button>
+                    </div>
+                    <div style="font-size:0.7rem; font-weight:bold; margin-top:5px; color:var(--primary);">ELISE</div>
+                </div>
             </div>
-            <button class="btn-new-letter" onclick="toggleLetterForm()">✍️ Écrire une lettre "Ouvrir quand..."</button>
-            <div class="letter-form" id="form-letter">
-                <input type="text" id="letter-title" class="letter-input" placeholder="Ouvrir quand... (ex: tu es triste)">
-                <textarea id="letter-content" class="letter-input" rows="3" placeholder="Ton message..."></textarea>
-                <button class="letter-btn" onclick="sendLetter()">📮 Poster la lettre</button>
-            </div>
-            <div id="mailbox-list"><div style="text-align:center; color:#ccc;">Chargement...</div></div>
         </div>
 
         <div class="card">
@@ -178,7 +158,7 @@
         </div>
 
         <div class="card">
-            <div class="card-title"><span>📚</span> Lectures</div>
+            <div class="card-title"><span>📚</span> Lectures Communes</div>
             <div class="input-group">
                 <input type="text" id="book-title" class="input-field" placeholder="Titre...">
                 <input type="number" id="book-pages" class="input-field" placeholder="Total P." style="width:80px; flex:none;">
@@ -188,8 +168,8 @@
         </div>
 
         <div class="card">
-            <div class="card-title"><span>🎵</span> Playlist YouTube</div>
-            <iframe width="100%" height="200" src="https://www.youtube.com/embed/videoseries?list=PLw-VjHDlEOgvWkYtWJjC2Vvj9Gqj-Rz6R" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius:12px;"></iframe>
+            <div class="card-title"><span>🎧</span> Vibe du moment</div>
+            <iframe id="spotify-frame" style="border-radius:12px" src="Https://open.spotify.com/playlist/20Gmofuoy7FuEydcKOhpOH?si=c8vohg2aSRWu6DXdzSq-UA" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
     </div>
 
@@ -197,29 +177,29 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns", authDomain: "lovetravel-35285.firebaseapp.com", projectId: "lovetravel-35285", storageBucket: "lovetravel-35285.firebasestorage.app", messagingSenderId: "189902268760", appId: "1:189902268760:web:b461ce15d8c396be479d2d" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         let currentUser = localStorage.getItem('userRole') || 'tw'; 
-        let currentTab = 'received'; 
-        
         updateIdentityUI();
-        window.setUser = function(role) { currentUser = role; localStorage.setItem('userRole', role); updateIdentityUI(); location.reload(); }
+
+        window.setUser = function(role) { currentUser = role; localStorage.setItem('userRole', role); updateIdentityUI(); }
         function updateIdentityUI() { 
             document.getElementById('btn-user-fr').classList.remove('active'); 
             document.getElementById('btn-user-tw').classList.remove('active'); 
             document.getElementById('btn-user-' + currentUser).classList.add('active'); 
         }
 
-        // --- NTFY ---
         function sendNtfy(message, tags) {
             const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
             const senderName = currentUser === 'tw' ? "Elise" : "Theo";
+
             fetch(`https://ntfy.sh/${targetChannel}`, {
-                method: 'POST', body: message,
+                method: 'POST',
+                body: message,
                 headers: { 'Title': `Love Travel (${senderName})`, 'Priority': 'high', 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8' }
             }).catch(e => console.log("Erreur ntfy", e));
         }
@@ -233,113 +213,31 @@
             showLocalNotif("💋 Bisou envoyé !");
         }
 
-        // --- BUCKET LIST ---
-        const qBucket = query(collection(db, "bucket"), orderBy("created", "desc"));
-        onSnapshot(qBucket, (snapshot) => {
-            const list = document.getElementById("bucket-list"); list.innerHTML = "";
-            snapshot.forEach((docSnap) => {
-                const item = docSnap.data();
-                const div = document.createElement('div'); div.className = "bucket-item";
-                
-                const checkMark = item.done ? "✓" : "";
-                const checkClass = item.done ? "checked" : "";
-                
-                div.innerHTML = `
-                    <div class="bucket-checkbox ${checkClass}" onclick="toggleBucket('${docSnap.id}', ${!item.done})">${checkMark}</div>
-                    <div class="bucket-text ${checkClass}">${item.title}</div>
-                    <button class="bucket-delete" onclick="deleteBucket('${docSnap.id}')">✕</button>
-                `;
-                list.appendChild(div);
-            });
-        });
-        window.addBucket = function() {
-            const val = document.getElementById('bucket-input').value;
-            if(!val) return;
-            addDoc(collection(db, "bucket"), { title: val, done: false, created: serverTimestamp() });
-            document.getElementById('bucket-input').value = "";
-        }
-        window.toggleBucket = function(id, status) { updateDoc(doc(db, "bucket", id), { done: status }); }
-        window.deleteBucket = function(id) { if(confirm("Supprimer ce rêve ?")) deleteDoc(doc(db, "bucket", id)); }
-
-        // --- BOITE AUX LETTRES ---
-        window.toggleLetterForm = function() { document.getElementById('form-letter').classList.toggle('visible'); }
-        window.switchMailbox = function(type) {
-            currentTab = type;
-            document.getElementById('tab-received').classList.remove('active');
-            document.getElementById('tab-sent').classList.remove('active');
-            document.getElementById('tab-' + type).classList.add('active');
-            loadLetters();
-        }
-        function loadLetters() {
-            const list = document.getElementById("mailbox-list");
-            list.innerHTML = `<div style="text-align:center; color:#ccc;">Chargement...</div>`;
-            const q = query(collection(db, "letters"), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snapshot) => {
-                list.innerHTML = "";
-                let count = 0;
-                snapshot.forEach((docSnap) => {
-                    const letter = docSnap.data();
-                    const id = docSnap.id;
-                    let display = false;
-                    if(currentTab === 'received' && letter.to === currentUser) display = true;
-                    if(currentTab === 'sent' && letter.from === currentUser) display = true;
-                    if(display) {
-                        count++;
-                        const div = document.createElement('div');
-                        div.className = "letter-item";
-                        let icon = "📩"; let statusHTML = "";
-                        if(currentTab === 'received') {
-                            icon = letter.isRead ? "📨" : "📩";
-                            if(letter.isRead) div.classList.add('open');
-                        } else {
-                            icon = "🚀";
-                            const statusText = letter.isRead ? "✅ LU" : "⏳ NON LU";
-                            const statusClass = letter.isRead ? "status-read" : "status-unread";
-                            statusHTML = `<span class="letter-status ${statusClass}">${statusText}</span>`;
-                        }
-                        div.innerHTML = `
-                            <div class="letter-header">
-                                <div class="letter-info"><span class="letter-icon">${icon}</span><span class="letter-title">${letter.title}</span>${statusHTML}</div>
-                                <button class="btn-delete-letter" onclick="deleteLetter(event, '${id}')">🗑️</button>
-                            </div>
-                            <div class="letter-content">${letter.content}</div>
-                        `;
-                        div.onclick = function(e) {
-                            if(e.target.classList.contains('btn-delete-letter')) return;
-                            this.classList.toggle("open");
-                            if(currentTab === 'received' && !letter.isRead) updateDoc(doc(db, "letters", id), { isRead: true });
-                        };
-                        list.appendChild(div);
-                    }
-                });
-                if(count === 0) list.innerHTML = `<div style="text-align:center; color:#ccc; font-size:0.9rem; padding:10px;">Aucune lettre.</div>`;
-            });
-        }
-        loadLetters();
-        window.sendLetter = function() {
-            const title = document.getElementById('letter-title').value;
-            const content = document.getElementById('letter-content').value;
-            if(!title || !content) return alert("Remplis tout !");
-            const target = currentUser === 'tw' ? 'fr' : 'tw';
-            addDoc(collection(db, "letters"), { to: target, from: currentUser, title: title, content: content, timestamp: serverTimestamp(), isRead: false });
-            document.getElementById('letter-title').value = ""; document.getElementById('letter-content').value = "";
-            document.getElementById('form-letter').classList.remove('visible');
-            sendNtfy("💌 Nouvelle lettre dans la boîte !", "email");
-            showLocalNotif("Lettre envoyée !");
-            switchMailbox('sent');
-        }
-        window.deleteLetter = function(e, id) { e.stopPropagation(); if(confirm("Supprimer cette lettre ?")) deleteDoc(doc(db, "letters", id)); }
-
-        // --- MOODS ---
+        // --- MOODS & OUTFITS ---
+        // On écoute le même document pour les moods et les tenues
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
+                // Moods
                 document.getElementById("mood-val-fr").innerText = d.fr_emoji || "😶";
                 document.getElementById("mood-msg-fr").innerText = d.fr_text || "";
                 document.getElementById("mood-val-tw").innerText = d.tw_emoji || "😶";
                 document.getElementById("mood-msg-tw").innerText = d.tw_text || "";
-            } else { setDoc(doc(db, "status", "moods"), { fr_emoji: "❤️", tw_emoji: "❤️" }); }
+
+                // Outfits (Par défaut 0 si non défini)
+                // Assurez-vous d'avoir les images theo_0.png, etc sur GitHub
+                const frOutfit = d.fr_outfit || 0;
+                const twOutfit = d.tw_outfit || 0;
+                
+                document.getElementById("avatar-img-fr").src = `theo_${frOutfit}.png`;
+                document.getElementById("avatar-img-tw").src = `elise_${twOutfit}.png`;
+            } else { 
+                // Init si vide
+                setDoc(doc(db, "status", "moods"), { fr_emoji: "❤️", tw_emoji: "❤️", fr_outfit: 0, tw_outfit: 0 }); 
+            }
         });
+
+        // Mise à jour Mood
         window.updateMood = function(emoji, text) {
             setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text }, { merge: true });
             sendNtfy(`${emoji} Nouveau statut : ${text}`, "partly_sunny");
@@ -348,6 +246,37 @@
             const emoji = prompt("Choisis un émoji :", "🦄"); if(!emoji) return;
             const text = prompt("Ta phrase :", "Je pense à toi"); if(!text) return;
             updateMood(emoji, text);
+        }
+
+        // Mise à jour Outfit (Tenue)
+        window.changeOutfit = function(role, direction) {
+            // Seule la personne concernée peut changer sa tenue (optionnel, ici ouvert)
+            if(role !== currentUser) {
+                if(!confirm("Tu veux changer la tenue de l'autre ?")) return;
+            }
+
+            // On récupère l'index actuel via le DOM ou on attend, 
+            // ici on va faire une lecture one-shot pour être propre ou stocker en variable globale
+            // Simplification : on suppose qu'on connait l'état via l'image src, mais mieux vaut lire DB.
+            // Pour faire simple et robuste : on utilise une variable locale mise à jour par le snapshot
+            // Mais comme on est dans une fonction, on va utiliser une astuce transactionnelle simple ou juste lire le dom
+            
+            // Astuce rapide: lire l'attribut src actuel pour déduire l'index
+            const img = document.getElementById(`avatar-img-${role}`);
+            let currentIdx = 0;
+            if(img.src.includes("_1")) currentIdx = 1;
+            if(img.src.includes("_2")) currentIdx = 2;
+
+            let newIdx = currentIdx + direction;
+            if(newIdx > 2) newIdx = 0;
+            if(newIdx < 0) newIdx = 2;
+
+            setDoc(doc(db, "status", "moods"), { [role+"_outfit"]: newIdx }, { merge: true });
+            
+            // Petit bonus : envoyer une notif si c'est moi qui change
+            if(role === currentUser) {
+                 sendNtfy(`👗 J'ai changé de tenue !`, "shirt");
+            }
         }
 
         // --- LIVRES ---
@@ -362,6 +291,7 @@
                 const twPage = book.page_tw || 0; const twRating = book.rating_tw || 0;
                 const frPercent = Math.min((frPage / totalPages) * 100, 100);
                 const twPercent = Math.min((twPage / totalPages) * 100, 100);
+
                 const makeStars = (role, currentRating) => {
                     let html = '';
                     for(let i=1; i<=5; i++) {
@@ -375,21 +305,30 @@
                 };
                 const canEditFr = currentUser === 'fr' ? '' : 'disabled';
                 const canEditTw = currentUser === 'tw' ? '' : 'disabled';
+
                 const div = document.createElement('div'); div.className = "book-item";
                 div.innerHTML = `
-                    <div class="book-title">${book.title}<button style="border:none; background:none; color:#faa; font-size:0.8rem; cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div>
+                    <div class="book-title">${book.title} <button style="border:none; background:none; color:#faa; font-size:0.8rem; cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div>
                     <div class="book-total-pages">${totalPages} pages</div>
                     <div class="user-row">
                         <div class="row-header"><span class="user-label">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div>
-                        <div class="user-inputs" style="width:100%"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--secondary);"></div></div></div>
+                        <div class="user-inputs" style="width:100%">
+                            <input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0">
+                            <div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--secondary);"></div></div>
+                        </div>
                     </div>
                     <div class="user-row" style="border:none;">
                         <div class="row-header"><span class="user-label" style="color:var(--primary)">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div>
-                        <div class="user-inputs" style="width:100%"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--primary);"></div></div></div>
-                    </div>`;
+                        <div class="user-inputs" style="width:100%">
+                            <input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0">
+                            <div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--primary);"></div></div>
+                        </div>
+                    </div>
+                `;
                 list.appendChild(div);
             });
         });
+
         window.addBook = function() { 
             const title = document.getElementById("book-title").value; const pages = document.getElementById("book-pages").value;
             if (!title) return; 
@@ -431,6 +370,7 @@
             document.getElementById("plane").style.left = `calc(${percent}% - 24px)`;
         }
         setInterval(updateCountdown, 1000); updateCountdown();
+
         const qBisou = query(collection(db, "actions"), orderBy("timestamp", "desc"), limit(1));
         onSnapshot(qBisou, (snapshot) => {
             if(!snapshot.empty) {
