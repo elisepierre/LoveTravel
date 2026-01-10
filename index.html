@@ -8,107 +8,136 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Love Travel">
     <meta name="theme-color" content="#fff0f3">
+    
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.jpg">
     <link rel="icon" type="image/jpeg" href="icon.jpg">
 
     <title>Love Travel ✈️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
     
     <style>
-        :root { --primary: #ff4b6e; --secondary: #4a90e2; --bg: #fff0f3; --card-bg: rgba(255, 255, 255, 0.95); --text: #2c3e50; }
+        /* COULEURS : ROSE (Elise) & BLEU (Théo) */
+        :root { --pink: #ff4b6e; --blue: #4a90e2; --bg: #fff0f3; --card-bg: rgba(255, 255, 255, 0.95); --text: #2c3e50; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Outfit', sans-serif; background: linear-gradient(180deg, #fff0f3 0%, #eef2f3 100%); color: var(--text); padding-bottom: 120px; }
+        body { margin: 0; font-family: 'Outfit', sans-serif; background: linear-gradient(180deg, #fff5f7 0%, #eef6ff 100%); color: var(--text); padding-bottom: 120px; }
 
-        /* HEADER */
-        #hero-header { background: white; padding: 20px 20px 30px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 25px rgba(255, 75, 110, 0.15); padding-top: max(20px, env(safe-area-inset-top)); text-align: center; }
-        .app-logo { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid white; }
+        /* HEADER MODERNE */
+        #hero-header { background: white; padding: 30px 20px 30px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05); padding-top: max(30px, env(safe-area-inset-top)); text-align: center; }
         
-        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ccc; margin-right: 5px; transition: 0.3s; }
-        .status-dot.online { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; animation: blink 2s infinite; }
+        /* TITRE DEGRADÉ */
+        .app-title {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.8rem;
+            margin: 0 0 15px 0;
+            background: linear-gradient(to right, var(--blue), var(--pink)); /* Dégradé Bleu -> Rose */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+        }
+
+        /* DOT CONNECTÉ */
+        .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 5px; vertical-align: middle; }
+        .status-dot.online { background: #2ecc71; box-shadow: 0 0 5px #2ecc71; animation: blink 2s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        .clocks-container { display: flex; justify-content: space-between; margin-bottom: 20px; background: #f8f9fa; padding: 10px 20px; border-radius: 20px; border: 1px solid #eee; margin-top: 15px; }
-        .clock-item { text-align: center; }
-        .clock-city { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: 700; display:flex; align-items:center; justify-content:center; gap:5px; }
-        .clock-time { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+        /* HORLOGES */
+        .clocks-container { display: flex; justify-content: space-between; margin-bottom: 20px; background: #f8f9fa; padding: 10px 15px; border-radius: 18px; border: 1px solid #eee; margin-top: 15px; }
+        .clock-item { text-align: center; flex: 1; }
+        .clock-city { font-size: 0.65rem; color: #888; text-transform: uppercase; font-weight: 800; display:flex; align-items:center; justify-content:center; gap:4px; letter-spacing: 0.5px; }
+        .clock-time { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+        
+        /* COMPTE À REBOURS */
         .countdown-box { text-align: center; margin-top: 10px; }
-        .countdown-title { font-size: 0.8rem; color: #ff8fa3; text-transform: uppercase; letter-spacing: 2px; }
-        .countdown-big { font-size: 2.5rem; font-weight: 700; color: var(--primary); line-height: 1; text-shadow: 2px 2px 0px rgba(0,0,0,0.05); }
-        .countdown-sub { font-size: 0.9rem; color: #888; margin-top: 5px; }
-        .progress-container { margin-top: 20px; position: relative; height: 40px; }
-        .progress-track { background: #eee; height: 6px; border-radius: 10px; position: relative; top: 15px; }
-        .progress-fill { background: linear-gradient(90deg, var(--secondary), var(--primary)); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease; }
-        .plane-icon { position: absolute; top: -5px; font-size: 24px; transition: left 1s ease; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); transform: rotate(90deg); }
+        .countdown-title { font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
+        .countdown-big { font-size: 2.2rem; font-weight: 900; color: #333; line-height: 1; margin: 5px 0; }
+        .countdown-sub { font-size: 0.85rem; color: #888; }
+        
+        /* BARRE AVION */
+        .progress-container { margin-top: 25px; position: relative; height: 30px; }
+        .progress-track { background: #eee; height: 4px; border-radius: 10px; position: relative; top: 12px; }
+        .progress-fill { background: linear-gradient(90deg, var(--blue), var(--pink)); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease; }
+        .plane-icon { position: absolute; top: -10px; font-size: 20px; transition: left 1s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); transform: rotate(90deg); }
 
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid white; }
-        .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid white; }
+        .card-title { font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
 
         /* MOODS AVEC AVATAR */
-        .current-moods { display: flex; justify-content: space-around; background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #eee; align-items: flex-end; }
-        .one-mood { display: flex; flex-direction: column; align-items: center; width: 45%; }
-        .mood-avatar-frame { width: 100px; height: 100px; display: flex; align-items: flex-end; justify-content: center; }
-        .mood-avatar-img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); transition: transform 0.3s ease; }
-        .mood-who { font-size: 0.7rem; font-weight: bold; color: var(--secondary); letter-spacing: 1px; margin-top: 5px; display: block;}
-        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .mood-btn { background: #f8f9fa; border: 1px solid #eee; border-radius: 12px; padding: 10px 5px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .mood-btn:active { transform: scale(0.95); background: var(--bg); }
-        .mood-emoji { font-size: 1.8rem; display: block; margin-bottom: 5px; }
-        .mood-text { font-size: 0.6rem; font-weight: bold; color: #666; display: block; line-height: 1.1; }
+        .current-moods { display: flex; justify-content: space-between; background: white; padding: 20px 10px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #f0f0f0; align-items: flex-end; }
+        .one-mood { display: flex; flex-direction: column; align-items: center; width: 48%; }
+        .mood-avatar-frame { width: 110px; height: 110px; display: flex; align-items: flex-end; justify-content: center; }
+        .mood-avatar-img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15)); transition: transform 0.3s ease; }
+        .mood-who { font-size: 0.75rem; font-weight: 900; letter-spacing: 1px; margin-top: 8px; display: block; text-transform: uppercase;}
+        
+        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
+        .mood-btn { background: white; border: 1px solid #eee; border-radius: 16px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .mood-btn:active { transform: scale(0.95); background: #f9f9f9; }
+        .mood-emoji { font-size: 1.5rem; display: block; margin-bottom: 2px; }
+        .mood-text { font-size: 0.65rem; font-weight: bold; color: #555; display: block; }
 
-        /* LETTRES À OUVRIR */
-        .letter-item { background: white; border: 2px dashed #ddd; border-radius: 15px; padding: 15px; margin-bottom: 10px; transition: 0.3s; cursor: pointer; }
-        .letter-item.open { border: 2px solid var(--primary); background: #fff5f7; }
+        /* LETTRES */
+        .letter-item { background: white; border: 2px dashed #e0e0e0; border-radius: 16px; padding: 15px; margin-bottom: 10px; transition: 0.3s; cursor: pointer; }
+        .letter-item.open { border: 2px solid var(--pink); background: #fff5f7; }
         .letter-header { font-weight: bold; font-size: 0.9rem; color: #333; display: flex; justify-content: space-between; align-items: center; }
-        .letter-content { margin-top: 10px; font-size: 0.9rem; color: #555; display: none; line-height: 1.4; border-top: 1px solid #eee; padding-top: 10px; }
-        .letter-tag { background: var(--secondary); color: white; padding: 2px 8px; border-radius: 8px; font-size: 0.6rem; text-transform: uppercase; }
+        .letter-content { margin-top: 10px; font-size: 0.9rem; color: #555; display: none; line-height: 1.5; border-top: 1px solid #eee; padding-top: 10px; }
+        .letter-tag { padding: 4px 8px; border-radius: 6px; font-size: 0.6rem; text-transform: uppercase; font-weight: bold; color: white; }
 
         /* GALERIE */
-        .gallery-bubbles { display: flex; justify-content: space-around; margin-top: 10px; }
+        .gallery-bubbles { display: flex; justify-content: space-around; margin-top: 15px; }
         .photo-bubble-wrapper { text-align: center; position: relative; }
-        .photo-bubble { width: 100px; height: 100px; border-radius: 50%; background: #eee; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; position: relative; cursor: pointer; transition: 0.3s; object-fit: cover; }
+        .photo-bubble { width: 90px; height: 90px; border-radius: 30px; background: #eee; border: 4px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1); overflow: hidden; position: relative; cursor: pointer; transition: 0.3s; object-fit: cover; }
         .photo-bubble:active { transform: scale(0.95); }
-        .add-photo-btn { position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 2px solid white; cursor: pointer; }
-        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; overflow-y: scroll; padding: 20px; }
+        .add-photo-btn { position: absolute; bottom: -5px; right: -5px; background: #333; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 3px solid white; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; overflow-y: scroll; padding: 20px; }
         .modal-header { display: flex; justify-content: space-between; color: white; margin-bottom: 20px; align-items: center; }
         .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .modal-img { width: 100%; border-radius: 10px; }
-        .modal-del { background: red; color: white; padding: 5px; border-radius: 5px; text-align: center; font-size: 0.7rem; margin-top: 5px; cursor: pointer; }
+        .modal-img { width: 100%; border-radius: 12px; }
+        .modal-del { background: rgba(255, 0, 0, 0.2); color: #ff8888; padding: 8px; border-radius: 8px; text-align: center; font-size: 0.7rem; margin-top: 5px; cursor: pointer; border: 1px solid rgba(255,0,0,0.3); }
 
-        /* TO DO LIST & LIVRES */
-        .todo-item { display: flex; align-items: center; background: white; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #eee; }
-        .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--primary); }
-        .todo-text { flex: 1; font-size: 0.9rem; }
-        .todo-text.done { text-decoration: line-through; color: #aaa; }
-        .todo-del { background: none; border: none; color: #faa; cursor: pointer; }
+        /* TO DO & LIVRES */
+        .todo-item { display: flex; align-items: center; background: white; padding: 12px; margin-bottom: 8px; border-radius: 12px; border: 1px solid #eee; }
+        .todo-check { width: 22px; height: 22px; margin-right: 12px; accent-color: var(--pink); border-radius: 6px; }
+        .todo-text { flex: 1; font-size: 0.95rem; font-weight: 500; }
+        .todo-text.done { text-decoration: line-through; color: #ccc; }
+        .todo-del { background: none; border: none; color: #ddd; cursor: pointer; font-size: 1.2rem; }
         
         .book-item { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #eee; }
-        .book-title { font-weight: 800; font-size: 1.1rem; color: #333; margin-bottom: 5px; display:flex; justify-content:space-between; }
-        .book-total-pages { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; font-weight: 500; }
-        .user-row { display: flex; flex-direction: column; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
+        .book-title { font-weight: 800; font-size: 1rem; color: #333; margin-bottom: 5px; display:flex; justify-content:space-between; }
+        .book-total-pages { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; font-weight: 600; text-transform: uppercase; }
+        .user-row { display: flex; flex-direction: column; margin-bottom: 12px; border-bottom: 1px dashed #f0f0f0; padding-bottom: 10px; }
         .user-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .user-inputs { display: flex; align-items: center; gap: 10px; }
-        .page-input { width: 50px; padding: 4px; border-radius: 6px; border: 1px solid #ddd; text-align: center; font-weight: bold; font-size: 0.9rem; }
-        .star-rating { display: flex; gap: 1px; }
-        .star { cursor: pointer; font-size: 1.1rem; color: #eee; transition: 0.2s; }
+        .user-inputs { display: flex; align-items: center; gap: 10px; width: 100%; }
+        .page-input { width: 50px; padding: 5px; border-radius: 8px; border: 1px solid #eee; text-align: center; font-weight: bold; font-size: 0.9rem; background: #f9f9f9; color: #333; }
+        .star-rating { display: flex; gap: 2px; }
+        .star { cursor: pointer; font-size: 1.2rem; color: #eee; transition: 0.2s; }
         .star.filled { color: #ffb84d; }
-        .star-reset { font-size: 0.7rem; color: #ccc; cursor: pointer; margin-left: 5px; padding: 2px;}
-        .book-progress-track { width: 100%; height: 6px; background: #f0f0f0; border-radius: 4px; overflow: hidden; margin-top: 5px; }
-        .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
+        .star-reset { font-size: 0.7rem; color: #ccc; cursor: pointer; margin-left: 8px; padding: 2px;}
+        .book-progress-track { flex: 1; height: 8px; background: #f0f0f0; border-radius: 10px; overflow: hidden; margin-left: 10px; }
+        .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 10px; }
 
-        /* UTILS */
-        .identity-btn { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 12px; border: 2px solid #eee; background: white; color: #999; font-weight: 600; cursor: pointer; transition:0.2s; }
-        .identity-btn.active { background: var(--secondary); color: white; border-color: var(--secondary); box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); }
-        #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 80px; height: 80px; border-radius: 40px; background: linear-gradient(135deg, #ff758c, #ff4b6e); color: white; border: none; font-size: 35px; box-shadow: 0 10px 25px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; }
+        /* FOOTER AVEC LOGO */
+        .app-footer { text-align: center; padding: 40px 20px 20px; color: #aaa; font-size: 0.8rem; }
+        .footer-logo { width: 50px; height: 50px; border-radius: 15px; margin-bottom: 10px; opacity: 0.8; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+        /* UTILS & IDENTITÉ */
+        .identity-btn { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 16px; border: 1px solid #eee; background: white; color: #aaa; font-weight: 700; cursor: pointer; transition:0.2s; font-family: 'Outfit', sans-serif;}
+        /* BLEU POUR THEO */
+        #btn-user-fr.active { background: var(--blue); color: white; border-color: var(--blue); box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3); }
+        /* ROSE POUR ELISE */
+        #btn-user-tw.active { background: var(--pink); color: white; border-color: var(--pink); box-shadow: 0 8px 20px rgba(255, 75, 110, 0.3); }
+        
+        #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 75px; height: 75px; border-radius: 30px; background: linear-gradient(135deg, var(--pink), #ff758c); color: white; border: none; font-size: 32px; box-shadow: 0 15px 35px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; display:flex; align-items:center; justify-content:center; }
         #bisou-btn:active { transform: scale(0.9); }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 20px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
-        #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-150px); background: white; padding: 15px 20px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; font-weight: bold; color: var(--primary); width: 90%; max-width: 300px; text-align: center; border: 2px solid #fff0f3; transition: 0.5s; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        
+        #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-150px); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); z-index: 2000; font-weight: bold; color: var(--pink); width: 90%; max-width: 350px; text-align: center; border: 1px solid rgba(255,255,255,0.5); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; gap: 10px;}
         #notif.show { transform: translateX(-50%) translateY(0); }
-        iframe { border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        iframe { border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
-        .input-field { flex: 1; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-family: 'Outfit', sans-serif; }
+        .input-field { flex: 1; padding: 12px; border: 1px solid #eee; border-radius: 12px; font-family: 'Outfit', sans-serif; background: #fcfcfc; }
         input[type="file"] { display: none; }
     </style>
 </head>
@@ -118,23 +147,24 @@
 
     <div id="gallery-modal">
         <div class="modal-header">
-            <h2 id="modal-title">Galerie</h2>
+            <h2 id="modal-title" style="font-family:'Outfit'">Galerie</h2>
             <button onclick="closeGallery()" style="background:none; border:none; color:white; font-size:1.5rem;">✕</button>
         </div>
         <div class="modal-grid" id="modal-grid"></div>
     </div>
 
     <section id="hero-header">
-        <img src="icon.jpg" class="app-logo" alt="Logo">
+        <h1 class="app-title">Love Travel</h1>
+        
         <div class="clocks-container">
             <div class="clock-item">
-                <div class="clock-city"><span id="dot-fr" class="status-dot"></span>FRANCE 🇫🇷</div>
+                <div class="clock-city" style="color:var(--blue)"><span id="dot-fr" class="status-dot"></span>FRANCE 🇫🇷</div>
                 <div class="clock-time" id="clock-fr">--:--</div>
             </div>
             <div style="width:1px; background:#ddd;"></div>
             <div class="clock-item">
-                <div class="clock-city"><span id="dot-tw" class="status-dot"></span>TAÏWAN 🇹🇼</div>
-                <div class="clock-time" id="clock-tw" style="color:var(--secondary)">--:--</div>
+                <div class="clock-city" style="color:var(--pink)"><span id="dot-tw" class="status-dot"></span>TAÏWAN 🇹🇼</div>
+                <div class="clock-time" id="clock-tw">--:--</div>
             </div>
         </div>
         <div class="countdown-box">
@@ -148,96 +178,101 @@
     </section>
 
     <div class="container">
-        <div class="card" style="text-align:center;">
-            <p style="margin:0 0 10px; font-size:0.8rem; color:#888;">Configuration du téléphone</p>
+        <div class="card" style="text-align:center; border:none; background:none; box-shadow:none;">
+            <p style="margin:0 0 10px; font-size:0.75rem; color:#aaa; text-transform:uppercase; letter-spacing:1px; font-weight:bold;">Qui utilise ce téléphone ?</p>
             <button class="identity-btn" id="btn-user-tw" onclick="setUser('tw')">Je suis Elise (Taïwan 🇹🇼)</button>
             <button class="identity-btn" id="btn-user-fr" onclick="setUser('fr')">Je suis Théo (France 🇫🇷)</button>
         </div>
 
         <div class="card">
-            <div class="card-title"><span>🌡️</span> Météo des Cœurs</div>
+            <div class="card-title"><span style="font-size:1.5rem">☁️</span> Météo des Cœurs</div>
             
             <div class="current-moods">
                 <div class="one-mood">
                     <div class="mood-avatar-frame">
                         <img src="" id="mood-img-fr" class="mood-avatar-img">
                     </div>
-                    <span class="mood-who">THÉO</span>
-                    <div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-fr">...</div>
+                    <span class="mood-who" style="color:var(--blue)">THÉO</span>
+                    <div style="font-size:0.7rem; color:#888; margin-top:2px; font-style:italic;" id="mood-msg-fr">...</div>
                 </div>
                 
-                <div style="width:1px; background:#eee;"></div>
+                <div style="width:1px; background:#f0f0f0; height:100px; align-self:center;"></div>
                 
                 <div class="one-mood">
                     <div class="mood-avatar-frame">
                         <img src="" id="mood-img-tw" class="mood-avatar-img">
                     </div>
-                    <span class="mood-who" style="color:var(--primary)">ELISE</span>
-                    <div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-tw">...</div>
+                    <span class="mood-who" style="color:var(--pink)">ELISE</span>
+                    <div style="font-size:0.7rem; color:#888; margin-top:2px; font-style:italic;" id="mood-msg-tw">...</div>
                 </div>
             </div>
 
-            <p style="font-size:0.8rem; text-align:center; color:#aaa; margin-bottom:5px;">Change ton mood :</p>
+            <p style="font-size:0.7rem; text-align:center; color:#aaa; margin-bottom:8px; font-weight:bold; text-transform:uppercase;">MON STATUT ACTUEL</p>
             <div class="mood-grid">
                 <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !', 0)"><span class="mood-emoji">🥰</span><span class="mood-text">Love</span></div>
                 <div class="mood-btn" onclick="updateMood('🎓', 'Je suis en cours', 1)"><span class="mood-emoji">🎓</span><span class="mood-text">Cours</span></div>
                 <div class="mood-btn" onclick="updateMood('😴', 'Je dors, chut !', 2)"><span class="mood-emoji">😴</span><span class="mood-text">Dodo</span></div>
                 <div class="mood-btn" onclick="updateMood('🍜', 'Je mange', 3)"><span class="mood-emoji">🍜</span><span class="mood-text">Miam</span></div>
                 <div class="mood-btn" onclick="updateMood('🔥', 'Envie de toi...', 4)"><span class="mood-emoji">🔥</span><span class="mood-text">Chaud</span></div>
-                <div class="mood-btn" onclick="customMood()"><span class="mood-emoji">✏️</span><span class="mood-text">Perso</span></div>
+                <div class="mood-btn" onclick="customMood()" style="border:1px dashed var(--pink); color:var(--pink);"><span class="mood-emoji">✏️</span><span class="mood-text">Perso</span></div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span>💌</span> Lettres à ouvrir quand...</div>
+            <div class="card-title"><span style="font-size:1.5rem">💌</span> Lettres à ouvrir</div>
             <div class="input-group">
                 <input type="text" id="letter-title" class="input-field" placeholder="Ouvrir quand...">
-                <button onclick="addLetter()" class="input-field" style="flex:0; background:var(--secondary); color:white; border:none;">+</button>
+                <button onclick="addLetter()" class="input-field" style="flex:0; background:var(--pink); color:white; border:none; font-weight:bold;">+</button>
             </div>
             <textarea id="letter-content" class="input-field" placeholder="Écris ton message ici..." style="width:100%; height:80px; margin-bottom:10px;"></textarea>
             <div id="letters-list"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span>📸</span> Nos Souvenirs</div>
+            <div class="card-title"><span style="font-size:1.5rem">📸</span> Nos Souvenirs</div>
             <div class="gallery-bubbles">
                 <div class="photo-bubble-wrapper">
                     <img id="bubble-img-fr" class="photo-bubble" src="https://via.placeholder.com/100" onclick="openGallery('fr')">
-                    <div class="add-photo-btn" onclick="document.getElementById('file-fr').click()">+</div>
+                    <div class="add-photo-btn" onclick="document.getElementById('file-fr').click()" style="background:var(--blue)">+</div>
                     <input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this, 'fr')">
-                    <div style="font-size:0.7rem; font-weight:bold; margin-top:5px; color:#888;">THÉO</div>
+                    <div style="font-size:0.7rem; font-weight:bold; margin-top:8px; color:var(--blue);">THÉO</div>
                 </div>
                 <div class="photo-bubble-wrapper">
                     <img id="bubble-img-tw" class="photo-bubble" src="https://via.placeholder.com/100" onclick="openGallery('tw')">
-                    <div class="add-photo-btn" onclick="document.getElementById('file-tw').click()">+</div>
+                    <div class="add-photo-btn" onclick="document.getElementById('file-tw').click()" style="background:var(--pink)">+</div>
                     <input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this, 'tw')">
-                    <div style="font-size:0.7rem; font-weight:bold; margin-top:5px; color:var(--primary);">ELISE</div>
+                    <div style="font-size:0.7rem; font-weight:bold; margin-top:8px; color:var(--pink);">ELISE</div>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span>📝</span> Choses à faire ensemble</div>
+            <div class="card-title"><span style="font-size:1.5rem">📝</span> À faire ensemble</div>
             <div class="input-group">
                 <input type="text" id="todo-input" class="input-field" placeholder="Ex: Manger une raclette...">
-                <button onclick="addTodo()" class="input-field" style="flex:0; background:var(--secondary); color:white; border:none;">+</button>
+                <button onclick="addTodo()" class="input-field" style="flex:0; background:var(--pink); color:white; border:none; font-weight:bold;">+</button>
             </div>
             <div id="todo-list"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span>📚</span> Lectures Communes</div>
+            <div class="card-title"><span style="font-size:1.5rem">📚</span> Lectures Communes</div>
             <div class="input-group">
                 <input type="text" id="book-title" class="input-field" placeholder="Titre...">
-                <input type="number" id="book-pages" class="input-field" placeholder="Total P." style="width:80px; flex:none;">
-                <button onclick="addBook()" class="input-field" style="flex:0; background:var(--secondary); color:white; border:none; font-weight:bold;">+</button>
+                <input type="number" id="book-pages" class="input-field" placeholder="P." style="width:60px; flex:none;">
+                <button onclick="addBook()" class="input-field" style="flex:0; background:var(--blue); color:white; border:none; font-weight:bold;">+</button>
             </div>
             <div id="book-list"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span>🎧</span> Vibe du moment</div>
+            <div class="card-title"><span style="font-size:1.5rem">🎧</span> Vibe du moment</div>
             <iframe id="spotify-frame" style="border-radius:12px" src="Https://open.spotify.com/playlist/20Gmofuoy7FuEydcKOhpOH?si=c8vohg2aSRWu6DXdzSq-UA" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+        
+        <div class="app-footer">
+            <img src="icon.jpg" class="footer-logo" alt="Logo Love Travel">
+            <div>Fait avec Amour pour 2026 ❤️</div>
         </div>
     </div>
 
@@ -323,10 +358,14 @@
                 const l = doc.data();
                 const div = document.createElement("div"); div.className = "letter-item"; div.id = "letter-item-"+doc.id;
                 div.onclick = (e) => { if(e.target.tagName !== 'BUTTON') toggleLetter(doc.id) };
+                
+                const tagColor = l.by === 'fr' ? 'var(--blue)' : 'var(--pink)';
+                const tagText = l.by === 'fr' ? 'Théo' : 'Elise';
+                
                 div.innerHTML = `
                     <div class="letter-header">
                         <span>${l.title}</span>
-                        <span class="letter-tag">De ${l.by === 'fr' ? 'Théo' : 'Elise'}</span>
+                        <span class="letter-tag" style="background:${tagColor}">De ${tagText}</span>
                         <button onclick="deleteLetter('${doc.id}', event)" style="border:none;background:none;color:#faa;">✕</button>
                     </div>
                     <div class="letter-content" id="letter-content-${doc.id}">${l.content}</div>
@@ -403,7 +442,7 @@
                 };
                 const canEditFr = currentUser === 'fr' ? '' : 'disabled'; const canEditTw = currentUser === 'tw' ? '' : 'disabled';
                 const div = document.createElement('div'); div.className = "book-item";
-                div.innerHTML = `<div class="book-title">${book.title} <button style="border:none; background:none; color:#faa; font-size:0.8rem; cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div><div class="book-total-pages">${totalPages} pages</div><div class="user-row"><div class="row-header"><span class="user-label">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div><div class="user-inputs" style="width:100%"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--secondary);"></div></div></div></div><div class="user-row" style="border:none;"><div class="row-header"><span class="user-label" style="color:var(--primary)">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div><div class="user-inputs" style="width:100%"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--primary);"></div></div></div></div>`;
+                div.innerHTML = `<div class="book-title"><span>${book.title}</span><button style="border:none; background:none; color:#ddd; font-size:0.8rem; cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div><div class="book-total-pages">${totalPages} pages</div><div class="user-row"><div class="row-header"><span class="user-label" style="color:var(--blue)">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div><div class="user-row" style="border:none;"><div class="row-header"><span class="user-label" style="color:var(--pink)">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div>`;
                 list.appendChild(div);
             });
         });
