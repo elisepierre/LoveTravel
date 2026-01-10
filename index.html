@@ -21,14 +21,22 @@
 
         /* HEADER */
         #hero-header { background: white; padding: 20px 20px 30px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 25px rgba(255, 75, 110, 0.15); padding-top: max(20px, env(safe-area-inset-top)); }
+        
+        /* PRESENCE (Point vert) */
+        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ccc; margin-right: 5px; transition: 0.3s; }
+        .status-dot.online { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; animation: blink 2s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
         .clocks-container { display: flex; justify-content: space-between; margin-bottom: 20px; background: #f8f9fa; padding: 10px 20px; border-radius: 20px; border: 1px solid #eee; }
         .clock-item { text-align: center; }
-        .clock-city { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: 700; }
+        .clock-city { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: 700; display:flex; align-items:center; justify-content:center; gap:5px; }
         .clock-time { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+        
         .countdown-box { text-align: center; margin-top: 10px; }
         .countdown-title { font-size: 0.8rem; color: #ff8fa3; text-transform: uppercase; letter-spacing: 2px; }
         .countdown-big { font-size: 2.5rem; font-weight: 700; color: var(--primary); line-height: 1; text-shadow: 2px 2px 0px rgba(0,0,0,0.05); }
         .countdown-sub { font-size: 0.9rem; color: #888; margin-top: 5px; }
+        
         .progress-container { margin-top: 20px; position: relative; height: 40px; }
         .progress-track { background: #eee; height: 6px; border-radius: 10px; position: relative; top: 15px; }
         .progress-fill { background: linear-gradient(90deg, var(--secondary), var(--primary)); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease; }
@@ -38,32 +46,11 @@
         .card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid white; }
         .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
 
-        /* --- GARDE-ROBE (CORRECTION TAILLE) --- */
+        /* GARDE-ROBE */
         .avatars-row { display: flex; justify-content: space-around; align-items: flex-end; }
         .avatar-box { display: flex; flex-direction: column; align-items: center; width: 45%; }
-        
-        /* C'est ici que la magie opère pour la taille */
-        .avatar-frame {
-            width: 130px; 
-            height: 130px; /* Carré fixe forcé */
-            display: flex;
-            align-items: flex-end; /* Aligner les pieds en bas */
-            justify-content: center;
-            margin-bottom: 5px;
-        }
-        
-        .avatar-img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: contain; /* L'image s'adapte sans être coupée ni déformée */
-            image-rendering: pixelated; 
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); 
-            transition: transform 0.3s ease; 
-        }
-
-        .avatar-controls { display: flex; gap: 10px; margin-top: 5px; }
-        .btn-outfit { background: white; border: 1px solid #ddd; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .btn-outfit:active { transform: scale(0.9); background: #eee; }
+        .avatar-frame { width: 130px; height: 130px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 5px; }
+        .avatar-img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); transition: transform 0.3s ease; }
 
         /* MOODS */
         .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
@@ -76,27 +63,30 @@
         .mood-big { font-size: 2.5rem; }
         .mood-who { font-size: 0.7rem; font-weight: bold; color: var(--secondary); letter-spacing: 1px; margin-top: 5px; display: block;}
 
-        /* LIVRES */
-        .book-item { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #eee; }
-        .book-title { font-weight: 800; font-size: 1.1rem; color: #333; margin-bottom: 5px; display:flex; justify-content:space-between; }
-        .book-total-pages { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; font-weight: 500; }
-        .user-row { display: flex; flex-direction: column; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
-        .user-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .user-label { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
-        .user-inputs { display: flex; align-items: center; gap: 10px; }
-        .page-input { width: 50px; padding: 4px; border-radius: 6px; border: 1px solid #ddd; text-align: center; font-weight: bold; font-size: 0.9rem; }
-        .star-rating { display: flex; gap: 1px; }
-        .star { cursor: pointer; font-size: 1.1rem; color: #eee; transition: 0.2s; }
-        .star.filled { color: #ffb84d; }
-        .star-reset { font-size: 0.7rem; color: #ccc; cursor: pointer; margin-left: 5px; padding: 2px;}
-        .book-progress-track { width: 100%; height: 6px; background: #f0f0f0; border-radius: 4px; overflow: hidden; margin-top: 5px; }
-        .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
+        /* GALERIE PHOTOS */
+        .gallery-bubbles { display: flex; justify-content: space-around; margin-top: 10px; }
+        .photo-bubble-wrapper { text-align: center; position: relative; }
+        .photo-bubble { width: 100px; height: 100px; border-radius: 50%; background: #eee; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden; position: relative; cursor: pointer; transition: 0.3s; object-fit: cover; }
+        .photo-bubble:active { transform: scale(0.95); }
+        .add-photo-btn { position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 2px solid white; cursor: pointer; }
+        
+        /* MODAL GALERIE */
+        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; overflow-y: scroll; padding: 20px; }
+        .modal-header { display: flex; justify-content: space-between; color: white; margin-bottom: 20px; align-items: center; }
+        .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .modal-img { width: 100%; border-radius: 10px; }
+        .modal-del { background: red; color: white; padding: 5px; border-radius: 5px; text-align: center; font-size: 0.7rem; margin-top: 5px; cursor: pointer; }
+
+        /* TO DO LIST */
+        .todo-item { display: flex; align-items: center; background: white; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #eee; }
+        .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--primary); }
+        .todo-text { flex: 1; font-size: 0.9rem; }
+        .todo-text.done { text-decoration: line-through; color: #aaa; }
+        .todo-del { background: none; border: none; color: #faa; cursor: pointer; }
 
         /* UTILS */
         .identity-btn { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 12px; border: 2px solid #eee; background: white; color: #999; font-weight: 600; cursor: pointer; transition:0.2s; }
         .identity-btn.active { background: var(--secondary); color: white; border-color: var(--secondary); box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3); }
-        
         #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 80px; height: 80px; border-radius: 40px; background: linear-gradient(135deg, #ff758c, #ff4b6e); color: white; border: none; font-size: 35px; box-shadow: 0 10px 25px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; }
         #bisou-btn:active { transform: scale(0.9); }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 20px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
@@ -107,17 +97,45 @@
         iframe { border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
         .input-field { flex: 1; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-family: 'Outfit', sans-serif; }
+        
+        /* Styles spécifiques aux lectures */
+        .book-total-pages { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; font-weight: 500; }
+        .user-row { display: flex; flex-direction: column; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
+        .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .user-inputs { display: flex; align-items: center; gap: 10px; }
+        .page-input { width: 50px; padding: 4px; border-radius: 6px; border: 1px solid #ddd; text-align: center; font-weight: bold; font-size: 0.9rem; }
+        .star-rating { display: flex; gap: 1px; }
+        .star { cursor: pointer; font-size: 1.1rem; color: #eee; transition: 0.2s; }
+        .star.filled { color: #ffb84d; }
+        .book-progress-track { width: 100%; height: 6px; background: #f0f0f0; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
+
+        input[type="file"] { display: none; }
     </style>
 </head>
 <body>
 
     <div id="notif">💋 Bisou reçu !</div>
 
+    <div id="gallery-modal">
+        <div class="modal-header">
+            <h2 id="modal-title">Galerie</h2>
+            <button onclick="closeGallery()" style="background:none; border:none; color:white; font-size:1.5rem;">✕</button>
+        </div>
+        <div class="modal-grid" id="modal-grid"></div>
+    </div>
+
     <section id="hero-header">
         <div class="clocks-container">
-            <div class="clock-item"><div class="clock-city">FRANCE 🇫🇷</div><div class="clock-time" id="clock-fr">--:--</div></div>
+            <div class="clock-item">
+                <div class="clock-city"><span id="dot-fr" class="status-dot"></span>FRANCE 🇫🇷</div>
+                <div class="clock-time" id="clock-fr">--:--</div>
+            </div>
             <div style="width:1px; background:#ddd;"></div>
-            <div class="clock-item"><div class="clock-city">TAÏWAN 🇹🇼</div><div class="clock-time" id="clock-tw" style="color:var(--secondary)">--:--</div></div>
+            <div class="clock-item">
+                <div class="clock-city"><span id="dot-tw" class="status-dot"></span>TAÏWAN 🇹🇼</div>
+                <div class="clock-time" id="clock-tw" style="color:var(--secondary)">--:--</div>
+            </div>
         </div>
         <div class="countdown-box">
             <div class="countdown-title">Retrouvailles dans</div>
@@ -137,26 +155,17 @@
         </div>
 
         <div class="card">
-            <div class="card-title"><span>👗</span> Garde-Robe</div>
+            <div class="card-title"><span>👗</span> Avatars (Auto)</div>
             <div class="avatars-row">
                 <div class="avatar-box">
                     <div class="avatar-frame">
                         <img src="" id="avatar-img-fr" class="avatar-img" alt="Theo">
                     </div>
-                    <div class="avatar-controls">
-                        <button class="btn-outfit" onclick="changeOutfit('fr', -1)">◀</button>
-                        <button class="btn-outfit" onclick="changeOutfit('fr', 1)">▶</button>
-                    </div>
                     <div style="font-size:0.7rem; font-weight:bold; margin-top:5px; color:#888;">THÉO</div>
                 </div>
-
                 <div class="avatar-box">
                     <div class="avatar-frame">
                         <img src="" id="avatar-img-tw" class="avatar-img" alt="Elise">
-                    </div>
-                    <div class="avatar-controls">
-                        <button class="btn-outfit" onclick="changeOutfit('tw', -1)">◀</button>
-                        <button class="btn-outfit" onclick="changeOutfit('tw', 1)">▶</button>
                     </div>
                     <div style="font-size:0.7rem; font-weight:bold; margin-top:5px; color:var(--primary);">ELISE</div>
                 </div>
@@ -171,13 +180,40 @@
                 <div class="one-mood"><span class="mood-big" id="mood-val-tw">😶</span><span class="mood-who" style="color:var(--primary)">ELISE</span><div style="font-size:0.7rem; color:#888; margin-top:2px;" id="mood-msg-tw">...</div></div>
             </div>
             <div class="mood-grid">
-                <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !')"><span class="mood-emoji">🥰</span><span class="mood-text">Manque</span></div>
-                <div class="mood-btn" onclick="updateMood('🎓', 'Je suis en cours')"><span class="mood-emoji">🎓</span><span class="mood-text">En cours</span></div>
-                <div class="mood-btn" onclick="updateMood('😴', 'Je dors, chut !')"><span class="mood-emoji">😴</span><span class="mood-text">Dodo</span></div>
-                <div class="mood-btn" onclick="updateMood('🔥', 'Envie de toi...')"><span class="mood-emoji">🔥</span><span class="mood-text">Envie</span></div>
-                <div class="mood-btn" onclick="updateMood('🍜', 'Je mange')"><span class="mood-emoji">🍜</span><span class="mood-text">Miam</span></div>
-                <div class="mood-btn" onclick="customMood()" style="background:white; border:2px dashed #ddd;"><span class="mood-emoji">✏️</span><span class="mood-text">Perso</span></div>
+                <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !', 0)"><span class="mood-emoji">🥰</span><span class="mood-text">Love</span></div>
+                <div class="mood-btn" onclick="updateMood('🎓', 'Je suis en cours', 1)"><span class="mood-emoji">🎓</span><span class="mood-text">Cours</span></div>
+                <div class="mood-btn" onclick="updateMood('😴', 'Je dors, chut !', 2)"><span class="mood-emoji">😴</span><span class="mood-text">Dodo</span></div>
+                <div class="mood-btn" onclick="updateMood('🍜', 'Je mange', 3)"><span class="mood-emoji">🍜</span><span class="mood-text">Miam</span></div>
+                <div class="mood-btn" onclick="updateMood('🔥', 'Envie de toi...', 4)"><span class="mood-emoji">🔥</span><span class="mood-text">Chaud</span></div>
+                <div class="mood-btn" onclick="updateMood('✏️', 'Soirée/Perso', 5)"><span class="mood-emoji">✏️</span><span class="mood-text">Soirée</span></div>
             </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span>📸</span> Nos Souvenirs</div>
+            <div class="gallery-bubbles">
+                <div class="photo-bubble-wrapper">
+                    <img id="bubble-img-fr" class="photo-bubble" src="https://via.placeholder.com/100" onclick="openGallery('fr')">
+                    <div class="add-photo-btn" onclick="document.getElementById('file-fr').click()">+</div>
+                    <input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this, 'fr')">
+                    <div style="font-size:0.7rem; font-weight:bold; margin-top:5px; color:#888;">THÉO</div>
+                </div>
+                <div class="photo-bubble-wrapper">
+                    <img id="bubble-img-tw" class="photo-bubble" src="https://via.placeholder.com/100" onclick="openGallery('tw')">
+                    <div class="add-photo-btn" onclick="document.getElementById('file-tw').click()">+</div>
+                    <input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this, 'tw')">
+                    <div style="font-size:0.7rem; font-weight:bold; margin-top:5px; color:var(--primary);">ELISE</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span>📝</span> Choses à faire ensemble</div>
+            <div class="input-group">
+                <input type="text" id="todo-input" class="input-field" placeholder="Ex: Manger une raclette...">
+                <button onclick="addTodo()" class="input-field" style="flex:0; background:var(--secondary); color:white; border:none;">+</button>
+            </div>
+            <div id="todo-list"></div>
         </div>
 
         <div class="card">
@@ -200,7 +236,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns", authDomain: "lovetravel-35285.firebaseapp.com", projectId: "lovetravel-35285", storageBucket: "lovetravel-35285.firebasestorage.app", messagingSenderId: "189902268760", appId: "1:189902268760:web:b461ce15d8c396be479d2d" };
         const app = initializeApp(firebaseConfig);
@@ -216,86 +252,161 @@
             document.getElementById('btn-user-' + currentUser).classList.add('active'); 
         }
 
-        // --- GESTION NOTIFICATIONS (PRIORITÉS) ---
+        // --- PRESENCE EN LIGNE ---
+        function updatePresence() {
+            setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true });
+        }
+        setInterval(updatePresence, 30000); // Envoie "je suis là" toutes les 30s
+        updatePresence();
+
+        onSnapshot(doc(db, "status", "presence"), (docSnap) => {
+            if(docSnap.exists()) {
+                const d = docSnap.data();
+                const now = Date.now();
+                // Si la dernière activité date de moins de 2 min, on considère en ligne
+                const isOnlineFr = (now - d.fr) < 120000;
+                const isOnlineTw = (now - d.tw) < 120000;
+                
+                if(isOnlineFr) document.getElementById('dot-fr').classList.add('online');
+                else document.getElementById('dot-fr').classList.remove('online');
+
+                if(isOnlineTw) document.getElementById('dot-tw').classList.add('online');
+                else document.getElementById('dot-tw').classList.remove('online');
+            }
+        });
+
+        // --- NOTIFICATIONS ---
         function sendNtfy(message, tags, priority = 'default') {
             const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
-            const senderName = currentUser === 'tw' ? "Elise" : "Theo"; // Sans accent
-
+            const senderName = currentUser === 'tw' ? "Elise" : "Theo";
             fetch(`https://ntfy.sh/${targetChannel}`, {
-                method: 'POST',
-                body: message,
-                headers: { 
-                    'Title': `Love Travel (${senderName})`, 
-                    'Priority': priority, // low = silencieux, high = vibre
-                    'Tags': tags,
-                    'Content-Type': 'text/plain; charset=utf-8' 
-                }
+                method: 'POST', body: message,
+                headers: { 'Title': `Love Travel (${senderName})`, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8' }
             }).catch(e => console.log("Erreur ntfy", e));
         }
 
-        // --- BISOUS (Haute Priorité) ---
+        // --- BISOUS ---
         window.sendBisou = function() {
             const btn = document.getElementById('bisou-btn');
             btn.style.transform = "scale(1.3)"; setTimeout(() => btn.style.transform = "scale(1)", 200);
-            
             addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
-            
-            // PRIORITY: HIGH (Vibre)
             sendNtfy("💋 Bisou envoyé !", "kiss,heart", "high");
-            
             showLocalNotif("💋 Bisou envoyé !");
         }
 
-        // --- MOODS (Basse Priorité) ---
+        // --- MOODS ET OUTFITS ---
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
-                // Moods
                 document.getElementById("mood-val-fr").innerText = d.fr_emoji || "😶";
                 document.getElementById("mood-msg-fr").innerText = d.fr_text || "";
                 document.getElementById("mood-val-tw").innerText = d.tw_emoji || "😶";
                 document.getElementById("mood-msg-tw").innerText = d.tw_text || "";
-
-                // Outfits
-                const frOutfit = d.fr_outfit || 0;
-                const twOutfit = d.tw_outfit || 0;
-                document.getElementById("avatar-img-fr").src = `theo_${frOutfit}.png`;
-                document.getElementById("avatar-img-tw").src = `elise_${twOutfit}.png`;
-            } else { 
-                setDoc(doc(db, "status", "moods"), { fr_emoji: "❤️", tw_emoji: "❤️", fr_outfit: 0, tw_outfit: 0 }); 
-            }
+                
+                // Mise à jour automatique des avatars
+                document.getElementById("avatar-img-fr").src = `theo_${d.fr_outfit || 0}.png`;
+                document.getElementById("avatar-img-tw").src = `elise_${d.tw_outfit || 0}.png`;
+            } else { setDoc(doc(db, "status", "moods"), { fr_emoji: "❤️", tw_emoji: "❤️", fr_outfit:0, tw_outfit:0 }); }
         });
 
-        window.updateMood = function(emoji, text) {
-            setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text }, { merge: true });
-            
-            // PRIORITY: LOW (Silencieux)
+        // Mise à jour Mood + Outfit (automatique)
+        window.updateMood = function(emoji, text, outfitId) {
+            setDoc(doc(db, "status", "moods"), { 
+                [currentUser+"_emoji"]: emoji, 
+                [currentUser+"_text"]: text,
+                [currentUser+"_outfit"]: outfitId 
+            }, { merge: true });
             sendNtfy(`${emoji} Nouveau statut : ${text}`, "partly_sunny", "low");
         }
-        window.customMood = function() {
-            const emoji = prompt("Choisis un émoji :", "🦄"); if(!emoji) return;
-            const text = prompt("Ta phrase :", "Je pense à toi"); if(!text) return;
-            updateMood(emoji, text);
-        }
 
-        window.changeOutfit = function(role, direction) {
-            if(role !== currentUser) { if(!confirm("Changer la tenue de l'autre ?")) return; }
+        // --- GALERIE PHOTOS ---
+        // Helper pour compresser les images (Important pour la BDD Gratuite)
+        const compressImage = async (file, { quality = 0.5, type = file.type }) => {
+            const imageBitmap = await createImageBitmap(file);
+            const canvas = document.createElement('canvas');
+            canvas.width = imageBitmap.width * 0.5; // Reduit taille par 2
+            canvas.height = imageBitmap.height * 0.5;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+            return canvas.toDataURL(type, quality);
+        };
 
-            const img = document.getElementById(`avatar-img-${role}`);
-            let currentIdx = 0;
-            if(img.src.includes("_1")) currentIdx = 1;
-            if(img.src.includes("_2")) currentIdx = 2;
+        window.handlePhotoUpload = async function(input, role) {
+            if(role !== currentUser && !confirm("Ajouter une photo pour l'autre ?")) return;
+            const file = input.files[0];
+            if(!file) return;
 
-            let newIdx = currentIdx + direction;
-            if(newIdx > 2) newIdx = 0; if(newIdx < 0) newIdx = 2;
-
-            setDoc(doc(db, "status", "moods"), { [role+"_outfit"]: newIdx }, { merge: true });
+            // Compression
+            const base64 = await compressImage(file, { quality: 0.6, type: 'image/jpeg' });
             
-            // PRIORITY: LOW (Silencieux)
-            if(role === currentUser) sendNtfy(`👗 J'ai changé de tenue !`, "shirt", "low");
+            await addDoc(collection(db, "photos"), {
+                url: base64,
+                by: role,
+                timestamp: serverTimestamp()
+            });
+            input.value = ""; // Reset
+            sendNtfy("📸 Nouvelle photo ajoutée !", "camera", "low");
         }
 
-        // --- LIVRES (Basse Priorité) ---
+        // Chargement Galerie
+        const qPhotos = query(collection(db, "photos"), orderBy("timestamp", "desc"));
+        let allPhotos = [];
+        onSnapshot(qPhotos, (snapshot) => {
+            allPhotos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            // Mise à jour des bulles (Dernière photo)
+            const lastFr = allPhotos.find(p => p.by === 'fr');
+            const lastTw = allPhotos.find(p => p.by === 'tw');
+            
+            if(lastFr) document.getElementById('bubble-img-fr').src = lastFr.url;
+            if(lastTw) document.getElementById('bubble-img-tw').src = lastTw.url;
+        });
+
+        window.openGallery = function(role) {
+            const modal = document.getElementById('gallery-modal');
+            const grid = document.getElementById('modal-grid');
+            document.getElementById('modal-title').innerText = role === 'fr' ? "Galerie de Théo" : "Galerie d'Elise";
+            grid.innerHTML = "";
+            
+            const userPhotos = allPhotos.filter(p => p.by === role);
+            userPhotos.forEach(p => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <img src="${p.url}" class="modal-img">
+                    <div class="modal-del" onclick="deletePhoto('${p.id}')">Supprimer</div>
+                `;
+                grid.appendChild(div);
+            });
+            modal.style.display = "block";
+        }
+        window.closeGallery = function() { document.getElementById('gallery-modal').style.display = "none"; }
+        window.deletePhoto = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db, "photos", id)); }
+
+        // --- TO DO LIST ---
+        const qTodos = query(collection(db, "todos"), orderBy("created", "desc"));
+        onSnapshot(qTodos, (snapshot) => {
+            const list = document.getElementById('todo-list'); list.innerHTML = "";
+            snapshot.forEach(docSnap => {
+                const todo = docSnap.data();
+                const div = document.createElement('div'); div.className = "todo-item";
+                div.innerHTML = `
+                    <input type="checkbox" class="todo-check" ${todo.done ? 'checked' : ''} onchange="toggleTodo('${docSnap.id}', this.checked)">
+                    <span class="todo-text ${todo.done ? 'done' : ''}">${todo.text}</span>
+                    <button class="todo-del" onclick="deleteTodo('${docSnap.id}')">✕</button>
+                `;
+                list.appendChild(div);
+            });
+        });
+        window.addTodo = function() {
+            const text = document.getElementById('todo-input').value;
+            if(!text) return;
+            addDoc(collection(db, "todos"), { text: text, done: false, created: serverTimestamp() });
+            document.getElementById('todo-input').value = "";
+        }
+        window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
+        window.deleteTodo = function(id) { deleteDoc(doc(db, "todos", id)); }
+
+        // --- LIVRES ---
         const qBooks = query(collection(db, "books"), orderBy("created", "desc"));
         onSnapshot(qBooks, (snapshot) => {
             const list = document.getElementById("book-list"); list.innerHTML = "";
@@ -326,25 +437,12 @@
                 div.innerHTML = `
                     <div class="book-title">${book.title} <button style="border:none; background:none; color:#faa; font-size:0.8rem; cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div>
                     <div class="book-total-pages">${totalPages} pages</div>
-                    <div class="user-row">
-                        <div class="row-header"><span class="user-label">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div>
-                        <div class="user-inputs" style="width:100%">
-                            <input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0">
-                            <div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--secondary);"></div></div>
-                        </div>
-                    </div>
-                    <div class="user-row" style="border:none;">
-                        <div class="row-header"><span class="user-label" style="color:var(--primary)">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div>
-                        <div class="user-inputs" style="width:100%">
-                            <input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0">
-                            <div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--primary);"></div></div>
-                        </div>
-                    </div>
+                    <div class="user-row"><div class="row-header"><span class="user-label">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div><div class="user-inputs" style="width:100%"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--secondary);"></div></div></div></div>
+                    <div class="user-row" style="border:none;"><div class="row-header"><span class="user-label" style="color:var(--primary)">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div><div class="user-inputs" style="width:100%"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--primary);"></div></div></div></div>
                 `;
                 list.appendChild(div);
             });
         });
-
         window.addBook = function() { 
             const title = document.getElementById("book-title").value; const pages = document.getElementById("book-pages").value;
             if (!title) return; 
@@ -354,8 +452,6 @@
         window.updatePage = function(id, role, val, max, title) {
             const newPage = parseInt(val);
             updateDoc(doc(db, "books", id), { ["page_"+role]: newPage });
-            
-            // PRIORITY: LOW (Silencieux)
             if(newPage >= max) sendNtfy(`🎉 J'ai fini de lire ${title} !`, "tada", "low");
         }
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
@@ -388,7 +484,8 @@
             document.getElementById("plane").style.left = `calc(${percent}% - 24px)`;
         }
         setInterval(updateCountdown, 1000); updateCountdown();
-
+        
+        // RECEPTION BISOUS (LIVE)
         const qBisou = query(collection(db, "actions"), orderBy("timestamp", "desc"), limit(1));
         onSnapshot(qBisou, (snapshot) => {
             if(!snapshot.empty) {
