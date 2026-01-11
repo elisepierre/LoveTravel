@@ -43,6 +43,7 @@
         .clock-weather { font-size: 0.8rem; font-weight: 600; margin: 2px 0; color: #555; display: flex; justify-content: center; align-items: center; gap: 4px; }
         .clock-time { font-size: 1.1rem; font-weight: 700; color: var(--text); }
         
+        /* COUNTDOWN */
         .countdown-box { text-align: center; margin-top: 10px; }
         .countdown-title { font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
         .countdown-big { font-size: 2.2rem; font-weight: 900; color: #333; line-height: 1; margin: 5px 0; }
@@ -51,7 +52,8 @@
         .progress-container { margin-top: 25px; position: relative; height: 30px; }
         .progress-track { background: #eee; height: 4px; border-radius: 10px; position: relative; top: 12px; }
         .progress-fill { background: linear-gradient(90deg, var(--blue), var(--pink)); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease; }
-        .plane-icon { position: absolute; top: -10px; font-size: 20px; transition: left 1s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); transform: rotate(90deg); }
+        /* L'icône change dynamiquement via JS */
+        .progress-icon { position: absolute; top: -12px; font-size: 24px; transition: left 1s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
 
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid white; }
@@ -69,19 +71,16 @@
         .mood-emoji { font-size: 1.5rem; display: block; margin-bottom: 2px; }
         .mood-text { font-size: 0.65rem; font-weight: bold; color: #555; display: block; }
 
-        /* NOUVEAU STYLE LETTRES (MAILBOX) */
+        /* LETTRES (MAILBOX) */
         .mailbox-section { margin-bottom: 20px; }
         .mailbox-title { font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px; padding-left: 5px; }
-        
         .letter-item { background: white; border: 1px solid #e0e0e0; border-radius: 16px; padding: 15px; margin-bottom: 8px; transition: 0.3s; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); position: relative; overflow: hidden; }
         
-        /* Style non lu (Nouveau) */
         .letter-item.unread { border-left: 5px solid var(--primary); background: white; }
         .letter-item.unread::after { content: "Nouveau"; position: absolute; top: 0; right: 0; background: var(--primary); color: white; font-size: 0.5rem; padding: 2px 6px; border-bottom-left-radius: 8px; text-transform: uppercase; font-weight: bold; }
         
-        /* Style lu (Ancien) */
         .letter-item.read { background: #f8f9fa; border: 1px solid #eee; opacity: 0.7; }
-        .letter-item.read .letter-header { color: #888; }
+        .letter-status-read { font-size: 0.6rem; color: #2ecc71; font-weight: bold; margin-left: 5px; display: inline-flex; align-items: center; gap:2px; }
 
         .letter-header { font-weight: bold; font-size: 0.9rem; color: #333; display: flex; justify-content: space-between; align-items: center; }
         .letter-icon { font-size: 1.2rem; margin-right: 10px; }
@@ -169,12 +168,15 @@
             </div>
         </div>
         <div class="countdown-box">
-            <div class="countdown-title">Retrouvailles dans</div>
+            <div class="countdown-title" id="countdown-title">...</div>
             <div class="countdown-big" id="days-count">--</div>
             <div class="countdown-sub" id="sub-count">jours, heures et minutes</div>
         </div>
         <div class="progress-container">
-            <div class="progress-track"><div class="progress-fill" id="prog-fill"></div><div class="plane-icon" id="plane" style="left:0">✈️</div></div>
+            <div class="progress-track">
+                <div class="progress-fill" id="prog-fill"></div>
+                <div class="progress-icon" id="prog-icon" style="left:0">❤️</div>
+            </div>
         </div>
     </section>
 
@@ -263,7 +265,7 @@
             <div class="card-title"><span style="font-size:1.5rem">🎧</span> Vibe du moment</div>
             <iframe 
                 style="border-radius:12px; width:100%; height:300px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);" 
-                src="https://www.youtube.com/embed/videoseries?list=PLmcI3xlumHTJ-pr1XW_tZ5YJ7Q_Wd0-bT" 
+                src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" 
                 title="YouTube Music" 
                 frameborder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -365,11 +367,10 @@
             updateMood("✨", text, 5);
         }
 
-        // --- LETTRES (V13 - Mailbox Split) ---
+        // --- LETTRES (Correction V14) ---
         window.addLetter = function() {
             const title = document.getElementById("letter-title").value; const content = document.getElementById("letter-content").value;
             if(!title || !content) return;
-            // On ajoute 'read: false' par défaut
             addDoc(collection(db, "letters"), { 
                 title: title, content: content, by: currentUser, read: false, timestamp: serverTimestamp() 
             });
@@ -377,13 +378,13 @@
             sendNtfy("💌 Nouvelle lettre reçue !", "email", "low");
         }
         
-        window.toggleLetter = function(id, currentRead) {
+        window.toggleLetter = function(id, senderRole, currentRead) {
             const el = document.getElementById("letter-content-"+id);
             if(el.style.display === "block") el.style.display = "none"; 
             else { 
                 el.style.display = "block"; 
-                // Si pas encore lu, on marque comme lu
-                if(!currentRead) {
+                // Je suis le destinataire (je ne suis PAS l'envoyeur) ET ce n'est pas encore lu
+                if(currentUser !== senderRole && !currentRead) {
                     updateDoc(doc(db, "letters", id), { read: true });
                 }
             }
@@ -397,22 +398,19 @@
 
             snapshot.forEach(docSnap => {
                 const l = docSnap.data();
-                // Si envoyé par 'tw' (Elise), c'est pour 'fr' (Théo)
                 const targetList = l.by === 'tw' ? listFr : listTw;
-                
                 const div = document.createElement("div"); 
-                // Style dynamique selon état 'read'
                 div.className = `letter-item ${l.read ? 'read' : 'unread'}`;
-                
                 const icon = l.read ? '📩' : '✉️';
+                const readLabel = l.read ? '<span class="letter-status-read">✓ Lu</span>' : '';
                 
-                div.onclick = (e) => { if(e.target.tagName !== 'BUTTON') toggleLetter(docSnap.id, l.read) };
+                div.onclick = (e) => { if(e.target.tagName !== 'BUTTON') toggleLetter(docSnap.id, l.by, l.read) };
                 
                 div.innerHTML = `
                     <div class="letter-header">
                         <div style="display:flex;align-items:center;">
                             <span class="letter-icon">${icon}</span>
-                            <span>${l.title}</span>
+                            <span>${l.title} ${readLabel}</span>
                         </div>
                         <button onclick="deleteLetter('${docSnap.id}', event)" style="border:none;background:none;color:#faa;">✕</button>
                     </div>
@@ -501,8 +499,52 @@
 
         function showLocalNotif(msg) { const notif = document.getElementById("notif"); notif.innerHTML = msg; notif.classList.add("show"); setTimeout(() => notif.classList.remove("show"), 3000); }
         function updateClocks() { const now = new Date(); document.getElementById('clock-fr').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' }); document.getElementById('clock-tw').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit' }); } setInterval(updateClocks, 1000); updateClocks();
-        const startDate = new Date("2026-02-14T00:00:00").getTime(); const endDate = new Date("2026-07-10T00:00:00").getTime();
-        function updateCountdown() { const now = new Date().getTime(); const dist = endDate - now; const days = Math.floor(dist / (1000 * 60 * 60 * 24)); const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); const minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60)); document.getElementById('days-count').innerText = days; document.getElementById('sub-count').innerText = `${hours} h et ${minutes} min`; const total = endDate - startDate; const current = now - startDate; let percent = (current / total) * 100; if (percent < 0) percent = 0; if (percent > 100) percent = 100; document.getElementById("prog-fill").style.width = percent + "%"; document.getElementById("plane").style.left = `calc(${percent}% - 24px)`; } setInterval(updateCountdown, 1000); updateCountdown();
+        
+        // --- COUNTDOWN V14 (Double Phase) ---
+        // Phase 1 : Départ en distance (14/02/2026) -> Coeur
+        // Phase 2 : Retrouvailles (05/07/2026) -> Avion
+        
+        const dateDepart = new Date("2026-02-14T00:00:00").getTime();
+        const dateRetour = new Date("2026-07-05T00:00:00").getTime(); // Correction: 5 Juillet
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            let targetDate, titleText, iconText;
+            
+            // Si on est avant le départ (Phase 1)
+            if (now < dateDepart) {
+                targetDate = dateDepart;
+                titleText = "Début de la distance dans";
+                iconText = "❤️";
+            } else {
+                // Si on est pendant la distance (Phase 2)
+                targetDate = dateRetour;
+                titleText = "Retrouvailles dans";
+                iconText = "✈️";
+            }
+
+            const dist = targetDate - now;
+            const days = Math.floor(dist / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+            
+            document.getElementById('days-count').innerText = days;
+            document.getElementById('sub-count').innerText = `${hours} h et ${minutes} min`;
+            document.getElementById('countdown-title').innerText = titleText.toUpperCase();
+            document.getElementById('prog-icon').innerText = iconText;
+
+            // Barre de progression (Base: 1er Jan 2026 -> Cible)
+            // On simplifie la barre pour qu'elle soit jolie : 0 à 100% sur 6 mois
+            const startDate = new Date("2026-01-01T00:00:00").getTime(); // Point de départ arbitraire
+            const total = targetDate - startDate;
+            const current = now - startDate;
+            let percent = (current / total) * 100;
+            if (percent < 0) percent = 0; if (percent > 100) percent = 100;
+            
+            document.getElementById("prog-fill").style.width = percent + "%";
+            document.getElementById("prog-icon").style.left = `calc(${percent}% - 24px)`;
+        }
+        setInterval(updateCountdown, 1000); updateCountdown();
 
         const qBisou = query(collection(db, "actions"), orderBy("timestamp", "desc"), limit(1));
         onSnapshot(qBisou, (snapshot) => { if(!snapshot.empty) { const action = snapshot.docs[0].data(); if (!action.timestamp) return; const diff = Math.abs(Date.now() - action.timestamp.toMillis()); if (diff < 60000 && action.from !== currentUser) { showLocalNotif(`💋 <b>${action.from === 'fr' ? 'Théo' : 'Elise'}</b> t'envoie un bisou !`); if(navigator.vibrate) navigator.vibrate([200, 100, 200, 500]); } } });
