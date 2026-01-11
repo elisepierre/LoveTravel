@@ -14,127 +14,196 @@
     <link rel="icon" type="image/jpeg" href="icon.jpg">
 
     <title>Love Travel ✈️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Pacifico&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
     
     <style>
-        :root { --pink: #ff4b6e; --blue: #4a90e2; --bg: #fff0f3; --card-bg: rgba(255, 255, 255, 0.95); --text: #2c3e50; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Outfit', sans-serif; background: linear-gradient(180deg, #fff5f7 0%, #eef6ff 100%); color: var(--text); padding-bottom: 120px; }
+        :root {
+            --pink: #ff9eb5;
+            --pink-dark: #ff4b6e;
+            --blue: #8ecae6;
+            --blue-dark: #219ebc;
+            --bg: #fffbf0;
+            --text: #4a4a4a;
+        }
 
-        /* HEADER */
-        #hero-header { background: white; padding: 30px 20px 30px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05); padding-top: max(30px, env(safe-area-inset-top)); text-align: center; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
+        body {
+            margin: 0; font-family: 'Outfit', sans-serif; 
+            background-color: var(--bg);
+            background-image: radial-gradient(#ffe4e1 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text); padding-bottom: 120px;
+        }
+
+        header { text-align: center; padding: 40px 20px 20px; }
         .app-title {
-            font-family: 'Pacifico', cursive; font-size: 2.8rem; margin: 0 0 15px 0;
-            background: linear-gradient(to right, var(--blue), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+            font-family: 'Pacifico', cursive; font-size: 3rem; margin: 0;
+            background: linear-gradient(to right, var(--blue-dark), var(--pink-dark));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 0px rgba(255,255,255,1));
         }
 
-        .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 5px; vertical-align: middle; }
-        .status-dot.online { background: #2ecc71; box-shadow: 0 0 5px #2ecc71; animation: blink 2s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
+        .card {
+            background: white; border-radius: 25px; padding: 25px; margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.02);
+        }
+        .card-title {
+            font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 20px;
+            text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px dashed #eee; padding-bottom: 10px;
+            display: flex; align-items: center; gap: 10px;
+        }
 
-        .clocks-container { display: flex; justify-content: space-between; margin-bottom: 20px; background: #f8f9fa; padding: 10px 15px; border-radius: 18px; border: 1px solid #eee; margin-top: 15px; }
-        .clock-item { text-align: center; flex: 1; }
-        .clock-city { font-size: 0.65rem; color: #888; text-transform: uppercase; font-weight: 800; display:flex; align-items:center; justify-content:center; gap:4px; letter-spacing: 0.5px; }
-        .clock-time { font-size: 1.1rem; font-weight: 700; color: var(--text); }
-        
-        .countdown-box { text-align: center; margin-top: 10px; }
-        .countdown-title { font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
-        .countdown-big { font-size: 2.2rem; font-weight: 900; color: #333; line-height: 1; margin: 5px 0; }
-        .countdown-sub { font-size: 0.85rem; color: #888; }
-        
-        .progress-container { margin-top: 25px; position: relative; height: 30px; }
-        .progress-track { background: #eee; height: 4px; border-radius: 10px; position: relative; top: 12px; }
-        .progress-fill { background: linear-gradient(90deg, var(--blue), var(--pink)); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease; }
-        .plane-icon { position: absolute; top: -10px; font-size: 20px; transition: left 1s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); transform: rotate(90deg); }
+        .info-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .info-box { 
+            flex: 1; background: #f8f9fa; border-radius: 20px; padding: 15px; text-align: center; 
+            border: 1px solid #eee;
+        }
+        .info-city { font-size: 0.7rem; font-weight: 800; color: #aaa; text-transform: uppercase; margin-bottom: 5px; }
+        .info-time { font-size: 1.3rem; font-weight: 700; color: #333; }
+        .info-weather { font-size: 0.8rem; color: #666; }
 
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid white; }
-        .card-title { font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-
-        /* MOODS AVEC AVATAR (Correction affichage) */
-        .current-moods { display: flex; justify-content: space-between; background: white; padding: 20px 10px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #f0f0f0; align-items: flex-end; }
-        .one-mood { display: flex; flex-direction: column; align-items: center; width: 48%; }
+        .countdown-box { text-align: center; padding: 10px 0; }
+        .count-days { font-size: 2.5rem; font-weight: 800; color: var(--pink-dark); }
+        .count-sub { font-size: 0.8rem; color: #888; margin-top: -5px; }
         
-        /* Cadre fixe pour éviter que ça bouge */
-        .mood-avatar-frame { width: 100%; height: 120px; display: flex; align-items: flex-end; justify-content: center; position: relative; overflow: hidden; }
-        /* Image contenue proprement */
-        .mood-avatar-img { 
-            max-width: 100%; 
-            max-height: 100%; 
-            width: auto; 
-            height: auto; 
-            object-fit: contain; /* Empêche le rognage */
-            object-position: bottom center; /* Colle les pieds au bas */
+        .progress-bar { height: 10px; background: #eee; border-radius: 10px; margin-top: 15px; position: relative; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%; transition: 1s; }
+        .progress-icon { position: absolute; top: -10px; font-size: 24px; transition: left 1s; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1)); }
+
+        /* --- MÉTÉO DES COEURS CORRIGÉE --- */
+        .mood-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
+        .mood-person { width: 48%; text-align: center; position: relative; }
+        
+        .avatar-frame {
+            width: 100%; height: 140px; 
+            /* Correction affichage : plus de bordure forcée qui coupe */
+            display: flex; align-items: flex-end; justify-content: center;
+            position: relative;
+        }
+        .avatar-img { 
+            height: 100%; width: auto; max-width: 100%;
+            object-fit: contain; 
             image-rendering: pixelated; 
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15)); 
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
+        }
+        
+        .mood-msg { 
+            background: white; padding: 8px 12px; border-radius: 15px; font-size: 0.8rem; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05); margin-top: -10px; position: relative; z-index: 2;
+            display: inline-block; max-width: 100%; font-style: italic; border: 1px solid #eee;
         }
 
-        .mood-who { font-size: 0.75rem; font-weight: 900; letter-spacing: 1px; margin-top: 8px; display: block; text-transform: uppercase;}
-        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
-        .mood-btn { background: white; border: 1px solid #eee; border-radius: 16px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .mood-btn:active { transform: scale(0.95); background: #f9f9f9; }
-        .mood-emoji { font-size: 1.5rem; display: block; margin-bottom: 2px; }
-        .mood-text { font-size: 0.65rem; font-weight: bold; color: #555; display: block; }
+        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .mood-btn { 
+            background: white; border: 1px solid #eee; border-radius: 15px; padding: 10px; 
+            text-align: center; cursor: pointer; transition: 0.2s; font-size: 1.5rem;
+        }
+        .mood-btn:active { transform: scale(0.95); background: #fdfdfd; }
 
-        /* GALERIE */
-        .gallery-bubbles { display: flex; justify-content: space-around; margin-top: 15px; }
-        .photo-bubble-wrapper { text-align: center; position: relative; }
-        .photo-bubble { width: 90px; height: 90px; border-radius: 30px; background: #eee; border: 4px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.1); overflow: hidden; position: relative; cursor: pointer; transition: 0.3s; object-fit: cover; }
-        .photo-bubble:active { transform: scale(0.95); }
-        .add-photo-btn { position: absolute; bottom: -5px; right: -5px; background: #333; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 3px solid white; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        /* --- BOÎTE AUX LETTRES --- */
+        .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .mailbox-tab { 
+            flex: 1; padding: 10px; text-align: center; border-radius: 12px; 
+            font-size: 0.8rem; font-weight: bold; cursor: pointer; opacity: 0.5; transition: 0.3s;
+        }
+        .mailbox-tab.active { opacity: 1; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .letter-list { display: flex; flex-direction: column; gap: 10px; }
+        .envelope-item {
+            background: white; border: 1px solid #eee; border-radius: 12px; padding: 15px;
+            display: flex; align-items: center; cursor: pointer; transition: 0.3s;
+            border-left: 5px solid #ccc;
+        }
+        .envelope-item.unread { border-left-color: var(--pink-dark); background: #fff0f5; }
         
-        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; overflow-y: scroll; padding: 20px; }
-        .modal-header { display: flex; justify-content: space-between; color: white; margin-bottom: 20px; align-items: center; }
-        .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .modal-img { width: 100%; border-radius: 12px; }
-        .modal-del { background: rgba(255, 0, 0, 0.2); color: #ff8888; padding: 8px; border-radius: 8px; text-align: center; font-size: 0.7rem; margin-top: 5px; cursor: pointer; border: 1px solid rgba(255,0,0,0.3); }
+        #letter-modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6); z-index: 5000; justify-content: center; align-items: center; 
+            padding: 20px; backdrop-filter: blur(5px);
+        }
+        .real-letter {
+            background: #fffdf0; width: 100%; max-width: 400px; min-height: 300px;
+            padding: 30px; border-radius: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative; background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px; transform: rotate(-1deg);
+        }
+        .real-letter h2 { font-family: 'Pacifico', cursive; margin-top: 0; color: var(--pink-dark); }
+        .real-letter p { 
+            font-family: 'Dancing Script', cursive; font-size: 1.6rem; line-height: 1.6; color: #333; 
+            white-space: pre-wrap;
+        }
+        .letter-close { position: absolute; top: 10px; right: 10px; font-size: 1.5rem; color: #aaa; background: none; border: none; cursor: pointer; }
+        .letter-stamp {
+            position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px;
+            border: 2px double #d4af37; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; color: #d4af37; font-size: 0.7rem; font-weight: bold;
+            transform: rotate(-15deg); opacity: 0.7; text-align: center;
+        }
 
-        /* TO DO LIST (CORRECTION CROIX) */
-        .todo-item { display: flex; align-items: center; background: white; padding: 12px; margin-bottom: 8px; border-radius: 12px; border: 1px solid #eee; justify-content: space-between; /* Ecarte les éléments */ }
-        .todo-check { width: 22px; height: 22px; margin-right: 12px; accent-color: var(--pink); border-radius: 6px; flex-shrink: 0; }
-        .todo-text { flex: 1; font-size: 0.95rem; font-weight: 500; margin-right: 10px; /* Espace avec la croix */ }
-        .todo-text.done { text-decoration: line-through; color: #ccc; }
-        .todo-del { background: none; border: none; color: #ddd; cursor: pointer; font-size: 1.2rem; margin-left: auto; /* Pousse à droite */ padding: 5px; }
+        /* --- GALERIE POLAROID --- */
+        .polaroid-container { display: flex; justify-content: space-around; }
+        .polaroid {
+            background: white; padding: 10px 10px 30px 10px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); transform: rotate(-2deg);
+            width: 45%; text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .polaroid:nth-child(2) { transform: rotate(3deg); }
+        .polaroid:active { transform: scale(1.05) rotate(0deg); z-index: 10; }
+        .polaroid-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; margin-bottom: 5px; }
+        .polaroid-label { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: #555; }
 
-        /* LIVRES */
+        /* --- PROJETS & INPUTS --- */
+        .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        .input-field { 
+            flex: 1; padding: 12px; border: 2px solid #eee; border-radius: 12px; 
+            font-family: 'Outfit'; outline: none; background: #fafafa;
+        }
+        .btn-action { 
+            background: var(--blue-dark); color: white; border: none; padding: 0 20px; 
+            border-radius: 12px; font-weight: bold; cursor: pointer;
+        }
+
+        /* Liste Projets Corrigée */
+        .todo-item { display: flex; align-items: center; background: white; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #eee; justify-content: space-between; }
+        .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--pink-dark); }
+        .todo-text { flex: 1; font-size: 0.9rem; margin-right: 10px; }
+        .todo-text.done { text-decoration: line-through; color: #aaa; }
+        .todo-del { background: none; border: none; color: #faa; cursor: pointer; font-size: 1.2rem; margin-left: auto; }
+
+        /* --- LIVRES (RAJOUTÉ) --- */
         .book-item { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #eee; }
         .book-title { font-weight: 800; font-size: 1rem; color: #333; margin-bottom: 5px; display:flex; justify-content:space-between; }
-        .book-total-pages { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; font-weight: 600; text-transform: uppercase; }
-        .user-row { display: flex; flex-direction: column; margin-bottom: 12px; border-bottom: 1px dashed #f0f0f0; padding-bottom: 10px; }
-        .user-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .book-total-pages { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; font-weight: 500; }
+        .user-row { display: flex; flex-direction: column; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
         .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         .user-inputs { display: flex; align-items: center; gap: 10px; width: 100%; }
-        .page-input { width: 50px; padding: 5px; border-radius: 8px; border: 1px solid #eee; text-align: center; font-weight: bold; font-size: 0.9rem; background: #f9f9f9; color: #333; }
-        .star-rating { display: flex; gap: 2px; }
-        .star { cursor: pointer; font-size: 1.2rem; color: #eee; transition: 0.2s; }
+        .page-input { width: 50px; padding: 4px; border-radius: 6px; border: 1px solid #ddd; text-align: center; font-weight: bold; font-size: 0.9rem; }
+        .star-rating { display: flex; gap: 1px; }
+        .star { cursor: pointer; font-size: 1.1rem; color: #eee; transition: 0.2s; }
         .star.filled { color: #ffb84d; }
-        .star-reset { font-size: 0.7rem; color: #ccc; cursor: pointer; margin-left: 8px; padding: 2px;}
-        .book-progress-track { flex: 1; height: 8px; background: #f0f0f0; border-radius: 10px; overflow: hidden; margin-left: 10px; }
-        .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 10px; }
+        .star-reset { font-size: 0.7rem; color: #ccc; cursor: pointer; margin-left: 5px; padding: 2px;}
+        .book-progress-track { flex: 1; height: 6px; background: #f0f0f0; border-radius: 4px; overflow: hidden; margin-left: 10px; }
+        .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
-        /* LETTRES */
-        .letter-item { background: white; border: 2px dashed #e0e0e0; border-radius: 16px; padding: 15px; margin-bottom: 10px; transition: 0.3s; cursor: pointer; }
-        .letter-item.open { border: 2px solid var(--pink); background: #fff5f7; }
-        .letter-header { font-weight: bold; font-size: 0.9rem; color: #333; display: flex; justify-content: space-between; align-items: center; }
-        .letter-content { margin-top: 10px; font-size: 0.9rem; color: #555; display: none; line-height: 1.5; border-top: 1px solid #eee; padding-top: 10px; }
-        .letter-tag { padding: 4px 8px; border-radius: 6px; font-size: 0.6rem; text-transform: uppercase; font-weight: bold; color: white; }
-
-        .app-footer { text-align: center; padding: 40px 20px 20px; color: #aaa; font-size: 0.8rem; }
-        .footer-logo { width: 50px; height: 50px; border-radius: 15px; margin-bottom: 10px; opacity: 0.8; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-
-        .identity-btn { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 16px; border: 1px solid #eee; background: white; color: #aaa; font-weight: 700; cursor: pointer; transition:0.2s; font-family: 'Outfit', sans-serif;}
-        #btn-user-fr.active { background: var(--blue); color: white; border-color: var(--blue); box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3); }
-        #btn-user-tw.active { background: var(--pink); color: white; border-color: var(--pink); box-shadow: 0 8px 20px rgba(255, 75, 110, 0.3); }
+        /* --- FAB & NOTIF --- */
+        #bisou-btn { 
+            position: fixed; bottom: 30px; right: 25px; width: 70px; height: 70px; 
+            border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--pink-dark)); 
+            color: white; border: none; font-size: 30px; 
+            box-shadow: 0 10px 25px rgba(255, 75, 110, 0.4); 
+            cursor: pointer; z-index: 1000; animation: pulse 3s infinite;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
         
-        #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 75px; height: 75px; border-radius: 30px; background: linear-gradient(135deg, var(--pink), #ff758c); color: white; border: none; font-size: 32px; box-shadow: 0 15px 35px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; display:flex; align-items:center; justify-content:center; }
-        #bisou-btn:active { transform: scale(0.9); }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 20px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
-        #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-150px); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); z-index: 2000; font-weight: bold; color: var(--pink); width: 90%; max-width: 350px; text-align: center; border: 1px solid rgba(255,255,255,0.5); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; gap: 10px;}
+        #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #333; color: white; padding: 10px 20px; border-radius: 30px; z-index: 9999; transition: 0.3s; display:flex; align-items:center; gap:10px; }
         #notif.show { transform: translateX(-50%) translateY(0); }
-        iframe { border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
-        .input-field { flex: 1; padding: 12px; border: 1px solid #eee; border-radius: 12px; font-family: 'Outfit', sans-serif; background: #fcfcfc; }
+
+        /* UTILS */
+        .hidden { display: none; }
+        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 6000; padding: 20px; overflow-y:auto;}
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 40px; }
+        .modal-img { width: 100%; border-radius: 5px; }
         input[type="file"] { display: none; }
     </style>
 </head>
@@ -142,181 +211,220 @@
 
     <div id="notif">💋 Bisou reçu !</div>
 
-    <div id="gallery-modal">
-        <div class="modal-header">
-            <h2 id="modal-title" style="font-family:'Outfit'">Galerie</h2>
-            <button onclick="closeGallery()" style="background:none; border:none; color:white; font-size:1.5rem;">✕</button>
+    <div id="letter-modal">
+        <div class="real-letter">
+            <button class="letter-close" onclick="closeLetter()">✕</button>
+            <h2 id="modal-letter-title">Titre</h2>
+            <p id="modal-letter-content">Contenu...</p>
+            <div class="letter-stamp" id="modal-letter-stamp">POSTE<br>AMOUR</div>
         </div>
+    </div>
+
+    <div id="gallery-modal">
+        <button onclick="closeGallery()" style="position:fixed; top:20px; right:20px; font-size:2rem; color:white; background:none; border:none;">✕</button>
         <div class="modal-grid" id="modal-grid"></div>
     </div>
 
-    <section id="hero-header">
+    <header>
         <h1 class="app-title">Love Travel</h1>
-        
-        <div class="clocks-container">
-            <div class="clock-item">
-                <div class="clock-city" style="color:var(--blue)"><span id="dot-fr" class="status-dot"></span>FRANCE 🇫🇷</div>
-                <div class="clock-time" id="clock-fr">--:--</div>
-            </div>
-            <div style="width:1px; background:#ddd;"></div>
-            <div class="clock-item">
-                <div class="clock-city" style="color:var(--pink)"><span id="dot-tw" class="status-dot"></span>TAÏWAN 🇹🇼</div>
-                <div class="clock-time" id="clock-tw">--:--</div>
-            </div>
-        </div>
-        <div class="countdown-box">
-            <div class="countdown-title">Retrouvailles dans</div>
-            <div class="countdown-big" id="days-count">--</div>
-            <div class="countdown-sub" id="sub-count">jours, heures et minutes</div>
-        </div>
-        <div class="progress-container">
-            <div class="progress-track"><div class="progress-fill" id="prog-fill"></div><div class="plane-icon" id="plane" style="left:0">✈️</div></div>
-        </div>
-    </section>
+    </header>
 
     <div class="container">
-        <div class="card" style="text-align:center; border:none; background:none; box-shadow:none;">
-            <p style="margin:0 0 10px; font-size:0.75rem; color:#aaa; text-transform:uppercase; letter-spacing:1px; font-weight:bold;">Qui utilise ce téléphone ?</p>
-            <button class="identity-btn" id="btn-user-tw" onclick="setUser('tw')">Je suis Elise (Taïwan 🇹🇼)</button>
-            <button class="identity-btn" id="btn-user-fr" onclick="setUser('fr')">Je suis Théo (France 🇫🇷)</button>
+
+        <div class="card" style="text-align:center; padding:15px; border:2px dashed #eee;">
+            <p style="margin:0 0 10px; font-size:0.7rem; color:#aaa; text-transform:uppercase;">C'est le téléphone de qui ?</p>
+            <div style="display:flex; gap:10px;">
+                <button onclick="setUser('tw')" id="btn-tw" style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd; background:white;">Elise 🇹🇼</button>
+                <button onclick="setUser('fr')" id="btn-fr" style="flex:1; padding:10px; border-radius:10px; border:1px solid #ddd; background:white;">Théo 🇫🇷</button>
+            </div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span style="font-size:1.5rem">☁️</span> Météo des Cœurs</div>
+            <div class="card-title"><span>✈️</span> Notre Voyage</div>
             
-            <div class="current-moods">
-                <div class="one-mood">
-                    <div class="mood-avatar-frame">
-                        <img src="" id="mood-img-fr" class="mood-avatar-img">
-                    </div>
-                    <span class="mood-who" style="color:var(--blue)">THÉO</span>
-                    <div style="font-size:0.7rem; color:#888; margin-top:2px; font-style:italic;" id="mood-msg-fr">...</div>
+            <div class="info-row">
+                <div class="info-box" style="border-bottom: 3px solid var(--blue);">
+                    <div class="info-city">FRANCE</div>
+                    <div class="info-time" id="clock-fr">--:--</div>
+                    <div class="info-weather" id="weather-fr">--°C</div>
                 </div>
-                
-                <div style="width:1px; background:#f0f0f0; height:100px; align-self:center;"></div>
-                
-                <div class="one-mood">
-                    <div class="mood-avatar-frame">
-                        <img src="" id="mood-img-tw" class="mood-avatar-img">
-                    </div>
-                    <span class="mood-who" style="color:var(--pink)">ELISE</span>
-                    <div style="font-size:0.7rem; color:#888; margin-top:2px; font-style:italic;" id="mood-msg-tw">...</div>
+                <div class="info-box" style="border-bottom: 3px solid var(--pink);">
+                    <div class="info-city">TAOYUAN</div>
+                    <div class="info-time" id="clock-tw">--:--</div>
+                    <div class="info-weather" id="weather-tw">--°C</div>
                 </div>
             </div>
 
-            <p style="font-size:0.7rem; text-align:center; color:#aaa; margin-bottom:8px; font-weight:bold; text-transform:uppercase;">MON STATUT ACTUEL</p>
-            <div class="mood-grid">
-                <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !', 0)"><span class="mood-emoji">🥰</span><span class="mood-text">Love</span></div>
-                <div class="mood-btn" onclick="updateMood('🤓', 'Je suis en cours', 1)"><span class="mood-emoji">🤓</span><span class="mood-text">Cours</span></div>
-                <div class="mood-btn" onclick="updateMood('😴', 'Zzz Zzz', 2)"><span class="mood-emoji">😴</span><span class="mood-text">Dodo</span></div>
-                <div class="mood-btn" onclick="updateMood('😋', 'Je mange, miam !', 3)"><span class="mood-emoji">😋</span><span class="mood-text">Miam</span></div>
-                <div class="mood-btn" onclick="updateMood('🥵', 'Envie de toi...', 4)"><span class="mood-emoji">🥵</span><span class="mood-text">Chaud</span></div>
-                <div class="mood-btn" onclick="customMood()" style="border:1px dashed var(--pink); color:var(--pink);"><span class="mood-emoji">✏️</span><span class="mood-text">Perso</span></div>
+            <div class="countdown-box">
+                <div class="count-days" id="days-count">--</div>
+                <div class="count-sub" id="sub-count">jours avant les retrouvailles</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="prog-fill"></div>
+                    <div class="progress-icon" id="prog-icon">❤️</div>
+                </div>
+                <div id="countdown-title" style="margin-top:10px; font-size:0.8rem; color:#aaa; font-weight:bold;">...</div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span style="font-size:1.5rem">💌</span> Lettres à ouvrir</div>
+            <div class="card-title"><span>☁️</span> Humeur du Jour</div>
+            
+            <div class="mood-container">
+                <div class="mood-person">
+                    <div class="avatar-frame">
+                        <img src="" id="mood-img-fr" class="avatar-img">
+                    </div>
+                    <div class="mood-msg" id="mood-msg-fr">...</div>
+                </div>
+                <div class="mood-person">
+                    <div class="avatar-frame">
+                        <img src="" id="mood-img-tw" class="avatar-img">
+                    </div>
+                    <div class="mood-msg" id="mood-msg-tw">...</div>
+                </div>
+            </div>
+
+            <div class="mood-grid">
+                <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !', 0)">🥰</div>
+                <div class="mood-btn" onclick="updateMood('🤓', 'Je suis en cours', 1)">🤓</div>
+                <div class="mood-btn" onclick="updateMood('😴', 'Zzz Zzz', 2)">😴</div>
+                <div class="mood-btn" onclick="updateMood('😋', 'Je mange, miam !', 3)">😋</div>
+                <div class="mood-btn" onclick="updateMood('🥵', 'Envie de toi...', 4)">🥵</div>
+                <div class="mood-btn" onclick="customMood()" style="color:var(--pink);">✏️</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span>💌</span> Boîte aux Lettres</div>
+            
+            <div class="mailbox-tabs">
+                <div class="mailbox-tab active" id="tab-inbox" style="background:var(--pink);" onclick="showTab('inbox')">Reçus</div>
+                <div class="mailbox-tab" id="tab-sent" style="background:var(--blue);" onclick="showTab('sent')">Envoyés</div>
+            </div>
+
             <div class="input-group">
                 <input type="text" id="letter-title" class="input-field" placeholder="Ouvrir quand...">
-                <button onclick="addLetter()" class="input-field" style="flex:0; background:var(--pink); color:white; border:none; font-weight:bold;">+</button>
+                <button onclick="addLetter()" class="btn-action" style="background:var(--pink-dark)">+</button>
             </div>
-            <textarea id="letter-content" class="input-field" placeholder="Écris ton message ici..." style="width:100%; height:80px; margin-bottom:10px;"></textarea>
-            <div id="letters-list"></div>
+            <textarea id="letter-content" class="input-field" placeholder="Ecris ta lettre ici..." style="width:100%; height:80px; resize:none; margin-bottom:15px;"></textarea>
+
+            <div id="list-inbox" class="letter-list"></div>
+            <div id="list-sent" class="letter-list hidden"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span style="font-size:1.5rem">📸</span> Nos Souvenirs</div>
-            <div class="gallery-bubbles">
-                <div class="photo-bubble-wrapper">
-                    <img id="bubble-img-fr" class="photo-bubble" src="https://via.placeholder.com/100" onclick="openGallery('fr')">
-                    <div class="add-photo-btn" onclick="document.getElementById('file-fr').click()" style="background:var(--blue)">+</div>
+            <div class="card-title"><span>📸</span> Nos Albums</div>
+            
+            <div class="polaroid-container">
+                <div class="polaroid" onclick="openGallery('fr')">
+                    <img id="polaroid-img-fr" class="polaroid-img" src="https://via.placeholder.com/150">
+                    <div class="polaroid-label" style="color:var(--blue-dark)">Théo</div>
+                    <div style="font-size:0.6rem; color:#aaa; margin-top:5px;" onclick="event.stopPropagation(); document.getElementById('file-fr').click()">+ Ajouter photo</div>
                     <input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this, 'fr')">
-                    <div style="font-size:0.7rem; font-weight:bold; margin-top:8px; color:var(--blue);">THÉO</div>
                 </div>
-                <div class="photo-bubble-wrapper">
-                    <img id="bubble-img-tw" class="photo-bubble" src="https://via.placeholder.com/100" onclick="openGallery('tw')">
-                    <div class="add-photo-btn" onclick="document.getElementById('file-tw').click()" style="background:var(--pink)">+</div>
+
+                <div class="polaroid" onclick="openGallery('tw')">
+                    <img id="polaroid-img-tw" class="polaroid-img" src="https://via.placeholder.com/150">
+                    <div class="polaroid-label" style="color:var(--pink-dark)">Elise</div>
+                    <div style="font-size:0.6rem; color:#aaa; margin-top:5px;" onclick="event.stopPropagation(); document.getElementById('file-tw').click()">+ Ajouter photo</div>
                     <input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this, 'tw')">
-                    <div style="font-size:0.7rem; font-weight:bold; margin-top:8px; color:var(--pink);">ELISE</div>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span style="font-size:1.5rem">📝</span> À faire ensemble</div>
+            <div class="card-title"><span>📝</span> Nos Projets</div>
             <div class="input-group">
-                <input type="text" id="todo-input" class="input-field" placeholder="Ex: Manger une raclette...">
-                <button onclick="addTodo()" class="input-field" style="flex:0; background:var(--pink); color:white; border:none; font-weight:bold;">+</button>
+                <input type="text" id="todo-input" class="input-field" placeholder="Manger une raclette...">
+                <button onclick="addTodo()" class="btn-action" style="background:var(--blue-dark)">OK</button>
             </div>
             <div id="todo-list"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span style="font-size:1.5rem">📚</span> Lectures Communes</div>
+            <div class="card-title"><span>📚</span> Lectures Communes</div>
             <div class="input-group">
                 <input type="text" id="book-title" class="input-field" placeholder="Titre...">
-                <input type="number" id="book-pages" class="input-field" placeholder="P." style="width:60px; flex:none;">
-                <button onclick="addBook()" class="input-field" style="flex:0; background:var(--blue); color:white; border:none; font-weight:bold;">+</button>
+                <input type="number" id="book-pages" class="input-field" placeholder="Total P." style="width:80px; flex:none;">
+                <button onclick="addBook()" class="btn-action" style="background:var(--blue);">+</button>
             </div>
             <div id="book-list"></div>
         </div>
 
         <div class="card">
-            <div class="card-title"><span style="font-size:1.5rem">🎧</span> Vibe du moment</div>
-            <iframe id="spotify-frame" style="border-radius:12px" src="Https://open.spotify.com/playlist/20Gmofuoy7FuEydcKOhpOH?si=c8vohg2aSRWu6DXdzSq-UA" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <div class="card-title"><span>🎧</span> Vibe</div>
+            <iframe style="border-radius:15px; width:100%; height:300px; border:none;" src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" allowfullscreen></iframe>
         </div>
-        
-        <div class="app-footer">
-            <img src="icon.jpg" class="footer-logo" alt="Logo Love Travel">
-            <div>Fait avec Amour pour 2026 ❤️</div>
-        </div>
+
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns", authDomain: "lovetravel-35285.firebaseapp.com", projectId: "lovetravel-35285", storageBucket: "lovetravel-35285.firebasestorage.app", messagingSenderId: "189902268760", appId: "1:189902268760:web:b461ce15d8c396be479d2d" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let currentUser = localStorage.getItem('userRole') || 'tw'; 
+        let currentUser = localStorage.getItem('userRole') || 'tw';
         updateIdentityUI();
 
-        window.setUser = function(role) { currentUser = role; localStorage.setItem('userRole', role); updateIdentityUI(); }
+        window.setUser = function(role) { 
+            currentUser = role; localStorage.setItem('userRole', role); 
+            updateIdentityUI();
+            updateMailboxView(); 
+        }
         function updateIdentityUI() { 
-            document.getElementById('btn-user-fr').classList.remove('active'); 
-            document.getElementById('btn-user-tw').classList.remove('active'); 
-            document.getElementById('btn-user-' + currentUser).classList.add('active'); 
+            document.getElementById('btn-fr').style.backgroundColor = currentUser === 'fr' ? '#e3f2fd' : 'white';
+            document.getElementById('btn-fr').style.borderColor = currentUser === 'fr' ? 'var(--blue)' : '#ddd';
+            document.getElementById('btn-tw').style.backgroundColor = currentUser === 'tw' ? '#fff0f3' : 'white';
+            document.getElementById('btn-tw').style.borderColor = currentUser === 'tw' ? 'var(--pink)' : '#ddd';
         }
 
+        // --- PRESENCE & METEO ---
         function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
         setInterval(updatePresence, 10000); updatePresence();
         document.addEventListener("visibilitychange", () => { if (document.visibilityState === 'hidden') setDoc(doc(db, "status", "presence"), { [currentUser]: 0 }, { merge: true }); else updatePresence(); });
-        onSnapshot(doc(db, "status", "presence"), (docSnap) => {
-            if(docSnap.exists()) {
-                const d = docSnap.data(); const now = Date.now();
-                const isOnlineFr = (now - d.fr) < 20000 && d.fr !== 0; const isOnlineTw = (now - d.tw) < 20000 && d.tw !== 0;
-                document.getElementById('dot-fr').classList.toggle('online', isOnlineFr);
-                document.getElementById('dot-tw').classList.toggle('online', isOnlineTw);
-            }
-        });
 
-        function sendNtfy(message, tags, priority = 'default') {
-            const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
-            const senderName = currentUser === 'tw' ? "Elise" : "Theo";
-            fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': `Love Travel (${senderName})`, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8' } }).catch(e => console.log(e));
+        async function updateWeather() {
+            try {
+                const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.77,24.99&longitude=3.08,121.30&current_weather=true");
+                const data = await res.json();
+                const wFr = data[0].current_weather; const wTw = data[1].current_weather;
+                const getIcon = (code) => { if(code===0)return"☀️"; if(code<=3)return"⛅"; if(code<=48)return"🌫️"; if(code<=67)return"🌧️"; if(code<=95)return"⛈️"; return"🌡️"; };
+                document.getElementById('weather-fr').innerText = `${getIcon(wFr.weathercode)} ${Math.round(wFr.temperature)}°C`;
+                document.getElementById('weather-tw').innerText = `${getIcon(wTw.weathercode)} ${Math.round(wTw.temperature)}°C`;
+            } catch (e) {}
         }
+        updateWeather(); setInterval(updateWeather, 1800000);
 
-        window.sendBisou = function() {
-            const btn = document.getElementById('bisou-btn'); btn.style.transform = "scale(1.3)"; setTimeout(() => btn.style.transform = "scale(1)", 200);
-            addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
-            sendNtfy("💋 Bisou envoyé !", "kiss,heart", "high"); showLocalNotif("💋 Bisou envoyé !");
+        // --- COUNTDOWN ---
+        const dateDepart = new Date("2026-02-14T00:00:00").getTime();
+        const dateRetour = new Date("2026-07-05T00:00:00").getTime(); 
+        function updateCountdown() {
+            const now = new Date().getTime();
+            let targetDate, titleText, iconText;
+            if (now < dateDepart) { targetDate = dateDepart; titleText = "DÉPART DANS"; iconText = "❤️"; } 
+            else { targetDate = dateRetour; titleText = "RETROUVAILLES DANS"; iconText = "✈️"; }
+            const dist = targetDate - now;
+            const days = Math.floor(dist / (1000*60*60*24));
+            const hours = Math.floor((dist % (1000*60*60*24))/(1000*60*60));
+            const minutes = Math.floor((dist % (1000*60*60))/(1000*60));
+            document.getElementById('days-count').innerText = days;
+            document.getElementById('sub-count').innerText = `${hours} h et ${minutes} min`;
+            document.getElementById('countdown-title').innerText = titleText;
+            document.getElementById('prog-icon').innerText = iconText;
+            const startDate = new Date("2026-01-01T00:00:00").getTime();
+            const total = targetDate - startDate; const current = now - startDate;
+            let percent = (current/total)*100; if(percent<0)percent=0; if(percent>100)percent=100;
+            document.getElementById("prog-fill").style.width = percent + "%";
+            document.getElementById("prog-icon").style.left = `calc(${percent}% - 12px)`;
         }
+        setInterval(updateCountdown, 1000); updateCountdown();
 
+        // --- MOODS ---
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
@@ -328,95 +436,92 @@
             setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text, [currentUser+"_outfit"]: (outfitId !== undefined ? outfitId : 5) }, { merge: true });
             sendNtfy(`${emoji} Nouveau statut : ${text}`, "partly_sunny", "low");
         }
-        window.customMood = function() {
-            const text = prompt("Ta phrase :", "Je pense à toi"); if(!text) return;
-            updateMood("✏️", text, 5);
-        }
+        window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
-        window.addLetter = function() {
-            const title = document.getElementById("letter-title").value; const content = document.getElementById("letter-content").value;
-            if(!title || !content) return;
-            addDoc(collection(db, "letters"), { title: title, content: content, by: currentUser, timestamp: serverTimestamp() });
-            document.getElementById("letter-title").value = ""; document.getElementById("letter-content").value = "";
-        }
-        window.toggleLetter = function(id) {
-            const el = document.getElementById("letter-content-"+id); const item = document.getElementById("letter-item-"+id);
-            if(el.style.display === "block") { el.style.display = "none"; item.classList.remove("open"); } 
-            else { el.style.display = "block"; item.classList.add("open"); }
-        }
+        // --- BOÎTE AUX LETTRES ---
+        let allLetters = [];
         const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
         onSnapshot(qLetters, (snapshot) => {
-            const list = document.getElementById("letters-list"); list.innerHTML = "";
-            snapshot.forEach(doc => {
-                const l = doc.data();
-                const div = document.createElement("div"); div.className = "letter-item"; div.id = "letter-item-"+doc.id;
-                div.onclick = (e) => { if(e.target.tagName !== 'BUTTON') toggleLetter(doc.id) };
-                const tagColor = l.by === 'fr' ? 'var(--blue)' : 'var(--pink)';
-                const tagText = l.by === 'fr' ? 'Théo' : 'Elise';
-                div.innerHTML = `<div class="letter-header"><span>${l.title}</span><span class="letter-tag" style="background:${tagColor}">De ${tagText}</span><button onclick="deleteLetter('${doc.id}', event)" style="border:none;background:none;color:#faa;">✕</button></div><div class="letter-content" id="letter-content-${doc.id}">${l.content}</div>`;
-                list.appendChild(div);
-            });
+            allLetters = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            updateMailboxView();
         });
+        window.showTab = function(tabName) {
+            document.getElementById('tab-inbox').classList.toggle('active', tabName === 'inbox');
+            document.getElementById('tab-sent').classList.toggle('active', tabName === 'sent');
+            document.getElementById('list-inbox').style.display = tabName === 'inbox' ? 'block' : 'none';
+            document.getElementById('list-sent').style.display = tabName === 'sent' ? 'block' : 'none';
+        }
+        window.updateMailboxView = function() {
+            const listInbox = document.getElementById("list-inbox"); const listSent = document.getElementById("list-sent");
+            listInbox.innerHTML = ""; listSent.innerHTML = "";
+            allLetters.forEach(l => {
+                const div = document.createElement("div"); div.className = `envelope-item ${(!l.read && l.by !== currentUser) ? 'unread' : ''}`;
+                div.innerHTML = `<div style="margin-right:15px; font-size:1.5rem;">${l.read ? '📩' : '✉️'}</div><div style="flex:1;"><div style="font-weight:bold; font-size:0.9rem;">${l.title}</div><div style="font-size:0.7rem; color:#888;">${l.by === currentUser ? 'Envoyé à l\'autre' : 'De: ' + (l.by==='fr'?'Théo':'Elise')}</div></div>${l.by === currentUser ? `<button onclick="deleteLetter('${l.id}', event)" style="border:none;background:none;color:#faa;">✕</button>` : ''}`;
+                div.onclick = (e) => { if(e.target.tagName === 'BUTTON') return; openLetterModal(l); };
+                if(l.by === currentUser) listSent.appendChild(div); else listInbox.appendChild(div);
+            });
+        }
+        window.openLetterModal = function(l) {
+            document.getElementById('letter-modal').style.display = "flex";
+            document.getElementById('modal-letter-title').innerText = l.title; document.getElementById('modal-letter-content').innerText = l.content;
+            if(l.by !== currentUser && !l.read) updateDoc(doc(db, "letters", l.id), { read: true });
+        }
+        window.closeLetter = function() { document.getElementById('letter-modal').style.display = "none"; }
+        window.addLetter = function() {
+            const title = document.getElementById("letter-title").value; const content = document.getElementById("letter-content").value; if(!title || !content) return;
+            addDoc(collection(db, "letters"), { title: title, content: content, by: currentUser, read: false, timestamp: serverTimestamp() });
+            document.getElementById("letter-title").value = ""; document.getElementById("letter-content").value = ""; sendNtfy("💌 Nouvelle lettre reçue !", "email", "low");
+        }
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db, "letters", id)); }
 
-        // --- GALERIE (MISE A JOUR INSTANTANÉE) ---
+        // --- GALERIE POLAROID & TODO ---
         const compressImage = async (file, { quality = 0.5, type = file.type }) => {
-            const imageBitmap = await createImageBitmap(file);
-            const canvas = document.createElement('canvas'); canvas.width = imageBitmap.width * 0.5; canvas.height = imageBitmap.height * 0.5;
+            const imageBitmap = await createImageBitmap(file); const canvas = document.createElement('canvas'); canvas.width = imageBitmap.width * 0.5; canvas.height = imageBitmap.height * 0.5;
             const ctx = canvas.getContext('2d'); ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
             return canvas.toDataURL(type, quality);
         };
         window.handlePhotoUpload = async function(input, role) {
-            if(role !== currentUser && !confirm("Ajouter une photo pour l'autre ?")) return;
+            if(role !== currentUser && !confirm("Ajouter photo ?")) return;
             const file = input.files[0]; if(!file) return;
+            // Fermer la galerie si elle est ouverte
+            document.getElementById('gallery-modal').style.display = "none";
             const base64 = await compressImage(file, { quality: 0.6, type: 'image/jpeg' });
-            
-            // UPDATE INSTANTANÉ DE LA BULLE
-            document.getElementById('bubble-img-'+role).src = base64;
-            
+            // Mise à jour instantanée du polaroid
+            document.getElementById(`polaroid-img-${role}`).src = base64;
             await addDoc(collection(db, "photos"), { url: base64, by: role, timestamp: serverTimestamp() });
-            input.value = ""; sendNtfy("📸 Nouvelle photo ajoutée !", "camera", "low");
+            sendNtfy("📸 Nouvelle photo !", "camera", "low");
         }
         const qPhotos = query(collection(db, "photos"), orderBy("timestamp", "desc"));
         let allPhotos = [];
         onSnapshot(qPhotos, (snapshot) => {
             allPhotos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             const lastFr = allPhotos.find(p => p.by === 'fr'); const lastTw = allPhotos.find(p => p.by === 'tw');
-            if(lastFr) document.getElementById('bubble-img-fr').src = lastFr.url;
-            if(lastTw) document.getElementById('bubble-img-tw').src = lastTw.url;
+            if(lastFr) document.getElementById('polaroid-img-fr').src = lastFr.url;
+            if(lastTw) document.getElementById('polaroid-img-tw').src = lastTw.url;
         });
         window.openGallery = function(role) {
-            const modal = document.getElementById('gallery-modal'); const grid = document.getElementById('modal-grid');
-            document.getElementById('modal-title').innerText = role === 'fr' ? "Galerie de Théo" : "Galerie d'Elise"; grid.innerHTML = "";
+            const modal = document.getElementById('gallery-modal'); const grid = document.getElementById('modal-grid'); grid.innerHTML = "";
             const userPhotos = allPhotos.filter(p => p.by === role);
-            userPhotos.forEach(p => {
-                const div = document.createElement('div'); div.innerHTML = `<img src="${p.url}" class="modal-img"><div class="modal-del" onclick="deletePhoto('${p.id}')">Supprimer</div>`;
-                grid.appendChild(div);
-            });
+            userPhotos.forEach(p => { const div = document.createElement('div'); div.innerHTML = `<img src="${p.url}" style="width:100%; border-radius:5px;"><div style="text-align:center;color:red;font-size:0.8rem;" onclick="deletePhoto('${p.id}')">Supprimer</div>`; grid.appendChild(div); });
             modal.style.display = "block";
         }
         window.closeGallery = function() { document.getElementById('gallery-modal').style.display = "none"; }
         window.deletePhoto = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db, "photos", id)); }
 
-        // --- TODO LIST (ALIGNEMENT CORRIGÉ) ---
         const qTodos = query(collection(db, "todos"), orderBy("created", "desc"));
         onSnapshot(qTodos, (snapshot) => {
             const list = document.getElementById('todo-list'); list.innerHTML = "";
             snapshot.forEach(docSnap => {
-                const todo = docSnap.data();
-                const div = document.createElement('div'); div.className = "todo-item";
+                const todo = docSnap.data(); const div = document.createElement('div'); div.className = "todo-item";
                 div.innerHTML = `<input type="checkbox" class="todo-check" ${todo.done ? 'checked' : ''} onchange="toggleTodo('${docSnap.id}', this.checked)"><span class="todo-text ${todo.done ? 'done' : ''}">${todo.text}</span><button class="todo-del" onclick="deleteTodo('${docSnap.id}')">✕</button>`;
                 list.appendChild(div);
             });
         });
-        window.addTodo = function() {
-            const text = document.getElementById('todo-input').value; if(!text) return;
-            addDoc(collection(db, "todos"), { text: text, done: false, created: serverTimestamp() });
-            document.getElementById('todo-input').value = "";
-        }
+        window.addTodo = function() { const text = document.getElementById('todo-input').value; if(!text) return; addDoc(collection(db, "todos"), { text: text, done: false, created: serverTimestamp() }); document.getElementById('todo-input').value = ""; }
         window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
         window.deleteTodo = function(id) { deleteDoc(doc(db, "todos", id)); }
 
+        // --- LIVRES ---
         const qBooks = query(collection(db, "books"), orderBy("created", "desc"));
         onSnapshot(qBooks, (snapshot) => {
             const list = document.getElementById("book-list"); list.innerHTML = "";
@@ -431,7 +536,7 @@
                 };
                 const canEditFr = currentUser === 'fr' ? '' : 'disabled'; const canEditTw = currentUser === 'tw' ? '' : 'disabled';
                 const div = document.createElement('div'); div.className = "book-item";
-                div.innerHTML = `<div class="book-title"><span>${book.title}</span><button style="border:none; background:none; color:#ddd; font-size:0.8rem; cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div><div class="book-total-pages">${totalPages} pages</div><div class="user-row"><div class="row-header"><span class="user-label" style="color:var(--blue)">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div><div class="user-row" style="border:none;"><div class="row-header"><span class="user-label" style="color:var(--pink)">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div>`;
+                div.innerHTML = `<div class="book-title"><span>${book.title}</span><button style="border:none; background:none; color:#ddd; font-size:0.8rem; cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div><div class="book-total-pages">${totalPages} pages</div><div class="user-row"><div class="row-header"><span style="color:var(--blue);font-weight:bold;font-size:0.8rem;">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div><div class="user-row" style="border:none;"><div class="row-header"><span style="color:var(--pink);font-weight:bold;font-size:0.8rem;">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div>`;
                 list.appendChild(div);
             });
         });
@@ -440,13 +545,22 @@
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
         window.deleteBook = function(id) { if(confirm("Supprimer ce livre ?")) deleteDoc(doc(db, "books", id)); }
 
-        function showLocalNotif(msg) { const notif = document.getElementById("notif"); notif.innerHTML = msg; notif.classList.add("show"); setTimeout(() => notif.classList.remove("show"), 3000); }
+        // --- UTILS ---
+        function sendNtfy(message, tags, priority = 'default') {
+            const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
+            const senderName = currentUser === 'tw' ? "Elise" : "Theo";
+            fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': `Love Travel (${senderName})`, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8' } }).catch(e => console.log(e));
+        }
+        window.sendBisou = function() {
+            const btn = document.getElementById('bisou-btn'); 
+            addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
+            sendNtfy("💋 Bisou envoyé !", "kiss,heart", "high");
+            const notif = document.getElementById("notif"); notif.classList.add("show"); setTimeout(() => notif.classList.remove("show"), 3000);
+        }
         function updateClocks() { const now = new Date(); document.getElementById('clock-fr').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' }); document.getElementById('clock-tw').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit' }); } setInterval(updateClocks, 1000); updateClocks();
-        const startDate = new Date("2026-02-14T00:00:00").getTime(); const endDate = new Date("2026-07-10T00:00:00").getTime();
-        function updateCountdown() { const now = new Date().getTime(); const dist = endDate - now; const days = Math.floor(dist / (1000 * 60 * 60 * 24)); const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); const minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60)); document.getElementById('days-count').innerText = days; document.getElementById('sub-count').innerText = `${hours} h et ${minutes} min`; const total = endDate - startDate; const current = now - startDate; let percent = (current / total) * 100; if (percent < 0) percent = 0; if (percent > 100) percent = 100; document.getElementById("prog-fill").style.width = percent + "%"; document.getElementById("plane").style.left = `calc(${percent}% - 24px)`; } setInterval(updateCountdown, 1000); updateCountdown();
-
+        
         const qBisou = query(collection(db, "actions"), orderBy("timestamp", "desc"), limit(1));
-        onSnapshot(qBisou, (snapshot) => { if(!snapshot.empty) { const action = snapshot.docs[0].data(); if (!action.timestamp) return; const diff = Math.abs(Date.now() - action.timestamp.toMillis()); if (diff < 60000 && action.from !== currentUser) { showLocalNotif(`💋 <b>${action.from === 'fr' ? 'Théo' : 'Elise'}</b> t'envoie un bisou !`); if(navigator.vibrate) navigator.vibrate([200, 100, 200, 500]); } } });
+        onSnapshot(qBisou, (snapshot) => { if(!snapshot.empty) { const action = snapshot.docs[0].data(); if (!action.timestamp) return; const diff = Math.abs(Date.now() - action.timestamp.toMillis()); if (diff < 60000 && action.from !== currentUser) { document.getElementById("notif").innerHTML = `💋 <b>${action.from === 'fr' ? 'Théo' : 'Elise'}</b> t'envoie un bisou !`; document.getElementById("notif").classList.add("show"); if(navigator.vibrate) navigator.vibrate([200, 100, 200, 500]); setTimeout(() => document.getElementById("notif").classList.remove("show"), 4000); } } });
     </script>
 </body>
 </html>
