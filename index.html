@@ -103,21 +103,26 @@
         .q-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
         .q-action-btn { font-size: 0.7rem; border: none; background: none; cursor: pointer; text-decoration: underline; color: #555; }
 
-        /* JEUX - V42 REDESIGN */
+        /* JEUX - V43 REDESIGN */
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
-        .game-btn { flex: 1; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-weight: bold; cursor: pointer; transition: 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; box-shadow:0 4px 10px rgba(0,0,0,0.05); }
+        .game-btn { 
+            flex: 1; padding: 12px; border-radius: 15px; border: 1px solid var(--border); 
+            background: var(--bg-card); color: var(--text-main); font-weight: bold; cursor: pointer; 
+            transition: 0.2s; text-align: center; font-size: 0.9rem;
+            box-shadow: 0 4px 5px rgba(0,0,0,0.05);
+        }
         .game-btn:active { transform:scale(0.95); }
-        .game-btn span { font-size:1.5rem; }
         .game-btn.active-game { border: 2px solid var(--pink-dark); background: #fff0f5; color: var(--pink-dark); }
+        .stop-btn { color:#ff4b6e; border-color:#ff4b6e; background: #fff0f5; }
 
         .game-block { display: none; background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 20px; animation: slideDown 0.3s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         
         .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed var(--border); padding-bottom: 5px; }
-        .game-title-text { font-weight: 800; text-transform: uppercase; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        .game-title-text { font-weight: 800; text-transform: uppercase; color: var(--text-main); display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
         .game-close-btn { background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--text-sub); }
         
-        .score-pill { background: var(--bg-card); border: 1px solid var(--border); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: var(--pink-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .score-pill { background: var(--bg-card); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; color: var(--pink-dark); }
         .status-msg { text-align: center; font-style: italic; color: var(--text-sub); margin: 10px 0; font-size: 0.9rem; min-height: 20px; }
 
         /* HISTORY SCROLL */
@@ -301,16 +306,17 @@
         <div class="card" id="card-games">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div></div>
             <div class="card-content">
-                <div class="game-score-card"><span id="score-fr">Théo: 0</span> <span>VS</span> <span id="score-tw">Elise: 0</span></div>
                 
                 <div class="game-selector">
-                    <button onclick="toggleGame('pendu')" class="game-btn"><span>🔤</span> Pendu</button>
-                    <button onclick="toggleGame('p4')" class="game-btn"><span>🔴</span> Puissance 4</button>
+                    <button onclick="toggleGame('pendu')" class="game-btn">Pendu</button>
+                    <button onclick="toggleGame('p4')" class="game-btn">Puissance 4</button>
+                    <button onclick="initGame('none')" class="game-btn stop-btn">Arrêter</button>
                 </div>
                 
                 <div id="pendu-box" class="game-block">
                     <div class="game-header"><div class="game-title-text">🔤 Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div>
-                    <div class="score-pill" id="score-pendu" style="margin:0 auto 10px auto; width:fit-content;">---</div>
+                    <div id="score-pendu" style="font-size:0.8rem;text-align:center;margin-bottom:5px;font-weight:bold;color:var(--text-sub);">---</div>
+                    
                     <canvas id="pendu-canvas" width="200" height="150"></canvas>
                     <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
                     <div id="pendu-status" class="status-msg">En attente...</div>
@@ -326,7 +332,11 @@
                 </div>
 
                 <div id="p4-box" class="game-block">
-                    <div class="game-header"><div class="game-title-text">🔴 Puissance 4</div><button class="game-close-btn" onclick="toggleGame('p4')">✕</button></div>
+                    <div class="game-header">
+                        <div class="game-title-text">🔴 Puissance 4</div>
+                        <div class="score-pill" id="score-p4">🏆 Théo: 0 | Elise: 0</div>
+                        <button class="game-close-btn" onclick="toggleGame('p4')">✕</button>
+                    </div>
                     <div id="p4-status" class="status-msg">En attente...</div>
                     <button id="p4-restart-btn" onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--pink);" disabled>Nouvelle Partie</button>
                     <div class="p4-grid" id="p4-grid"></div>
@@ -338,10 +348,10 @@
 
         <div class="card" id="card-music">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎧</span> Vibe</div></div>
-            <div class="card-content"><iframe style="border-radius:15px; width:100%; height:300px; border:none;" src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" allowfullscreen></iframe></div>
+            <div class="card-content"><iframe width="100%" height="315" src="https://www.youtube.com/embed/videoseries?si=adn2bkxfdoMcELcC&amp;list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius:15px;"></iframe></div>
         </div>
 
-        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v42 • janvier 2026</div></div>
+        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v43 • janvier 2026</div></div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
@@ -504,7 +514,7 @@
         // P4
         let activeP4 = null;
         onSnapshot(doc(db, "games", "p4_active"), (s) => { activeP4 = s.exists() ? s.data() : null; if(activeP4) renderP4(activeP4); else document.getElementById('p4-status').innerText = "Aucune partie en cours"; });
-        onSnapshot(doc(db, "games", "p4_scores"), (s) => { const sc = s.exists() ? s.data() : {fr:0, tw:0}; document.getElementById('score-fr').innerText = `Théo: ${sc.fr}`; document.getElementById('score-tw').innerText = `Elise: ${sc.tw}`; });
+        onSnapshot(doc(db, "games", "p4_scores"), (s) => { const sc = s.exists() ? s.data() : {fr:0, tw:0}; document.getElementById('score-p4').innerText = `🏆 Théo: ${sc.fr} | Elise: ${sc.tw}`; });
         onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(5)), (s) => {
             const list = document.getElementById('p4-history-list'); list.innerHTML = "";
             s.forEach(d => { const h = d.data(); list.innerHTML += `<div class="hist-row"><span>${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`; });
@@ -574,9 +584,8 @@
             addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
             sendNtfy(`💋 Bisou envoyé ! (${getCurrentTime(currentUser)})`, "kiss,heart", "urgent");
             const n = document.getElementById("notif"); n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),3000);
-            if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 100]); // V42 Vibe
+            if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // V43 Vibe: Very Short & Cute
         }
-        
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
