@@ -32,6 +32,9 @@
             --input-bg: #fafafa;
             --shadow: rgba(0,0,0,0.05);
             --dot-pattern: #ffe4e1;
+            
+            /* Highlight Voyage */
+            --voyage-border: linear-gradient(135deg, var(--blue), var(--pink));
         }
 
         body.dark-mode {
@@ -91,7 +94,6 @@
         /* CARTE VOYAGE (DESIGN ÉPURÉ V26) */
         .card.voyage-card {
             padding: 25px 20px;
-            /* Plus de bordure colorée en haut */
         }
 
         /* TABLEAU DE BORD VOYAGE */
@@ -149,16 +151,23 @@
         .small-time { font-size: 1rem; font-weight: 600; color: var(--text-main); }
 
         /* BARRE PROGRESSION EXPLIQUEE */
-        .progress-container-modern { margin-top: 15px; }
+        .progress-container-modern { margin-top: 15px; position: relative; }
         .dates-row {
             display: flex; justify-content: space-between; font-size: 0.7rem; 
             font-weight: bold; color: var(--text-sub); margin-bottom: 5px;
         }
         .prog-bar-mini {
-            height: 8px; background: var(--border); border-radius: 10px; position: relative; width: 100%; overflow: hidden;
+            height: 8px; background: var(--border); border-radius: 10px; position: relative; width: 100%; 
         }
         .prog-fill-mini {
             height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%;
+            transition: width 1s ease;
+        }
+        /* PETIT COEUR SUR LA BARRE */
+        .prog-heart {
+            position: absolute; top: -6px; font-size: 14px; /* Petit smiley */
+            transform: translateX(-50%); transition: left 1s ease;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
         }
 
         /* TITRES ACCORDÉON */
@@ -332,6 +341,7 @@
                         </div>
                         <div class="prog-bar-mini">
                             <div class="prog-fill-mini" id="prog-fill"></div>
+                            <div class="prog-heart" id="prog-heart">🩷</div>
                         </div>
                     </div>
                 </div>
@@ -448,7 +458,7 @@
 
         <div class="app-footer">
             <img src="icon.jpg" class="footer-logo" alt="Logo">
-            <div style="font-size:0.7rem; color:var(--text-sub); margin-top:5px;">Fait avec ❤️ pour 2026</div>
+            <div style="font-size:0.7rem; color:var(--text-sub); margin-top:5px;">Love Travel v26 • janvier 2026</div>
         </div>
 
     </div>
@@ -566,32 +576,55 @@
         }
         updateWeather(); setInterval(updateWeather, 1800000);
 
-        // DATE PRECISE AVEC TIMEZONE
-        const dateDepart = new Date("2026-02-14T00:00:00+01:00").getTime(); // 14 Fev Minuit FR
-        const dateRetour = new Date("2026-07-05T08:00:00+02:00").getTime(); // 05 Juil 8h FR (Été)
+        // DATE PRECISE AVEC TIMEZONE (V27 FIX)
+        // Départ : 14 Fev 2026 à 00:00 FR
+        const dateDepart = new Date("2026-02-14T00:00:00+01:00").getTime(); 
+        // Retour : 05 Juil 2026 à 08:00 FR (heure d'été +02:00)
+        const dateRetour = new Date("2026-07-05T08:00:00+02:00").getTime(); 
 
         function updateCountdown() {
             const now = new Date().getTime();
             let targetDate, titleText, iconText;
-            if (now < dateDepart) { targetDate = dateDepart; titleText = "DÉPART DANS"; iconText = "❤️"; } 
-            else { targetDate = dateRetour; titleText = "RETROUVAILLES DANS"; iconText = "✈️"; }
             
+            // LOGIQUE DE PROGRESSION CORRIGÉE V27
+            // La barre ne représente QUE la période de séparation (14 Fev -> 05 Juil)
+            const separationDuration = dateRetour - dateDepart;
+            
+            let percent = 0;
+            if (now < dateDepart) {
+                // Avant le départ : 0%
+                percent = 0;
+                targetDate = dateDepart; titleText = "DÉPART DANS"; iconText = "❤️";
+            } else if (now > dateRetour) {
+                // Après le retour : 100%
+                percent = 100;
+                targetDate = dateRetour; titleText = "RETROUVAILLES !"; iconText = "✈️";
+            } else {
+                // Pendant la séparation
+                const timePassed = now - dateDepart;
+                percent = (timePassed / separationDuration) * 100;
+                targetDate = dateRetour; titleText = "RETROUVAILLES DANS"; iconText = "✈️";
+            }
+            
+            // Bornes 0-100
+            if(percent < 0) percent = 0;
+            if(percent > 100) percent = 100;
+
             const dist = targetDate - now;
-            const days = Math.floor(dist / (1000*60*60*24));
-            const hours = Math.floor((dist % (1000*60*60*24))/(1000*60*60));
-            const minutes = Math.floor((dist % (1000*60*60))/(1000*60));
+            // Si c'est passé, on met 0
+            const displayDist = dist > 0 ? dist : 0;
+
+            const days = Math.floor(displayDist / (1000*60*60*24));
+            const hours = Math.floor((displayDist % (1000*60*60*24))/(1000*60*60));
+            const minutes = Math.floor((displayDist % (1000*60*60))/(1000*60));
             
             document.getElementById('days-count').innerText = days;
-            // GRAMMAIRE INTELLIGENTE : JOUR vs JOURS
             document.getElementById('days-unit').innerText = (days <= 1) ? "JOUR" : "JOURS";
-            
             document.getElementById('sub-count').innerText = `${hours} h et ${minutes} min`;
             document.getElementById('countdown-title').innerText = titleText;
             
-            const startDate = new Date("2026-01-01T00:00:00").getTime();
-            const total = targetDate - startDate; const current = now - startDate;
-            let percent = (current/total)*100; if(percent<0)percent=0; if(percent>100)percent=100;
             document.getElementById("prog-fill").style.width = percent + "%";
+            document.getElementById("prog-heart").style.left = percent + "%";
         }
         setInterval(updateCountdown, 1000); updateCountdown();
 
