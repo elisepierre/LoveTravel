@@ -73,7 +73,7 @@
         .prog-fill-mini { height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%; transition: width 1s ease; }
         .prog-heart { position: absolute; top: -6px; font-size: 14px; transform: translateX(-50%); transition: left 1s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
 
-        /* MOODS */
+        /* MOODS & OTHERS */
         .mood-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
         .mood-person { width: 48%; text-align: center; position: relative; }
         .avatar-frame { width: 100%; height: 140px; display: flex; align-items: flex-end; justify-content: center; position: relative; border-bottom: 1px solid var(--border); }
@@ -102,29 +102,26 @@
         .q-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
         .q-action-btn { font-size: 0.7rem; border: none; background: none; cursor: pointer; text-decoration: underline; color: #555; }
 
-        /* JEUX - V40 REDESIGN */
-        .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
-        .game-btn { flex: 1; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-weight: bold; cursor: pointer; transition: 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; box-shadow:0 4px 10px rgba(0,0,0,0.05); }
-        .game-btn:active { transform:scale(0.95); }
-        .game-btn span { font-size:1.5rem; }
-        .stop-btn { color:#ff4b6e; border-color:#ff4b6e; background: #fff0f5; }
-
-        .game-board-container { text-align: center; background: var(--input-bg); padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-top:10px; }
-        .game-score-card { 
-            background: linear-gradient(135deg, var(--blue), var(--pink)); color:white;
-            padding: 10px; border-radius: 12px; margin-bottom: 15px; text-align: center;
-            display: flex; justify-content: space-around; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+        /* JEUX - V41 REDESIGN */
+        .game-block { background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 20px; }
+        .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed var(--border); padding-bottom: 5px; }
+        .game-title-text { font-weight: 800; text-transform: uppercase; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
         
+        .score-pill { background: var(--bg-card); border: 1px solid var(--border); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: var(--pink-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .status-msg { text-align: center; font-style: italic; color: var(--text-sub); margin: 10px 0; font-size: 0.9rem; min-height: 20px; }
+
+        /* HISTORY SCROLL */
+        .history-box { margin-top: 15px; max-height: 100px; overflow-y: auto; font-size: 0.75rem; border-top: 1px solid var(--border); padding-top: 10px; }
+        .hist-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: var(--text-sub); }
+        .hist-win { color: #2ecc71; font-weight: bold; }
+        .hist-loose { color: #e74c3c; font-weight: bold; }
+
         /* PENDU */
-        #pendu-canvas { border-bottom: 2px solid var(--text-main); margin-bottom: 10px; width: 200px; height: 150px; }
-        .pendu-word { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin: 15px 0; color: var(--text-main); }
+        #pendu-canvas { display: block; margin: 0 auto; border-bottom: 2px solid var(--text-main); margin-bottom: 10px; width: 200px; height: 150px; }
+        .pendu-word { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin: 15px 0; color: var(--text-main); text-align: center; }
         .keyboard { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
         .key-btn { width: 30px; height: 35px; border: 1px solid var(--border); border-radius: 5px; background: white; cursor: pointer; font-weight: bold; color: #333; }
         .key-btn:disabled { opacity: 0.3; background: #ddd; }
-        .pendu-history { margin-top: 20px; text-align: left; max-height: 150px; overflow-y: auto; border-top: 1px dashed var(--border); padding-top: 10px; }
-        .history-item { font-size: 0.8rem; margin-bottom: 5px; padding: 5px; background: var(--bg-card); border-radius: 5px; display: flex; justify-content: space-between; }
-        .win { border-left: 3px solid #2ecc71; } .loose { border-left: 3px solid #e74c3c; }
         
         /* PUISSANCE 4 */
         .p4-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #34495e; padding: 10px; border-radius: 10px; max-width: 300px; margin: 0 auto; }
@@ -294,35 +291,41 @@
         <div class="card" id="card-games">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div></div>
             <div class="card-content">
-                <div class="game-score-card"><span id="score-fr">Théo: 0</span> <span>VS</span> <span id="score-tw">Elise: 0</span></div>
                 
-                <div class="game-selector">
-                    <button onclick="initGame('pendu')" class="game-btn"><span>🔤</span> Pendu</button>
-                    <button onclick="initGame('p4')" class="game-btn"><span>🔴</span> Puissance 4</button>
-                    <button onclick="initGame('none')" class="game-btn stop-btn"><span>✕</span> Arrêter</button>
-                </div>
-                
-                <div id="game-area" class="game-board-container" style="display:none;">
-                    <h3 id="game-status" style="margin:0 0 10px; font-size:0.9rem; color:var(--text-main);">...</h3>
-                    
-                    <div id="pendu-ui" style="display:none;">
+                <div class="game-block">
+                    <div class="game-header">
+                        <div class="game-title-text">🔤 Pendu</div>
+                        <div class="score-pill" id="score-pendu">---</div>
+                    </div>
+                    <div id="pendu-ui">
                         <canvas id="pendu-canvas" width="200" height="150"></canvas>
                         <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
-                        <div id="pendu-keyboard" class="keyboard"></div>
+                        <div id="game-status" class="status-msg">En attente...</div>
+                        
                         <div id="pendu-setup" style="margin-top:10px;">
                             <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)">
-                            <button onclick="startPendu()" class="btn-action">Lancer</button>
+                            <button onclick="startPendu()" class="btn-action" style="margin-top:5px;width:100%">Lancer</button>
                         </div>
-                        <div class="pendu-history" id="pendu-history">
-                            <small style="color:var(--text-sub);">Historique des mots :</small>
-                            <div id="pendu-history-list"></div>
-                        </div>
-                    </div>
-
-                    <div id="p4-ui" style="display:none;">
-                        <div class="p4-grid" id="p4-grid"></div>
+                        
+                        <div id="pendu-keyboard" class="keyboard" style="display:none;"></div>
+                        
+                        <div class="history-box" id="pendu-history-list"></div>
                     </div>
                 </div>
+
+                <div class="game-block">
+                    <div class="game-header">
+                        <div class="game-title-text">🔴 Puissance 4</div>
+                        <div class="score-pill" id="score-p4">🏆 Théo: 0 | Elise: 0</div>
+                    </div>
+                    <div id="p4-ui">
+                        <div id="p4-status" class="status-msg">En attente...</div>
+                        <button onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--pink);">Nouvelle Partie</button>
+                        <div class="p4-grid" id="p4-grid"></div>
+                        <div class="history-box" id="p4-history-list"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -331,7 +334,7 @@
             <div class="card-content"><iframe style="border-radius:15px; width:100%; height:300px; border:none;" src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" allowfullscreen></iframe></div>
         </div>
 
-        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v40 • janvier 2026</div></div>
+        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v41 • janvier 2026</div></div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
@@ -428,99 +431,142 @@
         window.editQ = function(key) { getDoc(doc(db, "daily_answers", key)).then(snap => { if(snap.exists()) { document.getElementById('q-input').value = snap.data()[currentUser]; deleteQ(key); } }); }
 
         // --- JEUX ---
-        onSnapshot(doc(db, "games", "scores"), (s) => { const sc = s.exists() ? s.data() : { fr:0, tw:0 }; document.getElementById('score-fr').innerText = `Théo: ${sc.fr}`; document.getElementById('score-tw').innerText = `Elise: ${sc.tw}`; });
-        onSnapshot(doc(db, "games", "active"), (docSnap) => {
-            const game = docSnap.exists() ? docSnap.data() : { type: 'none' };
-            document.getElementById('game-area').style.display = game.type === 'none' ? 'none' : 'block';
-            document.getElementById('pendu-ui').style.display = 'none'; document.getElementById('p4-ui').style.display = 'none';
-            if(game.type === 'pendu') renderPendu(game); if(game.type === 'p4') renderP4(game);
+        // 1. PENDU LOGIC
+        let activePendu = null;
+        onSnapshot(doc(db, "games", "pendu_active"), (s) => { 
+            activePendu = s.exists() ? s.data() : { state:'setup' };
+            renderPendu(activePendu);
         });
-        window.initGame = function(type) {
-            let data = { type: type };
-            if(type === 'p4') { data.board = Array(42).fill(0); data.turn = currentUser; data.winner = null; } 
-            else if(type === 'pendu') { data.state = 'setup'; data.mistakes = 0; data.guessed = []; data.word = ""; data.creator = ""; } 
-            setDoc(doc(db, "games", "active"), data);
-        }
-        let activeGame = null; onSnapshot(doc(db, "games", "active"), (s) => { activeGame = s.data(); });
         
-        // PENDU
-        // Historique Listener
-        onSnapshot(query(collection(db, "games_history"), orderBy("timestamp", "desc"), limit(10)), (snapshot) => {
+        onSnapshot(query(collection(db, "games_pendu_history"), orderBy("timestamp", "desc"), limit(5)), (s) => {
             const list = document.getElementById('pendu-history-list'); list.innerHTML = "";
-            snapshot.forEach(d => {
-                const data = d.data();
-                const item = document.createElement('div');
-                item.className = "history-item " + (data.result === 'win' ? 'win' : 'loose');
-                item.innerHTML = `<b>${data.setter==='fr'?'Théo':'Elise'}</b> a fait deviner <b>${data.word}</b> (${data.result === 'win' ? 'Trouvé' : 'Raté'})`;
-                list.appendChild(item);
+            s.forEach(d => {
+                const h = d.data();
+                const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose';
+                const setter = h.setter === 'fr' ? 'Théo' : 'Elise';
+                list.innerHTML += `<div class="hist-row"><span>${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`;
             });
         });
 
         function renderPendu(game) {
-            document.getElementById('pendu-ui').style.display='block'; const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('game-status');
-            ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.strokeStyle= getComputedStyle(document.body).getPropertyValue('--text-main'); ctx.beginPath();
-            if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} if(game.mistakes>2){ctx.lineTo(130,20);} if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);}
+            const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('game-status');
+            const mainColor = getComputedStyle(document.body).getPropertyValue('--text-main');
+            ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.strokeStyle = mainColor; ctx.beginPath();
+            
+            // DESSIN DU BONHOMME
+            if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} 
+            if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} 
+            if(game.mistakes>2){ctx.lineTo(130,20);} 
+            if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);}
             ctx.stroke(); 
             if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} 
             if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} 
-            ctx.beginPath(); if(game.mistakes>6){ctx.moveTo(130,80);ctx.lineTo(110,95);} if(game.mistakes>7){ctx.moveTo(130,80);ctx.lineTo(150,95);} if(game.mistakes>8){ctx.moveTo(130,110);ctx.lineTo(115,135);} if(game.mistakes>9){ctx.moveTo(130,110);ctx.lineTo(145,135);} ctx.stroke();
-            if(game.mistakes>10){ctx.font="20px Arial";ctx.fillStyle=ctx.strokeStyle;ctx.fillText("X X",122,60);} 
+            ctx.beginPath(); 
+            if(game.mistakes>6){ctx.moveTo(130,80);ctx.lineTo(110,95);} 
+            if(game.mistakes>7){ctx.moveTo(130,80);ctx.lineTo(150,95);} 
+            if(game.mistakes>8){ctx.moveTo(130,110);ctx.lineTo(115,135);} 
+            if(game.mistakes>9){ctx.moveTo(130,110);ctx.lineTo(145,135);} 
+            ctx.stroke();
+            // YEUX CENTRES (FIX V41)
+            if(game.mistakes>10){
+                ctx.font="14px Arial"; ctx.fillStyle=mainColor; ctx.textAlign="center"; 
+                ctx.fillText("x x",130,60); // Centré en X=130
+            } 
             
-            if(game.state==='setup'){ status.innerText="En attente..."; document.getElementById('pendu-setup').style.display='block'; document.getElementById('pendu-word-display').innerText="???"; document.getElementById('pendu-keyboard').innerHTML=""; }
-            else { 
+            if(game.state==='setup'){ 
+                status.innerText="En attente d'un mot..."; 
+                document.getElementById('pendu-setup').style.display='block'; 
+                document.getElementById('pendu-keyboard').style.display='none';
+                document.getElementById('pendu-word-display').innerText="???"; 
+            } else { 
                 document.getElementById('pendu-setup').style.display='none'; 
+                document.getElementById('pendu-keyboard').style.display='flex';
+                
                 let d=""; for(let c of game.word) d+=(game.guessed.includes(c)?c:"_")+" "; document.getElementById('pendu-word-display').innerText=d; 
                 const isCreator = game.creator === currentUser;
+                
                 if(game.state==='playing') { 
                     status.innerText = isCreator ? "L'autre devine..." : "Devine !";
-                    let k=""; "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l=>{ const disabled = isCreator || game.guessed.includes(l) ? "disabled" : ""; k+=`<button class="key-btn" onclick="playPenduMove('${l}')" ${disabled}>${l}</button>`; }); 
+                    let k=""; 
+                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l=>{ 
+                        const disabled = isCreator || game.guessed.includes(l) ? "disabled" : ""; 
+                        k+=`<button class="key-btn" onclick="playPenduMove('${l}')" ${disabled}>${l}</button>`; 
+                    }); 
                     document.getElementById('pendu-keyboard').innerHTML=k; 
                 }
-                else status.innerText = game.state==='win' ? "GAGNÉ ! 🎉" : ("PERDU... Le mot: "+game.word);
+                else status.innerText = game.state==='win' ? "GAGNÉ ! 🎉" : ("PERDU... Le mot était : "+game.word);
             }
         }
-        window.startPendu=function(){const w=document.getElementById('pendu-secret').value.toUpperCase().trim(); if(w) updateDoc(doc(db,"games","active"),{state:'playing',word:w,guessed:[],mistakes:0, creator:currentUser});}
+        window.startPendu=function(){const w=document.getElementById('pendu-secret').value.toUpperCase().trim(); if(w) setDoc(doc(db,"games","pendu_active"),{state:'playing',word:w,guessed:[],mistakes:0, creator:currentUser});}
         window.playPenduMove=async function(l){ 
-            if(!activeGame||activeGame.state!=='playing')return; 
-            const ng=[...activeGame.guessed,l]; let nm=activeGame.mistakes; 
-            if(!activeGame.word.includes(l))nm++; 
-            let ns='playing';
-            let saveHistory = false;
+            if(!activePendu||activePendu.state!=='playing')return; 
+            const ng=[...activePendu.guessed,l]; let nm=activePendu.mistakes; 
+            if(!activePendu.word.includes(l))nm++; 
+            let ns='playing'; let save=false;
+            if(nm>=11) { ns='loose'; save=true; }
+            else if(activePendu.word.split('').every(c=>ng.includes(c))) { ns='win'; save=true; }
+            await updateDoc(doc(db,"games","pendu_active"),{guessed:ng,mistakes:nm,state:ns});
+            if(save) addDoc(collection(db, "games_pendu_history"), { word: activePendu.word, setter: activePendu.creator, result: ns, timestamp: serverTimestamp() });
+        }
+
+        // 2. P4 LOGIC
+        let activeP4 = null;
+        onSnapshot(doc(db, "games", "p4_active"), (s) => { activeP4 = s.exists() ? s.data() : null; if(activeP4) renderP4(activeP4); else document.getElementById('p4-status').innerText = "Aucune partie en cours"; });
+        
+        onSnapshot(doc(db, "games", "p4_scores"), (s) => { const sc = s.exists() ? s.data() : {fr:0, tw:0}; document.getElementById('score-p4').innerText = `🏆 Théo: ${sc.fr} | Elise: ${sc.tw}`; });
+        onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(5)), (s) => {
+            const list = document.getElementById('p4-history-list'); list.innerHTML = "";
+            s.forEach(d => {
+                const h = d.data();
+                list.innerHTML += `<div class="hist-row"><span>${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`;
+            });
+        });
+
+        window.initP4 = function() {
+            setDoc(doc(db, "games", "p4_active"), { board: Array(42).fill(0), turn: currentUser, winner: null, moves: 0, starter: currentUser });
+        }
+
+        function renderP4(game) {
+            const grid=document.getElementById('p4-grid'); grid.innerHTML="";
+            const status = document.getElementById('p4-status');
+            if(game.winner) status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !";
+            else status.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)");
             
-            if(nm>=11) { ns='loose'; saveHistory=true; }
-            else if(activeGame.word.split('').every(c=>ng.includes(c))) { ns='win'; saveHistory=true; }
-            
-            await updateDoc(doc(db,"games","active"),{guessed:ng,mistakes:nm,state:ns});
-            
-            if(saveHistory) {
-                // Add to history collection
-                addDoc(collection(db, "games_history"), {
-                    word: activeGame.word,
-                    setter: activeGame.creator,
-                    guesser: activeGame.creator === 'fr' ? 'tw' : 'fr',
-                    result: ns,
-                    timestamp: serverTimestamp()
-                });
+            for(let i=0; i<42; i++) { 
+                const c=document.createElement('div'); 
+                c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); 
+                c.onclick=()=>playP4(i%7); 
+                grid.appendChild(c); 
             }
         }
-        
-        // P4
-        function renderP4(game) {
-            document.getElementById('p4-ui').style.display='block'; const grid=document.getElementById('p4-grid'); grid.innerHTML="";
-            const status = document.getElementById('game-status');
-            if(game.winner) status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !";
-            else status.innerText = (game.turn === 'fr' ? "Tour de Théo (Bleu)" : "Tour d'Elise (Rose)");
-            for(let i=0; i<42; i++) { const c=document.createElement('div'); c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); c.onclick=()=>playP4(i%7); grid.appendChild(c); }
-        }
+
         window.playP4 = async function(col) {
-            if(!activeGame||activeGame.winner) return;
-            if(activeGame.turn !== currentUser) { alert("Attends ton tour !"); return; }
-            let board=[...activeGame.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; }
-            if(row<0)return;
+            if(!activeP4 || activeP4.winner) return;
+            if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; }
+            
+            let board=[...activeP4.board]; let row=5; 
+            while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; }
+            if(row<0) return;
+
             const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0};
-            const winnerCode = checkWin(board); let winner = null;
-            if(winnerCode !== 0) { winner = winnerCode === 1 ? 'fr' : 'tw'; const scoreSnap = await getDoc(doc(db, "games", "scores")); const scores = scoreSnap.exists() ? scoreSnap.data() : {fr:0, tw:0}; scores[winner]++; setDoc(doc(db, "games", "scores"), scores); }
-            updateDoc(doc(db,"games","active"),{board:board,turn:currentUser==='fr'?'tw':'fr',winner:winner});
+            
+            const winnerCode = checkWin(board); 
+            let winner = null;
+            let moves = activeP4.moves + 1;
+
+            if(winnerCode !== 0) { 
+                winner = winnerCode === 1 ? 'fr' : 'tw'; 
+                // Update Score
+                const scoreRef = doc(db, "games", "p4_scores");
+                const scoreSnap = await getDoc(scoreRef);
+                const scores = scoreSnap.exists() ? scoreSnap.data() : {fr:0, tw:0};
+                scores[winner]++; 
+                setDoc(scoreRef, scores);
+                // Update History
+                addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() });
+            }
+            
+            updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves });
         }
 
         // --- BASICS ---
