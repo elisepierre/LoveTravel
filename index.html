@@ -404,7 +404,7 @@
 
         let currentUser = localStorage.getItem('userRole') || 'tw';
         
-        // Dark Mode Logic
+        // Dark Mode
         if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
         window.toggleTheme = function() {
             document.body.classList.toggle('dark-mode');
@@ -472,6 +472,12 @@
             }
         });
 
+        // TIME HELPER FOR NOTIFS
+        function getCurrentTime(role) {
+            const timeZone = role === 'fr' ? 'Europe/Paris' : 'Asia/Taipei';
+            return new Date().toLocaleTimeString('fr-FR', { timeZone: timeZone, hour: '2-digit', minute: '2-digit' });
+        }
+
         async function updateWeather() {
             try {
                 const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.77,24.99&longitude=3.08,121.30&current_weather=true");
@@ -516,7 +522,8 @@
         });
         window.updateMood = function(emoji, text, outfitId) {
             setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text, [currentUser+"_outfit"]: (outfitId !== undefined ? outfitId : 5) }, { merge: true });
-            sendNtfy(`${emoji} Nouveau statut : ${text}`, "partly_sunny", "low");
+            const myTime = getCurrentTime(currentUser);
+            sendNtfy(`${emoji} ${text} (${myTime})`, "partly_sunny", "low");
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
@@ -551,7 +558,9 @@
         window.addLetter = function() {
             const title = document.getElementById("letter-title").value; const content = document.getElementById("letter-content").value; if(!title || !content) return;
             addDoc(collection(db, "letters"), { title: title, content: content, by: currentUser, read: false, timestamp: serverTimestamp() });
-            document.getElementById("letter-title").value = ""; document.getElementById("letter-content").value = ""; sendNtfy("💌 Nouvelle lettre reçue !", "email", "low");
+            document.getElementById("letter-title").value = ""; document.getElementById("letter-content").value = ""; 
+            const myTime = getCurrentTime(currentUser);
+            sendNtfy(`💌 Nouvelle lettre ! (${myTime})`, "email", "low");
         }
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db, "letters", id)); }
 
@@ -568,7 +577,8 @@
             const base64 = await compressImage(file, { quality: 0.6, type: 'image/jpeg' });
             document.getElementById(`polaroid-img-${role}`).src = base64;
             await addDoc(collection(db, "photos"), { url: base64, by: role, timestamp: serverTimestamp() });
-            sendNtfy("📸 Nouvelle photo !", "camera", "low");
+            const myTime = getCurrentTime(currentUser);
+            sendNtfy(`📸 Nouvelle photo ! (${myTime})`, "camera", "low");
         }
         const qPhotos = query(collection(db, "photos"), orderBy("timestamp", "desc"));
         let allPhotos = [];
@@ -618,7 +628,13 @@
                 list.appendChild(div);
             });
         });
-        window.addTodo = function() { const text = document.getElementById('todo-input').value; if(!text) return; addDoc(collection(db, "todos"), { text: text, done: false, created: serverTimestamp() }); document.getElementById('todo-input').value = ""; }
+        window.addTodo = function() { 
+            const text = document.getElementById('todo-input').value; if(!text) return; 
+            addDoc(collection(db, "todos"), { text: text, done: false, created: serverTimestamp() }); 
+            document.getElementById('todo-input').value = ""; 
+            const myTime = getCurrentTime(currentUser);
+            sendNtfy(`📝 Nouveau projet ! (${myTime})`, "clipboard", "low");
+        }
         window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
         window.deleteTodo = function(id) { deleteDoc(doc(db, "todos", id)); }
 
@@ -649,6 +665,7 @@
             const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
             const senderName = currentUser === 'tw' ? "Elise" : "Theo";
             const iconUrl = new URL("icon.jpg", window.location.href).href; 
+            // TITRE SIMPLIFIÉ ICI : Juste le Prénom
             fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': senderName, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8', 'Icon': iconUrl } }).catch(e => console.log(e));
         }
         window.sendBisou = function() {
