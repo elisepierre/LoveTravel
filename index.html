@@ -71,11 +71,11 @@
         .prog-fill-mini { height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%; transition: width 1s ease; }
         .prog-heart { position: absolute; top: -6px; font-size: 14px; transform: translateX(-50%); transition: left 1s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
 
-        /* MOODS & OTHERS */
+        /* MOODS */
         .mood-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
         .mood-person { width: 48%; text-align: center; position: relative; }
-        .avatar-frame { width: 100%; height: 140px; display: flex; align-items: flex-end; justify-content: center; position: relative; }
-        .avatar-img { height: 100%; width: auto; max-width: 100%; object-fit: contain; }
+        .avatar-frame { width: 100%; height: 140px; display: flex; align-items: flex-end; justify-content: center; position: relative; border-bottom: 1px solid var(--border); }
+        .avatar-img { height: 95%; width: auto; max-width: 100%; object-fit: contain; }
         .mood-msg { background: var(--bg-card); padding: 8px 12px; border-radius: 15px; font-size: 0.8rem; color: var(--text-main); box-shadow: 0 3px 10px var(--shadow); margin-top: -10px; position: relative; z-index: 2; display: inline-block; max-width: 100%; font-style: italic; border: 1px solid var(--border); }
         .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .mood-btn { background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 10px; text-align: center; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
@@ -106,28 +106,60 @@
         /* JEUX */
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .game-board-container { text-align: center; background: var(--input-bg); padding: 15px; border-radius: 15px; border: 1px solid var(--border); }
-        
-        /* PENDU */
+        .identity-btn { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-sub); font-weight: bold; cursor: pointer; transition: 0.3s; }
         #pendu-canvas { border-bottom: 2px solid var(--text-main); margin-bottom: 10px; width: 200px; height: 150px; }
         .pendu-word { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin: 15px 0; color: var(--text-main); }
         .keyboard { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
         .key-btn { width: 30px; height: 35px; border: 1px solid var(--border); border-radius: 5px; background: white; cursor: pointer; font-weight: bold; color: #333; }
         .key-btn:disabled { opacity: 0.3; background: #ddd; }
-
-        /* PUISSANCE 4 */
         .p4-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #0066cc; padding: 10px; border-radius: 10px; max-width: 300px; margin: 0 auto; }
         .p4-cell { aspect-ratio: 1/1; background: white; border-radius: 50%; cursor: pointer; border: 2px solid #0055aa; }
-        .p4-cell.p1 { background: #ff4b6e; } /* Elise */
-        .p4-cell.p2 { background: #ffcc00; } /* Théo - Jaune pour contraste sur bleu */
+        .p4-cell.p1 { background: #ff4b6e; } .p4-cell.p2 { background: #ffcc00; }
 
-        /* LETTRES V29 */
+        /* LETTRES */
         .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
         .mailbox-tab { flex: 1; padding: 10px; text-align: center; border-radius: 12px; font-size: 0.8rem; font-weight: bold; cursor: pointer; opacity: 0.5; transition: 0.3s; color: var(--text-main); border: 1px solid var(--border); }
         .mailbox-tab.active { opacity: 1; color: white; border: none; }
         .envelope-item { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; display: flex; align-items: center; cursor: pointer; transition: 0.3s; border-left: 5px solid #ccc; }
         .envelope-item.unread { border-left-color: var(--pink-dark); background: rgba(255, 75, 110, 0.1); }
+        
+        #letter-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 5000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
+        .real-letter { background: #fffdf0; width: 100%; max-width: 400px; max-height: 80vh; display: flex; flex-direction: column; padding: 30px; border-radius: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; background-image: radial-gradient(#e0e0e0 1px, transparent 1px); background-size: 20px 20px; transform: rotate(-1deg); }
+        .real-letter h2 { font-family: 'Pacifico', cursive; margin-top: 0; color: var(--pink-dark); margin-right: 30px; flex-shrink: 0; }
+        #modal-letter-content { font-family: 'Dancing Script', cursive; font-size: 1.6rem; line-height: 1.6; color: #333; white-space: pre-wrap; overflow-y: auto; flex: 1; padding-right: 10px; margin-bottom: 20px; }
+        .letter-close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #aaa; background: none; border: none; cursor: pointer; z-index: 10; }
+        .letter-stamp { position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border: 2px double #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4af37; font-size: 0.7rem; font-weight: bold; transform: rotate(-15deg); opacity: 0.7; text-align: center; pointer-events: none; }
 
-        /* LIVRES V29 (RESTAURO) */
+        /* GALERIE (DESIGN CORRIGÉ) */
+        .polaroid-container { display: flex; justify-content: space-around; }
+        .polaroid {
+            background: white; padding: 10px 10px 30px 10px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); transform: rotate(-2deg);
+            width: 45%; text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .polaroid:nth-child(2) { transform: rotate(3deg); }
+        .polaroid:active { transform: scale(1.05) rotate(0deg); z-index: 10; }
+        .polaroid-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; margin-bottom: 5px; }
+        .polaroid-label { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: #555; }
+        .add-photo-btn { display: none; margin-top: 5px; font-size: 0.7rem; color: #888; border: 1px dashed #ccc; padding: 5px; border-radius: 5px; }
+
+        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; overflow-y:auto;}
+        .modal-header { display: flex; justify-content: space-between; color: white; margin-bottom: 20px; align-items: center; }
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .modal-img { width: 100%; border-radius: 5px; cursor: zoom-in; transition: 0.2s; }
+        .modal-img:hover { opacity: 0.8; }
+        
+        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 7000; justify-content: center; align-items: center; }
+        #lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .lightbox-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; background: none; border: none; cursor: pointer; }
+
+        /* PROJETS & LIVRES */
+        .todo-item { display: flex; align-items: center; background: var(--input-bg); padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--border); justify-content: space-between; }
+        .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--pink-dark); }
+        .todo-text { flex: 1; font-size: 0.9rem; margin-right: 10px; color: var(--text-main); }
+        .todo-text.done { text-decoration: line-through; color: var(--text-sub); }
+        .todo-del { background: none; border: none; color: #faa; cursor: pointer; font-size: 1.2rem; margin-left: auto; }
+
         .book-item { background: var(--input-bg); padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border); }
         .book-title { font-weight: 800; font-size: 1rem; color: var(--text-main); margin-bottom: 5px; display:flex; justify-content:space-between; }
         .book-total-pages { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 10px; font-weight: 500; }
@@ -142,30 +174,9 @@
         .book-progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-left: 10px; }
         .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
-        /* FOOTER & UTILS */
         .app-footer { text-align: center; padding: 20px; margin-top: 30px; opacity: 0.8; }
         .footer-logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
-        /* MODAL GALERIE & LIGHTBOX */
-        #gallery-modal, #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; overflow-y:auto; }
-        #lightbox { background: black; z-index: 7000; justify-content: center; align-items: center; padding: 0; }
-        #lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .modal-img { width: 100%; border-radius: 5px; }
-        .add-photo-btn { display: none; margin-top: 5px; font-size: 0.7rem; color: #888; border: 1px dashed #ccc; padding: 5px; border-radius: 5px; }
-        .polaroid-container { display: flex; justify-content: space-around; }
-        .polaroid { width: 45%; background: white; padding: 10px 10px 30px 10px; transform: rotate(-2deg); box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
-        .polaroid:nth-child(2) { transform: rotate(3deg); }
-        .polaroid-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; }
 
-        /* PROJETS V29 */
-        .todo-item { display: flex; align-items: center; background: var(--input-bg); padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--border); justify-content: space-between; }
-        .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--pink-dark); }
-        .todo-text { flex: 1; font-size: 0.9rem; margin-right: 10px; color: var(--text-main); }
-        .todo-text.done { text-decoration: line-through; color: var(--text-sub); }
-        .todo-del { background: none; border: none; color: #faa; cursor: pointer; font-size: 1.2rem; margin-left: auto; }
-
-        /* FAB */
         #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--pink-dark)); color: white; border: none; font-size: 30px; box-shadow: 0 10px 25px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
         #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #333; color: white; padding: 10px 20px; border-radius: 30px; z-index: 9999; transition: 0.3s; display:flex; align-items:center; gap:10px; }
@@ -226,33 +237,21 @@
         </div>
 
         <div class="card" id="card-question">
-            <div class="card-title toggleable" onclick="toggleCard(this)">
-                <div style="display:flex; align-items:center; gap:10px;"><span>💬</span> Question du Jour</div>
-            </div>
+            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>💬</span> Question du Jour</div></div>
             <div class="card-content">
                 <div class="question-box">
                     <div class="q-date" id="q-date-label">Aujourd'hui</div>
                     <div class="q-text" id="q-text">Chargement...</div>
                     <div class="q-answers" id="q-answers-area"></div>
                 </div>
-                <div class="input-group">
-                    <input type="text" id="q-input" class="input-field" placeholder="Ta réponse...">
-                    <button onclick="sendAnswer()" class="btn-action">Envoyer</button>
-                </div>
+                <div class="input-group"><input type="text" id="q-input" class="input-field" placeholder="Ta réponse..."><button onclick="sendAnswer()" class="btn-action">Envoyer</button></div>
             </div>
         </div>
 
         <div class="card" id="card-dates">
-            <div class="card-title toggleable" onclick="toggleCard(this)">
-                <div style="display:flex; align-items:center; gap:10px;"><span>📅</span> Nos Dates</div>
-            </div>
+            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📅</span> Nos Dates</div></div>
             <div class="card-content">
-                <div class="input-group">
-                    <input type="date" id="date-date" class="input-field">
-                    <input type="time" id="date-time" class="input-field">
-                    <input type="text" id="date-activity" class="input-field" placeholder="Activité...">
-                    <button onclick="addDateEvent()" class="btn-action">+</button>
-                </div>
+                <div class="input-group"><input type="date" id="date-date" class="input-field"><input type="time" id="date-time" class="input-field"><input type="text" id="date-activity" class="input-field" placeholder="Activité..."><button onclick="addDateEvent()" class="btn-action">+</button></div>
                 <div id="dates-list"></div>
             </div>
         </div>
@@ -271,8 +270,8 @@
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📸</span> Nos Albums</div></div>
             <div class="card-content">
                 <div class="polaroid-container">
-                    <div class="polaroid" onclick="openGallery('fr')"><img id="polaroid-img-fr" class="polaroid-img"><div class="polaroid-label">Théo</div><div id="btn-add-fr" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-fr').click()">+ Photo</div><input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this,'fr')" style="display:none;"></div>
-                    <div class="polaroid" onclick="openGallery('tw')"><img id="polaroid-img-tw" class="polaroid-img"><div class="polaroid-label">Elise</div><div id="btn-add-tw" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-tw').click()">+ Photo</div><input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this,'tw')" style="display:none;"></div>
+                    <div class="polaroid" onclick="openGallery('fr')"><img id="polaroid-img-fr" class="polaroid-img"><div class="polaroid-label">Théo</div><div id="btn-add-fr" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-fr').click()">+ Ajouter photo</div><input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this,'fr')" style="display:none;"></div>
+                    <div class="polaroid" onclick="openGallery('tw')"><img id="polaroid-img-tw" class="polaroid-img"><div class="polaroid-label">Elise</div><div id="btn-add-tw" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-tw').click()">+ Ajouter photo</div><input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this,'tw')" style="display:none;"></div>
                 </div>
             </div>
         </div>
@@ -284,7 +283,7 @@
 
         <div class="card" id="card-books">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📚</span> Lectures Communes</div></div>
-            <div class="card-content"><div class="input-group"><input type="text" id="book-title" class="input-field" placeholder="Titre"><input type="number" id="book-pages" class="input-field" style="width:80px;" placeholder="Total P."><button onclick="addBook()" class="btn-action">+</button></div><div id="book-list"></div></div>
+            <div class="card-content"><div class="input-group"><input type="text" id="book-title" class="input-field" placeholder="Titre..."><input type="number" id="book-pages" class="input-field" style="width:80px;" placeholder="Total P."><button onclick="addBook()" class="btn-action">+</button></div><div id="book-list"></div></div>
         </div>
 
         <div class="card" id="card-music">
@@ -293,9 +292,7 @@
         </div>
 
         <div class="card" id="card-games">
-            <div class="card-title toggleable" onclick="toggleCard(this)">
-                <div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div>
-            </div>
+            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div></div>
             <div class="card-content">
                 <div class="game-selector">
                     <button onclick="initGame('pendu')" class="identity-btn">🔤 Pendu</button>
@@ -304,21 +301,13 @@
                 </div>
                 <div id="game-area" class="game-board-container" style="display:none;">
                     <h3 id="game-status" style="margin:0 0 10px; font-size:0.9rem; color:var(--text-main);">...</h3>
-                    <div id="pendu-ui" style="display:none;">
-                        <canvas id="pendu-canvas" width="200" height="150"></canvas>
-                        <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
-                        <div id="pendu-keyboard" class="keyboard"></div>
-                        <div id="pendu-setup" style="margin-top:10px;">
-                            <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)">
-                            <button onclick="startPendu()" class="btn-action">Lancer</button>
-                        </div>
-                    </div>
+                    <div id="pendu-ui" style="display:none;"><canvas id="pendu-canvas" width="200" height="150"></canvas><div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div><div id="pendu-keyboard" class="keyboard"></div><div id="pendu-setup" style="margin-top:10px;"><input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)"><button onclick="startPendu()" class="btn-action">Lancer</button></div></div>
                     <div id="p4-ui" style="display:none;"><div class="p4-grid" id="p4-grid"></div></div>
                 </div>
             </div>
         </div>
 
-        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v31 • janvier 2026</div></div>
+        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v32 • janvier 2026</div></div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
@@ -353,6 +342,13 @@
             localStorage.setItem('card_' + header.parentElement.id, isClosed ? 'open' : 'closed');
         }
         document.querySelectorAll('.card[id]').forEach(c => { if(c.id!=='card-voyage' && localStorage.getItem('card_'+c.id)==='closed') { c.querySelector('.card-content').style.display='none'; c.querySelector('.card-title').classList.add('closed'); }});
+
+        // REPARATION DES BOUTONS DE SUPPRESSION (SCOPE FIX)
+        window.deleteDate = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db,"dates",id)); }
+        window.deleteTodo = function(id) { deleteDoc(doc(db,"todos",id)); }
+        window.deleteBook = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db,"books",id)); }
+        window.deletePhoto = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db,"photos",id)); }
+        window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db,"letters",id)); }
 
         // --- QUESTION DU JOUR ---
         const questionsList = ["Quel est ton meilleur souvenir de nous ?", "Quelle qualité préfères-tu chez moi ?", "Où veux-tu qu'on aille manger en premier ?", "Quelle chanson te fait penser à moi ?", "Décris notre relation en 3 mots.", "Quel est ton rêve pour nous ?", "Si on pouvait partir demain, on irait où ?", "Qu'est-ce qui te manque le plus ?", "Raconte notre première rencontre vue par toi."]; 
@@ -396,7 +392,6 @@
             addDoc(collection(db, "dates"), { date: d, time: t, activity: a });
             document.getElementById('date-activity').value = ""; sendNtfy(`📅 Nouveau Date ajouté ! (${getCurrentTime(currentUser)})`, "calendar", "low");
         }
-        window.deleteDate = function(id) { deleteDoc(doc(db, "dates", id)); }
 
         // --- JEUX ---
         onSnapshot(doc(db, "games", "active"), (docSnap) => {
@@ -411,7 +406,6 @@
             else if(type === 'pendu') { data.state = 'setup'; data.mistakes = 0; data.guessed = []; data.word = ""; }
             setDoc(doc(db, "games", "active"), data);
         }
-        // Pendu
         let activeGame = null; onSnapshot(doc(db, "games", "active"), (s) => { activeGame = s.data(); });
         function renderPendu(game) {
             document.getElementById('pendu-ui').style.display = 'block'; const ctx = document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('game-status');
@@ -439,7 +433,6 @@
             let newState = newMistakes >= 11 ? 'loose' : (activeGame.word.split('').every(c=>newGuessed.includes(c)) ? 'win' : 'playing');
             updateDoc(doc(db,"games","active"),{guessed:newGuessed,mistakes:newMistakes,state:newState});
         }
-        // P4
         function renderP4(game) {
             document.getElementById('p4-ui').style.display='block'; const grid=document.getElementById('p4-grid'); grid.innerHTML="";
             document.getElementById('game-status').innerText = game.winner ? (game.winner==='fr'?"THÉO GAGNE !":"ELISE GAGNE !") : (game.turn==='fr'?"Tour de Théo":"Tour d'Elise");
@@ -449,9 +442,7 @@
             if(!activeGame||activeGame.winner||activeGame.turn!==currentUser) return;
             let board=[...activeGame.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; }
             if(row<0)return;
-            // Check Win rudimentary (Horizontal only for demo)
-            let win = false; // Add real logic here if needed
-            updateDoc(doc(db,"games","active"),{board:board,turn:currentUser==='fr'?'tw':'fr',winner:win?currentUser:null});
+            updateDoc(doc(db,"games","active"),{board:board,turn:currentUser==='fr'?'tw':'fr',winner:false});
         }
 
         // --- BASICS ---
@@ -485,8 +476,20 @@
             const n = document.getElementById("notif"); n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),3000);
         }
         
+        onSnapshot(doc(db, "status", "moods"), (doc) => {
+            if (doc.exists()) {
+                const d = doc.data();
+                document.getElementById("mood-img-fr").src = `theo_${d.fr_outfit || 0}.png`; document.getElementById("mood-msg-fr").innerText = d.fr_text || "";
+                document.getElementById("mood-img-tw").src = `elise_${d.tw_outfit || 0}.png`; document.getElementById("mood-msg-tw").innerText = d.tw_text || "";
+            } else { setDoc(doc(db, "status", "moods"), { fr_outfit:0, tw_outfit:0 }); }
+        });
+        window.updateMood = function(emoji, text, outfitId) {
+            setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text, [currentUser+"_outfit"]: (outfitId !== undefined ? outfitId : 5) }, { merge: true });
+            sendNtfy(`${emoji} ${text} (${getCurrentTime(currentUser)})`, "partly_sunny", "low");
+        }
+        window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
+
         window.addLetter = function() { const t=document.getElementById("letter-title").value; const c=document.getElementById("letter-content").value; if(!t||!c)return; addDoc(collection(db,"letters"),{title:t,content:c,by:currentUser,read:false,timestamp:serverTimestamp()}); document.getElementById("letter-title").value="";document.getElementById("letter-content").value=""; sendNtfy("💌 Nouvelle lettre ! ("+getCurrentTime(currentUser)+")","email","low"); }
-        window.deleteLetter = function(id,e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db,"letters",id)); }
         window.openLetterModal = function(l) { document.getElementById('letter-modal').style.display="flex"; document.getElementById('modal-letter-title').innerText=l.title; document.getElementById('modal-letter-content').innerText=l.content; if(l.by!==currentUser && !l.read) updateDoc(doc(db,"letters",l.id),{read:true}); }
         window.closeLetter = function() { document.getElementById('letter-modal').style.display="none"; }
         
@@ -499,14 +502,14 @@
             const lastFr=allPhotos.find(p=>p.by==='fr'); if(lastFr)document.getElementById('polaroid-img-fr').src=lastFr.url;
             const lastTw=allPhotos.find(p=>p.by==='tw'); if(lastTw)document.getElementById('polaroid-img-tw').src=lastTw.url;
         });
-        window.openGallery = function(role) { const m=document.getElementById('gallery-modal'); const g=document.getElementById('modal-grid'); g.innerHTML=""; allPhotos.filter(p=>p.by===role).forEach(p=>{ g.innerHTML+=`<div><img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'">${role===currentUser?`<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deleteDoc(doc(db,'photos','${p.id}'))">Supprimer</div>`:''}</div>`; }); m.style.display="block"; }
+        window.openGallery = function(role) { const m=document.getElementById('gallery-modal'); const g=document.getElementById('modal-grid'); g.innerHTML=""; allPhotos.filter(p=>p.by===role).forEach(p=>{ g.innerHTML+=`<div><img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'">${role===currentUser?`<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>`:''}</div>`; }); m.style.display="block"; }
         window.closeGallery = () => document.getElementById('gallery-modal').style.display='none';
         window.closeLightbox = () => document.getElementById('lightbox').style.display='none';
 
         window.addTodo=function(){const t=document.getElementById('todo-input').value;if(!t)return;addDoc(collection(db,"todos"),{text:t,done:false,created:serverTimestamp()});document.getElementById('todo-input').value="";sendNtfy("📝 Projet ! ("+getCurrentTime(currentUser)+")","clipboard","low");}
-        onSnapshot(query(collection(db,"todos"),orderBy("created","desc")),s=>{ const l=document.getElementById('todo-list');l.innerHTML=""; s.forEach(d=>{const t=d.data();l.innerHTML+=`<div class="todo-item"><input type="checkbox" class="todo-check" ${t.done?'checked':''} onchange="updateDoc(doc(db,'todos','${d.id}'),{done:this.checked})"><span class="todo-text ${t.done?'done':''}">${t.text}</span><button onclick="deleteDoc(doc(db,'todos','${d.id}'))" class="todo-del">✕</button></div>`;}); });
+        window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
+        onSnapshot(query(collection(db,"todos"),orderBy("created","desc")),s=>{ const l=document.getElementById('todo-list');l.innerHTML=""; s.forEach(d=>{const t=d.data();l.innerHTML+=`<div class="todo-item"><input type="checkbox" class="todo-check" ${t.done?'checked':''} onchange="toggleTodo('${d.id}',this.checked)"><span class="todo-text ${t.done?'done':''}">${t.text}</span><button onclick="deleteTodo('${d.id}')" class="todo-del">✕</button></div>`;}); });
 
-        // BOOKS V29 RESTORED
         window.addBook=function(){const t=document.getElementById('book-title').value;if(!t)return;addDoc(collection(db,"books"),{title:t,pages_total:parseInt(document.getElementById('book-pages').value)||200,created:serverTimestamp(),page_fr:0,rating_fr:0,page_tw:0,rating_tw:0});document.getElementById('book-title').value="";}
         window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 ${title} terminé ! (${getCurrentTime(currentUser)})`, "tada", "low"); }
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
@@ -523,7 +526,7 @@
                     if(role === currentUser) html += `<span class="star-reset" onclick="rateBook('${id}', '${role}', 0)">Ø</span>`; return html;
                  };
                  const canEditFr = currentUser === 'fr' ? '' : 'disabled'; const canEditTw = currentUser === 'tw' ? '' : 'disabled';
-                 l.innerHTML+=`<div class="book-item"><div class="book-title"><span>${book.title}</span><button style="border:none;background:none;color:var(--text-sub);font-size:0.8rem;cursor:pointer;" onclick="deleteDoc(doc(db,'books','${id}'))">✕</button></div><div class="book-total-pages">${totalPages} pages</div><div class="user-row"><div class="row-header"><span style="color:var(--blue);font-weight:bold;font-size:0.8rem;">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div><div class="user-row" style="border:none;"><div class="row-header"><span style="color:var(--pink);font-weight:bold;font-size:0.8rem;">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div></div>`;
+                 l.innerHTML+=`<div class="book-item"><div class="book-title"><span>${book.title}</span><button style="border:none;background:none;color:var(--text-sub);font-size:0.8rem;cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div><div class="book-total-pages">${totalPages} pages</div><div class="user-row"><div class="row-header"><span style="color:var(--blue);font-weight:bold;font-size:0.8rem;">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div><div class="user-row" style="border:none;"><div class="row-header"><span style="color:var(--pink);font-weight:bold;font-size:0.8rem;">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div></div>`;
              });
         });
 
