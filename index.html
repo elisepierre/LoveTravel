@@ -89,23 +89,20 @@
         .card {
             background: var(--bg-card); border-radius: 25px; padding: 25px; margin-bottom: 25px;
             box-shadow: 0 10px 25px var(--shadow); border: 1px solid var(--border);
-            transition: background 0.3s; overflow: hidden; /* Important pour l'accordéon */
+            transition: background 0.3s; overflow: hidden;
         }
         
-        /* TITRE CLIQUABLE POUR ACCORDÉON */
         .card-title {
             font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin-bottom: 20px;
             text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px dashed var(--border); padding-bottom: 10px;
-            display: flex; align-items: center; justify-content: space-between; /* Espace pour la flèche */
+            display: flex; align-items: center; justify-content: space-between;
             gap: 10px; cursor: pointer; user-select: none;
         }
         
-        /* Flèche animée */
         .card-title::after {
             content: '▼'; font-size: 0.8rem; color: var(--text-sub); 
             transition: transform 0.3s ease;
         }
-        /* Classe ajoutée quand fermé */
         .card-title.closed::after { transform: rotate(-90deg); }
         .card-title.closed { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
 
@@ -250,7 +247,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-voyage">
             <div class="card-title" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>✈️</span> Notre Voyage</div>
             </div>
@@ -280,7 +277,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-mood">
             <div class="card-title" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>☁️</span> Humeur du Jour</div>
             </div>
@@ -307,7 +304,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-letter">
             <div class="card-title" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>💌</span> Boîte aux Lettres</div>
             </div>
@@ -327,7 +324,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-album">
             <div class="card-title" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>📸</span> Nos Albums</div>
             </div>
@@ -350,7 +347,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-todo">
             <div class="card-title" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>📝</span> Nos Projets</div>
             </div>
@@ -364,7 +361,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-books">
             <div class="card-title" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>📚</span> Lectures Communes</div>
             </div>
@@ -379,7 +376,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="card-music">
             <div class="card-title" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>🎧</span> Vibe</div>
             </div>
@@ -407,11 +404,45 @@
 
         let currentUser = localStorage.getItem('userRole') || 'tw';
         
+        // Dark Mode
         if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
         window.toggleTheme = function() {
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
         }
+
+        // Accordion Persistence
+        window.toggleCard = function(header) {
+            const card = header.parentElement;
+            const content = header.nextElementSibling;
+            
+            // Toggle
+            if (content.style.display === "none") {
+                content.style.display = "block";
+                header.classList.remove("closed");
+                localStorage.setItem('card_state_' + card.id, 'open');
+            } else {
+                content.style.display = "none";
+                header.classList.add("closed");
+                localStorage.setItem('card_state_' + card.id, 'closed');
+            }
+        }
+
+        // Restore Accordion State
+        function restoreCards() {
+            const cards = document.querySelectorAll('.card[id]');
+            cards.forEach(card => {
+                const state = localStorage.getItem('card_state_' + card.id);
+                const header = card.querySelector('.card-title');
+                const content = card.querySelector('.card-content');
+                
+                if (state === 'closed') {
+                    content.style.display = "none";
+                    header.classList.add("closed");
+                }
+            });
+        }
+        restoreCards();
 
         updateIdentityUI();
 
@@ -425,17 +456,6 @@
             document.getElementById('btn-tw').className = `identity-btn ${currentUser === 'tw' ? 'active-tw' : ''}`;
             document.getElementById('btn-add-fr').style.display = currentUser === 'fr' ? 'block' : 'none';
             document.getElementById('btn-add-tw').style.display = currentUser === 'tw' ? 'block' : 'none';
-        }
-
-        // --- ACCORDÉON ---
-        window.toggleCard = function(header) {
-            const content = header.nextElementSibling;
-            header.classList.toggle('closed');
-            if(content.style.display === "none") {
-                content.style.display = "block";
-            } else {
-                content.style.display = "none";
-            }
         }
 
         function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
@@ -564,11 +584,9 @@
             userPhotos.forEach(p => { 
                 const div = document.createElement('div'); 
                 div.id = `photo-${p.id}`;
-                // Bouton supprimer visible uniquement si c'est MA galerie
                 const deleteBtn = (role === currentUser) 
                     ? `<div style="text-align:center;color:red;font-size:0.8rem;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>` 
                     : '';
-                
                 div.innerHTML = `<img src="${p.url}" class="modal-img" onclick="openLightbox('${p.url}')">${deleteBtn}`; 
                 grid.appendChild(div); 
             });
@@ -630,7 +648,8 @@
         function sendNtfy(message, tags, priority = 'default') {
             const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
             const senderName = currentUser === 'tw' ? "Elise" : "Theo";
-            fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': `Love Travel (${senderName})`, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8' } }).catch(e => console.log(e));
+            const iconUrl = new URL("icon.jpg", window.location.href).href; 
+            fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': `Love Travel (${senderName})`, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8', 'Icon': iconUrl } }).catch(e => console.log(e));
         }
         window.sendBisou = function() {
             const btn = document.getElementById('bisou-btn'); 
