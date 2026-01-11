@@ -88,28 +88,25 @@
             transition: background 0.3s; overflow: hidden;
         }
         
-        /* CARTE VOYAGE (NOUVEAU DESIGN ÉPURÉ) */
+        /* CARTE VOYAGE (DESIGN ÉPURÉ V26) */
         .card.voyage-card {
-            padding: 30px 20px;
-            position: relative;
-            border-top: 4px solid var(--pink-dark); /* Petite touche de couleur en haut */
-            border-image: linear-gradient(to right, var(--blue), var(--pink)) 1;
-            border-left: 0; border-right: 0; border-bottom: 0;
+            padding: 25px 20px;
+            /* Plus de bordure colorée en haut */
         }
 
         /* TABLEAU DE BORD VOYAGE */
         .journey-row {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         .journey-col { text-align: center; flex: 1; }
         .place-name {
-            display: block; font-size: 0.8rem; font-weight: 800; 
+            display: block; font-size: 0.7rem; font-weight: 800; 
             letter-spacing: 2px; text-transform: uppercase; color: var(--text-sub);
             margin-bottom: 5px;
         }
         .place-time {
-            display: block; font-size: 1.8rem; font-weight: 800; color: var(--text-main);
+            display: block; font-size: 1.6rem; font-weight: 800; color: var(--text-main);
             line-height: 1;
         }
         .place-weather {
@@ -129,18 +126,40 @@
         }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
-        /* Compte à rebours */
-        .countdown-modern { text-align: center; }
-        .count-days { font-size: 3.5rem; font-weight: 800; color: var(--pink-dark); line-height: 1; }
-        .count-label { font-size: 1rem; font-weight: bold; color: var(--pink-dark); text-transform: uppercase; letter-spacing: 1px;}
-        .count-sub { font-size: 0.9rem; color: var(--text-sub); margin-top: 5px; font-weight: 500; }
+        /* COMPTEUR COMPACT V26 */
+        .countdown-compact {
+            background: var(--input-bg); border-radius: 15px; padding: 15px;
+            text-align: center; border: 1px solid var(--border);
+        }
+        .compact-title {
+            font-size: 0.75rem; color: var(--text-sub); font-weight: 800; 
+            text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;
+        }
+        .compact-counter {
+            display: flex; align-items: baseline; justify-content: center; gap: 8px;
+            color: var(--text-main);
+        }
+        .big-num {
+            font-size: 2.2rem; font-weight: 800; color: var(--pink-dark); line-height: 1;
+        }
+        .unit {
+            font-size: 1rem; font-weight: bold; color: var(--pink-dark); text-transform: uppercase;
+        }
+        .separator { color: var(--text-sub); font-size: 1.2rem; opacity: 0.5; }
+        .small-time { font-size: 1rem; font-weight: 600; color: var(--text-main); }
+
+        /* BARRE PROGRESSION EXPLIQUEE */
+        .progress-container-modern { margin-top: 15px; }
+        .dates-row {
+            display: flex; justify-content: space-between; font-size: 0.7rem; 
+            font-weight: bold; color: var(--text-sub); margin-bottom: 5px;
+        }
         .prog-bar-mini {
-            height: 6px; background: var(--border); border-radius: 10px; margin-top: 20px; position: relative; width: 100%;
+            height: 8px; background: var(--border); border-radius: 10px; position: relative; width: 100%; overflow: hidden;
         }
         .prog-fill-mini {
             height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%;
         }
-        .phase-text { margin-top: 10px; font-size: 0.7rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1.5px; font-weight: bold; }
 
         /* TITRES ACCORDÉON */
         .card-title {
@@ -276,6 +295,7 @@
     <div class="container">
 
         <div class="card voyage-card" id="card-voyage">
+            
             <div class="card-content">
                 <div class="journey-row">
                     <div class="journey-col">
@@ -296,14 +316,24 @@
                     </div>
                 </div>
 
-                <div class="countdown-modern">
-                    <div class="count-days" id="days-count">--</div>
-                    <div class="count-label" id="days-label">JOURS</div>
-                    <div class="count-sub" id="sub-count">-- h et -- min</div>
-                    <div class="prog-bar-mini">
-                        <div class="prog-fill-mini" id="prog-fill"></div>
+                <div class="countdown-compact">
+                    <div id="countdown-title" class="compact-title">DÉPART DANS</div>
+                    
+                    <div class="compact-counter">
+                        <span id="days-count" class="big-num">--</span> <span class="unit" id="days-unit">JOURS</span>
+                        <span class="separator">•</span>
+                        <span id="sub-count" class="small-time">-- h et -- min</span>
                     </div>
-                    <div id="countdown-title" class="phase-text">...</div>
+
+                    <div class="progress-container-modern">
+                        <div class="dates-row">
+                            <span>14 Fév</span>
+                            <span>05 Juil</span>
+                        </div>
+                        <div class="prog-bar-mini">
+                            <div class="prog-fill-mini" id="prog-fill"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -552,7 +582,9 @@
             const minutes = Math.floor((dist % (1000*60*60))/(1000*60));
             
             document.getElementById('days-count').innerText = days;
-            document.getElementById('days-label').innerText = (days <= 1) ? "JOUR" : "JOURS";
+            // GRAMMAIRE INTELLIGENTE : JOUR vs JOURS
+            document.getElementById('days-unit').innerText = (days <= 1) ? "JOUR" : "JOURS";
+            
             document.getElementById('sub-count').innerText = `${hours} h et ${minutes} min`;
             document.getElementById('countdown-title').innerText = titleText;
             
