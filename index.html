@@ -49,7 +49,7 @@
         .card-title.closed::after { transform: rotate(-90deg); }
         .card-title.closed { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
 
-        /* VOYAGE & PRESENCE */
+        /* VOYAGE */
         .journey-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .journey-col { text-align: center; flex: 1; }
         .place-name { display: block; font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--text-sub); margin-bottom: 5px; }
@@ -60,7 +60,7 @@
         .plane-icon { font-size: 1.5rem; position: relative; top: -24px; color: var(--text-main); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
-        /* INDICATEUR ONLINE REPARÉ */
+        /* INDICATEUR ONLINE */
         .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 5px; transition:0.3s; vertical-align: middle; }
         .status-dot.online { background: #2ecc71 !important; box-shadow: 0 0 10px #2ecc71; animation: blink 2s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -108,7 +108,7 @@
         .q-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
         .q-action-btn { font-size: 0.7rem; border: none; background: none; cursor: pointer; text-decoration: underline; color: #555; }
 
-        /* JEUX - V43 REDESIGN */
+        /* JEUX */
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .game-btn { 
             flex: 1; padding: 12px; border-radius: 15px; border: 1px solid var(--border); 
@@ -118,7 +118,8 @@
         }
         .game-btn:active { transform:scale(0.95); }
         .game-btn.active-game { border: 2px solid var(--pink-dark); background: #fff0f5; color: var(--pink-dark); }
-        
+        .stop-btn { color:#ff4b6e; border-color:#ff4b6e; background: #fff0f5; }
+
         .game-block { display: none; background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 20px; animation: slideDown 0.3s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         
@@ -129,26 +130,23 @@
         .score-pill { background: var(--bg-card); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; color: var(--pink-dark); }
         .status-msg { text-align: center; font-style: italic; color: var(--text-sub); margin: 10px 0; font-size: 0.9rem; min-height: 20px; }
 
-        /* HISTORY SCROLL */
         .history-box { margin-top: 15px; max-height: 100px; overflow-y: auto; font-size: 0.75rem; border-top: 1px solid var(--border); padding-top: 10px; }
         .hist-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: var(--text-sub); }
         .hist-win { color: #2ecc71; font-weight: bold; }
         .hist-loose { color: #e74c3c; font-weight: bold; }
 
-        /* PENDU */
         #pendu-canvas { display: block; margin: 0 auto; border-bottom: 2px solid var(--text-main); margin-bottom: 10px; width: 200px; height: 150px; }
         .pendu-word { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin: 15px 0; color: var(--text-main); text-align: center; }
         .keyboard { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
         .key-btn { width: 30px; height: 35px; border: 1px solid var(--border); border-radius: 5px; background: white; cursor: pointer; font-weight: bold; color: #333; }
         .key-btn:disabled { opacity: 0.3; background: #ddd; }
         
-        /* PUISSANCE 4 */
         .p4-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #34495e; padding: 10px; border-radius: 10px; max-width: 300px; margin: 0 auto; }
         .p4-cell { aspect-ratio: 1/1; background: var(--bg-body); border-radius: 50%; cursor: pointer; border: 2px solid rgba(0,0,0,0.1); transition: 0.2s; }
-        .p4-cell.p1 { background: var(--blue); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); } /* Théo = Bleu */
-        .p4-cell.p2 { background: var(--pink); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); } /* Elise = Rose */
+        .p4-cell.p1 { background: var(--blue); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        .p4-cell.p2 { background: var(--pink); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
 
-        /* LETTRES (V28 STYLE) */
+        /* LETTRES */
         .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
         .mailbox-tab { flex: 1; padding: 10px; text-align: center; border-radius: 12px; font-size: 0.8rem; font-weight: bold; cursor: pointer; opacity: 0.5; transition: 0.3s; color: var(--text-main); border: 1px solid var(--border); }
         .mailbox-tab.active { opacity: 1; color: white; border: none; box-shadow: 0 4px 10px var(--shadow); }
@@ -161,7 +159,7 @@
         .letter-close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #aaa; background: none; border: none; cursor: pointer; z-index: 10; }
         .letter-stamp { position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border: 2px double #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4af37; font-size: 0.7rem; font-weight: bold; transform: rotate(-15deg); opacity: 0.7; text-align: center; pointer-events: none; }
 
-        /* GALERIE (V28 STYLE) */
+        /* GALERIE */
         .polaroid-container { display: flex; justify-content: space-around; }
         .polaroid { background: white; padding: 10px 10px 30px 10px; position: relative; box-shadow: 0 5px 15px var(--p-shadow); transform: rotate(-2deg); width: 45%; text-align: center; cursor: pointer; transition: 0.3s; border-radius:0; }
         .polaroid:nth-child(2) { transform: rotate(3deg); }
@@ -211,6 +209,9 @@
         #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #333; color: white; padding: 10px 20px; border-radius: 30px; z-index: 9999; transition: 0.3s; display:flex; align-items:center; gap:10px; }
         #notif.show { transform: translateX(-50%) translateY(0); }
         .hidden { display: none; }
+        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ccc; margin-right: 6px; }
+        .status-dot.online { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; animation: blink 2s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -246,7 +247,9 @@
 
         <div class="card" id="card-music">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎧</span> Vibe</div></div>
-            <div class="card-content"><iframe width="100%" height="200" src="https://www.youtube.com/embed/videoseries?si=adn2bkxfdoMcELcC&amp;list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius:15px;"></iframe></div>
+            <div class="card-content">
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
         </div>
 
         <div class="card" id="card-mood">
@@ -312,13 +315,19 @@
         <div class="card" id="card-games">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div></div>
             <div class="card-content">
+                
                 <div class="game-selector">
                     <button onclick="toggleGame('pendu')" class="game-btn">Pendu</button>
                     <button onclick="toggleGame('p4')" class="game-btn">Puissance 4</button>
+                    <button onclick="initGame('none')" class="game-btn stop-btn">Arrêter</button>
                 </div>
                 
                 <div id="pendu-box" class="game-block">
-                    <div class="game-header"><div class="game-title-text">🔤 Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div>
+                    <div class="game-header">
+                        <div class="game-title-text">🔤 Pendu</div>
+                        <button class="game-close-btn" onclick="toggleGame('pendu')">✕</button>
+                    </div>
+                    
                     <canvas id="pendu-canvas" width="200" height="150"></canvas>
                     <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
                     <div id="pendu-status" class="status-msg">En attente...</div>
@@ -327,7 +336,7 @@
                         <button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button>
                     </div>
                     <div id="pendu-restart-area" style="display:none;margin-top:10px;">
-                        <button onclick="startPenduSetup()" class="btn-action" style="background:#2ecc71;width:100%;">Rejouer</button>
+                        <button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button>
                     </div>
                     <div id="pendu-keyboard" class="keyboard" style="display:none;"></div>
                     <div class="history-box" id="pendu-history-list"></div>
@@ -344,10 +353,11 @@
                     <div class="p4-grid" id="p4-grid"></div>
                     <div class="history-box" id="p4-history-list"></div>
                 </div>
+
             </div>
         </div>
 
-        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v44 • janvier 2026</div></div>
+        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v45 • janvier 2026</div></div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
@@ -464,8 +474,6 @@
 
         function renderPendu(game) {
             const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('pendu-status');
-            
-            // COULEURS DU PENDU
             const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark');
             const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
             
@@ -608,7 +616,7 @@
             addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
             sendNtfy(`💋 Bisou envoyé ! (${getCurrentTime(currentUser)})`, "kiss,heart", "urgent");
             const n = document.getElementById("notif"); n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),3000);
-            if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // V44 Vibe
+            if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
         }
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
