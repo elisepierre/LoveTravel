@@ -72,13 +72,12 @@
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%; transition: 1s; }
         .progress-icon { position: absolute; top: -10px; font-size: 24px; transition: left 1s; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1)); }
 
-        /* --- MÉTÉO DES COEURS CORRIGÉE --- */
+        /* --- MÉTÉO DES COEURS --- */
         .mood-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
         .mood-person { width: 48%; text-align: center; position: relative; }
         
         .avatar-frame {
             width: 100%; height: 140px; 
-            /* Correction affichage : plus de bordure forcée qui coupe */
             display: flex; align-items: flex-end; justify-content: center;
             position: relative;
         }
@@ -153,25 +152,29 @@
         .polaroid-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; margin-bottom: 5px; }
         .polaroid-label { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: #555; }
 
-        /* --- PROJETS & INPUTS --- */
-        .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        /* --- PROJETS & INPUTS CORRIGÉS --- */
+        .input-group { 
+            display: flex; gap: 10px; margin-bottom: 10px; 
+            flex-wrap: wrap; /* Le secret pour que ça ne déborde plus ! */
+        }
         .input-field { 
-            flex: 1; padding: 12px; border: 2px solid #eee; border-radius: 12px; 
+            flex: 1; min-width: 120px; /* Taille min pour éviter l'écrasement */
+            padding: 12px; border: 2px solid #eee; border-radius: 12px; 
             font-family: 'Outfit'; outline: none; background: #fafafa;
         }
         .btn-action { 
             background: var(--blue-dark); color: white; border: none; padding: 0 20px; 
             border-radius: 12px; font-weight: bold; cursor: pointer;
+            height: 45px; align-self: center; /* Hauteur fixe pour alignement */
         }
 
-        /* Liste Projets Corrigée */
         .todo-item { display: flex; align-items: center; background: white; padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid #eee; justify-content: space-between; }
         .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--pink-dark); }
         .todo-text { flex: 1; font-size: 0.9rem; margin-right: 10px; }
         .todo-text.done { text-decoration: line-through; color: #aaa; }
         .todo-del { background: none; border: none; color: #faa; cursor: pointer; font-size: 1.2rem; margin-left: auto; }
 
-        /* --- LIVRES (RAJOUTÉ) --- */
+        /* --- LIVRES --- */
         .book-item { background: white; padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid #eee; }
         .book-title { font-weight: 800; font-size: 1rem; color: #333; margin-bottom: 5px; display:flex; justify-content:space-between; }
         .book-total-pages { font-size: 0.7rem; color: #aaa; margin-bottom: 10px; font-weight: 500; }
@@ -345,7 +348,7 @@
             <div class="card-title"><span>📚</span> Lectures Communes</div>
             <div class="input-group">
                 <input type="text" id="book-title" class="input-field" placeholder="Titre...">
-                <input type="number" id="book-pages" class="input-field" placeholder="Total P." style="width:80px; flex:none;">
+                <input type="number" id="book-pages" class="input-field" placeholder="Total P." style="width:80px;">
                 <button onclick="addBook()" class="btn-action" style="background:var(--blue);">+</button>
             </div>
             <div id="book-list"></div>
@@ -383,7 +386,6 @@
             document.getElementById('btn-tw').style.borderColor = currentUser === 'tw' ? 'var(--pink)' : '#ddd';
         }
 
-        // --- PRESENCE & METEO ---
         function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
         setInterval(updatePresence, 10000); updatePresence();
         document.addEventListener("visibilitychange", () => { if (document.visibilityState === 'hidden') setDoc(doc(db, "status", "presence"), { [currentUser]: 0 }, { merge: true }); else updatePresence(); });
@@ -400,7 +402,6 @@
         }
         updateWeather(); setInterval(updateWeather, 1800000);
 
-        // --- COUNTDOWN ---
         const dateDepart = new Date("2026-02-14T00:00:00").getTime();
         const dateRetour = new Date("2026-07-05T00:00:00").getTime(); 
         function updateCountdown() {
@@ -424,7 +425,6 @@
         }
         setInterval(updateCountdown, 1000); updateCountdown();
 
-        // --- MOODS ---
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
@@ -438,7 +438,6 @@
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
-        // --- BOÎTE AUX LETTRES ---
         let allLetters = [];
         const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
         onSnapshot(qLetters, (snapshot) => {
@@ -474,7 +473,7 @@
         }
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db, "letters", id)); }
 
-        // --- GALERIE POLAROID & TODO ---
+        // --- GALERIE CORRIGÉE (SUPPRESSION INSTANTANÉE) ---
         const compressImage = async (file, { quality = 0.5, type = file.type }) => {
             const imageBitmap = await createImageBitmap(file); const canvas = document.createElement('canvas'); canvas.width = imageBitmap.width * 0.5; canvas.height = imageBitmap.height * 0.5;
             const ctx = canvas.getContext('2d'); ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
@@ -483,10 +482,10 @@
         window.handlePhotoUpload = async function(input, role) {
             if(role !== currentUser && !confirm("Ajouter photo ?")) return;
             const file = input.files[0]; if(!file) return;
-            // Fermer la galerie si elle est ouverte
+            // Fermeture immédiate de la galerie
             document.getElementById('gallery-modal').style.display = "none";
             const base64 = await compressImage(file, { quality: 0.6, type: 'image/jpeg' });
-            // Mise à jour instantanée du polaroid
+            // Update immédiat du polaroid pour l'effet waouh
             document.getElementById(`polaroid-img-${role}`).src = base64;
             await addDoc(collection(db, "photos"), { url: base64, by: role, timestamp: serverTimestamp() });
             sendNtfy("📸 Nouvelle photo !", "camera", "low");
@@ -502,11 +501,27 @@
         window.openGallery = function(role) {
             const modal = document.getElementById('gallery-modal'); const grid = document.getElementById('modal-grid'); grid.innerHTML = "";
             const userPhotos = allPhotos.filter(p => p.by === role);
-            userPhotos.forEach(p => { const div = document.createElement('div'); div.innerHTML = `<img src="${p.url}" style="width:100%; border-radius:5px;"><div style="text-align:center;color:red;font-size:0.8rem;" onclick="deletePhoto('${p.id}')">Supprimer</div>`; grid.appendChild(div); });
+            userPhotos.forEach(p => { 
+                const div = document.createElement('div'); 
+                // ID unique pour suppression instantanée
+                div.id = `photo-${p.id}`;
+                div.innerHTML = `<img src="${p.url}" style="width:100%; border-radius:5px;"><div style="text-align:center;color:red;font-size:0.8rem;" onclick="deletePhoto('${p.id}')">Supprimer</div>`; 
+                grid.appendChild(div); 
+            });
             modal.style.display = "block";
         }
         window.closeGallery = function() { document.getElementById('gallery-modal').style.display = "none"; }
-        window.deletePhoto = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db, "photos", id)); }
+        
+        // SUPPRESSION INSTANTANÉE
+        window.deletePhoto = async function(id) { 
+            if(confirm("Supprimer ?")) {
+                // Disparaît tout de suite de l'écran
+                const el = document.getElementById(`photo-${id}`);
+                if(el) el.remove();
+                // Supprime en BDD après
+                await deleteDoc(doc(db, "photos", id));
+            }
+        }
 
         const qTodos = query(collection(db, "todos"), orderBy("created", "desc"));
         onSnapshot(qTodos, (snapshot) => {
@@ -521,7 +536,6 @@
         window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
         window.deleteTodo = function(id) { deleteDoc(doc(db, "todos", id)); }
 
-        // --- LIVRES ---
         const qBooks = query(collection(db, "books"), orderBy("created", "desc"));
         onSnapshot(qBooks, (snapshot) => {
             const list = document.getElementById("book-list"); list.innerHTML = "";
@@ -545,7 +559,6 @@
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
         window.deleteBook = function(id) { if(confirm("Supprimer ce livre ?")) deleteDoc(doc(db, "books", id)); }
 
-        // --- UTILS ---
         function sendNtfy(message, tags, priority = 'default') {
             const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
             const senderName = currentUser === 'tw' ? "Elise" : "Theo";
