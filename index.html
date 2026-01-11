@@ -91,7 +91,7 @@
             transition: background 0.3s; overflow: hidden;
         }
         
-        /* CARTE VOYAGE (DESIGN ÉPURÉ) */
+        /* CARTE VOYAGE (DESIGN ÉPURÉ V26) */
         .card.voyage-card {
             padding: 25px 20px;
         }
@@ -303,7 +303,6 @@
     <div class="container">
 
         <div class="card voyage-card" id="card-voyage">
-            
             <div class="card-content">
                 <div class="journey-row">
                     <div class="journey-col">
@@ -575,42 +574,33 @@
         }
         updateWeather(); setInterval(updateWeather, 1800000);
 
-        // DATE PRECISE AVEC TIMEZONE (V27 FIX)
-        // Départ : 14 Fev 2026 à 00:00 FR
+        // DATE PRECISE AVEC TIMEZONE
         const dateDepart = new Date("2026-02-14T00:00:00+01:00").getTime(); 
-        // Retour : 05 Juil 2026 à 08:00 FR (heure d'été +02:00)
         const dateRetour = new Date("2026-07-05T08:00:00+02:00").getTime(); 
 
         function updateCountdown() {
             const now = new Date().getTime();
             let targetDate, titleText, iconText;
             
-            // LOGIQUE DE PROGRESSION CORRIGÉE V27
-            // La barre ne représente QUE la période de séparation (14 Fev -> 05 Juil)
             const separationDuration = dateRetour - dateDepart;
             
             let percent = 0;
             if (now < dateDepart) {
-                // Avant le départ : 0%
                 percent = 0;
                 targetDate = dateDepart; titleText = "DÉPART DANS"; iconText = "❤️";
             } else if (now > dateRetour) {
-                // Après le retour : 100%
                 percent = 100;
                 targetDate = dateRetour; titleText = "RETROUVAILLES !"; iconText = "✈️";
             } else {
-                // Pendant la séparation
                 const timePassed = now - dateDepart;
                 percent = (timePassed / separationDuration) * 100;
                 targetDate = dateRetour; titleText = "RETROUVAILLES DANS"; iconText = "✈️";
             }
             
-            // Bornes 0-100
             if(percent < 0) percent = 0;
             if(percent > 100) percent = 100;
 
             const dist = targetDate - now;
-            // Si c'est passé, on met 0
             const displayDist = dist > 0 ? dist : 0;
 
             const days = Math.floor(displayDist / (1000*60*60*24));
@@ -637,7 +627,7 @@
         window.updateMood = function(emoji, text, outfitId) {
             setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text, [currentUser+"_outfit"]: (outfitId !== undefined ? outfitId : 5) }, { merge: true });
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`${emoji} ${text} (${myTime})`, "partly_sunny", "low");
+            sendNtfy(`${emoji} ${text} (${myTime})`, "partly_sunny", "low"); // LOW = SILENCIEUX
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
@@ -674,7 +664,7 @@
             addDoc(collection(db, "letters"), { title: title, content: content, by: currentUser, read: false, timestamp: serverTimestamp() });
             document.getElementById("letter-title").value = ""; document.getElementById("letter-content").value = ""; 
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`💌 Nouvelle lettre ! (${myTime})`, "email", "low");
+            sendNtfy(`💌 Nouvelle lettre ! (${myTime})`, "email", "low"); // LOW = SILENCIEUX
         }
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db, "letters", id)); }
 
@@ -692,7 +682,7 @@
             document.getElementById(`polaroid-img-${role}`).src = base64;
             await addDoc(collection(db, "photos"), { url: base64, by: role, timestamp: serverTimestamp() });
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`📸 Nouvelle photo ! (${myTime})`, "camera", "low");
+            sendNtfy(`📸 Nouvelle photo ! (${myTime})`, "camera", "low"); // LOW = SILENCIEUX
         }
         const qPhotos = query(collection(db, "photos"), orderBy("timestamp", "desc"));
         let allPhotos = [];
@@ -747,7 +737,7 @@
             addDoc(collection(db, "todos"), { text: text, done: false, created: serverTimestamp() }); 
             document.getElementById('todo-input').value = ""; 
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`📝 Nouveau projet ! (${myTime})`, "clipboard", "low");
+            sendNtfy(`📝 Nouveau projet ! (${myTime})`, "clipboard", "low"); // LOW = SILENCIEUX
         }
         window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
         window.deleteTodo = function(id) { deleteDoc(doc(db, "todos", id)); }
@@ -771,7 +761,7 @@
             });
         });
         window.addBook = function() { const title = document.getElementById("book-title").value; const pages = document.getElementById("book-pages").value; if (!title) return; addDoc(collection(db, "books"), { title: title, pages_total: parseInt(pages) || 200, created: serverTimestamp(), page_fr: 0, rating_fr: 0, page_tw: 0, rating_tw: 0 }); document.getElementById("book-title").value = ""; document.getElementById("book-pages").value = ""; }
-        window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 J'ai fini de lire ${title} !`, "tada", "low"); }
+        window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 J'ai fini de lire ${title} !`, "tada", "low"); } // LOW = SILENCIEUX
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
         window.deleteBook = function(id) { if(confirm("Supprimer ce livre ?")) deleteDoc(doc(db, "books", id)); }
 
@@ -779,13 +769,13 @@
             const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
             const senderName = currentUser === 'tw' ? "Elise" : "Theo";
             const iconUrl = new URL("icon.jpg", window.location.href).href; 
-            // TITRE SIMPLIFIÉ ICI : Juste le Prénom
             fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': senderName, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8', 'Icon': iconUrl } }).catch(e => console.log(e));
         }
         window.sendBisou = function() {
             const btn = document.getElementById('bisou-btn'); 
             addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
-            sendNtfy("💋 Bisou envoyé !", "kiss,heart", "urgent"); // URGENT = Vibreur
+            const myTime = getCurrentTime(currentUser);
+            sendNtfy(`💋 Bisou envoyé ! (${myTime})`, "kiss,heart", "urgent"); // URGENT = Vibreur + Son
             const notif = document.getElementById("notif"); notif.classList.add("show"); setTimeout(() => notif.classList.remove("show"), 3000);
         }
         function updateClocks() { const now = new Date(); document.getElementById('clock-fr').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' }); document.getElementById('clock-tw').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit' }); } setInterval(updateClocks, 1000); updateClocks();
