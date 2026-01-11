@@ -17,43 +17,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
     
     <style>
-        /* COULEURS : ROSE (Elise) & BLEU (Théo) */
+        /* COULEURS */
         :root { --pink: #ff4b6e; --blue: #4a90e2; --bg: #fff0f3; --card-bg: rgba(255, 255, 255, 0.95); --text: #2c3e50; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; font-family: 'Outfit', sans-serif; background: linear-gradient(180deg, #fff5f7 0%, #eef6ff 100%); color: var(--text); padding-bottom: 120px; }
 
-        /* HEADER MODERNE */
+        /* HEADER */
         #hero-header { background: white; padding: 30px 20px 30px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05); padding-top: max(30px, env(safe-area-inset-top)); text-align: center; }
         
-        /* TITRE DEGRADÉ */
         .app-title {
-            font-family: 'Pacifico', cursive;
-            font-size: 2.8rem;
-            margin: 0 0 15px 0;
-            background: linear-gradient(to right, var(--blue), var(--pink)); /* Dégradé Bleu -> Rose */
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-family: 'Pacifico', cursive; font-size: 2.8rem; margin: 0 0 15px 0;
+            background: linear-gradient(to right, var(--blue), var(--pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
         }
 
-        /* DOT CONNECTÉ */
         .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 5px; vertical-align: middle; }
         .status-dot.online { background: #2ecc71; box-shadow: 0 0 5px #2ecc71; animation: blink 2s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        /* HORLOGES */
+        /* HORLOGES & MÉTÉO */
         .clocks-container { display: flex; justify-content: space-between; margin-bottom: 20px; background: #f8f9fa; padding: 10px 15px; border-radius: 18px; border: 1px solid #eee; margin-top: 15px; }
         .clock-item { text-align: center; flex: 1; }
         .clock-city { font-size: 0.65rem; color: #888; text-transform: uppercase; font-weight: 800; display:flex; align-items:center; justify-content:center; gap:4px; letter-spacing: 0.5px; }
+        .clock-weather { font-size: 0.8rem; font-weight: 600; margin: 2px 0; color: #555; display: flex; justify-content: center; align-items: center; gap: 4px; }
         .clock-time { font-size: 1.1rem; font-weight: 700; color: var(--text); }
         
-        /* COMPTE À REBOURS */
         .countdown-box { text-align: center; margin-top: 10px; }
         .countdown-title { font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; }
         .countdown-big { font-size: 2.2rem; font-weight: 900; color: #333; line-height: 1; margin: 5px 0; }
         .countdown-sub { font-size: 0.85rem; color: #888; }
         
-        /* BARRE AVION */
         .progress-container { margin-top: 25px; position: relative; height: 30px; }
         .progress-track { background: #eee; height: 4px; border-radius: 10px; position: relative; top: 12px; }
         .progress-fill { background: linear-gradient(90deg, var(--blue), var(--pink)); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease; }
@@ -63,25 +57,35 @@
         .card { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid white; }
         .card-title { font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
 
-        /* MOODS AVEC AVATAR */
+        /* MOODS */
         .current-moods { display: flex; justify-content: space-between; background: white; padding: 20px 10px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #f0f0f0; align-items: flex-end; }
         .one-mood { display: flex; flex-direction: column; align-items: center; width: 48%; }
         .mood-avatar-frame { width: 110px; height: 110px; display: flex; align-items: flex-end; justify-content: center; }
         .mood-avatar-img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15)); transition: transform 0.3s ease; }
         .mood-who { font-size: 0.75rem; font-weight: 900; letter-spacing: 1px; margin-top: 8px; display: block; text-transform: uppercase;}
-        
         .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
         .mood-btn { background: white; border: 1px solid #eee; border-radius: 16px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .mood-btn:active { transform: scale(0.95); background: #f9f9f9; }
         .mood-emoji { font-size: 1.5rem; display: block; margin-bottom: 2px; }
         .mood-text { font-size: 0.65rem; font-weight: bold; color: #555; display: block; }
 
-        /* LETTRES */
-        .letter-item { background: white; border: 2px dashed #e0e0e0; border-radius: 16px; padding: 15px; margin-bottom: 10px; transition: 0.3s; cursor: pointer; }
-        .letter-item.open { border: 2px solid var(--pink); background: #fff5f7; }
+        /* NOUVEAU STYLE LETTRES (MAILBOX) */
+        .mailbox-section { margin-bottom: 20px; }
+        .mailbox-title { font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; margin-bottom: 8px; padding-left: 5px; }
+        
+        .letter-item { background: white; border: 1px solid #e0e0e0; border-radius: 16px; padding: 15px; margin-bottom: 8px; transition: 0.3s; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); position: relative; overflow: hidden; }
+        
+        /* Style non lu (Nouveau) */
+        .letter-item.unread { border-left: 5px solid var(--primary); background: white; }
+        .letter-item.unread::after { content: "Nouveau"; position: absolute; top: 0; right: 0; background: var(--primary); color: white; font-size: 0.5rem; padding: 2px 6px; border-bottom-left-radius: 8px; text-transform: uppercase; font-weight: bold; }
+        
+        /* Style lu (Ancien) */
+        .letter-item.read { background: #f8f9fa; border: 1px solid #eee; opacity: 0.7; }
+        .letter-item.read .letter-header { color: #888; }
+
         .letter-header { font-weight: bold; font-size: 0.9rem; color: #333; display: flex; justify-content: space-between; align-items: center; }
+        .letter-icon { font-size: 1.2rem; margin-right: 10px; }
         .letter-content { margin-top: 10px; font-size: 0.9rem; color: #555; display: none; line-height: 1.5; border-top: 1px solid #eee; padding-top: 10px; }
-        .letter-tag { padding: 4px 8px; border-radius: 6px; font-size: 0.6rem; text-transform: uppercase; font-weight: bold; color: white; }
 
         /* GALERIE */
         .gallery-bubbles { display: flex; justify-content: space-around; margin-top: 15px; }
@@ -117,25 +121,20 @@
         .book-progress-track { flex: 1; height: 8px; background: #f0f0f0; border-radius: 10px; overflow: hidden; margin-left: 10px; }
         .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 10px; }
 
-        /* FOOTER AVEC LOGO */
+        /* FOOTER */
         .app-footer { text-align: center; padding: 40px 20px 20px; color: #aaa; font-size: 0.8rem; }
         .footer-logo { width: 50px; height: 50px; border-radius: 15px; margin-bottom: 10px; opacity: 0.8; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-        /* UTILS & IDENTITÉ */
         .identity-btn { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 16px; border: 1px solid #eee; background: white; color: #aaa; font-weight: 700; cursor: pointer; transition:0.2s; font-family: 'Outfit', sans-serif;}
-        /* BLEU POUR THEO */
         #btn-user-fr.active { background: var(--blue); color: white; border-color: var(--blue); box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3); }
-        /* ROSE POUR ELISE */
         #btn-user-tw.active { background: var(--pink); color: white; border-color: var(--pink); box-shadow: 0 8px 20px rgba(255, 75, 110, 0.3); }
         
         #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 75px; height: 75px; border-radius: 30px; background: linear-gradient(135deg, var(--pink), #ff758c); color: white; border: none; font-size: 32px; box-shadow: 0 15px 35px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; display:flex; align-items:center; justify-content:center; }
         #bisou-btn:active { transform: scale(0.9); }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 20px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
         
         #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-150px); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 15px 25px; border-radius: 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); z-index: 2000; font-weight: bold; color: var(--pink); width: 90%; max-width: 350px; text-align: center; border: 1px solid rgba(255,255,255,0.5); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; gap: 10px;}
         #notif.show { transform: translateX(-50%) translateY(0); }
         
-        iframe { border-radius: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .input-group { display: flex; gap: 8px; margin-bottom: 15px; }
         .input-field { flex: 1; padding: 12px; border: 1px solid #eee; border-radius: 12px; font-family: 'Outfit', sans-serif; background: #fcfcfc; }
         input[type="file"] { display: none; }
@@ -159,11 +158,13 @@
         <div class="clocks-container">
             <div class="clock-item">
                 <div class="clock-city" style="color:var(--blue)"><span id="dot-fr" class="status-dot"></span>FRANCE 🇫🇷</div>
+                <div class="clock-weather" id="weather-fr">--°C</div>
                 <div class="clock-time" id="clock-fr">--:--</div>
             </div>
             <div style="width:1px; background:#ddd;"></div>
             <div class="clock-item">
-                <div class="clock-city" style="color:var(--pink)"><span id="dot-tw" class="status-dot"></span>TAÏWAN 🇹🇼</div>
+                <div class="clock-city" style="color:var(--pink)"><span id="dot-tw" class="status-dot"></span>TAOYUAN 🇹🇼</div>
+                <div class="clock-weather" id="weather-tw">--°C</div>
                 <div class="clock-time" id="clock-tw">--:--</div>
             </div>
         </div>
@@ -180,33 +181,17 @@
     <div class="container">
         <div class="card" style="text-align:center; border:none; background:none; box-shadow:none;">
             <p style="margin:0 0 10px; font-size:0.75rem; color:#aaa; text-transform:uppercase; letter-spacing:1px; font-weight:bold;">Qui utilise ce téléphone ?</p>
-            <button class="identity-btn" id="btn-user-tw" onclick="setUser('tw')">Je suis Elise (Taïwan 🇹🇼)</button>
+            <button class="identity-btn" id="btn-user-tw" onclick="setUser('tw')">Je suis Elise (Taoyuan 🇹🇼)</button>
             <button class="identity-btn" id="btn-user-fr" onclick="setUser('fr')">Je suis Théo (France 🇫🇷)</button>
         </div>
 
         <div class="card">
             <div class="card-title"><span style="font-size:1.5rem">☁️</span> Météo des Cœurs</div>
-            
             <div class="current-moods">
-                <div class="one-mood">
-                    <div class="mood-avatar-frame">
-                        <img src="" id="mood-img-fr" class="mood-avatar-img">
-                    </div>
-                    <span class="mood-who" style="color:var(--blue)">THÉO</span>
-                    <div style="font-size:0.7rem; color:#888; margin-top:2px; font-style:italic;" id="mood-msg-fr">...</div>
-                </div>
-                
+                <div class="one-mood"><div class="mood-avatar-frame"><img src="" id="mood-img-fr" class="mood-avatar-img"></div><span class="mood-who" style="color:var(--blue)">THÉO</span><div style="font-size:0.7rem; color:#888; margin-top:2px; font-style:italic;" id="mood-msg-fr">...</div></div>
                 <div style="width:1px; background:#f0f0f0; height:100px; align-self:center;"></div>
-                
-                <div class="one-mood">
-                    <div class="mood-avatar-frame">
-                        <img src="" id="mood-img-tw" class="mood-avatar-img">
-                    </div>
-                    <span class="mood-who" style="color:var(--pink)">ELISE</span>
-                    <div style="font-size:0.7rem; color:#888; margin-top:2px; font-style:italic;" id="mood-msg-tw">...</div>
-                </div>
+                <div class="one-mood"><div class="mood-avatar-frame"><img src="" id="mood-img-tw" class="mood-avatar-img"></div><span class="mood-who" style="color:var(--pink)">ELISE</span><div style="font-size:0.7rem; color:#888; margin-top:2px; font-style:italic;" id="mood-msg-tw">...</div></div>
             </div>
-
             <p style="font-size:0.7rem; text-align:center; color:#aaa; margin-bottom:8px; font-weight:bold; text-transform:uppercase;">MON STATUT ACTUEL</p>
             <div class="mood-grid">
                 <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !', 0)"><span class="mood-emoji">🥰</span><span class="mood-text">Love</span></div>
@@ -219,13 +204,22 @@
         </div>
 
         <div class="card">
-            <div class="card-title"><span style="font-size:1.5rem">💌</span> Lettres à ouvrir</div>
+            <div class="card-title"><span style="font-size:1.5rem">💌</span> Boîte aux lettres</div>
+            
             <div class="input-group">
-                <input type="text" id="letter-title" class="input-field" placeholder="Ouvrir quand...">
-                <button onclick="addLetter()" class="input-field" style="flex:0; background:var(--pink); color:white; border:none; font-weight:bold;">+</button>
+                <input type="text" id="letter-title" class="input-field" placeholder="Titre de la lettre...">
+                <button onclick="addLetter()" class="input-field" style="flex:0; background:var(--pink); color:white; border:none; font-weight:bold;">Envoyer</button>
             </div>
-            <textarea id="letter-content" class="input-field" placeholder="Écris ton message ici..." style="width:100%; height:80px; margin-bottom:10px;"></textarea>
-            <div id="letters-list"></div>
+            <textarea id="letter-content" class="input-field" placeholder="Écris ton message ici..." style="width:100%; height:80px; margin-bottom:20px;"></textarea>
+
+            <div class="mailbox-section">
+                <div class="mailbox-title">📬 Reçu par Théo (De Elise)</div>
+                <div id="list-for-fr"></div>
+            </div>
+            <div class="mailbox-section">
+                <div class="mailbox-title">📬 Reçu par Elise (De Théo)</div>
+                <div id="list-for-tw"></div>
+            </div>
         </div>
 
         <div class="card">
@@ -268,8 +262,8 @@
         <div class="card">
             <div class="card-title"><span style="font-size:1.5rem">🎧</span> Vibe du moment</div>
             <iframe 
-                style="border-radius:12px; width:100%; height:300px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);" 
-                src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP&jct=2t2C2kP4Sk_z5akZJ-RTmA" 
+                style="border-radius:12px; width:100%; height:300px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);" 
+                src="https://www.youtube.com/embed/videoseries?list=PLmcI3xlumHTJ-pr1XW_tZ5YJ7Q_Wd0-bT" 
                 title="YouTube Music" 
                 frameborder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -302,6 +296,32 @@
             document.getElementById('btn-user-tw').classList.remove('active'); 
             document.getElementById('btn-user-' + currentUser).classList.add('active'); 
         }
+
+        // --- MÉTÉO (Taoyuan) ---
+        async function updateWeather() {
+            try {
+                // Clermont (45.77, 3.08) & Taoyuan (24.99, 121.30)
+                const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.77,24.99&longitude=3.08,121.30&current_weather=true");
+                const data = await res.json();
+                
+                const wFr = data[0].current_weather; 
+                const wTw = data[1].current_weather; 
+                
+                const getIcon = (code) => {
+                    if (code === 0) return "☀️";
+                    if (code >= 1 && code <= 3) return "⛅";
+                    if (code >= 45 && code <= 48) return "🌫️";
+                    if (code >= 51 && code <= 67) return "🌧️";
+                    if (code >= 71) return "❄️";
+                    if (code >= 95) return "⛈️";
+                    return "🌡️";
+                };
+
+                document.getElementById('weather-fr').innerText = `${getIcon(wFr.weathercode)} ${Math.round(wFr.temperature)}°C`;
+                document.getElementById('weather-tw').innerText = `${getIcon(wTw.weathercode)} ${Math.round(wTw.temperature)}°C`;
+            } catch (e) { console.log("Météo erreur", e); }
+        }
+        updateWeather(); setInterval(updateWeather, 1800000);
 
         // --- PRESENCE ---
         function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
@@ -342,42 +362,63 @@
         }
         window.customMood = function() {
             const text = prompt("Ta phrase :", "Je pense à toi"); if(!text) return;
-            updateMood("✨", text, 5); // 5 = Tenue soirée par défaut pour perso, emoji fixe
+            updateMood("✨", text, 5);
         }
 
-        // --- LETTRES ---
+        // --- LETTRES (V13 - Mailbox Split) ---
         window.addLetter = function() {
             const title = document.getElementById("letter-title").value; const content = document.getElementById("letter-content").value;
             if(!title || !content) return;
-            addDoc(collection(db, "letters"), { title: title, content: content, by: currentUser, timestamp: serverTimestamp() });
+            // On ajoute 'read: false' par défaut
+            addDoc(collection(db, "letters"), { 
+                title: title, content: content, by: currentUser, read: false, timestamp: serverTimestamp() 
+            });
             document.getElementById("letter-title").value = ""; document.getElementById("letter-content").value = "";
+            sendNtfy("💌 Nouvelle lettre reçue !", "email", "low");
         }
-        window.toggleLetter = function(id) {
+        
+        window.toggleLetter = function(id, currentRead) {
             const el = document.getElementById("letter-content-"+id);
-            const item = document.getElementById("letter-item-"+id);
-            if(el.style.display === "block") { el.style.display = "none"; item.classList.remove("open"); } 
-            else { el.style.display = "block"; item.classList.add("open"); }
+            if(el.style.display === "block") el.style.display = "none"; 
+            else { 
+                el.style.display = "block"; 
+                // Si pas encore lu, on marque comme lu
+                if(!currentRead) {
+                    updateDoc(doc(db, "letters", id), { read: true });
+                }
+            }
         }
+        
         const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
         onSnapshot(qLetters, (snapshot) => {
-            const list = document.getElementById("letters-list"); list.innerHTML = "";
-            snapshot.forEach(doc => {
-                const l = doc.data();
-                const div = document.createElement("div"); div.className = "letter-item"; div.id = "letter-item-"+doc.id;
-                div.onclick = (e) => { if(e.target.tagName !== 'BUTTON') toggleLetter(doc.id) };
+            const listFr = document.getElementById("list-for-fr"); // Reçu par Théo
+            const listTw = document.getElementById("list-for-tw"); // Reçu par Elise
+            listFr.innerHTML = ""; listTw.innerHTML = "";
+
+            snapshot.forEach(docSnap => {
+                const l = docSnap.data();
+                // Si envoyé par 'tw' (Elise), c'est pour 'fr' (Théo)
+                const targetList = l.by === 'tw' ? listFr : listTw;
                 
-                const tagColor = l.by === 'fr' ? 'var(--blue)' : 'var(--pink)';
-                const tagText = l.by === 'fr' ? 'Théo' : 'Elise';
+                const div = document.createElement("div"); 
+                // Style dynamique selon état 'read'
+                div.className = `letter-item ${l.read ? 'read' : 'unread'}`;
+                
+                const icon = l.read ? '📩' : '✉️';
+                
+                div.onclick = (e) => { if(e.target.tagName !== 'BUTTON') toggleLetter(docSnap.id, l.read) };
                 
                 div.innerHTML = `
                     <div class="letter-header">
-                        <span>${l.title}</span>
-                        <span class="letter-tag" style="background:${tagColor}">De ${tagText}</span>
-                        <button onclick="deleteLetter('${doc.id}', event)" style="border:none;background:none;color:#faa;">✕</button>
+                        <div style="display:flex;align-items:center;">
+                            <span class="letter-icon">${icon}</span>
+                            <span>${l.title}</span>
+                        </div>
+                        <button onclick="deleteLetter('${docSnap.id}', event)" style="border:none;background:none;color:#faa;">✕</button>
                     </div>
-                    <div class="letter-content" id="letter-content-${doc.id}">${l.content}</div>
+                    <div class="letter-content" id="letter-content-${docSnap.id}">${l.content}</div>
                 `;
-                list.appendChild(div);
+                targetList.appendChild(div);
             });
         });
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db, "letters", id)); }
