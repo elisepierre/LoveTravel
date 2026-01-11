@@ -73,7 +73,7 @@
         .prog-fill-mini { height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%; transition: width 1s ease; }
         .prog-heart { position: absolute; top: -6px; font-size: 14px; transform: translateX(-50%); transition: left 1s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
 
-        /* MOODS & OTHERS */
+        /* MOODS */
         .mood-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
         .mood-person { width: 48%; text-align: center; position: relative; }
         .avatar-frame { width: 100%; height: 140px; display: flex; align-items: flex-end; justify-content: center; position: relative; border-bottom: 1px solid var(--border); }
@@ -87,6 +87,7 @@
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
         .input-field { flex: 1; min-width: 120px; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-family: 'Outfit'; outline: none; background: var(--input-bg); color: var(--text-main); }
         .btn-action { background: var(--blue-dark); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: bold; cursor: pointer; height: 45px; }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; background: var(--text-sub); }
         
         /* QUESTIONS DU JOUR */
         .question-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 15px; }
@@ -102,10 +103,19 @@
         .q-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
         .q-action-btn { font-size: 0.7rem; border: none; background: none; cursor: pointer; text-decoration: underline; color: #555; }
 
-        /* JEUX - V41 REDESIGN */
-        .game-block { background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 20px; }
+        /* JEUX - V42 REDESIGN */
+        .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+        .game-btn { flex: 1; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-weight: bold; cursor: pointer; transition: 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; box-shadow:0 4px 10px rgba(0,0,0,0.05); }
+        .game-btn:active { transform:scale(0.95); }
+        .game-btn span { font-size:1.5rem; }
+        .game-btn.active-game { border: 2px solid var(--pink-dark); background: #fff0f5; color: var(--pink-dark); }
+
+        .game-block { display: none; background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 20px; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed var(--border); padding-bottom: 5px; }
         .game-title-text { font-weight: 800; text-transform: uppercase; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        .game-close-btn { background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--text-sub); }
         
         .score-pill { background: var(--bg-card); border: 1px solid var(--border); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: var(--pink-dark); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .status-msg { text-align: center; font-style: italic; color: var(--text-sub); margin: 10px 0; font-size: 0.9rem; min-height: 20px; }
@@ -129,7 +139,7 @@
         .p4-cell.p1 { background: var(--blue); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); } /* Théo = Bleu */
         .p4-cell.p2 { background: var(--pink); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); } /* Elise = Rose */
 
-        /* LETTRES (V28 STYLE) */
+        /* LETTRES */
         .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
         .mailbox-tab { flex: 1; padding: 10px; text-align: center; border-radius: 12px; font-size: 0.8rem; font-weight: bold; cursor: pointer; opacity: 0.5; transition: 0.3s; color: var(--text-main); border: 1px solid var(--border); }
         .mailbox-tab.active { opacity: 1; color: white; border: none; box-shadow: 0 4px 10px var(--shadow); }
@@ -142,7 +152,7 @@
         .letter-close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #aaa; background: none; border: none; cursor: pointer; z-index: 10; }
         .letter-stamp { position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border: 2px double #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4af37; font-size: 0.7rem; font-weight: bold; transform: rotate(-15deg); opacity: 0.7; text-align: center; pointer-events: none; }
 
-        /* GALERIE (V28 STYLE) */
+        /* GALERIE */
         .polaroid-container { display: flex; justify-content: space-around; }
         .polaroid { background: white; padding: 10px 10px 30px 10px; position: relative; box-shadow: 0 5px 15px var(--p-shadow); transform: rotate(-2deg); width: 45%; text-align: center; cursor: pointer; transition: 0.3s; border-radius:0; }
         .polaroid:nth-child(2) { transform: rotate(3deg); }
@@ -291,39 +301,36 @@
         <div class="card" id="card-games">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div></div>
             <div class="card-content">
+                <div class="game-score-card"><span id="score-fr">Théo: 0</span> <span>VS</span> <span id="score-tw">Elise: 0</span></div>
                 
-                <div class="game-block">
-                    <div class="game-header">
-                        <div class="game-title-text">🔤 Pendu</div>
-                        <div class="score-pill" id="score-pendu">---</div>
+                <div class="game-selector">
+                    <button onclick="toggleGame('pendu')" class="game-btn"><span>🔤</span> Pendu</button>
+                    <button onclick="toggleGame('p4')" class="game-btn"><span>🔴</span> Puissance 4</button>
+                </div>
+                
+                <div id="pendu-box" class="game-block">
+                    <div class="game-header"><div class="game-title-text">🔤 Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div>
+                    <div class="score-pill" id="score-pendu" style="margin:0 auto 10px auto; width:fit-content;">---</div>
+                    <canvas id="pendu-canvas" width="200" height="150"></canvas>
+                    <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
+                    <div id="pendu-status" class="status-msg">En attente...</div>
+                    <div id="pendu-setup" style="margin-top:10px;">
+                        <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)">
+                        <button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button>
                     </div>
-                    <div id="pendu-ui">
-                        <canvas id="pendu-canvas" width="200" height="150"></canvas>
-                        <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
-                        <div id="game-status" class="status-msg">En attente...</div>
-                        
-                        <div id="pendu-setup" style="margin-top:10px;">
-                            <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)">
-                            <button onclick="startPendu()" class="btn-action" style="margin-top:5px;width:100%">Lancer</button>
-                        </div>
-                        
-                        <div id="pendu-keyboard" class="keyboard" style="display:none;"></div>
-                        
-                        <div class="history-box" id="pendu-history-list"></div>
+                    <div id="pendu-restart-area" style="display:none;margin-top:10px;">
+                        <button onclick="startPenduSetup()" class="btn-action" style="background:#2ecc71;width:100%;">Rejouer</button>
                     </div>
+                    <div id="pendu-keyboard" class="keyboard" style="display:none;"></div>
+                    <div class="history-box" id="pendu-history-list"></div>
                 </div>
 
-                <div class="game-block">
-                    <div class="game-header">
-                        <div class="game-title-text">🔴 Puissance 4</div>
-                        <div class="score-pill" id="score-p4">🏆 Théo: 0 | Elise: 0</div>
-                    </div>
-                    <div id="p4-ui">
-                        <div id="p4-status" class="status-msg">En attente...</div>
-                        <button onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--pink);">Nouvelle Partie</button>
-                        <div class="p4-grid" id="p4-grid"></div>
-                        <div class="history-box" id="p4-history-list"></div>
-                    </div>
+                <div id="p4-box" class="game-block">
+                    <div class="game-header"><div class="game-title-text">🔴 Puissance 4</div><button class="game-close-btn" onclick="toggleGame('p4')">✕</button></div>
+                    <div id="p4-status" class="status-msg">En attente...</div>
+                    <button id="p4-restart-btn" onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--pink);" disabled>Nouvelle Partie</button>
+                    <div class="p4-grid" id="p4-grid"></div>
+                    <div class="history-box" id="p4-history-list"></div>
                 </div>
 
             </div>
@@ -334,7 +341,7 @@
             <div class="card-content"><iframe style="border-radius:15px; width:100%; height:300px; border:none;" src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" allowfullscreen></iframe></div>
         </div>
 
-        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v41 • janvier 2026</div></div>
+        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v42 • janvier 2026</div></div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
@@ -382,9 +389,7 @@
 
         // --- QUESTION DU JOUR ---
         const questionsList = ["Quel est ton meilleur souvenir de nous ?", "Quelle qualité préfères-tu chez moi ?", "Où veux-tu qu'on aille manger en premier ?", "Quelle chanson te fait penser à moi ?", "Décris notre relation en 3 mots.", "Quel est ton rêve pour nous ?", "Si on pouvait partir demain, on irait où ?", "Qu'est-ce qui te manque le plus ?", "Raconte notre première rencontre vue par toi."]; 
-        // Note: Liste réduite ici pour l'exemple, mais tu peux remettre les 150 questions de la V39
         const baseQuestions = [ "Quel est ton meilleur souvenir de nous ?", "Quelle qualité préfères-tu chez moi ?", "Où veux-tu qu'on aille manger en premier ?", "Quelle chanson te fait penser à moi ?", "Décris notre relation en 3 mots.", "Quel est ton rêve pour nous ?", "Si on pouvait partir demain, on irait où ?", "Qu'est-ce qui te manque le plus ?", "Raconte notre première rencontre vue par toi." ]; 
-        // Helper Timezone France
         function getFrenchDate() { return new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Paris"})); }
         let currentQDate = getFrenchDate();
 
@@ -431,12 +436,16 @@
         window.editQ = function(key) { getDoc(doc(db, "daily_answers", key)).then(snap => { if(snap.exists()) { document.getElementById('q-input').value = snap.data()[currentUser]; deleteQ(key); } }); }
 
         // --- JEUX ---
-        // 1. PENDU LOGIC
+        // UI TOGGLE
+        window.toggleGame = function(game) {
+            const el = document.getElementById(game + '-box');
+            if (el.style.display === 'block') el.style.display = 'none';
+            else el.style.display = 'block';
+        }
+
+        // PENDU
         let activePendu = null;
-        onSnapshot(doc(db, "games", "pendu_active"), (s) => { 
-            activePendu = s.exists() ? s.data() : { state:'setup' };
-            renderPendu(activePendu);
-        });
+        onSnapshot(doc(db, "games", "pendu_active"), (s) => { activePendu = s.exists() ? s.data() : { state:'setup' }; renderPendu(activePendu); });
         
         onSnapshot(query(collection(db, "games_pendu_history"), orderBy("timestamp", "desc"), limit(5)), (s) => {
             const list = document.getElementById('pendu-history-list'); list.innerHTML = "";
@@ -449,123 +458,92 @@
         });
 
         function renderPendu(game) {
-            const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('game-status');
+            const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('pendu-status');
             const mainColor = getComputedStyle(document.body).getPropertyValue('--text-main');
             ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.strokeStyle = mainColor; ctx.beginPath();
             
-            // DESSIN DU BONHOMME
-            if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} 
-            if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} 
-            if(game.mistakes>2){ctx.lineTo(130,20);} 
-            if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);}
-            ctx.stroke(); 
-            if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} 
-            if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} 
-            ctx.beginPath(); 
-            if(game.mistakes>6){ctx.moveTo(130,80);ctx.lineTo(110,95);} 
-            if(game.mistakes>7){ctx.moveTo(130,80);ctx.lineTo(150,95);} 
-            if(game.mistakes>8){ctx.moveTo(130,110);ctx.lineTo(115,135);} 
-            if(game.mistakes>9){ctx.moveTo(130,110);ctx.lineTo(145,135);} 
-            ctx.stroke();
-            // YEUX CENTRES (FIX V41)
-            if(game.mistakes>10){
-                ctx.font="14px Arial"; ctx.fillStyle=mainColor; ctx.textAlign="center"; 
-                ctx.fillText("x x",130,60); // Centré en X=130
-            } 
+            if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} if(game.mistakes>2){ctx.lineTo(130,20);} if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);}
+            ctx.stroke(); if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} 
+            ctx.beginPath(); if(game.mistakes>6){ctx.moveTo(130,80);ctx.lineTo(110,95);} if(game.mistakes>7){ctx.moveTo(130,80);ctx.lineTo(150,95);} if(game.mistakes>8){ctx.moveTo(130,110);ctx.lineTo(115,135);} if(game.mistakes>9){ctx.moveTo(130,110);ctx.lineTo(145,135);} ctx.stroke();
+            if(game.mistakes>10){ctx.font="14px Arial"; ctx.fillStyle=mainColor; ctx.textAlign="center"; ctx.fillText("x x",130,60);} 
             
+            const restartArea = document.getElementById('pendu-restart-area');
+            const setupArea = document.getElementById('pendu-setup');
+            const keyboard = document.getElementById('pendu-keyboard');
+
             if(game.state==='setup'){ 
-                status.innerText="En attente d'un mot..."; 
-                document.getElementById('pendu-setup').style.display='block'; 
-                document.getElementById('pendu-keyboard').style.display='none';
-                document.getElementById('pendu-word-display').innerText="???"; 
+                status.innerText="En attente d'un mot..."; setupArea.style.display='block'; keyboard.style.display='none'; restartArea.style.display='none'; document.getElementById('pendu-word-display').innerText="???"; 
             } else { 
-                document.getElementById('pendu-setup').style.display='none'; 
-                document.getElementById('pendu-keyboard').style.display='flex';
-                
+                setupArea.style.display='none'; 
                 let d=""; for(let c of game.word) d+=(game.guessed.includes(c)?c:"_")+" "; document.getElementById('pendu-word-display').innerText=d; 
                 const isCreator = game.creator === currentUser;
                 
                 if(game.state==='playing') { 
                     status.innerText = isCreator ? "L'autre devine..." : "Devine !";
-                    let k=""; 
-                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l=>{ 
-                        const disabled = isCreator || game.guessed.includes(l) ? "disabled" : ""; 
-                        k+=`<button class="key-btn" onclick="playPenduMove('${l}')" ${disabled}>${l}</button>`; 
-                    }); 
-                    document.getElementById('pendu-keyboard').innerHTML=k; 
+                    keyboard.style.display = 'flex'; restartArea.style.display='none';
+                    let k=""; "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l=>{ const disabled = isCreator || game.guessed.includes(l) ? "disabled" : ""; k+=`<button class="key-btn" onclick="playPenduMove('${l}')" ${disabled}>${l}</button>`; }); 
+                    keyboard.innerHTML=k; 
                 }
-                else status.innerText = game.state==='win' ? "GAGNÉ ! 🎉" : ("PERDU... Le mot était : "+game.word);
+                else {
+                    status.innerText = game.state==='win' ? "GAGNÉ ! 🎉" : ("PERDU... Le mot était : "+game.word);
+                    keyboard.style.display='none';
+                    restartArea.style.display='block';
+                }
             }
         }
         window.startPendu=function(){const w=document.getElementById('pendu-secret').value.toUpperCase().trim(); if(w) setDoc(doc(db,"games","pendu_active"),{state:'playing',word:w,guessed:[],mistakes:0, creator:currentUser});}
+        window.startPenduSetup=function(){ setDoc(doc(db,"games","pendu_active"),{state:'setup',word:"",guessed:[],mistakes:0, creator:""}); }
         window.playPenduMove=async function(l){ 
-            if(!activePendu||activePendu.state!=='playing')return; 
-            const ng=[...activePendu.guessed,l]; let nm=activePendu.mistakes; 
-            if(!activePendu.word.includes(l))nm++; 
+            if(!activePendu||activePendu.state!=='playing')return; const ng=[...activePendu.guessed,l]; let nm=activePendu.mistakes; if(!activePendu.word.includes(l))nm++; 
             let ns='playing'; let save=false;
-            if(nm>=11) { ns='loose'; save=true; }
-            else if(activePendu.word.split('').every(c=>ng.includes(c))) { ns='win'; save=true; }
+            if(nm>=11) { ns='loose'; save=true; } else if(activePendu.word.split('').every(c=>ng.includes(c))) { ns='win'; save=true; }
             await updateDoc(doc(db,"games","pendu_active"),{guessed:ng,mistakes:nm,state:ns});
             if(save) addDoc(collection(db, "games_pendu_history"), { word: activePendu.word, setter: activePendu.creator, result: ns, timestamp: serverTimestamp() });
         }
 
-        // 2. P4 LOGIC
+        // P4
         let activeP4 = null;
         onSnapshot(doc(db, "games", "p4_active"), (s) => { activeP4 = s.exists() ? s.data() : null; if(activeP4) renderP4(activeP4); else document.getElementById('p4-status').innerText = "Aucune partie en cours"; });
-        
-        onSnapshot(doc(db, "games", "p4_scores"), (s) => { const sc = s.exists() ? s.data() : {fr:0, tw:0}; document.getElementById('score-p4').innerText = `🏆 Théo: ${sc.fr} | Elise: ${sc.tw}`; });
+        onSnapshot(doc(db, "games", "p4_scores"), (s) => { const sc = s.exists() ? s.data() : {fr:0, tw:0}; document.getElementById('score-fr').innerText = `Théo: ${sc.fr}`; document.getElementById('score-tw').innerText = `Elise: ${sc.tw}`; });
         onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(5)), (s) => {
             const list = document.getElementById('p4-history-list'); list.innerHTML = "";
-            s.forEach(d => {
-                const h = d.data();
-                list.innerHTML += `<div class="hist-row"><span>${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`;
-            });
+            s.forEach(d => { const h = d.data(); list.innerHTML += `<div class="hist-row"><span>${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`; });
         });
 
-        window.initP4 = function() {
-            setDoc(doc(db, "games", "p4_active"), { board: Array(42).fill(0), turn: currentUser, winner: null, moves: 0, starter: currentUser });
-        }
+        window.initP4 = function() { setDoc(doc(db, "games", "p4_active"), { board: Array(42).fill(0), turn: currentUser, winner: null, moves: 0, starter: currentUser }); }
 
         function renderP4(game) {
             const grid=document.getElementById('p4-grid'); grid.innerHTML="";
             const status = document.getElementById('p4-status');
-            if(game.winner) status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !";
-            else status.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)");
+            const btn = document.getElementById('p4-restart-btn');
+            
+            if(game.winner) {
+                status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !";
+                btn.disabled = false; btn.style.opacity = "1";
+            } else {
+                status.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)");
+                btn.disabled = true; btn.style.opacity = "0.5";
+            }
             
             for(let i=0; i<42; i++) { 
-                const c=document.createElement('div'); 
-                c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); 
-                c.onclick=()=>playP4(i%7); 
-                grid.appendChild(c); 
+                const c=document.createElement('div'); c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); 
+                c.onclick=()=>playP4(i%7); grid.appendChild(c); 
             }
         }
 
         window.playP4 = async function(col) {
-            if(!activeP4 || activeP4.winner) return;
+            if(!activeP4||activeP4.winner) return;
             if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; }
-            
-            let board=[...activeP4.board]; let row=5; 
-            while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; }
+            let board=[...activeP4.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; }
             if(row<0) return;
-
             const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0};
-            
-            const winnerCode = checkWin(board); 
-            let winner = null;
-            let moves = activeP4.moves + 1;
-
+            const winnerCode = checkWin(board); let winner = null; let moves = activeP4.moves + 1;
             if(winnerCode !== 0) { 
                 winner = winnerCode === 1 ? 'fr' : 'tw'; 
-                // Update Score
-                const scoreRef = doc(db, "games", "p4_scores");
-                const scoreSnap = await getDoc(scoreRef);
-                const scores = scoreSnap.exists() ? scoreSnap.data() : {fr:0, tw:0};
-                scores[winner]++; 
-                setDoc(scoreRef, scores);
-                // Update History
+                const scoreRef = doc(db, "games", "p4_scores"); const scoreSnap = await getDoc(scoreRef);
+                const scores = scoreSnap.exists() ? scoreSnap.data() : {fr:0, tw:0}; scores[winner]++; setDoc(scoreRef, scores);
                 addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() });
             }
-            
             updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves });
         }
 
@@ -596,7 +574,9 @@
             addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
             sendNtfy(`💋 Bisou envoyé ! (${getCurrentTime(currentUser)})`, "kiss,heart", "urgent");
             const n = document.getElementById("notif"); n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),3000);
+            if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 100]); // V42 Vibe
         }
+        
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
@@ -686,7 +666,7 @@
         onSnapshot(query(collection(db,"actions"),orderBy("timestamp","desc"),limit(1)),s=>{
             if(!s.empty){const a=s.docs[0].data(); if(a.from!==currentUser && Math.abs(Date.now()-a.timestamp.toMillis())<60000){
                 document.getElementById("notif").innerHTML=`💋 <b>${a.from==='fr'?'Théo':'Elise'}</b> t'envoie un bisou !`;
-                document.getElementById("notif").classList.add("show"); if(navigator.vibrate)navigator.vibrate([200,100,200]);
+                document.getElementById("notif").classList.add("show"); if(navigator.vibrate)navigator.vibrate([100,50,100,50,100]);
                 setTimeout(()=>document.getElementById("notif").classList.remove("show"),4000);
             }}
         });
