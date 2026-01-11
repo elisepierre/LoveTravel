@@ -71,7 +71,7 @@
         .prog-fill-mini { height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%; transition: width 1s ease; }
         .prog-heart { position: absolute; top: -6px; font-size: 14px; transform: translateX(-50%); transition: left 1s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
 
-        /* MOODS */
+        /* MOODS & OTHERS */
         .mood-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
         .mood-person { width: 48%; text-align: center; position: relative; }
         .avatar-frame { width: 100%; height: 140px; display: flex; align-items: flex-end; justify-content: center; position: relative; border-bottom: 1px solid var(--border); }
@@ -86,17 +86,19 @@
         .input-field { flex: 1; min-width: 120px; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-family: 'Outfit'; outline: none; background: var(--input-bg); color: var(--text-main); }
         .btn-action { background: var(--blue-dark); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: bold; cursor: pointer; height: 45px; }
         
-        /* QUESTIONS DU JOUR */
+        /* QUESTIONS DU JOUR (V33 IMPROVED) */
         .question-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 15px; }
         .q-date { font-size: 0.7rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         .q-text { font-size: 1.1rem; font-weight: bold; color: var(--text-main); margin-bottom: 15px; font-family: 'Dancing Script', cursive; }
         .q-answers { display: flex; flex-direction: column; gap: 10px; text-align: left; }
         .q-bubble { padding: 10px; border-radius: 10px; font-size: 0.9rem; position: relative; }
-        .q-blur { filter: blur(5px); user-select: none; opacity: 0.5; }
+        .q-blur { filter: blur(5px); user-select: none; opacity: 0.5; cursor: not-allowed; }
         .q-fr { background: #e3f2fd; color: #333; border: 1px solid var(--blue); align-self: flex-start; max-width: 90%; }
         .q-tw { background: #fff0f5; color: #333; border: 1px solid var(--pink); align-self: flex-end; max-width: 90%; }
+        .q-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
+        .q-action-btn { font-size: 0.7rem; border: none; background: none; cursor: pointer; text-decoration: underline; color: #555; }
 
-        /* DATES & CALENDRIER */
+        /* DATES & CALENDRIER (V33 TIMEZONE) */
         .date-item { display: flex; align-items: center; background: var(--input-bg); padding: 12px; margin-bottom: 10px; border-radius: 15px; border: 1px solid var(--border); justify-content: space-between; }
         .date-info { flex: 1; }
         .date-main { font-weight: bold; font-size: 0.95rem; color: var(--text-main); }
@@ -107,6 +109,8 @@
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .game-board-container { text-align: center; background: var(--input-bg); padding: 15px; border-radius: 15px; border: 1px solid var(--border); }
         .identity-btn { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-sub); font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .identity-btn.active-fr { background: var(--btn-fr-bg); color: var(--btn-fr-text); border-color: var(--blue-dark); }
+        .identity-btn.active-tw { background: var(--btn-tw-bg); color: var(--btn-tw-text); border-color: var(--pink-dark); }
         #pendu-canvas { border-bottom: 2px solid var(--text-main); margin-bottom: 10px; width: 200px; height: 150px; }
         .pendu-word { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin: 15px 0; color: var(--text-main); }
         .keyboard { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
@@ -116,50 +120,14 @@
         .p4-cell { aspect-ratio: 1/1; background: white; border-radius: 50%; cursor: pointer; border: 2px solid #0055aa; }
         .p4-cell.p1 { background: #ff4b6e; } .p4-cell.p2 { background: #ffcc00; }
 
-        /* LETTRES */
+        /* LETTRES (DESIGN V28 RESTORED) */
         .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
         .mailbox-tab { flex: 1; padding: 10px; text-align: center; border-radius: 12px; font-size: 0.8rem; font-weight: bold; cursor: pointer; opacity: 0.5; transition: 0.3s; color: var(--text-main); border: 1px solid var(--border); }
-        .mailbox-tab.active { opacity: 1; color: white; border: none; }
-        .envelope-item { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; display: flex; align-items: center; cursor: pointer; transition: 0.3s; border-left: 5px solid #ccc; }
+        .mailbox-tab.active { opacity: 1; color: white; border: none; box-shadow: 0 4px 10px var(--shadow); }
+        .envelope-item { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; display: flex; align-items: center; cursor: pointer; transition: 0.3s; border-left: 5px solid #ccc; margin-bottom: 10px; }
         .envelope-item.unread { border-left-color: var(--pink-dark); background: rgba(255, 75, 110, 0.1); }
-        
-        #letter-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 5000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
-        .real-letter { background: #fffdf0; width: 100%; max-width: 400px; max-height: 80vh; display: flex; flex-direction: column; padding: 30px; border-radius: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; background-image: radial-gradient(#e0e0e0 1px, transparent 1px); background-size: 20px 20px; transform: rotate(-1deg); }
-        .real-letter h2 { font-family: 'Pacifico', cursive; margin-top: 0; color: var(--pink-dark); margin-right: 30px; flex-shrink: 0; }
-        #modal-letter-content { font-family: 'Dancing Script', cursive; font-size: 1.6rem; line-height: 1.6; color: #333; white-space: pre-wrap; overflow-y: auto; flex: 1; padding-right: 10px; margin-bottom: 20px; }
-        .letter-close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #aaa; background: none; border: none; cursor: pointer; z-index: 10; }
-        .letter-stamp { position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border: 2px double #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4af37; font-size: 0.7rem; font-weight: bold; transform: rotate(-15deg); opacity: 0.7; text-align: center; pointer-events: none; }
 
-        /* GALERIE (DESIGN CORRIGÉ) */
-        .polaroid-container { display: flex; justify-content: space-around; }
-        .polaroid {
-            background: white; padding: 10px 10px 30px 10px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); transform: rotate(-2deg);
-            width: 45%; text-align: center; cursor: pointer; transition: 0.3s;
-        }
-        .polaroid:nth-child(2) { transform: rotate(3deg); }
-        .polaroid:active { transform: scale(1.05) rotate(0deg); z-index: 10; }
-        .polaroid-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; margin-bottom: 5px; }
-        .polaroid-label { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: #555; }
-        .add-photo-btn { display: none; margin-top: 5px; font-size: 0.7rem; color: #888; border: 1px dashed #ccc; padding: 5px; border-radius: 5px; }
-
-        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; overflow-y:auto;}
-        .modal-header { display: flex; justify-content: space-between; color: white; margin-bottom: 20px; align-items: center; }
-        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .modal-img { width: 100%; border-radius: 5px; cursor: zoom-in; transition: 0.2s; }
-        .modal-img:hover { opacity: 0.8; }
-        
-        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 7000; justify-content: center; align-items: center; }
-        #lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .lightbox-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; background: none; border: none; cursor: pointer; }
-
-        /* PROJETS & LIVRES */
-        .todo-item { display: flex; align-items: center; background: var(--input-bg); padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--border); justify-content: space-between; }
-        .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--pink-dark); }
-        .todo-text { flex: 1; font-size: 0.9rem; margin-right: 10px; color: var(--text-main); }
-        .todo-text.done { text-decoration: line-through; color: var(--text-sub); }
-        .todo-del { background: none; border: none; color: #faa; cursor: pointer; font-size: 1.2rem; margin-left: auto; }
-
+        /* LIVRES */
         .book-item { background: var(--input-bg); padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border); }
         .book-title { font-weight: 800; font-size: 1rem; color: var(--text-main); margin-bottom: 5px; display:flex; justify-content:space-between; }
         .book-total-pages { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 10px; font-weight: 500; }
@@ -174,9 +142,31 @@
         .book-progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-left: 10px; }
         .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
+        /* FOOTER & UTILS */
         .app-footer { text-align: center; padding: 20px; margin-top: 30px; opacity: 0.8; }
         .footer-logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        /* MODAL GALERIE & LIGHTBOX */
+        #gallery-modal, #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; overflow-y:auto; }
+        #lightbox { background: black; z-index: 7000; justify-content: center; align-items: center; padding: 0; }
+        #lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .modal-img { width: 100%; border-radius: 5px; cursor: zoom-in; transition: 0.2s; }
+        .modal-img:hover { opacity: 0.8; }
+        .add-photo-btn { display: none; margin-top: 5px; font-size: 0.7rem; color: #888; border: 1px dashed #ccc; padding: 5px; border-radius: 5px; }
+        .polaroid-container { display: flex; justify-content: space-around; }
+        .polaroid { width: 45%; background: white; padding: 10px 10px 30px 10px; transform: rotate(-2deg); box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
+        .polaroid:nth-child(2) { transform: rotate(3deg); }
+        .polaroid-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; }
 
+        /* PROJETS V29 */
+        .todo-item { display: flex; align-items: center; background: var(--input-bg); padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--border); justify-content: space-between; }
+        .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--pink-dark); }
+        .todo-text { flex: 1; font-size: 0.9rem; margin-right: 10px; color: var(--text-main); }
+        .todo-text.done { text-decoration: line-through; color: var(--text-sub); }
+        .todo-del { background: none; border: none; color: #faa; cursor: pointer; font-size: 1.2rem; margin-left: auto; }
+
+        /* FAB */
         #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--pink-dark)); color: white; border: none; font-size: 30px; box-shadow: 0 10px 25px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
         #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #333; color: white; padding: 10px 20px; border-radius: 30px; z-index: 9999; transition: 0.3s; display:flex; align-items:center; gap:10px; }
@@ -244,14 +234,18 @@
                     <div class="q-text" id="q-text">Chargement...</div>
                     <div class="q-answers" id="q-answers-area"></div>
                 </div>
-                <div class="input-group"><input type="text" id="q-input" class="input-field" placeholder="Ta réponse..."><button onclick="sendAnswer()" class="btn-action">Envoyer</button></div>
+                <div class="input-group" id="q-input-group"><input type="text" id="q-input" class="input-field" placeholder="Ta réponse..."><button onclick="sendAnswer()" class="btn-action">Envoyer</button></div>
             </div>
         </div>
 
         <div class="card" id="card-dates">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📅</span> Nos Dates</div></div>
             <div class="card-content">
-                <div class="input-group"><input type="date" id="date-date" class="input-field"><input type="time" id="date-time" class="input-field"><input type="text" id="date-activity" class="input-field" placeholder="Activité..."><button onclick="addDateEvent()" class="btn-action">+</button></div>
+                <div class="input-group">
+                    <input type="datetime-local" id="date-input" class="input-field">
+                    <input type="text" id="date-activity" class="input-field" placeholder="Activité...">
+                    <button onclick="addDateEvent()" class="btn-action">+</button>
+                </div>
                 <div id="dates-list"></div>
             </div>
         </div>
@@ -259,8 +253,11 @@
         <div class="card" id="card-letter">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>💌</span> Boîte aux Lettres</div></div>
             <div class="card-content">
-                <div class="mailbox-tabs"><div class="mailbox-tab active" id="tab-inbox" onclick="showTab('inbox')">Reçus</div><div class="mailbox-tab" id="tab-sent" onclick="showTab('sent')">Envoyés</div></div>
-                <div class="input-group"><input type="text" id="letter-title" class="input-field" placeholder="Ouvrir quand..."><button onclick="addLetter()" class="btn-action">+</button></div>
+                <div class="mailbox-tabs">
+                    <div class="mailbox-tab active" id="tab-inbox" style="background:var(--pink);color:white;" onclick="showTab('inbox')">Reçus</div>
+                    <div class="mailbox-tab" id="tab-sent" style="background:var(--blue);" onclick="showTab('sent')">Envoyés</div>
+                </div>
+                <div class="input-group"><input type="text" id="letter-title" class="input-field" placeholder="Ouvrir quand..."><button onclick="addLetter()" class="btn-action" style="background:var(--pink-dark)">+</button></div>
                 <textarea id="letter-content" class="input-field" placeholder="Ecris ta lettre ici..." style="width:100%;height:80px;resize:none;margin-bottom:15px;"></textarea>
                 <div id="list-inbox" class="letter-list"></div><div id="list-sent" class="letter-list hidden"></div>
             </div>
@@ -286,19 +283,10 @@
             <div class="card-content"><div class="input-group"><input type="text" id="book-title" class="input-field" placeholder="Titre..."><input type="number" id="book-pages" class="input-field" style="width:80px;" placeholder="Total P."><button onclick="addBook()" class="btn-action">+</button></div><div id="book-list"></div></div>
         </div>
 
-        <div class="card" id="card-music">
-            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎧</span> Vibe</div></div>
-            <div class="card-content"><iframe style="border-radius:15px; width:100%; height:300px; border:none;" src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" allowfullscreen></iframe></div>
-        </div>
-
         <div class="card" id="card-games">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div></div>
             <div class="card-content">
-                <div class="game-selector">
-                    <button onclick="initGame('pendu')" class="identity-btn">🔤 Pendu</button>
-                    <button onclick="initGame('p4')" class="identity-btn">🔴 Puissance 4</button>
-                    <button onclick="initGame('none')" class="identity-btn" style="color:red; border-color:red;">Arrêter</button>
-                </div>
+                <div class="game-selector"><button onclick="initGame('pendu')" class="identity-btn">🔤 Pendu</button><button onclick="initGame('p4')" class="identity-btn">🔴 Puissance 4</button><button onclick="initGame('none')" class="identity-btn" style="color:red;border-color:red;">Arrêter</button></div>
                 <div id="game-area" class="game-board-container" style="display:none;">
                     <h3 id="game-status" style="margin:0 0 10px; font-size:0.9rem; color:var(--text-main);">...</h3>
                     <div id="pendu-ui" style="display:none;"><canvas id="pendu-canvas" width="200" height="150"></canvas><div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div><div id="pendu-keyboard" class="keyboard"></div><div id="pendu-setup" style="margin-top:10px;"><input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)"><button onclick="startPendu()" class="btn-action">Lancer</button></div></div>
@@ -307,7 +295,12 @@
             </div>
         </div>
 
-        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v32 • janvier 2026</div></div>
+        <div class="card" id="card-music">
+            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎧</span> Vibe</div></div>
+            <div class="card-content"><iframe style="border-radius:15px; width:100%; height:300px; border:none;" src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" allowfullscreen></iframe></div>
+        </div>
+
+        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v33 • janvier 2026</div></div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
@@ -343,19 +336,22 @@
         }
         document.querySelectorAll('.card[id]').forEach(c => { if(c.id!=='card-voyage' && localStorage.getItem('card_'+c.id)==='closed') { c.querySelector('.card-content').style.display='none'; c.querySelector('.card-title').classList.add('closed'); }});
 
-        // REPARATION DES BOUTONS DE SUPPRESSION (SCOPE FIX)
+        // REPARATION BOUTONS
         window.deleteDate = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db,"dates",id)); }
         window.deleteTodo = function(id) { deleteDoc(doc(db,"todos",id)); }
         window.deleteBook = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db,"books",id)); }
-        window.deletePhoto = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db,"photos",id)); }
+        window.deletePhoto = async function(id) { 
+            if(confirm("Supprimer ?")) {
+                const el = document.getElementById(`photo-${id}`);
+                if(el) el.remove(); // Suppression visuelle immédiate
+                await deleteDoc(doc(db,"photos",id));
+            }
+        }
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db,"letters",id)); }
 
-        // --- QUESTION DU JOUR ---
+        // --- QUESTION DU JOUR (LOGIQUE INTELLIGENTE) ---
         const questionsList = ["Quel est ton meilleur souvenir de nous ?", "Quelle qualité préfères-tu chez moi ?", "Où veux-tu qu'on aille manger en premier ?", "Quelle chanson te fait penser à moi ?", "Décris notre relation en 3 mots.", "Quel est ton rêve pour nous ?", "Si on pouvait partir demain, on irait où ?", "Qu'est-ce qui te manque le plus ?", "Raconte notre première rencontre vue par toi."]; 
-        function getQuestionIndex() {
-            const start = new Date("2026-02-14").getTime(); const now = new Date().getTime(); const days = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-            if(days < 0) return 0; return days % questionsList.length;
-        }
+        function getQuestionIndex() { const start = new Date("2026-02-14").getTime(); const now = new Date().getTime(); const days = Math.floor((now - start) / (1000 * 60 * 60 * 24)); if(days < 0) return 0; return days % questionsList.length; }
         const todayQKey = new Date().toISOString().split('T')[0];
         document.getElementById('q-text').innerText = questionsList[getQuestionIndex()] || "Question bonus du jour !";
 
@@ -363,33 +359,73 @@
             const data = docSnap.exists() ? docSnap.data() : {};
             const frAns = data.fr || ""; const twAns = data.tw || "";
             const area = document.getElementById('q-answers-area'); area.innerHTML = "";
+            
             const bothAnswered = frAns && twAns;
-            if(frAns) { const blurClass = (currentUser === 'tw' && !bothAnswered) ? "q-blur" : ""; area.innerHTML += `<div class="q-bubble q-fr ${blurClass}"><b>Théo:</b> ${frAns}</div>`; }
-            if(twAns) { const blurClass = (currentUser === 'fr' && !bothAnswered) ? "q-blur" : ""; area.innerHTML += `<div class="q-bubble q-tw ${blurClass}"><b>Elise:</b> ${twAns}</div>`; }
+            const myAnswer = (currentUser === 'fr' ? frAns : twAns);
+            const otherAnswer = (currentUser === 'fr' ? twAns : frAns);
+
+            // Gestion Affichage des bulles
+            if(frAns) { 
+                const isMe = currentUser === 'fr';
+                const blurClass = (!isMe && !bothAnswered) ? "q-blur" : "";
+                const content = (!isMe && !bothAnswered) ? "Réponse cachée..." : frAns;
+                let actions = "";
+                if(isMe && !bothAnswered) actions = `<div class="q-actions"><button class="q-action-btn" onclick="editQ()">Modif</button><button class="q-action-btn" onclick="deleteQ()">Supp</button></div>`;
+                area.innerHTML += `<div class="q-bubble q-fr ${blurClass}"><b>Théo:</b> ${content} ${actions}</div>`; 
+            }
+            if(twAns) { 
+                const isMe = currentUser === 'tw';
+                const blurClass = (!isMe && !bothAnswered) ? "q-blur" : "";
+                const content = (!isMe && !bothAnswered) ? "Réponse cachée..." : twAns;
+                let actions = "";
+                if(isMe && !bothAnswered) actions = `<div class="q-actions"><button class="q-action-btn" onclick="editQ()">Modif</button><button class="q-action-btn" onclick="deleteQ()">Supp</button></div>`;
+                area.innerHTML += `<div class="q-bubble q-tw ${blurClass}"><b>Elise:</b> ${content} ${actions}</div>`; 
+            }
+            
+            // Gestion Input
+            if(!myAnswer) document.getElementById('q-input-group').style.display = 'flex';
+            else document.getElementById('q-input-group').style.display = 'none';
+
             if(!frAns && !twAns) area.innerHTML = "<div style='text-align:center;font-style:italic;font-size:0.8rem;color:#aaa'>Pas encore de réponse...</div>";
         });
+
         window.sendAnswer = function() {
             const txt = document.getElementById('q-input').value; if(!txt) return;
             setDoc(doc(db, "daily_answers", todayQKey), { [currentUser]: txt }, { merge: true });
             document.getElementById('q-input').value = ""; sendNtfy(`💬 Réponse à la question du jour ! (${getCurrentTime(currentUser)})`, "speech_balloon", "low");
         }
+        window.deleteQ = function() { updateDoc(doc(db, "daily_answers", todayQKey), { [currentUser]: "" }); } // Effacer via update empty
+        window.editQ = function() { 
+            // On récup la réponse actuelle pour la mettre dans l'input avant d'effacer
+            getDoc(doc(db, "daily_answers", todayQKey)).then(snap => {
+                if(snap.exists()) { document.getElementById('q-input').value = snap.data()[currentUser]; deleteQ(); }
+            });
+        }
+        // Helper import manquant pour editQ
+        import { getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // --- NOS DATES ---
-        onSnapshot(query(collection(db, "dates"), orderBy("date", "asc")), (snapshot) => {
+
+        // --- NOS DATES (TIMEZONE FIX) ---
+        onSnapshot(query(collection(db, "dates"), orderBy("isoDate", "asc")), (snapshot) => {
             const list = document.getElementById('dates-list'); list.innerHTML = "";
             snapshot.forEach(d => {
                 const data = d.data();
-                const dStr = data.date.replace(/-/g, '') + 'T' + data.time.replace(/:/g, '') + '00';
-                const gCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(data.activity)}&dates=${dStr}/${dStr}`;
+                // Affichage adaptatif selon timezone du navigateur
+                const dateObj = new Date(data.isoDate);
+                const localDateStr = dateObj.toLocaleDateString();
+                const localTimeStr = dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
                 const div = document.createElement('div'); div.className = "date-item";
-                div.innerHTML = `<div class="date-info"><div class="date-main">${data.activity}</div><div class="date-sub">📅 ${new Date(data.date).toLocaleDateString()} à ${data.time}</div></div><a href="${gCalUrl}" target="_blank" class="gcal-btn">📅</a><button onclick="deleteDate('${d.id}')" style="background:none;border:none;color:#faa;margin-left:10px;">✕</button>`;
+                div.innerHTML = `<div class="date-info"><div class="date-main">${data.activity}</div><div class="date-sub">📅 ${localDateStr} à ${localTimeStr}</div></div><button onclick="deleteDate('${d.id}')" style="background:none;border:none;color:#faa;margin-left:10px;">✕</button>`;
                 list.appendChild(div);
             });
         });
         window.addDateEvent = function() {
-            const d = document.getElementById('date-date').value; const t = document.getElementById('date-time').value; const a = document.getElementById('date-activity').value;
-            if(!d || !t || !a) return;
-            addDoc(collection(db, "dates"), { date: d, time: t, activity: a });
+            const isoInput = document.getElementById('date-input').value; // YYYY-MM-DDTHH:MM
+            const a = document.getElementById('date-activity').value;
+            if(!isoInput || !a) return;
+            // On stocke la date brute ISO pour qu'elle soit universelle
+            addDoc(collection(db, "dates"), { isoDate: isoInput, activity: a });
             document.getElementById('date-activity').value = ""; sendNtfy(`📅 Nouveau Date ajouté ! (${getCurrentTime(currentUser)})`, "calendar", "low");
         }
 
@@ -489,10 +525,38 @@
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
-        window.addLetter = function() { const t=document.getElementById("letter-title").value; const c=document.getElementById("letter-content").value; if(!t||!c)return; addDoc(collection(db,"letters"),{title:t,content:c,by:currentUser,read:false,timestamp:serverTimestamp()}); document.getElementById("letter-title").value="";document.getElementById("letter-content").value=""; sendNtfy("💌 Nouvelle lettre ! ("+getCurrentTime(currentUser)+")","email","low"); }
-        window.openLetterModal = function(l) { document.getElementById('letter-modal').style.display="flex"; document.getElementById('modal-letter-title').innerText=l.title; document.getElementById('modal-letter-content').innerText=l.content; if(l.by!==currentUser && !l.read) updateDoc(doc(db,"letters",l.id),{read:true}); }
-        window.closeLetter = function() { document.getElementById('letter-modal').style.display="none"; }
-        
+        // BOITE AUX LETTRES RESTAURATION V28
+        let allLetters = [];
+        const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
+        onSnapshot(qLetters, (snapshot) => {
+            allLetters = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            updateMailboxView();
+        });
+        window.showTab = function(tabName) {
+            const tabInbox = document.getElementById('tab-inbox'); const tabSent = document.getElementById('tab-sent');
+            if(tabName === 'inbox') {
+                tabInbox.classList.add('active'); tabInbox.style.background = 'var(--pink)'; tabInbox.style.color = 'white';
+                tabSent.classList.remove('active'); tabSent.style.background = 'transparent'; tabSent.style.color = 'var(--text-main)';
+                document.getElementById('list-inbox').style.display='block'; document.getElementById('list-sent').style.display='none';
+            } else {
+                tabSent.classList.add('active'); tabSent.style.background = 'var(--blue)'; tabSent.style.color = 'white';
+                tabInbox.classList.remove('active'); tabInbox.style.background = 'transparent'; tabInbox.style.color = 'var(--text-main)';
+                document.getElementById('list-inbox').style.display='none'; document.getElementById('list-sent').style.display='block';
+            }
+        }
+        window.updateMailboxView = function() {
+            const listInbox = document.getElementById("list-inbox"); const listSent = document.getElementById("list-sent");
+            listInbox.innerHTML = ""; listSent.innerHTML = "";
+            allLetters.forEach(l => {
+                const div = document.createElement("div"); div.className = `envelope-item ${(!l.read && l.by !== currentUser) ? 'unread' : ''}`;
+                div.innerHTML = `<div style="margin-right:15px; font-size:1.5rem;">${l.read ? '📩' : '✉️'}</div><div style="flex:1;"><div style="font-weight:bold; font-size:0.9rem;">${l.title}</div><div style="font-size:0.7rem; color:var(--text-sub);">${l.by === currentUser ? 'Envoyé à l\'autre' : 'De: ' + (l.by==='fr'?'Théo':'Elise')}</div></div>${l.by === currentUser ? `<button onclick="deleteLetter('${l.id}', event)" style="border:none;background:none;color:#faa;">✕</button>` : ''}`;
+                div.onclick = (e) => { if(e.target.tagName === 'BUTTON') return; openLetterModal(l); };
+                if(l.by === currentUser) listSent.appendChild(div); else listInbox.appendChild(div);
+            });
+        }
+        // Init tab style
+        window.showTab('inbox');
+
         const compressImage = async (file) => { const bmp = await createImageBitmap(file); const cvs = document.createElement('canvas'); cvs.width=bmp.width*0.5; cvs.height=bmp.height*0.5; cvs.getContext('2d').drawImage(bmp,0,0,cvs.width,cvs.height); return cvs.toDataURL(file.type,0.6); };
         window.handlePhotoUpload = async function(inpt, role) { if(role!==currentUser){alert("Interdit !");return;} const f = inpt.files[0]; if(!f)return; document.getElementById('gallery-modal').style.display="none"; const b64 = await compressImage(f); await addDoc(collection(db,"photos"),{url:b64,by:role,timestamp:serverTimestamp()}); sendNtfy("📸 Nouvelle photo ! ("+getCurrentTime(currentUser)+")","camera","low"); }
         
