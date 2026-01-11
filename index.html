@@ -86,17 +86,25 @@
         .input-field { flex: 1; min-width: 120px; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-family: 'Outfit'; outline: none; background: var(--input-bg); color: var(--text-main); }
         .btn-action { background: var(--blue-dark); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: bold; cursor: pointer; height: 45px; }
         
-        /* QUESTIONS DU JOUR */
+        /* QUESTIONS DU JOUR (HISTORIQUE) */
         .question-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 15px; }
-        .q-date { font-size: 0.7rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .q-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; color:var(--text-sub); font-size:0.8rem; }
+        .q-nav { cursor:pointer; font-size:1.2rem; padding:0 10px; }
         .q-text { font-size: 1.1rem; font-weight: bold; color: var(--text-main); margin-bottom: 15px; font-family: 'Dancing Script', cursive; }
         .q-answers { display: flex; flex-direction: column; gap: 10px; text-align: left; }
         .q-bubble { padding: 10px; border-radius: 10px; font-size: 0.9rem; position: relative; }
-        .q-blur { filter: blur(5px); user-select: none; opacity: 0.5; }
+        .q-blur { filter: blur(5px); user-select: none; opacity: 0.5; cursor: not-allowed; }
         .q-fr { background: #e3f2fd; color: #333; border: 1px solid var(--blue); align-self: flex-start; max-width: 90%; }
         .q-tw { background: #fff0f5; color: #333; border: 1px solid var(--pink); align-self: flex-end; max-width: 90%; }
         .q-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
         .q-action-btn { font-size: 0.7rem; border: none; background: none; cursor: pointer; text-decoration: underline; color: #555; }
+
+        /* DATES & CALENDRIER */
+        .date-item { display: flex; align-items: center; background: var(--input-bg); padding: 12px; margin-bottom: 10px; border-radius: 15px; border: 1px solid var(--border); justify-content: space-between; }
+        .date-info { flex: 1; }
+        .date-main { font-weight: bold; font-size: 0.95rem; color: var(--text-main); }
+        .date-sub { font-size: 0.75rem; color: var(--text-sub); display: flex; align-items: center; gap: 5px; margin-top: 2px;}
+        .gcal-btn { text-decoration: none; font-size: 1.2rem; margin-left: 10px; opacity: 0.7; }
 
         /* JEUX */
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -131,6 +139,23 @@
         .letter-close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #aaa; background: none; border: none; cursor: pointer; z-index: 10; }
         .letter-stamp { position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border: 2px double #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4af37; font-size: 0.7rem; font-weight: bold; transform: rotate(-15deg); opacity: 0.7; text-align: center; pointer-events: none; }
 
+        /* GALERIE (RESTAURO V28) */
+        .polaroid-container { display: flex; justify-content: space-around; }
+        .polaroid {
+            background: white; padding: 10px 10px 30px 10px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); transform: rotate(-2deg);
+            width: 45%; text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .polaroid:nth-child(2) { transform: rotate(3deg); }
+        .polaroid:active { transform: scale(1.05) rotate(0deg); z-index: 10; }
+        .polaroid-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; margin-bottom: 5px; }
+        .polaroid-label { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: #555; }
+        .add-photo-btn {
+            display: none; /* Caché par défaut */
+            margin-top: 5px; font-size: 0.7rem; color: #888; 
+            border: 1px dashed #ccc; padding: 5px; border-radius: 5px;
+        }
+
         /* PROJETS & LIVRES */
         .todo-item { display: flex; align-items: center; background: var(--input-bg); padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--border); justify-content: space-between; }
         .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--pink-dark); }
@@ -160,11 +185,6 @@
         .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         .modal-img { width: 100%; border-radius: 5px; cursor: zoom-in; transition: 0.2s; }
         .modal-img:hover { opacity: 0.8; }
-        .add-photo-btn { display: none; margin-top: 5px; font-size: 0.7rem; color: #888; border: 1px dashed #ccc; padding: 5px; border-radius: 5px; }
-        .polaroid-container { display: flex; justify-content: space-around; }
-        .polaroid { width: 45%; background: white; padding: 10px 10px 30px 10px; transform: rotate(-2deg); box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center; }
-        .polaroid:nth-child(2) { transform: rotate(3deg); }
-        .polaroid-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; }
 
         /* FAB */
         #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--pink-dark)); color: white; border: none; font-size: 30px; box-shadow: 0 10px 25px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; }
@@ -230,7 +250,11 @@
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>💬</span> Question du Jour</div></div>
             <div class="card-content">
                 <div class="question-box">
-                    <div class="q-date" id="q-date-label">Aujourd'hui</div>
+                    <div class="q-header">
+                        <span class="q-nav" onclick="changeQDate(-1)">←</span>
+                        <span id="q-date-label">Aujourd'hui</span>
+                        <span class="q-nav" onclick="changeQDate(1)">→</span>
+                    </div>
                     <div class="q-text" id="q-text">Chargement...</div>
                     <div class="q-answers" id="q-answers-area"></div>
                 </div>
@@ -238,9 +262,12 @@
             </div>
         </div>
 
-        <div class="card" id="card-books">
-            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📚</span> Lectures Communes</div></div>
-            <div class="card-content"><div class="input-group"><input type="text" id="book-title" class="input-field" placeholder="Titre..."><input type="number" id="book-pages" class="input-field" style="width:80px;" placeholder="Total P."><button onclick="addBook()" class="btn-action">+</button></div><div id="book-list"></div></div>
+        <div class="card" id="card-dates">
+            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📅</span> Nos Dates</div></div>
+            <div class="card-content">
+                <div class="input-group"><input type="datetime-local" id="date-input" class="input-field"><input type="text" id="date-activity" class="input-field" placeholder="Activité..."><button onclick="addDateEvent()" class="btn-action">+</button></div>
+                <div id="dates-list"></div>
+            </div>
         </div>
 
         <div class="card" id="card-letter">
@@ -257,8 +284,8 @@
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📸</span> Nos Albums</div></div>
             <div class="card-content">
                 <div class="polaroid-container">
-                    <div class="polaroid" onclick="openGallery('fr')"><img id="polaroid-img-fr" class="polaroid-img"><div class="polaroid-label">Théo</div><div id="btn-add-fr" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-fr').click()">+ Ajouter photo</div><input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this,'fr')" style="display:none;"></div>
-                    <div class="polaroid" onclick="openGallery('tw')"><img id="polaroid-img-tw" class="polaroid-img"><div class="polaroid-label">Elise</div><div id="btn-add-tw" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-tw').click()">+ Ajouter photo</div><input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this,'tw')" style="display:none;"></div>
+                    <div class="polaroid" onclick="openGallery('fr')"><img id="polaroid-img-fr" class="polaroid-img"><div class="polaroid-label" style="color:var(--blue-dark)">Théo</div><div id="btn-add-fr" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-fr').click()">+ Ajouter photo</div><input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this,'fr')" style="display:none;"></div>
+                    <div class="polaroid" onclick="openGallery('tw')"><img id="polaroid-img-tw" class="polaroid-img"><div class="polaroid-label" style="color:var(--pink-dark)">Elise</div><div id="btn-add-tw" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-tw').click()">+ Ajouter photo</div><input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this,'tw')" style="display:none;"></div>
                 </div>
             </div>
         </div>
@@ -266,6 +293,11 @@
         <div class="card" id="card-todo">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📝</span> Nos Projets</div></div>
             <div class="card-content"><div class="input-group"><input type="text" id="todo-input" class="input-field" placeholder="Manger une raclette..."><button onclick="addTodo()" class="btn-action">OK</button></div><div id="todo-list"></div></div>
+        </div>
+
+        <div class="card" id="card-books">
+            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📚</span> Lectures Communes</div></div>
+            <div class="card-content"><div class="input-group"><input type="text" id="book-title" class="input-field" placeholder="Titre..."><input type="number" id="book-pages" class="input-field" style="width:80px;" placeholder="Total P."><button onclick="addBook()" class="btn-action">+</button></div><div id="book-list"></div></div>
         </div>
 
         <div class="card" id="card-games">
@@ -286,7 +318,7 @@
             <div class="card-content"><iframe style="border-radius:15px; width:100%; height:300px; border:none;" src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" allowfullscreen></iframe></div>
         </div>
 
-        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v35 • janvier 2026</div></div>
+        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v36 • janvier 2026</div></div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
@@ -321,81 +353,154 @@
         document.querySelectorAll('.card[id]').forEach(c => { if(c.id!=='card-voyage' && localStorage.getItem('card_'+c.id)==='closed') { c.querySelector('.card-content').style.display='none'; c.querySelector('.card-title').classList.add('closed'); }});
 
         // REPARATION BOUTONS
+        window.deleteDate = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db,"dates",id)); }
         window.deleteTodo = function(id) { deleteDoc(doc(db,"todos",id)); }
         window.deleteBook = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db,"books",id)); }
-        window.deletePhoto = async function(id) { if(confirm("Supprimer ?")) { document.getElementById(`photo-${id}`)?.remove(); await deleteDoc(doc(db,"photos",id)); } }
+        window.deletePhoto = async function(id) { 
+            if(confirm("Supprimer ?")) {
+                const el = document.getElementById(`photo-${id}`);
+                if(el) el.remove(); 
+                await deleteDoc(doc(db,"photos",id));
+            }
+        }
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db,"letters",id)); }
 
-        // --- QUESTION DU JOUR ---
+        // --- QUESTION DU JOUR (HISTORIQUE) ---
         const questionsList = ["Quel est ton meilleur souvenir de nous ?", "Quelle qualité préfères-tu chez moi ?", "Où veux-tu qu'on aille manger en premier ?", "Quelle chanson te fait penser à moi ?", "Décris notre relation en 3 mots.", "Quel est ton rêve pour nous ?", "Si on pouvait partir demain, on irait où ?", "Qu'est-ce qui te manque le plus ?", "Raconte notre première rencontre vue par toi."]; 
-        const todayQKey = new Date().toISOString().split('T')[0];
-        function getQuestionIndex() { const start = new Date("2026-02-14").getTime(); const now = new Date().getTime(); const days = Math.floor((now - start) / (1000 * 60 * 60 * 24)); if(days < 0) return 0; return days % questionsList.length; }
-        document.getElementById('q-text').innerText = questionsList[getQuestionIndex()] || "Question bonus du jour !";
+        
+        let currentQDate = new Date();
+        
+        function updateQuestionView() {
+            const y = currentQDate.getFullYear();
+            const m = String(currentQDate.getMonth() + 1).padStart(2, '0');
+            const d = String(currentQDate.getDate()).padStart(2, '0');
+            const dateKey = `${y}-${m}-${d}`;
+            
+            // Calcul index
+            const start = new Date("2026-02-14").getTime(); 
+            const now = currentQDate.getTime(); 
+            const diffDays = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+            
+            // Affichage Date Label
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('q-date-label').innerText = (dateKey === todayStr) ? "Aujourd'hui" : currentQDate.toLocaleDateString();
+            
+            // Question text
+            let qIndex = diffDays;
+            if(qIndex < 0) qIndex = 0; 
+            document.getElementById('q-text').innerText = questionsList[Math.abs(qIndex) % questionsList.length] || "Question surprise";
 
-        onSnapshot(doc(db, "daily_answers", todayQKey), (docSnap) => {
-            const data = docSnap.exists() ? docSnap.data() : {};
-            const frAns = data.fr || ""; const twAns = data.tw || "";
-            const area = document.getElementById('q-answers-area'); area.innerHTML = "";
-            const bothAnswered = frAns && twAns;
-            const myAnswer = (currentUser === 'fr' ? frAns : twAns);
+            // Listener
+            onSnapshot(doc(db, "daily_answers", dateKey), (docSnap) => {
+                const data = docSnap.exists() ? docSnap.data() : {};
+                const frAns = data.fr || ""; const twAns = data.tw || "";
+                const area = document.getElementById('q-answers-area'); area.innerHTML = "";
+                const bothAnswered = frAns && twAns;
+                const myAnswer = (currentUser === 'fr' ? frAns : twAns);
 
-            const makeBubble = (user, txt, role) => {
-                const isMe = currentUser === role;
-                const blurClass = (!isMe && !bothAnswered) ? "q-blur" : "";
-                const content = (!isMe && !bothAnswered) ? "Réponse cachée..." : txt;
-                let actions = (isMe && !bothAnswered) ? `<div class="q-actions"><button class="q-action-btn" onclick="editQ()">Modif</button><button class="q-action-btn" onclick="deleteQ()">Supp</button></div>` : "";
-                return `<div class="q-bubble q-${role} ${blurClass}"><b>${user}:</b> ${content} ${actions}</div>`;
-            };
-            if(frAns) area.innerHTML += makeBubble("Théo", frAns, 'fr');
-            if(twAns) area.innerHTML += makeBubble("Elise", twAns, 'tw');
-            document.getElementById('q-input-group').style.display = myAnswer ? 'none' : 'flex';
-            if(!frAns && !twAns) area.innerHTML = "<div style='text-align:center;font-style:italic;font-size:0.8rem;color:#aaa'>Pas encore de réponse...</div>";
+                const makeBubble = (user, txt, role) => {
+                    const isMe = currentUser === role;
+                    const blurClass = (!isMe && !bothAnswered) ? "q-blur" : "";
+                    const content = (!isMe && !bothAnswered) ? "Réponse cachée..." : txt;
+                    let actions = (isMe && !bothAnswered) ? `<div class="q-actions"><button class="q-action-btn" onclick="editQ('${dateKey}')">Modif</button><button class="q-action-btn" onclick="deleteQ('${dateKey}')">Supp</button></div>` : "";
+                    return `<div class="q-bubble q-${role} ${blurClass}"><b>${user}:</b> ${content} ${actions}</div>`;
+                };
+                if(frAns) area.innerHTML += makeBubble("Théo", frAns, 'fr');
+                if(twAns) area.innerHTML += makeBubble("Elise", twAns, 'tw');
+                
+                // Input visibility (only for today)
+                if(dateKey === todayStr && !myAnswer) document.getElementById('q-input-group').style.display = 'flex';
+                else document.getElementById('q-input-group').style.display = 'none';
+
+                if(!frAns && !twAns) area.innerHTML = "<div style='text-align:center;font-style:italic;font-size:0.8rem;color:#aaa'>Aucune réponse pour cette date.</div>";
+            });
+        }
+        
+        window.changeQDate = function(offset) {
+            currentQDate.setDate(currentQDate.getDate() + offset);
+            updateQuestionView();
+        }
+        updateQuestionView(); // Init
+
+        window.sendAnswer = function() {
+            const txt = document.getElementById('q-input').value; if(!txt) return;
+            const y = currentQDate.getFullYear(); const m = String(currentQDate.getMonth() + 1).padStart(2, '0'); const d = String(currentQDate.getDate()).padStart(2, '0');
+            const key = `${y}-${m}-${d}`;
+            setDoc(doc(db, "daily_answers", key), { [currentUser]: txt }, { merge: true });
+            document.getElementById('q-input').value = ""; sendNtfy(`💬 Réponse à la question ! (${getCurrentTime(currentUser)})`, "speech_balloon", "low");
+        }
+        window.deleteQ = function(key) { updateDoc(doc(db, "daily_answers", key), { [currentUser]: "" }); }
+        window.editQ = function(key) { getDoc(doc(db, "daily_answers", key)).then(snap => { if(snap.exists()) { document.getElementById('q-input').value = snap.data()[currentUser]; deleteQ(key); } }); }
+
+        // --- NOS DATES (TIMEZONE FIX) ---
+        onSnapshot(query(collection(db, "dates"), orderBy("isoDate", "asc")), (snapshot) => {
+            const list = document.getElementById('dates-list'); list.innerHTML = "";
+            snapshot.forEach(d => {
+                const data = d.data();
+                const dObj = new Date(data.isoDate);
+                const tFr = dObj.toLocaleTimeString('fr-FR', {timeZone:'Europe/Paris', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit'});
+                const tTw = dObj.toLocaleTimeString('fr-FR', {timeZone:'Asia/Taipei', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit'});
+                const dStr = data.isoDate.replace(/[-:]/g, '').split('.')[0] + 'Z';
+                const gCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(data.activity)}&dates=${dStr}/${dStr}`;
+                const div = document.createElement('div'); div.className = "date-item";
+                div.innerHTML = `<div class="date-info"><div class="date-main">${data.activity}</div><div class="date-sub">🇫🇷 ${tFr} ↔️ 🇹🇼 ${tTw}</div></div><a href="${gCalUrl}" target="_blank" class="gcal-btn">📅</a><button onclick="deleteDate('${d.id}')" style="background:none;border:none;color:#faa;margin-left:10px;">✕</button>`;
+                list.appendChild(div);
+            });
         });
-        window.sendAnswer = function() { const txt = document.getElementById('q-input').value; if(!txt) return; setDoc(doc(db, "daily_answers", todayQKey), { [currentUser]: txt }, { merge: true }); document.getElementById('q-input').value = ""; sendNtfy(`💬 Réponse à la question du jour ! (${getCurrentTime(currentUser)})`, "speech_balloon", "low"); }
-        window.deleteQ = function() { updateDoc(doc(db, "daily_answers", todayQKey), { [currentUser]: "" }); }
-        window.editQ = function() { getDoc(doc(db, "daily_answers", todayQKey)).then(snap => { if(snap.exists()) { document.getElementById('q-input').value = snap.data()[currentUser]; deleteQ(); } }); }
+        window.addDateEvent = function() {
+            const iso = document.getElementById('date-input').value; const a = document.getElementById('date-activity').value; if(!iso || !a) return;
+            addDoc(collection(db, "dates"), { isoDate: iso, activity: a });
+            document.getElementById('date-activity').value = ""; sendNtfy(`📅 Nouveau Date ajouté ! (${getCurrentTime(currentUser)})`, "calendar", "low");
+        }
 
         // --- JEUX ---
         onSnapshot(doc(db, "games", "scores"), (s) => { const sc = s.exists() ? s.data() : { fr:0, tw:0 }; document.getElementById('score-fr').innerText = `🏆 Théo: ${sc.fr}`; document.getElementById('score-tw').innerText = `🏆 Elise: ${sc.tw}`; });
         onSnapshot(doc(db, "games", "active"), (docSnap) => {
             const game = docSnap.exists() ? docSnap.data() : { type: 'none' };
-            document.getElementById('game-area').style.display = game.type === 'none' ? 'none' : 'block';
+            const area = document.getElementById('game-area');
             document.getElementById('pendu-ui').style.display = 'none'; document.getElementById('p4-ui').style.display = 'none';
-            if(game.type === 'pendu') renderPendu(game); if(game.type === 'p4') renderP4(game);
+            if(game.type === 'none') { area.style.display = 'none'; } else { area.style.display = 'block'; if(game.type === 'pendu') renderPendu(game); if(game.type === 'p4') renderP4(game); }
         });
         window.initGame = function(type) {
             let data = { type: type };
             if(type === 'p4') { data.board = Array(42).fill(0); data.turn = currentUser; data.winner = null; } 
-            else if(type === 'pendu') { data.state = 'setup'; data.mistakes = 0; data.guessed = []; data.word = ""; }
+            else if(type === 'pendu') { data.state = 'setup'; data.mistakes = 0; data.guessed = []; data.word = ""; data.creator = ""; } // Reset creator
             setDoc(doc(db, "games", "active"), data);
         }
         let activeGame = null; onSnapshot(doc(db, "games", "active"), (s) => { activeGame = s.data(); });
-        // PENDU CODE
+        
+        // PENDU (MAITRE DU JEU FIX)
         function renderPendu(game) {
             document.getElementById('pendu-ui').style.display='block'; const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('game-status');
+            // Draw
             ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.strokeStyle="#333"; ctx.beginPath();
             if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} if(game.mistakes>2){ctx.lineTo(130,20);} if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);}
             ctx.stroke(); if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} if(game.mistakes>10){ctx.font="20px Arial";ctx.fillText("X X",122,60);}
             ctx.stroke();
+            
             if(game.state==='setup'){ status.innerText="En attente..."; document.getElementById('pendu-setup').style.display='block'; document.getElementById('pendu-word-display').innerText="???"; document.getElementById('pendu-keyboard').innerHTML=""; }
             else { 
                 document.getElementById('pendu-setup').style.display='none'; 
                 let d=""; for(let c of game.word) d+=(game.guessed.includes(c)?c:"_")+" "; document.getElementById('pendu-word-display').innerText=d; 
-                if(game.state==='playing') { status.innerText="Devine !"; let k=""; "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l=>{ k+=`<button class="key-btn" onclick="playPenduMove('${l}')" ${game.guessed.includes(l)?"disabled":""}>${l}</button>`; }); document.getElementById('pendu-keyboard').innerHTML=k; }
+                
+                // Logic Master vs Player
+                const isCreator = game.creator === currentUser;
+                
+                if(game.state==='playing') { 
+                    status.innerText = isCreator ? "L'autre devine..." : "Devine !";
+                    let k=""; 
+                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l=>{ 
+                        const disabled = isCreator || game.guessed.includes(l) ? "disabled" : "";
+                        k+=`<button class="key-btn" onclick="playPenduMove('${l}')" ${disabled}>${l}</button>`; 
+                    }); 
+                    document.getElementById('pendu-keyboard').innerHTML=k; 
+                }
                 else status.innerText = game.state==='win' ? "GAGNÉ ! 🎉" : ("PERDU... Le mot: "+game.word);
             }
         }
-        window.startPendu=function(){const w=document.getElementById('pendu-secret').value.toUpperCase().trim(); if(w) updateDoc(doc(db,"games","active"),{state:'playing',word:w,guessed:[],mistakes:0});}
+        window.startPendu=function(){const w=document.getElementById('pendu-secret').value.toUpperCase().trim(); if(w) updateDoc(doc(db,"games","active"),{state:'playing',word:w,guessed:[],mistakes:0, creator:currentUser});}
         window.playPenduMove=function(l){ if(!activeGame||activeGame.state!=='playing')return; const ng=[...activeGame.guessed,l]; let nm=activeGame.mistakes; if(!activeGame.word.includes(l))nm++; let ns=nm>=11?'loose':(activeGame.word.split('').every(c=>ng.includes(c))?'win':'playing'); updateDoc(doc(db,"games","active"),{guessed:ng,mistakes:nm,state:ns}); }
         
-        // P4 CODE
-        function checkWin(board) {
-            for(let r=0; r<6; r++) { for(let c=0; c<4; c++) { const i=r*7+c; if(board[i]!==0 && board[i]===board[i+1] && board[i]===board[i+2] && board[i]===board[i+3]) return board[i]; } }
-            for(let r=0; r<3; r++) { for(let c=0; c<7; c++) { const i=r*7+c; if(board[i]!==0 && board[i]===board[i+7] && board[i]===board[i+14] && board[i]===board[i+21]) return board[i]; } }
-            for(let r=3; r<6; r++) { for(let c=0; c<4; c++) { const i=r*7+c; if(board[i]!==0 && board[i]===board[i-6] && board[i]===board[i-12] && board[i]===board[i-18]) return board[i]; } }
-            for(let r=0; r<3; r++) { for(let c=0; c<4; c++) { const i=r*7+c; if(board[i]!==0 && board[i]===board[i+8] && board[i]===board[i+16] && board[i]===board[i+24]) return board[i]; } }
-            return 0;
-        }
         function renderP4(game) {
             document.getElementById('p4-ui').style.display='block'; const grid=document.getElementById('p4-grid'); grid.innerHTML="";
             const status = document.getElementById('game-status');
@@ -408,6 +513,7 @@
             if(activeGame.turn !== currentUser) { alert("Attends ton tour !"); return; }
             let board=[...activeGame.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; }
             if(row<0)return;
+            const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0};
             const winnerCode = checkWin(board); let winner = null;
             if(winnerCode !== 0) { winner = winnerCode === 1 ? 'fr' : 'tw'; const scoreSnap = await getDoc(doc(db, "games", "scores")); const scores = scoreSnap.exists() ? scoreSnap.data() : {fr:0, tw:0}; scores[winner]++; setDoc(doc(db, "games", "scores"), scores); }
             updateDoc(doc(db,"games","active"),{board:board,turn:currentUser==='fr'?'tw':'fr',winner:winner});
@@ -454,7 +560,7 @@
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
-        // LETTRES (V28 STYLE RESTAURED)
+        // LETTRES
         let allLetters = [];
         const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
         onSnapshot(qLetters, (snapshot) => {
@@ -483,48 +589,9 @@
                 if(l.by === currentUser) listSent.appendChild(div); else listInbox.appendChild(div);
             });
         }
-        window.showTab('inbox'); // Init
+        window.showTab('inbox');
 
-        window.addLetter = function() { const t=document.getElementById("letter-title").value; const c=document.getElementById("letter-content").value; if(!t||!c)return; addDoc(collection(db,"letters"),{title:t,content:c,by:currentUser,read:false,timestamp:serverTimestamp()}); document.getElementById("letter-title").value="";document.getElementById("letter-content").value=""; sendNtfy("💌 Nouvelle lettre ! ("+getCurrentTime(currentUser)+")","email","low"); }
-        window.openLetterModal = function(l) { document.getElementById('letter-modal').style.display="flex"; document.getElementById('modal-letter-title').innerText=l.title; document.getElementById('modal-letter-content').innerText=l.content; if(l.by!==currentUser && !l.read) updateDoc(doc(db,"letters",l.id),{read:true}); }
-        window.closeLetter = function() { document.getElementById('letter-modal').style.display="none"; }
-        
-        const compressImage = async (file) => { const bmp = await createImageBitmap(file); const cvs = document.createElement('canvas'); cvs.width=bmp.width*0.5; cvs.height=bmp.height*0.5; cvs.getContext('2d').drawImage(bmp,0,0,cvs.width,cvs.height); return cvs.toDataURL(file.type,0.6); };
-        window.handlePhotoUpload = async function(inpt, role) { if(role!==currentUser){alert("Interdit !");return;} const f = inpt.files[0]; if(!f)return; document.getElementById('gallery-modal').style.display="none"; const b64 = await compressImage(f); await addDoc(collection(db,"photos"),{url:b64,by:role,timestamp:serverTimestamp()}); sendNtfy("📸 Nouvelle photo ! ("+getCurrentTime(currentUser)+")","camera","low"); }
-        let allPhotos=[];
-        onSnapshot(query(collection(db,"photos"),orderBy("timestamp","desc")), s=>{
-            allPhotos=s.docs.map(d=>({id:d.id,...d.data()}));
-            const lastFr=allPhotos.find(p=>p.by==='fr'); if(lastFr)document.getElementById('polaroid-img-fr').src=lastFr.url;
-            const lastTw=allPhotos.find(p=>p.by==='tw'); if(lastTw)document.getElementById('polaroid-img-tw').src=lastTw.url;
-        });
-        window.openGallery = function(role) { const m=document.getElementById('gallery-modal'); const g=document.getElementById('modal-grid'); g.innerHTML=""; allPhotos.filter(p=>p.by===role).forEach(p=>{ g.innerHTML+=`<div><img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'">${role===currentUser?`<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>`:''}</div>`; }); m.style.display="block"; }
-        window.closeGallery = () => document.getElementById('gallery-modal').style.display='none';
-        window.closeLightbox = () => document.getElementById('lightbox').style.display='none';
-
-        window.addTodo=function(){const t=document.getElementById('todo-input').value;if(!t)return;addDoc(collection(db,"todos"),{text:t,done:false,created:serverTimestamp()});document.getElementById('todo-input').value="";sendNtfy("📝 Projet ! ("+getCurrentTime(currentUser)+")","clipboard","low");}
-        window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
-        onSnapshot(query(collection(db,"todos"),orderBy("created","desc")),s=>{ const l=document.getElementById('todo-list');l.innerHTML=""; s.forEach(d=>{const t=d.data();l.innerHTML+=`<div class="todo-item"><input type="checkbox" class="todo-check" ${t.done?'checked':''} onchange="toggleTodo('${d.id}',this.checked)"><span class="todo-text ${t.done?'done':''}">${t.text}</span><button onclick="deleteTodo('${d.id}')" class="todo-del">✕</button></div>`;}); });
-
-        window.addBook=function(){const t=document.getElementById('book-title').value;if(!t)return;addDoc(collection(db,"books"),{title:t,pages_total:parseInt(document.getElementById('book-pages').value)||200,created:serverTimestamp(),page_fr:0,rating_fr:0,page_tw:0,rating_tw:0});document.getElementById('book-title').value="";}
-        window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 ${title} terminé ! (${getCurrentTime(currentUser)})`, "tada", "low"); }
-        window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
-        onSnapshot(query(collection(db,"books"),orderBy("created","desc")),s=>{
-             const l=document.getElementById('book-list');l.innerHTML="";
-             s.forEach(docSnap=>{
-                 const book = docSnap.data(); const id = docSnap.id; const totalPages = book.pages_total || 200;
-                 const frPage = book.page_fr || 0; const frRating = book.rating_fr || 0;
-                 const twPage = book.page_tw || 0; const twRating = book.rating_tw || 0;
-                 const frPercent = Math.min((frPage / totalPages) * 100, 100); const twPercent = Math.min((twPage / totalPages) * 100, 100);
-                 const makeStars = (role, currentRating) => {
-                    let html = ''; for(let i=1; i<=5; i++) { const filled = i <= currentRating ? 'filled' : ''; const action = role === currentUser ? `onclick="rateBook('${id}', '${role}', ${i})"` : ''; const cursor = role === currentUser ? 'pointer' : 'default'; html += `<span class="star ${filled}" style="cursor:${cursor}" ${action}>★</span>`; }
-                    if(role === currentUser) html += `<span class="star-reset" onclick="rateBook('${id}', '${role}', 0)">Ø</span>`; return html;
-                 };
-                 const canEditFr = currentUser === 'fr' ? '' : 'disabled'; const canEditTw = currentUser === 'tw' ? '' : 'disabled';
-                 l.innerHTML+=`<div class="book-item"><div class="book-title"><span>${book.title}</span><button style="border:none;background:none;color:var(--text-sub);font-size:0.8rem;cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div><div class="book-total-pages">${totalPages} pages</div><div class="user-row"><div class="row-header"><span style="color:var(--blue);font-weight:bold;font-size:0.8rem;">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div><div class="user-row" style="border:none;"><div class="row-header"><span style="color:var(--pink);font-weight:bold;font-size:0.8rem;">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div></div>`;
-             });
-        });
-
-        // NOTIF BISOUS REÇU
+        // SNAPSHOT BISOUS
         onSnapshot(query(collection(db,"actions"),orderBy("timestamp","desc"),limit(1)),s=>{
             if(!s.empty){const a=s.docs[0].data(); if(a.from!==currentUser && Math.abs(Date.now()-a.timestamp.toMillis())<60000){
                 document.getElementById("notif").innerHTML=`💋 <b>${a.from==='fr'?'Théo':'Elise'}</b> t'envoie un bisou !`;
