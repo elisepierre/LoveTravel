@@ -91,7 +91,7 @@
             transition: background 0.3s; overflow: hidden;
         }
         
-        /* CARTE VOYAGE (DESIGN ÉPURÉ V26) */
+        /* CARTE VOYAGE (DESIGN ÉPURÉ) */
         .card.voyage-card {
             padding: 25px 20px;
         }
@@ -128,7 +128,7 @@
         }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
-        /* COMPTEUR COMPACT V26 */
+        /* COMPTEUR COMPACT */
         .countdown-compact {
             background: var(--input-bg); border-radius: 15px; padding: 15px;
             text-align: center; border: 1px solid var(--border);
@@ -150,7 +150,7 @@
         .separator { color: var(--text-sub); font-size: 1.2rem; opacity: 0.5; }
         .small-time { font-size: 1rem; font-weight: 600; color: var(--text-main); }
 
-        /* BARRE PROGRESSION EXPLIQUEE */
+        /* BARRE PROGRESSION */
         .progress-container-modern { margin-top: 15px; position: relative; }
         .dates-row {
             display: flex; justify-content: space-between; font-size: 0.7rem; 
@@ -163,9 +163,8 @@
             height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%;
             transition: width 1s ease;
         }
-        /* PETIT COEUR SUR LA BARRE */
         .prog-heart {
-            position: absolute; top: -6px; font-size: 14px; /* Petit smiley */
+            position: absolute; top: -6px; font-size: 14px;
             transform: translateX(-50%); transition: left 1s ease;
             filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
         }
@@ -458,7 +457,7 @@
 
         <div class="app-footer">
             <img src="icon.jpg" class="footer-logo" alt="Logo">
-            <div style="font-size:0.7rem; color:var(--text-sub); margin-top:5px;">Love Travel v26 • janvier 2026</div>
+            <div style="font-size:0.7rem; color:var(--text-sub); margin-top:5px;">Love Travel v28 • janvier 2026</div>
         </div>
 
     </div>
@@ -638,7 +637,7 @@
         window.updateMood = function(emoji, text, outfitId) {
             setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text, [currentUser+"_outfit"]: (outfitId !== undefined ? outfitId : 5) }, { merge: true });
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`${emoji} ${text} (${myTime})`, "partly_sunny", "high");
+            sendNtfy(`${emoji} ${text} (${myTime})`, "partly_sunny", "low");
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
@@ -675,7 +674,7 @@
             addDoc(collection(db, "letters"), { title: title, content: content, by: currentUser, read: false, timestamp: serverTimestamp() });
             document.getElementById("letter-title").value = ""; document.getElementById("letter-content").value = ""; 
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`💌 Nouvelle lettre ! (${myTime})`, "email", "high");
+            sendNtfy(`💌 Nouvelle lettre ! (${myTime})`, "email", "low");
         }
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db, "letters", id)); }
 
@@ -693,7 +692,7 @@
             document.getElementById(`polaroid-img-${role}`).src = base64;
             await addDoc(collection(db, "photos"), { url: base64, by: role, timestamp: serverTimestamp() });
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`📸 Nouvelle photo ! (${myTime})`, "camera", "high");
+            sendNtfy(`📸 Nouvelle photo ! (${myTime})`, "camera", "low");
         }
         const qPhotos = query(collection(db, "photos"), orderBy("timestamp", "desc"));
         let allPhotos = [];
@@ -748,7 +747,7 @@
             addDoc(collection(db, "todos"), { text: text, done: false, created: serverTimestamp() }); 
             document.getElementById('todo-input').value = ""; 
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`📝 Nouveau projet ! (${myTime})`, "clipboard", "high");
+            sendNtfy(`📝 Nouveau projet ! (${myTime})`, "clipboard", "low");
         }
         window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
         window.deleteTodo = function(id) { deleteDoc(doc(db, "todos", id)); }
@@ -772,7 +771,7 @@
             });
         });
         window.addBook = function() { const title = document.getElementById("book-title").value; const pages = document.getElementById("book-pages").value; if (!title) return; addDoc(collection(db, "books"), { title: title, pages_total: parseInt(pages) || 200, created: serverTimestamp(), page_fr: 0, rating_fr: 0, page_tw: 0, rating_tw: 0 }); document.getElementById("book-title").value = ""; document.getElementById("book-pages").value = ""; }
-        window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 J'ai fini de lire ${title} !`, "tada", "high"); }
+        window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 J'ai fini de lire ${title} !`, "tada", "low"); }
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
         window.deleteBook = function(id) { if(confirm("Supprimer ce livre ?")) deleteDoc(doc(db, "books", id)); }
 
