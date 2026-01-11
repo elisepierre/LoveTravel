@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -33,10 +34,8 @@
             --shadow: rgba(0,0,0,0.05);
             --dot-pattern: #ffe4e1;
             
-            --btn-fr-bg: #e3f2fd;
-            --btn-fr-text: #219ebc;
-            --btn-tw-bg: #fff0f5;
-            --btn-tw-text: #ff4b6e;
+            /* Highlight Voyage */
+            --voyage-border: linear-gradient(135deg, var(--blue), var(--pink));
         }
 
         body.dark-mode {
@@ -48,11 +47,6 @@
             --input-bg: #2c2c2c;
             --shadow: rgba(0,0,0,0.5);
             --dot-pattern: rgba(255,255,255,0.05);
-            
-            --btn-fr-bg: #1a3a5a;
-            --btn-fr-text: #8ecae6;
-            --btn-tw-bg: #4a2a3a;
-            --btn-tw-text: #ff9eb5;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -66,19 +60,23 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        header { text-align: center; padding: 40px 20px 20px; position: relative; }
-        
-        .theme-toggle {
-            position: absolute; top: 20px; right: 20px;
-            background: var(--bg-card); border: 1px solid var(--border);
-            width: 40px; height: 40px; border-radius: 50%; color: var(--text-main);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; cursor: pointer;
-            box-shadow: 0 4px 10px var(--shadow);
+        /* --- HEADER --- */
+        header { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 20px 10px 20px; margin-bottom: 10px;
         }
+        
+        .header-btn {
+            background: var(--bg-card); border: 1px solid var(--border);
+            width: 45px; height: 45px; border-radius: 50%; color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; cursor: pointer;
+            box-shadow: 0 4px 10px var(--shadow); transition: 0.2s;
+        }
+        .header-btn:active { transform: scale(0.9); }
 
         .app-title {
-            font-family: 'Pacifico', cursive; font-size: 3rem; margin: 0;
+            font-family: 'Pacifico', cursive; font-size: 2.2rem; margin: 0;
             background: linear-gradient(to right, var(--blue-dark), var(--pink-dark));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 2px 0px rgba(255,255,255,0.2));
@@ -86,10 +84,19 @@
 
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
         
+        /* CARTES STANDARD */
         .card {
-            background: var(--bg-card); border-radius: 25px; padding: 25px; margin-bottom: 25px;
+            background: var(--bg-card); border-radius: 25px; padding: 25px; margin-bottom: 20px;
             box-shadow: 0 10px 25px var(--shadow); border: 1px solid var(--border);
             transition: background 0.3s; overflow: hidden;
+        }
+        
+        /* CARTE VOYAGE (ANCRÉE & SPÉCIALE) */
+        .card.voyage-card {
+            border: 2px solid transparent;
+            background-image: linear-gradient(var(--bg-card), var(--bg-card)), var(--voyage-border);
+            background-origin: border-box; background-clip: content-box, border-box;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
         }
         
         .card-title {
@@ -99,21 +106,15 @@
             gap: 10px; cursor: pointer; user-select: none;
         }
         
-        .card-title::after {
+        /* Flèche accordéon */
+        .card-title.toggleable::after {
             content: '▼'; font-size: 0.8rem; color: var(--text-sub); 
             transition: transform 0.3s ease;
         }
         .card-title.closed::after { transform: rotate(-90deg); }
         .card-title.closed { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
 
-        .identity-btn { 
-            flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border); 
-            background: var(--input-bg); color: var(--text-sub); 
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-        .identity-btn.active-fr { background: var(--btn-fr-bg); color: var(--btn-fr-text); border-color: var(--blue-dark); }
-        .identity-btn.active-tw { background: var(--btn-tw-bg); color: var(--btn-tw-text); border-color: var(--pink-dark); }
-
+        /* WIDGETS */
         .info-row { display: flex; gap: 15px; margin-bottom: 15px; }
         .info-box { flex: 1; background: var(--input-bg); border-radius: 20px; padding: 15px; text-align: center; border: 1px solid var(--border); }
         .info-city { font-size: 0.7rem; font-weight: 800; color: var(--text-sub); text-transform: uppercase; margin-bottom: 5px; display:flex; align-items:center; justify-content:center;}
@@ -121,10 +122,10 @@
         .info-weather { font-size: 0.8rem; color: var(--text-sub); }
 
         .countdown-box { text-align: center; padding: 10px 0; }
-        .count-days { font-size: 2.5rem; font-weight: 800; color: var(--pink-dark); }
-        .count-sub { font-size: 0.8rem; color: var(--text-sub); margin-top: -5px; }
+        .count-days { font-size: 2.8rem; font-weight: 800; color: var(--pink-dark); line-height: 1; }
+        .count-sub { font-size: 0.8rem; color: var(--text-sub); margin-top: 5px; }
         
-        .progress-bar { height: 10px; background: var(--border); border-radius: 10px; margin-top: 15px; position: relative; }
+        .progress-bar { height: 10px; background: var(--border); border-radius: 10px; margin-top: 20px; position: relative; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%; transition: 1s; }
         .progress-icon { position: absolute; top: -10px; font-size: 24px; transition: left 1s; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1)); }
 
@@ -233,22 +234,17 @@
     </div>
 
     <header>
-        <button class="theme-toggle" onclick="toggleTheme()">🌗</button>
+        <button class="header-btn" id="user-toggle-btn" onclick="switchUser()">🇹🇼</button>
+        
         <h1 class="app-title">Love Travel</h1>
+        
+        <button class="header-btn" onclick="toggleTheme()">🌗</button>
     </header>
 
     <div class="container">
 
-        <div class="card" style="text-align:center; padding:15px; border:2px dashed var(--border);">
-            <p style="margin:0 0 10px; font-size:0.7rem; color:var(--text-sub); text-transform:uppercase;">C'est le téléphone de qui ?</p>
-            <div style="display:flex; gap:10px;">
-                <button onclick="setUser('tw')" id="btn-tw" class="identity-btn">Elise 🇹🇼</button>
-                <button onclick="setUser('fr')" id="btn-fr" class="identity-btn">Théo 🇫🇷</button>
-            </div>
-        </div>
-
-        <div class="card" id="card-voyage">
-            <div class="card-title" onclick="toggleCard(this)">
+        <div class="card voyage-card" id="card-voyage">
+            <div class="card-title">
                 <div style="display:flex; align-items:center; gap:10px;"><span>✈️</span> Notre Voyage</div>
             </div>
             
@@ -278,7 +274,7 @@
         </div>
 
         <div class="card" id="card-mood">
-            <div class="card-title" onclick="toggleCard(this)">
+            <div class="card-title toggleable" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>☁️</span> Humeur du Jour</div>
             </div>
             
@@ -305,7 +301,7 @@
         </div>
 
         <div class="card" id="card-letter">
-            <div class="card-title" onclick="toggleCard(this)">
+            <div class="card-title toggleable" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>💌</span> Boîte aux Lettres</div>
             </div>
             
@@ -325,7 +321,7 @@
         </div>
 
         <div class="card" id="card-album">
-            <div class="card-title" onclick="toggleCard(this)">
+            <div class="card-title toggleable" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>📸</span> Nos Albums</div>
             </div>
             
@@ -348,7 +344,7 @@
         </div>
 
         <div class="card" id="card-todo">
-            <div class="card-title" onclick="toggleCard(this)">
+            <div class="card-title toggleable" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>📝</span> Nos Projets</div>
             </div>
             
@@ -362,7 +358,7 @@
         </div>
 
         <div class="card" id="card-books">
-            <div class="card-title" onclick="toggleCard(this)">
+            <div class="card-title toggleable" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>📚</span> Lectures Communes</div>
             </div>
             
@@ -377,7 +373,7 @@
         </div>
 
         <div class="card" id="card-music">
-            <div class="card-title" onclick="toggleCard(this)">
+            <div class="card-title toggleable" onclick="toggleCard(this)">
                 <div style="display:flex; align-items:center; gap:10px;"><span>🎧</span> Vibe</div>
             </div>
             <div class="card-content">
@@ -411,6 +407,32 @@
             localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
         }
 
+        updateIdentityUI();
+
+        // NOUVEAU SYSTÈME DE CHANGEMENT UTILISATEUR
+        window.switchUser = function() {
+            if (currentUser === 'tw') {
+                currentUser = 'fr';
+                alert("Mode Théo activé 🇫🇷");
+            } else {
+                currentUser = 'tw';
+                alert("Mode Elise activé 🇹🇼");
+            }
+            localStorage.setItem('userRole', currentUser);
+            updateIdentityUI();
+            updateMailboxView();
+        }
+
+        function updateIdentityUI() { 
+            // Mise à jour du drapeau dans le header
+            const btn = document.getElementById('user-toggle-btn');
+            btn.innerText = currentUser === 'tw' ? '🇹🇼' : '🇫🇷';
+            
+            // GESTION BOUTONS PHOTOS
+            document.getElementById('btn-add-fr').style.display = currentUser === 'fr' ? 'block' : 'none';
+            document.getElementById('btn-add-tw').style.display = currentUser === 'tw' ? 'block' : 'none';
+        }
+
         // Accordion Persistence
         window.toggleCard = function(header) {
             const card = header.parentElement;
@@ -432,6 +454,9 @@
         function restoreCards() {
             const cards = document.querySelectorAll('.card[id]');
             cards.forEach(card => {
+                // Ignore la carte voyage (toujours ouverte)
+                if(card.id === 'card-voyage') return;
+
                 const state = localStorage.getItem('card_state_' + card.id);
                 const header = card.querySelector('.card-title');
                 const content = card.querySelector('.card-content');
@@ -443,20 +468,6 @@
             });
         }
         restoreCards();
-
-        updateIdentityUI();
-
-        window.setUser = function(role) { 
-            currentUser = role; localStorage.setItem('userRole', role); 
-            updateIdentityUI();
-            updateMailboxView(); 
-        }
-        function updateIdentityUI() { 
-            document.getElementById('btn-fr').className = `identity-btn ${currentUser === 'fr' ? 'active-fr' : ''}`;
-            document.getElementById('btn-tw').className = `identity-btn ${currentUser === 'tw' ? 'active-tw' : ''}`;
-            document.getElementById('btn-add-fr').style.display = currentUser === 'fr' ? 'block' : 'none';
-            document.getElementById('btn-add-tw').style.display = currentUser === 'tw' ? 'block' : 'none';
-        }
 
         function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
         setInterval(updatePresence, 5000); updatePresence();
@@ -523,7 +534,7 @@
         window.updateMood = function(emoji, text, outfitId) {
             setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text, [currentUser+"_outfit"]: (outfitId !== undefined ? outfitId : 5) }, { merge: true });
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`${emoji} ${text} (${myTime})`, "partly_sunny", "low");
+            sendNtfy(`${emoji} ${text} (${myTime})`, "partly_sunny", "high");
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
@@ -560,7 +571,7 @@
             addDoc(collection(db, "letters"), { title: title, content: content, by: currentUser, read: false, timestamp: serverTimestamp() });
             document.getElementById("letter-title").value = ""; document.getElementById("letter-content").value = ""; 
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`💌 Nouvelle lettre ! (${myTime})`, "email", "low");
+            sendNtfy(`💌 Nouvelle lettre ! (${myTime})`, "email", "high");
         }
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db, "letters", id)); }
 
@@ -578,7 +589,7 @@
             document.getElementById(`polaroid-img-${role}`).src = base64;
             await addDoc(collection(db, "photos"), { url: base64, by: role, timestamp: serverTimestamp() });
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`📸 Nouvelle photo ! (${myTime})`, "camera", "low");
+            sendNtfy(`📸 Nouvelle photo ! (${myTime})`, "camera", "high");
         }
         const qPhotos = query(collection(db, "photos"), orderBy("timestamp", "desc"));
         let allPhotos = [];
@@ -633,7 +644,7 @@
             addDoc(collection(db, "todos"), { text: text, done: false, created: serverTimestamp() }); 
             document.getElementById('todo-input').value = ""; 
             const myTime = getCurrentTime(currentUser);
-            sendNtfy(`📝 Nouveau projet ! (${myTime})`, "clipboard", "low");
+            sendNtfy(`📝 Nouveau projet ! (${myTime})`, "clipboard", "high");
         }
         window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
         window.deleteTodo = function(id) { deleteDoc(doc(db, "todos", id)); }
@@ -657,7 +668,7 @@
             });
         });
         window.addBook = function() { const title = document.getElementById("book-title").value; const pages = document.getElementById("book-pages").value; if (!title) return; addDoc(collection(db, "books"), { title: title, pages_total: parseInt(pages) || 200, created: serverTimestamp(), page_fr: 0, rating_fr: 0, page_tw: 0, rating_tw: 0 }); document.getElementById("book-title").value = ""; document.getElementById("book-pages").value = ""; }
-        window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 J'ai fini de lire ${title} !`, "tada", "low"); }
+        window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 J'ai fini de lire ${title} !`, "tada", "high"); }
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
         window.deleteBook = function(id) { if(confirm("Supprimer ce livre ?")) deleteDoc(doc(db, "books", id)); }
 
@@ -665,13 +676,12 @@
             const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
             const senderName = currentUser === 'tw' ? "Elise" : "Theo";
             const iconUrl = new URL("icon.jpg", window.location.href).href; 
-            // TITRE SIMPLIFIÉ ICI : Juste le Prénom
             fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': senderName, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8', 'Icon': iconUrl } }).catch(e => console.log(e));
         }
         window.sendBisou = function() {
             const btn = document.getElementById('bisou-btn'); 
             addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
-            sendNtfy("💋 Bisou envoyé !", "kiss,heart", "high");
+            sendNtfy("💋 Bisou envoyé !", "kiss,heart", "urgent"); // URGENT = Vibreur
             const notif = document.getElementById("notif"); notif.classList.add("show"); setTimeout(() => notif.classList.remove("show"), 3000);
         }
         function updateClocks() { const now = new Date(); document.getElementById('clock-fr').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' }); document.getElementById('clock-tw').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit' }); } setInterval(updateClocks, 1000); updateClocks();
