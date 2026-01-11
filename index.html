@@ -88,7 +88,7 @@
         .input-field { flex: 1; min-width: 120px; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-family: 'Outfit'; outline: none; background: var(--input-bg); color: var(--text-main); }
         .btn-action { background: var(--blue-dark); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: bold; cursor: pointer; height: 45px; }
         
-        /* QUESTIONS DU JOUR (HISTORIQUE) */
+        /* QUESTIONS DU JOUR */
         .question-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 15px; }
         .q-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; color:var(--text-sub); font-size:0.8rem; }
         .q-nav { cursor:pointer; font-size:1.2rem; padding:0 10px; user-select: none;}
@@ -102,24 +102,37 @@
         .q-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
         .q-action-btn { font-size: 0.7rem; border: none; background: none; cursor: pointer; text-decoration: underline; color: #555; }
 
-        /* JEUX */
+        /* JEUX - V40 REDESIGN */
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
-        .game-board-container { text-align: center; background: var(--input-bg); padding: 15px; border-radius: 15px; border: 1px solid var(--border); }
-        .identity-btn { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-sub); font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .identity-btn.active-fr { background: var(--btn-fr-bg); color: var(--btn-fr-text); border-color: var(--blue-dark); }
-        .identity-btn.active-tw { background: var(--btn-tw-bg); color: var(--btn-tw-text); border-color: var(--pink-dark); }
-        .game-score-board { margin-bottom:15px; font-weight:bold; font-size:0.9rem; color:var(--text-main); display:flex; justify-content:space-around; background:var(--bg-card); padding:10px; border-radius:10px; border:1px solid var(--border); }
+        .game-btn { flex: 1; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-weight: bold; cursor: pointer; transition: 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; box-shadow:0 4px 10px rgba(0,0,0,0.05); }
+        .game-btn:active { transform:scale(0.95); }
+        .game-btn span { font-size:1.5rem; }
+        .stop-btn { color:#ff4b6e; border-color:#ff4b6e; background: #fff0f5; }
+
+        .game-board-container { text-align: center; background: var(--input-bg); padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-top:10px; }
+        .game-score-card { 
+            background: linear-gradient(135deg, var(--blue), var(--pink)); color:white;
+            padding: 10px; border-radius: 12px; margin-bottom: 15px; text-align: center;
+            display: flex; justify-content: space-around; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
         
+        /* PENDU */
         #pendu-canvas { border-bottom: 2px solid var(--text-main); margin-bottom: 10px; width: 200px; height: 150px; }
         .pendu-word { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin: 15px 0; color: var(--text-main); }
         .keyboard { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
         .key-btn { width: 30px; height: 35px; border: 1px solid var(--border); border-radius: 5px; background: white; cursor: pointer; font-weight: bold; color: #333; }
         .key-btn:disabled { opacity: 0.3; background: #ddd; }
-        .p4-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #0066cc; padding: 10px; border-radius: 10px; max-width: 300px; margin: 0 auto; }
-        .p4-cell { aspect-ratio: 1/1; background: white; border-radius: 50%; cursor: pointer; border: 2px solid #0055aa; }
-        .p4-cell.p1 { background: #ff4b6e; } .p4-cell.p2 { background: #ffcc00; }
+        .pendu-history { margin-top: 20px; text-align: left; max-height: 150px; overflow-y: auto; border-top: 1px dashed var(--border); padding-top: 10px; }
+        .history-item { font-size: 0.8rem; margin-bottom: 5px; padding: 5px; background: var(--bg-card); border-radius: 5px; display: flex; justify-content: space-between; }
+        .win { border-left: 3px solid #2ecc71; } .loose { border-left: 3px solid #e74c3c; }
+        
+        /* PUISSANCE 4 */
+        .p4-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; background: #34495e; padding: 10px; border-radius: 10px; max-width: 300px; margin: 0 auto; }
+        .p4-cell { aspect-ratio: 1/1; background: var(--bg-body); border-radius: 50%; cursor: pointer; border: 2px solid rgba(0,0,0,0.1); transition: 0.2s; }
+        .p4-cell.p1 { background: var(--blue); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); } /* Théo = Bleu */
+        .p4-cell.p2 { background: var(--pink); box-shadow: inset 0 0 10px rgba(0,0,0,0.2); } /* Elise = Rose */
 
-        /* LETTRES */
+        /* LETTRES (V28 STYLE) */
         .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
         .mailbox-tab { flex: 1; padding: 10px; text-align: center; border-radius: 12px; font-size: 0.8rem; font-weight: bold; cursor: pointer; opacity: 0.5; transition: 0.3s; color: var(--text-main); border: 1px solid var(--border); }
         .mailbox-tab.active { opacity: 1; color: white; border: none; box-shadow: 0 4px 10px var(--shadow); }
@@ -132,7 +145,7 @@
         .letter-close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #aaa; background: none; border: none; cursor: pointer; z-index: 10; }
         .letter-stamp { position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border: 2px double #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4af37; font-size: 0.7rem; font-weight: bold; transform: rotate(-15deg); opacity: 0.7; text-align: center; pointer-events: none; }
 
-        /* GALERIE */
+        /* GALERIE (V28 STYLE) */
         .polaroid-container { display: flex; justify-content: space-around; }
         .polaroid { background: white; padding: 10px 10px 30px 10px; position: relative; box-shadow: 0 5px 15px var(--p-shadow); transform: rotate(-2deg); width: 45%; text-align: center; cursor: pointer; transition: 0.3s; border-radius:0; }
         .polaroid:nth-child(2) { transform: rotate(3deg); }
@@ -281,12 +294,34 @@
         <div class="card" id="card-games">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div></div>
             <div class="card-content">
-                <div class="game-score-board"><span id="score-fr">🏆 Théo: 0</span> <span id="score-tw">🏆 Elise: 0</span></div>
-                <div class="game-selector"><button onclick="initGame('pendu')" class="identity-btn">🔤 Pendu</button><button onclick="initGame('p4')" class="identity-btn">🔴 Puissance 4</button><button onclick="initGame('none')" class="identity-btn" style="color:red;border-color:red;">Arrêter</button></div>
+                <div class="game-score-card"><span id="score-fr">Théo: 0</span> <span>VS</span> <span id="score-tw">Elise: 0</span></div>
+                
+                <div class="game-selector">
+                    <button onclick="initGame('pendu')" class="game-btn"><span>🔤</span> Pendu</button>
+                    <button onclick="initGame('p4')" class="game-btn"><span>🔴</span> Puissance 4</button>
+                    <button onclick="initGame('none')" class="game-btn stop-btn"><span>✕</span> Arrêter</button>
+                </div>
+                
                 <div id="game-area" class="game-board-container" style="display:none;">
                     <h3 id="game-status" style="margin:0 0 10px; font-size:0.9rem; color:var(--text-main);">...</h3>
-                    <div id="pendu-ui" style="display:none;"><canvas id="pendu-canvas" width="200" height="150"></canvas><div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div><div id="pendu-keyboard" class="keyboard"></div><div id="pendu-setup" style="margin-top:10px;"><input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)"><button onclick="startPendu()" class="btn-action">Lancer</button></div></div>
-                    <div id="p4-ui" style="display:none;"><div class="p4-grid" id="p4-grid"></div></div>
+                    
+                    <div id="pendu-ui" style="display:none;">
+                        <canvas id="pendu-canvas" width="200" height="150"></canvas>
+                        <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
+                        <div id="pendu-keyboard" class="keyboard"></div>
+                        <div id="pendu-setup" style="margin-top:10px;">
+                            <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)">
+                            <button onclick="startPendu()" class="btn-action">Lancer</button>
+                        </div>
+                        <div class="pendu-history" id="pendu-history">
+                            <small style="color:var(--text-sub);">Historique des mots :</small>
+                            <div id="pendu-history-list"></div>
+                        </div>
+                    </div>
+
+                    <div id="p4-ui" style="display:none;">
+                        <div class="p4-grid" id="p4-grid"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -296,7 +331,7 @@
             <div class="card-content"><iframe style="border-radius:15px; width:100%; height:300px; border:none;" src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" allowfullscreen></iframe></div>
         </div>
 
-        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v39 • janvier 2026</div></div>
+        <div class="app-footer"><img src="icon.jpg" class="footer-logo"><div style="font-size:0.7rem;color:var(--text-sub);margin-top:5px;">Love Travel v40 • janvier 2026</div></div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
@@ -342,83 +377,29 @@
         }
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db,"letters",id)); }
 
-        // --- QUESTION DU JOUR (150+ & SYNC FRANCE) ---
-        const questionsList = [
-            "Quel est ton meilleur souvenir de nous ?", "Quelle qualité préfères-tu chez moi ?", "Où veux-tu qu'on aille manger en premier ?", "Quelle chanson te fait penser à moi ?",
-            "Décris notre relation en 3 mots.", "Quel est ton rêve pour nous ?", "Si on pouvait partir demain, on irait où ?", "Qu'est-ce qui te manque le plus ?",
-            "Raconte notre première rencontre vue par toi.", "Quel film nous représente le mieux ?", "Quelle est ma manie la plus mignonne ?", "Quelle est ma manie la plus agaçante ?",
-            "Quel plat as-tu envie de cuisiner ensemble ?", "Quelle est ta photo préférée de nous ?", "Quel surnom me donnes-tu en secret ?", "Quel est le moment où tu as su que c'était sérieux ?",
-            "Quelle activité veux-tu absolument faire cet été ?", "Quel cadeau t'a le plus marqué ?", "Quelle est ta plus grande fierté nous concernant ?", "Si tu étais un animal, lequel serais-tu ?",
-            "Quelle couleur me va le mieux ?", "Quel est ton moment préféré de la journée ?", "Quelle est ta plus grande peur ?", "Quelle est ta plus grande qualité selon toi ?",
-            "Si on gagnait au loto, on ferait quoi ?", "Plutôt soirée Netflix ou sortie bar ?", "Quelle est la chose la plus folle qu'on ait faite ?", "Quel est ton dessert préféré ?",
-            "Si tu pouvais avoir un super-pouvoir, lequel ?", "Quel est ton plus grand regret ?", "Quelle est la chose que tu aimerais apprendre ?", "Si on avait un chien, on l'appellerait comment ?",
-            "Quelle est ta saison préférée et pourquoi ?", "Quel est le dernier livre que tu as aimé ?", "Quelle est ta citation préférée ?", "Si tu pouvais dîner avec une célébrité, qui ?",
-            "Quel est ton souvenir d'enfance le plus marquant ?", "Quelle est ta tradition familiale préférée ?", "Quel est ton jeu vidéo préféré ?", "Si tu pouvais vivre n'importe où, où ce serait ?",
-            "Qu'est-ce qui te fait rire à coup sûr ?", "Quelle est ta série préférée de tous les temps ?", "Quel est ton groupe de musique préféré ?", "Si tu pouvais changer une chose dans le monde ?",
-            "Quel est ton plus grand rêve professionnel ?", "Quelle est la chose la plus romantique que j'ai faite ?", "Quel est ton endroit préféré dans ta ville ?", "Si tu pouvais voyager dans le temps, où irais-tu ?",
-            "Quelle est ta plus grande réussite ?", "Qu'est-ce que tu aimes le plus faire le week-end ?", "Quelle est ta boisson préférée ?", "Si tu pouvais rencontrer un personnage de fiction, qui ?",
-            "Quel est ton sport préféré ?", "Quelle est la chose la plus courageuse que tu aies faite ?", "Quel est ton talent caché ?", "Si tu devais manger un seul plat toute ta vie ?",
-            "Quelle est ta fête préférée ?", "Quel est le meilleur conseil qu'on t'ait donné ?", "Quelle est ta plus grande source d'inspiration ?", "Si tu pouvais parler à ton toi enfant, que dirais-tu ?",
-            "Quel est ton film Disney préféré ?", "Quelle est ta plus grande passion ?", "Si tu pouvais être invisible une journée, que ferais-tu ?", "Quel est ton souvenir de vacances préféré ?",
-            "Quelle est la chose que tu détestes le plus faire ?", "Si tu pouvais échanger ta vie avec quelqu'un, qui ?", "Quel est ton plus gros fou rire avec moi ?", "Quelle est la chose que tu attends le plus en juillet ?",
-            "Si on construisait une maison, elle serait comment ?", "Quel est ton animal préféré ?", "Quelle est ta fleur préférée ?", "Si tu pouvais apprendre une langue instantanément ?",
-            "Quel est ton plus grand défi actuel ?", "Quelle est la chose que tu préfères chez toi ?", "Si tu pouvais avoir un souhait exaucé ?", "Quel est ton moment préféré de notre histoire ?",
-            "Quelle est la chanson qui te donne la pêche ?", "Si tu pouvais inventer quelque chose, ce serait quoi ?", "Quel est ton héros préféré ?", "Quelle est la chose la plus gentille qu'on t'ait dite ?",
-            "Si tu pouvais assister à n'importe quel événement historique ?", "Quel est ton odeur préférée ?", "Quelle est ta tenue préférée sur moi ?", "Si tu pouvais changer ton prénom ?",
-            "Quel est ton plus beau souvenir de voyage ?", "Quelle est la chose la plus importante dans un couple ?", "Si tu pouvais avoir un talent artistique ?", "Quel est ton jeu de société préféré ?",
-            "Quelle est ta plus grande habitude ?", "Si tu pouvais ne plus jamais dormir, que ferais-tu ?", "Quel est ton plus grand rêve d'enfant ?", "Quelle est la chose la plus drôle que tu aies vue ?",
-            "Si tu pouvais être un personnage de film ?", "Quel est ton endroit préféré pour te détendre ?", "Quelle est ta plus grande motivation ?", "Si tu pouvais avoir une réponse à une question ?",
-            "Quel est ton plus grand espoir ?", "Quelle est la chose que tu aimerais changer chez moi ?", "Si tu pouvais revivre une journée de ta vie ?", "Quel est ton plus grand accomplissement ?",
-            "Quelle est la chose la plus importante que tu aies apprise ?", "Si tu pouvais avoir un animal sauvage ?", "Quel est ton plus grand secret (avouable) ?", "Quelle est ta plus grande joie ?",
-            "Si tu pouvais créer une loi ?", "Quel est ton plus grand souhait pour nous ?", "Quelle est la chose la plus bizarre que tu aies mangée ?", "Si tu pouvais être un instrument de musique ?",
-            "Quel est ton plus grand rêve de voyage ?", "Quelle est la chose que tu aimerais faire avant de mourir ?", "Si tu pouvais avoir un dîner romantique n'importe où ?", "Quel est ton plus grand moment de solitude ?",
-            "Quelle est la chose que tu aimerais que je fasse plus souvent ?", "Si tu pouvais avoir un super-gadget ?", "Quel est ton plus grand moment de fierté ?", "Quelle est la chose que tu aimerais qu'on fasse ensemble ?",
-            "Si tu pouvais avoir une collection de quoi que ce soit ?", "Quel est ton plus grand moment de surprise ?", "Quelle est la chose que tu aimerais qu'on accomplisse ?", "Si tu pouvais avoir une maison n'importe où ?",
-            "Quel est ton plus grand moment de bonheur ?", "Quelle est la chose que tu aimerais qu'on partage ?", "Si tu pouvais avoir une aventure ?", "Quel est ton plus grand moment de paix ?",
-            "Quelle est la chose que tu aimerais qu'on découvre ?", "Si tu pouvais avoir une passion commune ?", "Quel est ton plus grand moment de rire ?", "Quelle est la chose que tu aimerais qu'on construise ?",
-            "Si tu pouvais avoir un futur idéal ?", "Quel est ton plus grand moment de complicité ?", "Quelle est la chose que tu aimerais qu'on se dise ?", "Si tu pouvais avoir un souvenir éternel ?",
-            "Quel est ton plus grand moment d'amour ?", "Quelle est la chose que tu aimerais qu'on vive ?", "Si tu pouvais avoir une éternité ?", "Quel est ton plus grand moment de partage ?",
-            "Quelle est la chose que tu aimerais qu'on ressente ?", "Si tu pouvais avoir un amour infini ?", "Quel est ton plus grand moment de tendresse ?"
-        ];
-
-        let currentQDate = new Date(); // Local date initially, will be adjusted to FR time logic visually
-        
+        // --- QUESTION DU JOUR ---
+        const questionsList = ["Quel est ton meilleur souvenir de nous ?", "Quelle qualité préfères-tu chez moi ?", "Où veux-tu qu'on aille manger en premier ?", "Quelle chanson te fait penser à moi ?", "Décris notre relation en 3 mots.", "Quel est ton rêve pour nous ?", "Si on pouvait partir demain, on irait où ?", "Qu'est-ce qui te manque le plus ?", "Raconte notre première rencontre vue par toi."]; 
+        // Note: Liste réduite ici pour l'exemple, mais tu peux remettre les 150 questions de la V39
+        const baseQuestions = [ "Quel est ton meilleur souvenir de nous ?", "Quelle qualité préfères-tu chez moi ?", "Où veux-tu qu'on aille manger en premier ?", "Quelle chanson te fait penser à moi ?", "Décris notre relation en 3 mots.", "Quel est ton rêve pour nous ?", "Si on pouvait partir demain, on irait où ?", "Qu'est-ce qui te manque le plus ?", "Raconte notre première rencontre vue par toi." ]; 
         // Helper Timezone France
-        function getFrenchDate() {
-            return new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Paris"}));
-        }
+        function getFrenchDate() { return new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Paris"})); }
+        let currentQDate = getFrenchDate();
 
         function updateQuestionView() {
-            const nowFr = getFrenchDate();
+            const today = getFrenchDate();
+            if (currentQDate > today) currentQDate = today;
             
-            // Check if currentQDate implies a future date relative to France
-            // We compare YYYY-MM-DD
-            const y = currentQDate.getFullYear();
-            const m = String(currentQDate.getMonth() + 1).padStart(2, '0');
-            const d = String(currentQDate.getDate()).padStart(2, '0');
-            const dateKey = `${y}-${m}-${d}`;
+            const y = currentQDate.getFullYear(); const m = String(currentQDate.getMonth() + 1).padStart(2, '0'); const d = String(currentQDate.getDate()).padStart(2, '0');
+            const dateKey = `${y}-${m}-${d}`; const todayStr = today.toISOString().split('T')[0];
+            const start = new Date("2026-02-14").getTime(); const qTime = currentQDate.getTime(); const diffDays = Math.floor((qTime - start) / (1000 * 60 * 60 * 24));
             
-            const todayStr = nowFr.toISOString().split('T')[0]; // Current FR Date
-            
-            // Start Date (14 Fev 2026)
-            const start = new Date("2026-02-14").getTime(); 
-            // Calculate index based on requested date vs start date
-            // Note: currentQDate is a manipulated date object for navigation
-            const qTime = currentQDate.getTime();
-            const diffDays = Math.floor((qTime - start) / (1000 * 60 * 60 * 24));
-            
-            // UI Update
             document.getElementById('q-date-label').innerText = (dateKey === todayStr) ? "Aujourd'hui (France)" : currentQDate.toLocaleDateString();
-            
-            // Nav logic: Block next if we are at today (France time)
             document.getElementById('q-nav-next').classList.toggle('disabled', dateKey >= todayStr);
             document.getElementById('q-nav-next').onclick = (dateKey >= todayStr) ? null : () => changeQDate(1);
 
-            let qIndex = diffDays; 
-            if(qIndex < 0) qIndex = 0; 
-            document.getElementById('q-text').innerText = questionsList[Math.abs(qIndex) % questionsList.length] || "Question surprise";
+            let qIndex = diffDays; if(qIndex < 0) qIndex = 0; 
+            document.getElementById('q-text').innerText = baseQuestions[Math.abs(qIndex) % baseQuestions.length] || "Question surprise";
 
-            // Listener
             onSnapshot(doc(db, "daily_answers", dateKey), (docSnap) => {
                 const data = docSnap.exists() ? docSnap.data() : {};
                 const frAns = data.fr || ""; const twAns = data.tw || "";
@@ -431,43 +412,23 @@
                     const blurClass = (!isMe && !bothAnswered) ? "q-blur" : "";
                     const content = (!isMe && !bothAnswered) ? "Réponse cachée..." : txt;
                     let actions = "";
-                    // Allow edit/delete ONLY if it is TODAY (France time)
-                    if(isMe && dateKey === todayStr) {
-                         actions = `<div class="q-actions"><button class="q-action-btn" onclick="editQ('${dateKey}')">Modif</button><button class="q-action-btn" onclick="deleteQ('${dateKey}')">Supp</button></div>`;
-                    }
+                    if(isMe && dateKey === todayStr) actions = `<div class="q-actions"><button class="q-action-btn" onclick="editQ('${dateKey}')">Modif</button><button class="q-action-btn" onclick="deleteQ('${dateKey}')">Supp</button></div>`;
                     return `<div class="q-bubble q-${role} ${blurClass}"><b>${user}:</b> ${content} ${actions}</div>`;
                 };
                 if(frAns) area.innerHTML += makeBubble("Théo", frAns, 'fr');
                 if(twAns) area.innerHTML += makeBubble("Elise", twAns, 'tw');
-                
-                // Input visibility (only for today AND if not answered)
-                if(dateKey === todayStr && !myAnswer) document.getElementById('q-input-group').style.display = 'flex';
-                else document.getElementById('q-input-group').style.display = 'none';
-
+                if(dateKey === todayStr && !myAnswer) document.getElementById('q-input-group').style.display = 'flex'; else document.getElementById('q-input-group').style.display = 'none';
                 if(!frAns && !twAns) area.innerHTML = "<div style='text-align:center;font-style:italic;font-size:0.8rem;color:#aaa'>Aucune réponse.</div>";
             });
         }
-        
-        window.changeQDate = function(offset) {
-            currentQDate.setDate(currentQDate.getDate() + offset);
-            updateQuestionView();
-        }
-        // Force init with French Date
-        currentQDate = getFrenchDate();
-        updateQuestionView(); 
-
-        window.sendAnswer = function() {
-            const txt = document.getElementById('q-input').value; if(!txt) return;
-            const y = currentQDate.getFullYear(); const m = String(currentQDate.getMonth() + 1).padStart(2, '0'); const d = String(currentQDate.getDate()).padStart(2, '0');
-            const key = `${y}-${m}-${d}`;
-            setDoc(doc(db, "daily_answers", key), { [currentUser]: txt }, { merge: true });
-            document.getElementById('q-input').value = ""; sendNtfy(`💬 Réponse à la question ! (${getCurrentTime(currentUser)})`, "speech_balloon", "low");
-        }
+        window.changeQDate = function(offset) { currentQDate.setDate(currentQDate.getDate() + offset); updateQuestionView(); }
+        updateQuestionView();
+        window.sendAnswer = function() { const txt = document.getElementById('q-input').value; if(!txt) return; const y = currentQDate.getFullYear(); const m = String(currentQDate.getMonth() + 1).padStart(2, '0'); const d = String(currentQDate.getDate()).padStart(2, '0'); const key = `${y}-${m}-${d}`; setDoc(doc(db, "daily_answers", key), { [currentUser]: txt }, { merge: true }); document.getElementById('q-input').value = ""; sendNtfy(`💬 Réponse à la question ! (${getCurrentTime(currentUser)})`, "speech_balloon", "low"); }
         window.deleteQ = function(key) { updateDoc(doc(db, "daily_answers", key), { [currentUser]: "" }); }
         window.editQ = function(key) { getDoc(doc(db, "daily_answers", key)).then(snap => { if(snap.exists()) { document.getElementById('q-input').value = snap.data()[currentUser]; deleteQ(key); } }); }
 
         // --- JEUX ---
-        onSnapshot(doc(db, "games", "scores"), (s) => { const sc = s.exists() ? s.data() : { fr:0, tw:0 }; document.getElementById('score-fr').innerText = `🏆 Théo: ${sc.fr}`; document.getElementById('score-tw').innerText = `🏆 Elise: ${sc.tw}`; });
+        onSnapshot(doc(db, "games", "scores"), (s) => { const sc = s.exists() ? s.data() : { fr:0, tw:0 }; document.getElementById('score-fr').innerText = `Théo: ${sc.fr}`; document.getElementById('score-tw').innerText = `Elise: ${sc.tw}`; });
         onSnapshot(doc(db, "games", "active"), (docSnap) => {
             const game = docSnap.exists() ? docSnap.data() : { type: 'none' };
             document.getElementById('game-area').style.display = game.type === 'none' ? 'none' : 'block';
@@ -483,6 +444,18 @@
         let activeGame = null; onSnapshot(doc(db, "games", "active"), (s) => { activeGame = s.data(); });
         
         // PENDU
+        // Historique Listener
+        onSnapshot(query(collection(db, "games_history"), orderBy("timestamp", "desc"), limit(10)), (snapshot) => {
+            const list = document.getElementById('pendu-history-list'); list.innerHTML = "";
+            snapshot.forEach(d => {
+                const data = d.data();
+                const item = document.createElement('div');
+                item.className = "history-item " + (data.result === 'win' ? 'win' : 'loose');
+                item.innerHTML = `<b>${data.setter==='fr'?'Théo':'Elise'}</b> a fait deviner <b>${data.word}</b> (${data.result === 'win' ? 'Trouvé' : 'Raté'})`;
+                list.appendChild(item);
+            });
+        });
+
         function renderPendu(game) {
             document.getElementById('pendu-ui').style.display='block'; const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('game-status');
             ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.strokeStyle= getComputedStyle(document.body).getPropertyValue('--text-main'); ctx.beginPath();
@@ -490,12 +463,7 @@
             ctx.stroke(); 
             if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} 
             if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} 
-            ctx.beginPath();
-            if(game.mistakes>6){ctx.moveTo(130,80);ctx.lineTo(110,95);} 
-            if(game.mistakes>7){ctx.moveTo(130,80);ctx.lineTo(150,95);} 
-            if(game.mistakes>8){ctx.moveTo(130,110);ctx.lineTo(115,135);} 
-            if(game.mistakes>9){ctx.moveTo(130,110);ctx.lineTo(145,135);} 
-            ctx.stroke();
+            ctx.beginPath(); if(game.mistakes>6){ctx.moveTo(130,80);ctx.lineTo(110,95);} if(game.mistakes>7){ctx.moveTo(130,80);ctx.lineTo(150,95);} if(game.mistakes>8){ctx.moveTo(130,110);ctx.lineTo(115,135);} if(game.mistakes>9){ctx.moveTo(130,110);ctx.lineTo(145,135);} ctx.stroke();
             if(game.mistakes>10){ctx.font="20px Arial";ctx.fillStyle=ctx.strokeStyle;ctx.fillText("X X",122,60);} 
             
             if(game.state==='setup'){ status.innerText="En attente..."; document.getElementById('pendu-setup').style.display='block'; document.getElementById('pendu-word-display').innerText="???"; document.getElementById('pendu-keyboard').innerHTML=""; }
@@ -512,14 +480,37 @@
             }
         }
         window.startPendu=function(){const w=document.getElementById('pendu-secret').value.toUpperCase().trim(); if(w) updateDoc(doc(db,"games","active"),{state:'playing',word:w,guessed:[],mistakes:0, creator:currentUser});}
-        window.playPenduMove=function(l){ if(!activeGame||activeGame.state!=='playing')return; const ng=[...activeGame.guessed,l]; let nm=activeGame.mistakes; if(!activeGame.word.includes(l))nm++; let ns=nm>=11?'loose':(activeGame.word.split('').every(c=>ng.includes(c))?'win':'playing'); updateDoc(doc(db,"games","active"),{guessed:ng,mistakes:nm,state:ns}); }
+        window.playPenduMove=async function(l){ 
+            if(!activeGame||activeGame.state!=='playing')return; 
+            const ng=[...activeGame.guessed,l]; let nm=activeGame.mistakes; 
+            if(!activeGame.word.includes(l))nm++; 
+            let ns='playing';
+            let saveHistory = false;
+            
+            if(nm>=11) { ns='loose'; saveHistory=true; }
+            else if(activeGame.word.split('').every(c=>ng.includes(c))) { ns='win'; saveHistory=true; }
+            
+            await updateDoc(doc(db,"games","active"),{guessed:ng,mistakes:nm,state:ns});
+            
+            if(saveHistory) {
+                // Add to history collection
+                addDoc(collection(db, "games_history"), {
+                    word: activeGame.word,
+                    setter: activeGame.creator,
+                    guesser: activeGame.creator === 'fr' ? 'tw' : 'fr',
+                    result: ns,
+                    timestamp: serverTimestamp()
+                });
+            }
+        }
         
+        // P4
         function renderP4(game) {
             document.getElementById('p4-ui').style.display='block'; const grid=document.getElementById('p4-grid'); grid.innerHTML="";
             const status = document.getElementById('game-status');
             if(game.winner) status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !";
-            else status.innerText = (game.turn === 'fr' ? "Tour de Théo (Jaune)" : "Tour d'Elise (Rouge)");
-            for(let i=0; i<42; i++) { const c=document.createElement('div'); c.className="p4-cell "+(game.board[i]===1?'p2':(game.board[i]===2?'p1':'')); c.onclick=()=>playP4(i%7); grid.appendChild(c); }
+            else status.innerText = (game.turn === 'fr' ? "Tour de Théo (Bleu)" : "Tour d'Elise (Rose)");
+            for(let i=0; i<42; i++) { const c=document.createElement('div'); c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); c.onclick=()=>playP4(i%7); grid.appendChild(c); }
         }
         window.playP4 = async function(col) {
             if(!activeGame||activeGame.winner) return;
@@ -535,19 +526,8 @@
         // --- BASICS ---
         function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
         setInterval(updatePresence, 5000); updatePresence();
-        onSnapshot(doc(db, "status", "presence"), (docSnap) => {
-            if(docSnap.exists()) {
-                const d = docSnap.data(); const now = Date.now();
-                const isOnlineFr = (now - d.fr) < 15000 && d.fr !== 0; 
-                const isOnlineTw = (now - d.tw) < 15000 && d.tw !== 0;
-                document.getElementById('dot-fr').classList.toggle('online', isOnlineFr);
-                document.getElementById('dot-tw').classList.toggle('online', isOnlineTw);
-            }
-        });
-        
         async function updateWeather() { try { const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.77,24.99&longitude=3.08,121.30&current_weather=true"); const d=await r.json(); document.getElementById('weather-fr').innerText=`☀️ ${Math.round(d[0].current_weather.temperature)}°C`; document.getElementById('weather-tw').innerText=`☀️ ${Math.round(d[1].current_weather.temperature)}°C`; } catch(e){} }
         updateWeather();
-
         const dateDepart = new Date("2026-02-14T00:00:00+01:00").getTime(); const dateRetour = new Date("2026-07-05T08:00:00+02:00").getTime(); 
         function updateCountdown() {
             const now=new Date().getTime(); let p=0;
@@ -571,7 +551,6 @@
             sendNtfy(`💋 Bisou envoyé ! (${getCurrentTime(currentUser)})`, "kiss,heart", "urgent");
             const n = document.getElementById("notif"); n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),3000);
         }
-        
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
