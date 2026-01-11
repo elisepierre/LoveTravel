@@ -18,13 +18,13 @@
     
     <style>
         :root {
-            /* Couleurs de base (Mode Clair) */
+            /* Couleurs de base */
             --pink: #ff9eb5;
             --pink-dark: #ff4b6e;
             --blue: #8ecae6;
             --blue-dark: #219ebc;
             
-            /* Variables Thème Dynamique */
+            /* Thème Clair (Défaut) */
             --bg-body: #fffbf0;
             --bg-card: #ffffff;
             --text-main: #4a4a4a;
@@ -33,18 +33,30 @@
             --input-bg: #fafafa;
             --shadow: rgba(0,0,0,0.05);
             --dot-pattern: #ffe4e1;
+            
+            /* Couleurs boutons actifs (Clair) */
+            --btn-fr-bg: #e3f2fd;
+            --btn-fr-text: #219ebc;
+            --btn-tw-bg: #fff0f5;
+            --btn-tw-text: #ff4b6e;
         }
 
         /* --- MODE SOMBRE --- */
         body.dark-mode {
-            --bg-body: #1a1a2e;
-            --bg-card: #16213e;
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
             --text-main: #e0e0e0;
-            --text-sub: #a0a0a0;
-            --border: #2a2a4e;
-            --input-bg: #0f3460;
-            --shadow: rgba(0,0,0,0.3);
-            --dot-pattern: rgba(255,255,255,0.1);
+            --text-sub: #aaaaaa;
+            --border: #333333;
+            --input-bg: #2c2c2c;
+            --shadow: rgba(0,0,0,0.5);
+            --dot-pattern: rgba(255,255,255,0.05);
+            
+            /* Couleurs boutons actifs (Sombre) */
+            --btn-fr-bg: #1a3a5a;
+            --btn-fr-text: #8ecae6;
+            --btn-tw-bg: #4a2a3a;
+            --btn-tw-text: #ff9eb5;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -55,18 +67,17 @@
             background-image: radial-gradient(var(--dot-pattern) 1px, transparent 1px);
             background-size: 20px 20px;
             color: var(--text-main); padding-bottom: 120px;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background 0.3s, color 0.3s;
         }
 
         header { 
             text-align: center; padding: 40px 20px 20px; position: relative;
         }
         
-        /* Bouton Dark Mode */
         .theme-toggle {
             position: absolute; top: 20px; right: 20px;
             background: var(--bg-card); border: 1px solid var(--border);
-            width: 40px; height: 40px; border-radius: 50%;
+            width: 40px; height: 40px; border-radius: 50%; color: var(--text-main);
             display: flex; align-items: center; justify-content: center;
             font-size: 1.2rem; cursor: pointer;
             box-shadow: 0 4px 10px var(--shadow);
@@ -76,14 +87,14 @@
             font-family: 'Pacifico', cursive; font-size: 3rem; margin: 0;
             background: linear-gradient(to right, var(--blue-dark), var(--pink-dark));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 0px rgba(255,255,255,0.5));
+            filter: drop-shadow(0 2px 0px rgba(255,255,255,0.2));
         }
 
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
         
         .card {
             background: var(--bg-card); border-radius: 25px; padding: 25px; margin-bottom: 25px;
-            box-shadow: 0 10px 25px var(--shadow); border: 1px solid rgba(0,0,0,0.02);
+            box-shadow: 0 10px 25px var(--shadow); border: 1px solid var(--border);
             transition: background 0.3s;
         }
         
@@ -92,6 +103,15 @@
             text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px dashed var(--border); padding-bottom: 10px;
             display: flex; align-items: center; gap: 10px;
         }
+
+        /* IDENTITÉ (CORRECTION LISIBILITÉ) */
+        .identity-btn { 
+            flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border); 
+            background: var(--input-bg); color: var(--text-sub); 
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .identity-btn.active-fr { background: var(--btn-fr-bg); color: var(--btn-fr-text); border-color: var(--blue-dark); }
+        .identity-btn.active-tw { background: var(--btn-tw-bg); color: var(--btn-tw-text); border-color: var(--pink-dark); }
 
         /* WIDGETS */
         .info-row { display: flex; gap: 15px; margin-bottom: 15px; }
@@ -111,7 +131,7 @@
         .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--pink)); border-radius: 10px; width: 0%; transition: 1s; }
         .progress-icon { position: absolute; top: -10px; font-size: 24px; transition: left 1s; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1)); }
 
-        /* MÉTÉO */
+        /* MOODS */
         .mood-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
         .mood-person { width: 48%; text-align: center; position: relative; }
         .avatar-frame { width: 100%; height: 140px; display: flex; align-items: flex-end; justify-content: center; position: relative; }
@@ -153,7 +173,7 @@
             transform: rotate(-15deg); opacity: 0.7; text-align: center; pointer-events: none;
         }
 
-        /* GALERIE */
+        /* GALERIE & LIGHTBOX */
         .polaroid-container { display: flex; justify-content: space-around; }
         .polaroid {
             background: white; padding: 10px 10px 30px 10px; position: relative;
@@ -164,13 +184,25 @@
         .polaroid:active { transform: scale(1.05) rotate(0deg); z-index: 10; }
         .polaroid-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; margin-bottom: 5px; }
         .polaroid-label { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: #555; }
-        
-        /* Bouton Ajouter Photo */
         .add-photo-btn {
-            display: none; /* Caché par défaut */
-            margin-top: 5px; font-size: 0.7rem; color: #888; 
+            display: none; margin-top: 5px; font-size: 0.7rem; color: #888; 
             border: 1px dashed #ccc; padding: 5px; border-radius: 5px;
         }
+
+        /* MODAL GALERIE & LIGHTBOX */
+        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; padding: 20px; overflow-y:auto;}
+        .modal-header { display: flex; justify-content: space-between; color: white; margin-bottom: 20px; align-items: center; }
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .modal-img { width: 100%; border-radius: 5px; cursor: zoom-in; transition: 0.2s; }
+        .modal-img:hover { opacity: 0.8; }
+        
+        /* LIGHTBOX (Zoom Photo) */
+        #lightbox { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: black; z-index: 7000; justify-content: center; align-items: center; 
+        }
+        #lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .lightbox-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; background: none; border: none; cursor: pointer; }
 
         /* INPUTS & PROJETS */
         .input-group { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
@@ -203,6 +235,10 @@
         .book-progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-left: 10px; }
         .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
+        /* FOOTER */
+        .app-footer { text-align: center; padding: 20px; margin-top: 30px; opacity: 0.8; }
+        .footer-logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
         /* FAB & NOTIF */
         #bisou-btn { position: fixed; bottom: 30px; right: 25px; width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--pink-dark)); color: white; border: none; font-size: 30px; box-shadow: 0 10px 25px rgba(255, 75, 110, 0.4); cursor: pointer; z-index: 1000; animation: pulse 3s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
@@ -211,11 +247,7 @@
 
         /* UTILS */
         .hidden { display: none; }
-        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 6000; padding: 20px; overflow-y:auto;}
-        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 40px; }
-        .modal-img { width: 100%; border-radius: 5px; }
         input[type="file"] { display: none; }
-        
         .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ccc; margin-right: 6px; vertical-align: middle; transition: 0.3s; }
         .status-dot.online { background: #2ecc71; box-shadow: 0 0 8px #2ecc71; animation: blink 2s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -235,8 +267,16 @@
     </div>
 
     <div id="gallery-modal">
-        <button onclick="closeGallery()" style="position:fixed; top:20px; right:20px; font-size:2rem; color:white; background:none; border:none;">✕</button>
+        <div class="modal-header">
+            <h2 style="color:white; font-family:'Outfit';">Galerie</h2>
+            <button onclick="closeGallery()" style="background:none; border:none; color:white; font-size:2rem; cursor:pointer;">✕</button>
+        </div>
         <div class="modal-grid" id="modal-grid"></div>
+    </div>
+
+    <div id="lightbox" onclick="closeLightbox()">
+        <button class="lightbox-close">✕</button>
+        <img id="lightbox-img" src="" alt="Zoom">
     </div>
 
     <header>
@@ -249,14 +289,13 @@
         <div class="card" style="text-align:center; padding:15px; border:2px dashed var(--border);">
             <p style="margin:0 0 10px; font-size:0.7rem; color:var(--text-sub); text-transform:uppercase;">C'est le téléphone de qui ?</p>
             <div style="display:flex; gap:10px;">
-                <button onclick="setUser('tw')" id="btn-tw" style="flex:1; padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main);">Elise 🇹🇼</button>
-                <button onclick="setUser('fr')" id="btn-fr" style="flex:1; padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--input-bg); color:var(--text-main);">Théo 🇫🇷</button>
+                <button onclick="setUser('tw')" id="btn-tw" class="identity-btn">Elise 🇹🇼</button>
+                <button onclick="setUser('fr')" id="btn-fr" class="identity-btn">Théo 🇫🇷</button>
             </div>
         </div>
 
         <div class="card">
             <div class="card-title"><span>✈️</span> Notre Voyage</div>
-            
             <div class="info-row">
                 <div class="info-box" style="border-bottom: 3px solid var(--blue);">
                     <div class="info-city"><span id="dot-fr" class="status-dot"></span>FRANCE</div>
@@ -269,7 +308,6 @@
                     <div class="info-weather" id="weather-tw">--°C</div>
                 </div>
             </div>
-
             <div class="countdown-box">
                 <div class="count-days" id="days-count">--</div>
                 <div class="count-sub" id="sub-count">jours avant les retrouvailles</div>
@@ -283,22 +321,16 @@
 
         <div class="card">
             <div class="card-title"><span>☁️</span> Humeur du Jour</div>
-            
             <div class="mood-container">
                 <div class="mood-person">
-                    <div class="avatar-frame">
-                        <img src="" id="mood-img-fr" class="avatar-img">
-                    </div>
+                    <div class="avatar-frame"><img src="" id="mood-img-fr" class="avatar-img"></div>
                     <div class="mood-msg" id="mood-msg-fr">...</div>
                 </div>
                 <div class="mood-person">
-                    <div class="avatar-frame">
-                        <img src="" id="mood-img-tw" class="avatar-img">
-                    </div>
+                    <div class="avatar-frame"><img src="" id="mood-img-tw" class="avatar-img"></div>
                     <div class="mood-msg" id="mood-msg-tw">...</div>
                 </div>
             </div>
-
             <div class="mood-grid">
                 <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !', 0)">🥰</div>
                 <div class="mood-btn" onclick="updateMood('🤓', 'Je suis en cours', 1)">🤓</div>
@@ -326,20 +358,16 @@
 
         <div class="card">
             <div class="card-title"><span>📸</span> Nos Albums</div>
-            
             <div class="polaroid-container">
                 <div class="polaroid" onclick="openGallery('fr')">
                     <img id="polaroid-img-fr" class="polaroid-img" src="https://via.placeholder.com/150">
                     <div class="polaroid-label" style="color:var(--blue-dark)">Théo</div>
-                    
                     <div id="btn-add-fr" class="add-photo-btn" onclick="event.stopPropagation(); document.getElementById('file-fr').click()">+ Ajouter photo</div>
                     <input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this, 'fr')">
                 </div>
-
                 <div class="polaroid" onclick="openGallery('tw')">
                     <img id="polaroid-img-tw" class="polaroid-img" src="https://via.placeholder.com/150">
                     <div class="polaroid-label" style="color:var(--pink-dark)">Elise</div>
-                    
                     <div id="btn-add-tw" class="add-photo-btn" onclick="event.stopPropagation(); document.getElementById('file-tw').click()">+ Ajouter photo</div>
                     <input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this, 'tw')">
                 </div>
@@ -368,6 +396,11 @@
         <div class="card">
             <div class="card-title"><span>🎧</span> Vibe</div>
             <iframe style="border-radius:15px; width:100%; height:300px; border:none;" src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" allowfullscreen></iframe>
+        </div>
+
+        <div class="app-footer">
+            <img src="icon.jpg" class="footer-logo" alt="Logo">
+            <div style="font-size:0.7rem; color:var(--text-sub); margin-top:5px;">Fait avec ❤️ pour 2026</div>
         </div>
 
     </div>
@@ -399,10 +432,9 @@
             updateMailboxView(); 
         }
         function updateIdentityUI() { 
-            document.getElementById('btn-fr').style.backgroundColor = currentUser === 'fr' ? '#e3f2fd' : 'var(--bg-card)';
-            document.getElementById('btn-fr').style.borderColor = currentUser === 'fr' ? 'var(--blue)' : 'var(--border)';
-            document.getElementById('btn-tw').style.backgroundColor = currentUser === 'tw' ? '#fff0f3' : 'var(--bg-card)';
-            document.getElementById('btn-tw').style.borderColor = currentUser === 'tw' ? 'var(--pink)' : 'var(--border)';
+            // Gestion classes actives pour style boutons
+            document.getElementById('btn-fr').className = `identity-btn ${currentUser === 'fr' ? 'active-fr' : ''}`;
+            document.getElementById('btn-tw').className = `identity-btn ${currentUser === 'tw' ? 'active-tw' : ''}`;
             
             // GESTION BOUTONS PHOTOS (SÉCURITÉ VISUELLE)
             document.getElementById('btn-add-fr').style.display = currentUser === 'fr' ? 'block' : 'none';
@@ -513,13 +545,7 @@
             return canvas.toDataURL(type, quality);
         };
         window.handlePhotoUpload = async function(input, role) {
-            // SÉCURITÉ CÔTÉ JS (Empêche l'upload si ce n'est pas le bon user)
-            if(role !== currentUser) {
-                alert("Tu ne peux ajouter des photos que dans ta galerie !");
-                input.value = ""; // Reset input
-                return;
-            }
-            
+            if(role !== currentUser) { alert("Action interdite !"); return; }
             const file = input.files[0]; if(!file) return;
             document.getElementById('gallery-modal').style.display = "none";
             const base64 = await compressImage(file, { quality: 0.6, type: 'image/jpeg' });
@@ -541,7 +567,7 @@
             userPhotos.forEach(p => { 
                 const div = document.createElement('div'); 
                 div.id = `photo-${p.id}`;
-                div.innerHTML = `<img src="${p.url}" style="width:100%; border-radius:5px;"><div style="text-align:center;color:red;font-size:0.8rem;" onclick="deletePhoto('${p.id}')">Supprimer</div>`; 
+                div.innerHTML = `<img src="${p.url}" class="modal-img" onclick="openLightbox('${p.url}')"><div style="text-align:center;color:red;font-size:0.8rem;" onclick="deletePhoto('${p.id}')">Supprimer</div>`; 
                 grid.appendChild(div); 
             });
             modal.style.display = "block";
@@ -553,6 +579,15 @@
                 if(el) el.remove();
                 await deleteDoc(doc(db, "photos", id));
             }
+        }
+        
+        // --- LIGHTBOX ---
+        window.openLightbox = function(url) {
+            document.getElementById('lightbox-img').src = url;
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+        window.closeLightbox = function() {
+            document.getElementById('lightbox').style.display = 'none';
         }
 
         const qTodos = query(collection(db, "todos"), orderBy("created", "desc"));
