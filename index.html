@@ -5,373 +5,364 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Love Travel">
-    <meta name="theme-color" content="#fff0f3">
+    <meta name="theme-color" content="#ffffff">
     
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.jpg">
     <link rel="icon" type="image/jpeg" href="icon.jpg">
 
     <title>Love Travel ✈️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;600;800&family=Pacifico&display=swap" rel="stylesheet">
     
     <style>
-        /* --- PALETTE DE COULEURS DOUCES & MODERNES --- */
+        /* --- THEME RESEAU SOCIAL --- */
         :root {
-            --pink: #ff8fa3;       /* Rose Elise (plus doux) */
-            --pink-light: #fff0f3;
-            --blue: #64b5f6;       /* Bleu Théo (plus ciel) */
-            --blue-light: #e3f2fd;
-            --text: #2d3436;
-            --text-light: #636e72;
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.6);
-            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            --pink: #ff4b6e; --pink-light: #fff0f5;
+            --blue: #4a90e2; --blue-light: #f0f7ff;
+            --bg: #fafafa; /* Fond gris très clair comme Insta */
+            --card-bg: #ffffff;
+            --text: #262626;
+            --text-grey: #8e8e8e;
+            --border: #efefef;
+            --shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-
-        /* --- FOND ANIMÉ (MESH GRADIENT) --- */
+        
         body {
-            margin: 0;
-            font-family: 'Outfit', sans-serif;
-            color: var(--text);
-            padding-bottom: 140px;
-            background: linear-gradient(-45deg, #ffdee9, #b5fffc, #fff0f3, #e3f2fd);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            min-height: 100vh;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            margin: 0; font-family: 'Outfit', sans-serif; background: var(--bg);
+            color: var(--text); padding-bottom: 100px;
         }
 
-        /* --- HEADER & TITRE --- */
-        #hero-header {
-            padding: 40px 20px 20px;
-            text-align: center;
-            position: relative;
+        /* --- HEADER --- */
+        #app-header {
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            padding: 15px 20px; position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: max(15px, env(safe-area-inset-top));
         }
+        .app-logo-text { font-family: 'Pacifico', cursive; font-size: 1.6rem; background: linear-gradient(45deg, var(--blue), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header-profile { width: 35px; height: 35px; border-radius: 50%; background: #eee; border: 1px solid #ddd; object-fit: cover; }
+
+        /* --- STORIES (GALERIE) --- */
+        .stories-container {
+            background: white; padding: 15px 0; border-bottom: 1px solid var(--border);
+            display: flex; gap: 15px; overflow-x: auto; padding-left: 20px;
+            scrollbar-width: none; /* Hide scrollbar */
+        }
+        .stories-container::-webkit-scrollbar { display: none; }
         
-        .app-title {
-            font-family: 'Pacifico', cursive;
-            font-size: 3rem;
-            margin: 0;
-            background: linear-gradient(to right, var(--blue), var(--pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 4px 0 rgba(255,255,255,0.5));
-            animation: float 6s ease-in-out infinite;
+        .story-item { text-align: center; flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .story-ring {
+            width: 68px; height: 68px; border-radius: 50%; padding: 3px;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            display: flex; align-items: center; justify-content: center; margin-bottom: 5px; transition: transform 0.2s;
         }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-
-        /* --- WIDGETS DU HAUT (Glassmorphism) --- */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .clocks-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 25px;
-        }
-        .clock-item { text-align: center; flex: 1; }
-        .clock-city { font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-bottom: 2px; }
-        .clock-weather { font-size: 0.85rem; font-weight: 600; color: var(--text); background: rgba(255,255,255,0.5); padding: 2px 8px; border-radius: 12px; display: inline-block; margin-bottom: 5px; }
-        .clock-time { font-size: 1.4rem; font-weight: 800; color: var(--text); }
-        .divider { width: 1px; height: 40px; background: rgba(0,0,0,0.1); }
-
-        /* COUNTDOWN */
-        .countdown-box { text-align: center; padding: 20px; }
-        .countdown-title { font-size: 0.75rem; color: var(--pink); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 5px; }
-        .countdown-big { font-size: 2.5rem; font-weight: 900; color: var(--text); line-height: 1; text-shadow: 2px 2px 0px rgba(255,255,255,1); }
-        .countdown-sub { font-size: 0.9rem; color: var(--text-light); margin-top: 5px; font-weight: 500; }
-
-        /* PROGRESSION AVION */
-        .progress-container { margin-top: 15px; position: relative; height: 40px; padding: 0 10px; }
-        .progress-track { background: rgba(255,255,255,0.5); height: 8px; border-radius: 20px; position: relative; top: 15px; overflow: hidden; }
-        .progress-fill { background: linear-gradient(90deg, var(--blue), var(--pink)); height: 100%; width: 0%; border-radius: 20px; transition: width 1s ease; }
-        .progress-icon { position: absolute; top: -5px; font-size: 28px; transition: left 1s ease; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); z-index: 2; }
-
-        /* --- CARTES PRINCIPALES --- */
-        .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
-        .card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 30px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--glass-border);
-            transition: transform 0.2s;
-        }
-        .card:hover { transform: translateY(-2px); }
-        .card-title { font-size: 1.2rem; font-weight: 800; color: var(--text); margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
-        .card-title span { background: white; padding: 8px; border-radius: 12px; font-size: 1.4rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-
-        /* --- MÉTÉO & AVATARS --- */
-        .current-moods { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; padding: 0 10px; }
-        .one-mood { display: flex; flex-direction: column; align-items: center; width: 45%; position: relative; }
+        .story-ring.blue-theme { background: linear-gradient(45deg, #4a90e2, #00d2ff); }
+        .story-ring.pink-theme { background: linear-gradient(45deg, #ff4b6e, #ff9a9e); }
+        .story-ring:active { transform: scale(0.95); }
         
-        .mood-avatar-frame { 
-            width: 120px; height: 120px; 
+        .story-img { width: 100%; height: 100%; border-radius: 50%; border: 3px solid white; object-fit: cover; background: white; }
+        .story-name { font-size: 0.7rem; color: var(--text); font-weight: 500; }
+        
+        /* Bouton ajout photo discret */
+        .add-story-btn {
+            position: absolute; bottom: 0; right: 0; background: var(--blue); color: white;
+            width: 20px; height: 20px; border-radius: 50%; font-size: 1rem; border: 2px solid white;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* --- FEED (CARTES) --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 15px; }
+        
+        .post-card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+            margin-bottom: 20px; overflow: hidden; box-shadow: var(--shadow);
+        }
+        .post-header { padding: 12px 15px; display: flex; align-items: center; border-bottom: 1px solid #f5f5f5; }
+        .post-icon { font-size: 1.2rem; margin-right: 10px; }
+        .post-title { font-weight: 600; font-size: 0.95rem; flex: 1; }
+        .post-dots { color: #ccc; }
+
+        /* --- CLOCKS & COUNTDOWN --- */
+        .clocks-row { display: flex; padding: 15px; justify-content: space-around; background: #fdfdfd; }
+        .clock-box { text-align: center; }
+        .clock-label { font-size: 0.7rem; color: var(--text-grey); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
+        .clock-val { font-size: 1.3rem; font-weight: 700; color: var(--text); }
+        .clock-weather { font-size: 0.8rem; color: var(--text-grey); }
+
+        .countdown-wrapper { padding: 20px; text-align: center; border-top: 1px solid var(--border); }
+        .countdown-val { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1; }
+        .countdown-label { font-size: 0.8rem; color: var(--text-grey); margin-top: 5px; }
+        
+        /* CORRECTION PROGRESSION */
+        .progress-bar-container { margin-top: 20px; height: 40px; position: relative; width: 100%; }
+        .progress-track { background: #eee; height: 6px; border-radius: 10px; position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%); }
+        .progress-fill { background: linear-gradient(90deg, var(--blue), var(--pink)); height: 100%; width: 0%; border-radius: 10px; transition: width 1s ease; }
+        .progress-emoji { 
+            position: absolute; top: 50%; transform: translate(-50%, -50%); 
+            font-size: 24px; transition: left 1s ease; left: 0; z-index: 2;
+            background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* --- METEO & AVATARS (CORRIGÉ) --- */
+        .avatars-container { 
+            display: flex; justify-content: space-evenly; align-items: flex-end; 
+            padding: 20px 10px 10px; min-height: 180px; /* Force la hauteur */
+        }
+        .avatar-wrapper { 
+            display: flex; flex-direction: column; align-items: center; 
+            width: 120px; position: relative;
+        }
+        .avatar-img-box {
+            width: 120px; height: 120px; /* Taille fixe */
             display: flex; align-items: flex-end; justify-content: center;
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
-            margin-bottom: -10px; z-index: 1;
+            margin-bottom: 5px;
         }
-        .mood-avatar-img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); transform: scale(1.1); transition: 0.3s; }
-        
-        .mood-info-box {
-            background: white; border-radius: 16px; padding: 15px 10px 10px; width: 100%; text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: -10px; padding-top: 20px;
+        .avatar-img { 
+            max-width: 100%; max-height: 100%; 
+            object-fit: contain; image-rendering: pixelated; 
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); 
         }
-        .mood-who { font-size: 0.7rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; display: block; }
-        
-        .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .mood-btn { 
-            background: white; border: none; border-radius: 20px; padding: 15px 5px; 
-            text-align: center; cursor: pointer; transition: 0.2s; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03); 
+        .avatar-name { 
+            font-size: 0.8rem; font-weight: 800; text-transform: uppercase; 
+            letter-spacing: 1px; margin-top: 5px;
         }
-        .mood-btn:active { transform: scale(0.9); }
-        .mood-emoji { font-size: 1.8rem; display: block; margin-bottom: 5px; }
-        .mood-text { font-size: 0.7rem; font-weight: bold; color: var(--text-light); }
+        .avatar-status {
+            font-size: 0.75rem; color: var(--text-grey); font-style: italic; 
+            text-align: center; margin-top: 2px; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+        }
 
-        /* --- MAILBOX (Lettres) --- */
-        .letter-group { margin-bottom: 25px; }
-        .mailbox-title { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; font-weight: 800; margin-bottom: 12px; padding-left: 10px; border-left: 3px solid #ddd; }
-        
-        .letter-item { 
-            background: white; border-radius: 18px; padding: 18px; margin-bottom: 12px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.3s; cursor: pointer; position: relative; overflow: hidden; border: 1px solid transparent;
-        }
-        .letter-item.unread { border-left: 6px solid var(--pink); box-shadow: 0 8px 20px rgba(255, 75, 110, 0.15); }
-        .letter-item.unread::after { content: "Nouveau"; position: absolute; top: 10px; right: 10px; background: var(--pink); color: white; font-size: 0.6rem; padding: 3px 8px; border-radius: 20px; font-weight: bold; }
-        
-        .letter-item.read { background: #fcfcfc; opacity: 0.8; }
-        .letter-header { font-weight: 700; font-size: 1rem; color: var(--text); display: flex; align-items: center; gap: 10px; }
-        .letter-content { margin-top: 15px; font-size: 0.95rem; color: var(--text-light); line-height: 1.6; border-top: 1px dashed #eee; padding-top: 15px; display: none; }
+        /* ACTIONS MOOD */
+        .mood-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border-top: 1px solid var(--border); }
+        .mood-btn { background: white; padding: 15px; border: none; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
+        .mood-btn:active { background: #f5f5f5; }
+        .mood-btn span { font-size: 0.7rem; display: block; color: var(--text-grey); font-weight: 600; margin-top: 5px; }
 
-        /* --- GALERIE BULLES --- */
-        .photo-bubble { width: 90px; height: 90px; border-radius: 35px; border: 4px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.15); object-fit: cover; transition: 0.3s; cursor: pointer; }
-        .photo-bubble:active { transform: scale(0.9); }
-        .add-photo-btn { position: absolute; bottom: -5px; right: -5px; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; }
-
-        /* --- INPUTS & BOUTONS STANDARDS --- */
-        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .input-field { 
-            flex: 1; padding: 15px; border: none; border-radius: 18px; 
-            font-family: 'Outfit', sans-serif; background: #f4f6f8; font-size: 0.95rem; color: var(--text);
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+        /* --- MAILBOX STYLE DM --- */
+        .mailbox-list { padding: 0; }
+        .mail-item { 
+            display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: 0.2s;
         }
-        .input-field:focus { background: white; box-shadow: 0 0 0 2px var(--blue); }
+        .mail-item:last-child { border-bottom: none; }
+        .mail-item:active { background: #fafafa; }
         
-        button.input-field { 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s;
+        .mail-icon-box { 
+            width: 45px; height: 45px; border-radius: 50%; background: #eee; 
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 15px;
+            flex-shrink: 0; position: relative;
         }
-        button.input-field:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .mail-unread-dot { 
+            position: absolute; top: 0; right: 0; width: 12px; height: 12px; 
+            background: var(--pink); border: 2px solid white; border-radius: 50%; 
+        }
+        
+        .mail-info { flex: 1; min-width: 0; }
+        .mail-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mail-preview { font-size: 0.8rem; color: var(--text-grey); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mail-meta { font-size: 0.7rem; color: #ccc; }
+
+        .mail-content-expanded { padding: 15px; background: #f9f9f9; font-size: 0.9rem; line-height: 1.5; border-top: 1px solid #eee; display: none; }
+
+        /* --- INPUTS & BUTTONS --- */
+        .input-bar { display: flex; padding: 15px; gap: 10px; border-top: 1px solid #f5f5f5; }
+        .input-std { 
+            flex: 1; padding: 10px 15px; border: 1px solid #ddd; border-radius: 20px; 
+            background: #fafafa; font-family: 'Outfit'; font-size: 0.9rem;
+        }
+        .btn-send { 
+            background: transparent; color: var(--blue); font-weight: 700; border: none; cursor: pointer; padding: 0 10px;
+        }
 
         /* --- IDENTITÉ --- */
-        .identity-container { display: flex; gap: 15px; margin-bottom: 20px; }
-        .identity-btn { 
-            flex: 1; padding: 15px; border: 2px solid transparent; border-radius: 20px; 
-            background: white; color: #ccc; font-weight: 800; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); font-family: 'Outfit';
-        }
-        .identity-btn.active { color: white; transform: scale(1.05); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        #btn-user-fr.active { background: var(--blue); }
-        #btn-user-tw.active { background: var(--pink); }
+        .config-box { padding: 20px; text-align: center; }
+        .identity-btn { width: 100%; padding: 12px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #ddd; background: white; color: #999; font-weight: 600; cursor: pointer; }
+        .identity-btn.active { background: var(--text); color: white; border-color: var(--text); }
 
-        /* --- FOOTER & FAB --- */
-        .app-footer { text-align: center; margin-top: 40px; color: rgba(0,0,0,0.3); font-size: 0.8rem; font-weight: 500; }
-        
+        /* --- FAB BISOUS --- */
         #bisou-btn { 
-            position: fixed; bottom: 30px; right: 25px; width: 80px; height: 80px; 
-            border-radius: 35px; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); 
-            color: white; border: none; font-size: 35px; 
-            box-shadow: 0 20px 40px rgba(255, 154, 158, 0.5); 
-            cursor: pointer; z-index: 1000; transition: transform 0.1s; 
-            animation: heartPulse 2s infinite; display: flex; align-items: center; justify-content: center;
+            position: fixed; bottom: 30px; right: 25px; width: 70px; height: 70px; 
+            border-radius: 50%; background: linear-gradient(135deg, #ff4b6e, #ff758c); 
+            color: white; border: none; font-size: 30px; 
+            box-shadow: 0 10px 25px rgba(255, 75, 110, 0.4); 
+            cursor: pointer; z-index: 1000; animation: pulse 3s infinite;
+            display:flex; align-items:center; justify-content:center;
         }
         #bisou-btn:active { transform: scale(0.9); }
-        @keyframes heartPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 25px 50px rgba(255, 154, 158, 0.6); } 100% { transform: scale(1); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(255, 75, 110, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 75, 110, 0); } }
 
-        /* --- ELEMENTS SPECIFIQUES --- */
-        .todo-item { background: white; padding: 15px; margin-bottom: 10px; border-radius: 16px; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .todo-check { width: 24px; height: 24px; margin-right: 15px; border-radius: 8px; accent-color: var(--pink); }
-        
-        #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-200px); background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); padding: 15px 30px; border-radius: 50px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); z-index: 9999; font-weight: 800; color: var(--pink); width: auto; min-width: 250px; text-align: center; border: 1px solid rgba(255,255,255,0.8); transition: 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); display:flex; align-items:center; justify-content:center; gap:10px; }
+        /* --- MODAL GALERIE --- */
+        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 5000; padding-top: 50px; }
+        .modal-close { position: absolute; top: 15px; right: 20px; color: white; font-size: 2rem; background: none; border: none; cursor: pointer; }
+        .modal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; padding: 2px; }
+        .modal-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .modal-title { color: white; text-align: center; margin-bottom: 20px; font-weight: 600; }
+
+        #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #333; color: white; padding: 12px 25px; border-radius: 30px; font-weight: 600; z-index: 9999; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         #notif.show { transform: translateX(-50%) translateY(0); }
-
-        /* Utilitaires */
-        .hidden { display: none; }
-        iframe { border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        #gallery-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; padding: 20px; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; color: white; margin-bottom: 20px; }
-        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .modal-img { width: 100%; border-radius: 12px; }
-        input[type="file"] { display: none; }
+        
+        .todo-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f5f5f5; }
+        .todo-check { width: 20px; height: 20px; margin-right: 15px; accent-color: var(--pink); }
+        iframe { width: 100%; height: 350px; border:none; }
     </style>
 </head>
 <body>
 
     <div id="notif">💋 Bisou reçu !</div>
 
-    <div id="gallery-modal">
-        <div class="modal-header">
-            <h2 style="font-family:'Pacifico'; font-weight:normal; margin:0;">Souvenirs</h2>
-            <button onclick="closeGallery()" style="background:rgba(255,255,255,0.2); border:none; color:white; width:40px; height:40px; border-radius:50%; font-size:1.2rem;">✕</button>
+    <header id="app-header">
+        <div class="app-logo-text">Love Travel</div>
+        <img src="icon.jpg" class="header-profile" alt="Profile">
+    </header>
+
+    <div class="stories-container">
+        <div class="story-item" onclick="openGallery('fr')">
+            <div class="story-ring blue-theme">
+                <img id="story-img-fr" src="https://via.placeholder.com/100" class="story-img">
+            </div>
+            <span class="story-name">Théo</span>
+            <div style="position:relative;">
+                <input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this, 'fr')" style="display:none">
+                <div class="add-story-btn" onclick="event.stopPropagation(); document.getElementById('file-fr').click()">+</div>
+            </div>
         </div>
-        <div class="modal-grid" id="modal-grid"></div>
+        <div class="story-item" onclick="openGallery('tw')">
+            <div class="story-ring pink-theme">
+                <img id="story-img-tw" src="https://via.placeholder.com/100" class="story-img">
+            </div>
+            <span class="story-name">Elise</span>
+            <div style="position:relative;">
+                <input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this, 'tw')" style="display:none">
+                <div class="add-story-btn" onclick="event.stopPropagation(); document.getElementById('file-tw').click()">+</div>
+            </div>
+        </div>
     </div>
 
-    <section id="hero-header">
-        <h1 class="app-title">Love Travel</h1>
-        
-        <div class="glass-panel clocks-container">
-            <div class="clock-item">
-                <div class="clock-city" style="color:var(--blue)"><span id="dot-fr" class="status-dot"></span>CLERMONT 🇫🇷</div>
-                <div class="clock-weather" id="weather-fr">--°C</div>
-                <div class="clock-time" id="clock-fr">--:--</div>
-            </div>
-            <div class="divider"></div>
-            <div class="clock-item">
-                <div class="clock-city" style="color:var(--pink)"><span id="dot-tw" class="status-dot"></span>TAOYUAN 🇹🇼</div>
-                <div class="clock-weather" id="weather-tw">--°C</div>
-                <div class="clock-time" id="clock-tw">--:--</div>
-            </div>
-        </div>
-
-        <div class="glass-panel countdown-box">
-            <div class="countdown-title" id="countdown-title">Chargement...</div>
-            <div class="countdown-big" id="days-count">--</div>
-            <div class="countdown-sub" id="sub-count">jours, heures et minutes</div>
-            <div class="progress-container">
-                <div class="progress-track">
-                    <div class="progress-fill" id="prog-fill"></div>
-                    <div class="progress-icon" id="prog-icon" style="left:0">✈️</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <div class="container">
-        
-        <div class="identity-container">
-            <button class="identity-btn" id="btn-user-tw" onclick="setUser('tw')">Je suis Elise 🇹🇼</button>
-            <button class="identity-btn" id="btn-user-fr" onclick="setUser('fr')">Je suis Théo 🇫🇷</button>
+
+        <div class="post-card config-box">
+            <p style="margin:0 0 10px; font-size:0.7rem; color:#888; text-transform:uppercase;">Mon Appareil</p>
+            <div style="display:flex; gap:10px;">
+                <button class="identity-btn" id="btn-user-tw" onclick="setUser('tw')">Elise 🇹🇼</button>
+                <button class="identity-btn" id="btn-user-fr" onclick="setUser('fr')">Théo 🇫🇷</button>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="card-title"><span>☁️</span> Météo des Cœurs</div>
+        <div class="post-card">
+            <div class="post-header">
+                <span class="post-icon">📍</span>
+                <span class="post-title">Localisation & Météo</span>
+            </div>
+            <div class="clocks-row">
+                <div class="clock-box">
+                    <div class="clock-label" style="color:var(--blue)">CLERMONT</div>
+                    <div class="clock-val" id="clock-fr">--:--</div>
+                    <div class="clock-weather" id="weather-fr">--°C</div>
+                </div>
+                <div style="width:1px; background:#eee;"></div>
+                <div class="clock-box">
+                    <div class="clock-label" style="color:var(--pink)">TAOYUAN</div>
+                    <div class="clock-val" id="clock-tw">--:--</div>
+                    <div class="clock-weather" id="weather-tw">--°C</div>
+                </div>
+            </div>
+            <div class="countdown-wrapper">
+                <div class="countdown-label" id="countdown-title">...</div>
+                <div class="countdown-val" id="days-count">--</div>
+                <div class="countdown-label" id="sub-count">jours restants</div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-track">
+                        <div class="progress-fill" id="prog-fill"></div>
+                        <div class="progress-emoji" id="prog-icon">❤️</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-card">
+            <div class="post-header">
+                <span class="post-icon">☁️</span>
+                <span class="post-title">Humeur du jour</span>
+            </div>
+            <div class="avatars-container">
+                <div class="avatar-wrapper">
+                    <div class="avatar-img-box">
+                        <img src="" id="mood-img-fr" class="avatar-img">
+                    </div>
+                    <span class="avatar-name" style="color:var(--blue)">Théo</span>
+                    <span class="avatar-status" id="mood-msg-fr">...</span>
+                </div>
+                <div class="avatar-wrapper">
+                    <div class="avatar-img-box">
+                        <img src="" id="mood-img-tw" class="avatar-img">
+                    </div>
+                    <span class="avatar-name" style="color:var(--pink)">Elise</span>
+                    <span class="avatar-status" id="mood-msg-tw">...</span>
+                </div>
+            </div>
+            <div class="mood-actions">
+                <button class="mood-btn" onclick="updateMood('🥰', 'Love', 0)">🥰<span>Love</span></button>
+                <button class="mood-btn" onclick="updateMood('🎓', 'Cours', 1)">🎓<span>Cours</span></button>
+                <button class="mood-btn" onclick="updateMood('😴', 'Dodo', 2)">😴<span>Dodo</span></button>
+                <button class="mood-btn" onclick="updateMood('🍜', 'Miam', 3)">🍜<span>Miam</span></button>
+                <button class="mood-btn" onclick="updateMood('🔥', 'Chaud', 4)">🔥<span>Chaud</span></button>
+                <button class="mood-btn" onclick="customMood()">✏️<span>Perso</span></button>
+            </div>
+        </div>
+
+        <div class="post-card">
+            <div class="post-header">
+                <span class="post-icon">💌</span>
+                <span class="post-title">Messages Privés</span>
+            </div>
             
-            <div class="current-moods">
-                <div class="one-mood">
-                    <div class="mood-avatar-frame"><img src="" id="mood-img-fr" class="mood-avatar-img"></div>
-                    <div class="mood-info-box">
-                        <span class="mood-who" style="color:var(--blue)">Théo</span>
-                        <div style="font-size:0.8rem; color:var(--text-light); font-style:italic;" id="mood-msg-fr">...</div>
-                    </div>
-                </div>
-                <div class="one-mood">
-                    <div class="mood-avatar-frame"><img src="" id="mood-img-tw" class="mood-avatar-img"></div>
-                    <div class="mood-info-box">
-                        <span class="mood-who" style="color:var(--pink)">Elise</span>
-                        <div style="font-size:0.8rem; color:var(--text-light); font-style:italic;" id="mood-msg-tw">...</div>
-                    </div>
-                </div>
+            <div class="input-bar">
+                <input type="text" id="letter-title" class="input-std" placeholder="Objet...">
+                <button onclick="addLetter()" class="btn-send">Envoyer</button>
             </div>
+            <textarea id="letter-content" class="input-std" placeholder="Ton message..." style="width:100%; margin:0 15px 15px; border-radius:10px; min-height:80px;"></textarea>
 
-            <p style="font-size:0.7rem; text-align:center; color:#aaa; margin-bottom:15px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">MON HUMEUR DU MOMENT</p>
-            <div class="mood-grid">
-                <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !', 0)"><span class="mood-emoji">🥰</span><span class="mood-text">Love</span></div>
-                <div class="mood-btn" onclick="updateMood('🎓', 'Je suis en cours', 1)"><span class="mood-emoji">🎓</span><span class="mood-text">Cours</span></div>
-                <div class="mood-btn" onclick="updateMood('😴', 'Je dors, chut !', 2)"><span class="mood-emoji">😴</span><span class="mood-text">Dodo</span></div>
-                <div class="mood-btn" onclick="updateMood('🍜', 'Je mange', 3)"><span class="mood-emoji">🍜</span><span class="mood-text">Miam</span></div>
-                <div class="mood-btn" onclick="updateMood('🔥', 'Envie de toi...', 4)"><span class="mood-emoji">🔥</span><span class="mood-text">Chaud</span></div>
-                <div class="mood-btn" onclick="customMood()" style="border:2px dashed var(--pink);"><span class="mood-emoji">✏️</span><span class="mood-text">Perso</span></div>
-            </div>
+            <div class="mailbox-list" id="mailbox-list"></div>
         </div>
 
-        <div class="card">
-            <div class="card-title"><span>💌</span> Boîte aux lettres</div>
-            <div class="input-group">
-                <input type="text" id="letter-title" class="input-field" placeholder="Objet de la lettre...">
-                <button onclick="addLetter()" class="input-field" style="flex:0; background:var(--pink); color:white; font-weight:bold;">Envoyer</button>
+        <div class="post-card">
+            <div class="post-header">
+                <span class="post-icon">📝</span>
+                <span class="post-title">Wishlist & To-Do</span>
             </div>
-            <textarea id="letter-content" class="input-field" placeholder="Écris ton mot doux ici..." style="width:100%; height:100px; margin-bottom:20px; resize:none;"></textarea>
-
-            <div class="letter-group">
-                <div class="mailbox-title">📬 Reçu par Théo (De Elise)</div>
-                <div id="list-for-fr"></div>
-            </div>
-            <div class="letter-group">
-                <div class="mailbox-title">📬 Reçu par Elise (De Théo)</div>
-                <div id="list-for-tw"></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title"><span>📸</span> Galerie Photo</div>
-            <div class="gallery-bubbles">
-                <div class="photo-bubble-wrapper">
-                    <img id="bubble-img-fr" class="photo-bubble" src="https://via.placeholder.com/100" onclick="openGallery('fr')">
-                    <div class="add-photo-btn" onclick="document.getElementById('file-fr').click()" style="background:var(--blue)">+</div>
-                    <input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this, 'fr')">
-                    <div style="font-size:0.75rem; font-weight:800; margin-top:10px; color:var(--blue);">ALBUM THÉO</div>
-                </div>
-                <div class="photo-bubble-wrapper">
-                    <img id="bubble-img-tw" class="photo-bubble" src="https://via.placeholder.com/100" onclick="openGallery('tw')">
-                    <div class="add-photo-btn" onclick="document.getElementById('file-tw').click()" style="background:var(--pink)">+</div>
-                    <input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this, 'tw')">
-                    <div style="font-size:0.75rem; font-weight:800; margin-top:10px; color:var(--pink);">ALBUM ELISE</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title"><span>📝</span> À faire ensemble</div>
-            <div class="input-group">
-                <input type="text" id="todo-input" class="input-field" placeholder="Ex: Manger une raclette...">
-                <button onclick="addTodo()" class="input-field" style="flex:0; background:var(--blue); color:white; font-weight:bold;">Ajouter</button>
+            <div class="input-bar">
+                <input type="text" id="todo-input" class="input-std" placeholder="Ajouter une idée...">
+                <button onclick="addTodo()" class="btn-send">+</button>
             </div>
             <div id="todo-list"></div>
         </div>
 
-        <div class="card">
-            <div class="card-title"><span>🎧</span> Notre Vibe</div>
-            <iframe 
-                style="border-radius:18px; width:100%; height:300px; border:none;" 
-                src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" 
-                title="YouTube Music" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-            </iframe>
+        <div class="post-card">
+            <div class="post-header">
+                <span class="post-icon">🎧</span>
+                <span class="post-title">Notre Vibe</span>
+            </div>
+            <iframe src="https://www.youtube.com/embed/videoseries?list=PLkQoEm2hOBbUUwQmOAFfp4qAU_xw8u-IP" allowfullscreen></iframe>
         </div>
-        
-        <div class="app-footer">
-            <img src="icon.jpg" style="width:40px; border-radius:10px; opacity:0.5; margin-bottom:5px;">
-            <div>Love Travel • 2026</div>
-        </div>
+
+    </div>
+
+    <div id="gallery-modal">
+        <button class="modal-close" onclick="closeGallery()">✕</button>
+        <div class="modal-title" id="modal-title">Galerie</div>
+        <div class="modal-grid" id="modal-grid"></div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, setDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns", authDomain: "lovetravel-35285.firebaseapp.com", projectId: "lovetravel-35285", storageBucket: "lovetravel-35285.firebasestorage.app", messagingSenderId: "189902268760", appId: "1:189902268760:web:b461ce15d8c396be479d2d" };
         const app = initializeApp(firebaseConfig);
@@ -387,7 +378,12 @@
             document.getElementById('btn-user-' + currentUser).classList.add('active'); 
         }
 
-        // --- MÉTÉO (Taoyuan & Clermont) ---
+        // --- PRESENCE ---
+        function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
+        setInterval(updatePresence, 10000); updatePresence();
+        document.addEventListener("visibilitychange", () => { if (document.visibilityState === 'hidden') setDoc(doc(db, "status", "presence"), { [currentUser]: 0 }, { merge: true }); else updatePresence(); });
+
+        // --- MÉTÉO (Taoyuan) ---
         async function updateWeather() {
             try {
                 const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.77,24.99&longitude=3.08,121.30&current_weather=true");
@@ -403,33 +399,35 @@
         }
         updateWeather(); setInterval(updateWeather, 1800000);
 
-        // --- PRESENCE ---
-        function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
-        setInterval(updatePresence, 10000); updatePresence();
-        document.addEventListener("visibilitychange", () => { if (document.visibilityState === 'hidden') setDoc(doc(db, "status", "presence"), { [currentUser]: 0 }, { merge: true }); else updatePresence(); });
-        onSnapshot(doc(db, "status", "presence"), (docSnap) => {
-            if(docSnap.exists()) {
-                const d = docSnap.data(); const now = Date.now();
-                const isOnlineFr = (now - d.fr) < 20000 && d.fr !== 0; const isOnlineTw = (now - d.tw) < 20000 && d.tw !== 0;
-                document.getElementById('dot-fr').classList.toggle('online', isOnlineFr);
-                document.getElementById('dot-tw').classList.toggle('online', isOnlineTw);
-            }
-        });
+        // --- COUNTDOWN V16 (Fixed UI) ---
+        const dateDepart = new Date("2026-02-14T00:00:00").getTime();
+        const dateRetour = new Date("2026-07-05T00:00:00").getTime(); 
 
-        function sendNtfy(message, tags, priority = 'default') {
-            const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
-            const senderName = currentUser === 'tw' ? "Elise" : "Theo";
-            fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': `Love Travel (${senderName})`, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8' } }).catch(e => console.log(e));
-        }
-
-        window.sendBisou = function() {
-            const btn = document.getElementById('bisou-btn'); 
-            // Petit effet pulse CSS manuel
-            btn.style.animation = "none"; setTimeout(()=> btn.style.animation = "heartPulse 2s infinite", 100);
+        function updateCountdown() {
+            const now = new Date().getTime();
+            let targetDate, titleText, iconText;
             
-            addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
-            sendNtfy("💋 Bisou envoyé !", "kiss,heart", "high"); showLocalNotif("💋 Bisou envoyé !");
+            if (now < dateDepart) { targetDate = dateDepart; titleText = "Début de la distance dans"; iconText = "❤️"; } 
+            else { targetDate = dateRetour; titleText = "Retrouvailles dans"; iconText = "✈️"; }
+
+            const dist = targetDate - now;
+            const days = Math.floor(dist / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+            
+            document.getElementById('days-count').innerText = days;
+            document.getElementById('sub-count').innerText = `${hours} h et ${minutes} min`;
+            document.getElementById('countdown-title').innerText = titleText.toUpperCase();
+            document.getElementById('prog-icon').innerText = iconText;
+
+            const startDate = new Date("2026-01-01T00:00:00").getTime();
+            const total = targetDate - startDate; const current = now - startDate;
+            let percent = (current / total) * 100; if (percent < 0) percent = 0; if (percent > 100) percent = 100;
+            
+            document.getElementById("prog-fill").style.width = percent + "%";
+            document.getElementById("prog-icon").style.left = `calc(${percent}% - 12px)`; // Fix centrage
         }
+        setInterval(updateCountdown, 1000); updateCountdown();
 
         // --- MOODS ---
         onSnapshot(doc(db, "status", "moods"), (doc) => {
@@ -448,7 +446,7 @@
             updateMood("✨", text, 5);
         }
 
-        // --- LETTRES (V14) ---
+        // --- MAILBOX (DM Style) ---
         window.addLetter = function() {
             const title = document.getElementById("letter-title").value; const content = document.getElementById("letter-content").value;
             if(!title || !content) return;
@@ -466,21 +464,41 @@
         }
         const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
         onSnapshot(qLetters, (snapshot) => {
-            const listFr = document.getElementById("list-for-fr"); const listTw = document.getElementById("list-for-tw");
-            listFr.innerHTML = ""; listTw.innerHTML = "";
+            const list = document.getElementById("mailbox-list"); list.innerHTML = "";
             snapshot.forEach(docSnap => {
-                const l = docSnap.data(); const targetList = l.by === 'tw' ? listFr : listTw;
-                const div = document.createElement("div"); div.className = `letter-item ${l.read ? 'read' : 'unread'}`;
-                const icon = l.read ? '📩' : '✉️';
-                const readLabel = l.read ? ' <span style="font-size:0.7rem; color:#2ecc71;">✓ Lu</span>' : '';
-                div.onclick = (e) => { if(e.target.tagName !== 'BUTTON') toggleLetter(docSnap.id, l.by, l.read) };
-                div.innerHTML = `<div class="letter-header"><div style="display:flex;align-items:center;"><span style="margin-right:10px; font-size:1.2rem">${icon}</span><span>${l.title}${readLabel}</span></div><button onclick="deleteLetter('${docSnap.id}', event)" style="border:none;background:none;color:#ff8a80;">✕</button></div><div class="letter-content" id="letter-content-${docSnap.id}">${l.content}</div>`;
-                targetList.appendChild(div);
+                const l = docSnap.data();
+                
+                // On affiche tout le monde dans une seule liste pour style DM
+                const isMe = l.by === currentUser;
+                const senderName = l.by === 'fr' ? 'Théo' : 'Elise';
+                const avatar = l.by === 'fr' ? 'theo_0.png' : 'elise_0.png';
+                const unreadDot = (!l.read && !isMe) ? '<div class="mail-unread-dot"></div>' : '';
+                const styleRead = l.read ? 'opacity:0.6;' : 'font-weight:600;';
+                const icon = isMe ? '📤' : '📥';
+
+                const div = document.createElement("div"); div.className = "mail-item";
+                div.onclick = (e) => toggleLetter(docSnap.id, l.by, l.read);
+                
+                div.innerHTML = `
+                    <div class="mail-icon-box">
+                        ${icon} ${unreadDot}
+                    </div>
+                    <div class="mail-info" style="${styleRead}">
+                        <div class="mail-title">${l.title}</div>
+                        <div class="mail-preview">De: ${senderName}</div>
+                    </div>
+                    <div class="mail-content-expanded" id="letter-content-${docSnap.id}">
+                        ${l.content}
+                        ${isMe && l.read ? '<br><small style="color:#2ecc71">✓ Lu par l\'autre</small>' : ''}
+                        ${isMe ? `<br><button onclick="deleteLetter('${docSnap.id}')" style="color:red;border:none;background:none;margin-top:10px;">Supprimer</button>` : ''}
+                    </div>
+                `;
+                list.appendChild(div);
             });
         });
-        window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db, "letters", id)); }
+        window.deleteLetter = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db, "letters", id)); }
 
-        // --- GALERIE & TODO (CODE IDENTIQUE V13) ---
+        // --- GALERIE (STORIES) ---
         const compressImage = async (file, { quality = 0.5, type = file.type }) => {
             const imageBitmap = await createImageBitmap(file);
             const canvas = document.createElement('canvas'); canvas.width = imageBitmap.width * 0.5; canvas.height = imageBitmap.height * 0.5;
@@ -488,26 +506,26 @@
             return canvas.toDataURL(type, quality);
         };
         window.handlePhotoUpload = async function(input, role) {
-            if(role !== currentUser && !confirm("Ajouter une photo pour l'autre ?")) return;
+            if(role !== currentUser && !confirm("Ajouter pour l'autre ?")) return;
             const file = input.files[0]; if(!file) return;
             const base64 = await compressImage(file, { quality: 0.6, type: 'image/jpeg' });
             await addDoc(collection(db, "photos"), { url: base64, by: role, timestamp: serverTimestamp() });
-            input.value = ""; sendNtfy("📸 Nouvelle photo ajoutée !", "camera", "low");
+            input.value = ""; sendNtfy("📸 Nouvelle photo !", "camera", "low");
         }
         const qPhotos = query(collection(db, "photos"), orderBy("timestamp", "desc"));
         let allPhotos = [];
         onSnapshot(qPhotos, (snapshot) => {
             allPhotos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             const lastFr = allPhotos.find(p => p.by === 'fr'); const lastTw = allPhotos.find(p => p.by === 'tw');
-            if(lastFr) document.getElementById('bubble-img-fr').src = lastFr.url;
-            if(lastTw) document.getElementById('bubble-img-tw').src = lastTw.url;
+            if(lastFr) document.getElementById('story-img-fr').src = lastFr.url;
+            if(lastTw) document.getElementById('story-img-tw').src = lastTw.url;
         });
         window.openGallery = function(role) {
             const modal = document.getElementById('gallery-modal'); const grid = document.getElementById('modal-grid');
-            document.getElementById('modal-title').innerText = role === 'fr' ? "Album de Théo" : "Album d'Elise"; grid.innerHTML = "";
+            document.getElementById('modal-title').innerText = role === 'fr' ? "Souvenirs de Théo" : "Souvenirs d'Elise"; grid.innerHTML = "";
             const userPhotos = allPhotos.filter(p => p.by === role);
             userPhotos.forEach(p => {
-                const div = document.createElement('div'); div.innerHTML = `<img src="${p.url}" class="modal-img"><div class="modal-del" onclick="deletePhoto('${p.id}')">Supprimer</div>`;
+                const div = document.createElement('div'); div.innerHTML = `<img src="${p.url}" class="modal-img"><div style="text-align:center;color:red;font-size:0.8rem;margin-bottom:10px;" onclick="deletePhoto('${p.id}')">Supprimer</div>`;
                 grid.appendChild(div);
             });
             modal.style.display = "block";
@@ -515,57 +533,41 @@
         window.closeGallery = function() { document.getElementById('gallery-modal').style.display = "none"; }
         window.deletePhoto = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db, "photos", id)); }
 
+        // --- TODO LIST ---
         const qTodos = query(collection(db, "todos"), orderBy("created", "desc"));
         onSnapshot(qTodos, (snapshot) => {
             const list = document.getElementById('todo-list'); list.innerHTML = "";
             snapshot.forEach(docSnap => {
                 const todo = docSnap.data();
                 const div = document.createElement('div'); div.className = "todo-item";
-                div.innerHTML = `<input type="checkbox" class="todo-check" ${todo.done ? 'checked' : ''} onchange="toggleTodo('${docSnap.id}', this.checked)"><span class="todo-text ${todo.done ? 'done' : ''}">${todo.text}</span><button class="todo-del" onclick="deleteTodo('${docSnap.id}')">✕</button>`;
+                div.innerHTML = `<input type="checkbox" class="todo-check" ${todo.done ? 'checked' : ''} onchange="toggleTodo('${docSnap.id}', this.checked)"><span style="flex:1;text-decoration:${todo.done?'line-through':'none'}">${todo.text}</span><span onclick="deleteTodo('${docSnap.id}')">✕</span>`;
                 list.appendChild(div);
             });
         });
-        window.addTodo = function() { const text = document.getElementById('todo-input').value; if(!text) return; addDoc(collection(db, "todos"), { text: text, done: false, created: serverTimestamp() }); document.getElementById('todo-input').value = ""; }
+        window.addTodo = function() {
+            const text = document.getElementById('todo-input').value; if(!text) return;
+            addDoc(collection(db, "todos"), { text: text, done: false, created: serverTimestamp() });
+            document.getElementById('todo-input').value = "";
+        }
         window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
         window.deleteTodo = function(id) { deleteDoc(doc(db, "todos", id)); }
 
-        // --- HORLOGES & COUNTDOWN V14 ---
-        function showLocalNotif(msg) { const notif = document.getElementById("notif"); notif.innerHTML = msg; notif.classList.add("show"); setTimeout(() => notif.classList.remove("show"), 3000); }
-        function updateClocks() { const now = new Date(); document.getElementById('clock-fr').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' }); document.getElementById('clock-tw').innerText = now.toLocaleTimeString('fr-FR', { timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit' }); } setInterval(updateClocks, 1000); updateClocks();
-        
-        const dateDepart = new Date("2026-02-14T00:00:00").getTime();
-        const dateRetour = new Date("2026-07-05T00:00:00").getTime(); 
-
-        function updateCountdown() {
-            const now = new Date().getTime();
-            let targetDate, titleText, iconText;
-            
-            if (now < dateDepart) {
-                targetDate = dateDepart; titleText = "Début de la distance dans"; iconText = "❤️";
-            } else {
-                targetDate = dateRetour; titleText = "Retrouvailles dans"; iconText = "✈️";
-            }
-
-            const dist = targetDate - now;
-            const days = Math.floor(dist / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
-            
-            document.getElementById('days-count').innerText = days;
-            document.getElementById('sub-count').innerText = `${hours} h et ${minutes} min`;
-            document.getElementById('countdown-title').innerText = titleText.toUpperCase();
-            document.getElementById('prog-icon').innerText = iconText;
-
-            const startDate = new Date("2026-01-01T00:00:00").getTime();
-            const total = targetDate - startDate; const current = now - startDate;
-            let percent = (current / total) * 100; if (percent < 0) percent = 0; if (percent > 100) percent = 100;
-            document.getElementById("prog-fill").style.width = percent + "%";
-            document.getElementById("prog-icon").style.left = `calc(${percent}% - 24px)`;
+        // --- UTILS ---
+        function sendNtfy(message, tags, priority = 'default') {
+            const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
+            const senderName = currentUser === 'tw' ? "Elise" : "Theo";
+            fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': `Love Travel (${senderName})`, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8' } }).catch(e => console.log(e));
         }
-        setInterval(updateCountdown, 1000); updateCountdown();
-
+        window.sendBisou = function() {
+            const btn = document.getElementById('bisou-btn'); 
+            addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
+            sendNtfy("💋 Bisou envoyé !", "kiss,heart", "high");
+            const notif = document.getElementById("notif"); notif.classList.add("show"); setTimeout(() => notif.classList.remove("show"), 3000);
+        }
+        
+        // Ecoute Bisous
         const qBisou = query(collection(db, "actions"), orderBy("timestamp", "desc"), limit(1));
-        onSnapshot(qBisou, (snapshot) => { if(!snapshot.empty) { const action = snapshot.docs[0].data(); if (!action.timestamp) return; const diff = Math.abs(Date.now() - action.timestamp.toMillis()); if (diff < 60000 && action.from !== currentUser) { showLocalNotif(`💋 <b>${action.from === 'fr' ? 'Théo' : 'Elise'}</b> t'envoie un bisou !`); if(navigator.vibrate) navigator.vibrate([200, 100, 200, 500]); } } });
+        onSnapshot(qBisou, (snapshot) => { if(!snapshot.empty) { const action = snapshot.docs[0].data(); if (!action.timestamp) return; const diff = Math.abs(Date.now() - action.timestamp.toMillis()); if (diff < 60000 && action.from !== currentUser) { document.getElementById("notif").innerHTML = `💋 <b>${action.from === 'fr' ? 'Théo' : 'Elise'}</b> t'envoie un bisou !`; document.getElementById("notif").classList.add("show"); if(navigator.vibrate) navigator.vibrate([200, 100, 200, 500]); setTimeout(() => document.getElementById("notif").classList.remove("show"), 4000); } } });
     </script>
 </body>
 </html>
