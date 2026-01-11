@@ -404,7 +404,7 @@
 
         let currentUser = localStorage.getItem('userRole') || 'tw';
         
-        // Dark Mode
+        // Dark Mode Logic
         if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
         window.toggleTheme = function() {
             document.body.classList.toggle('dark-mode');
@@ -649,7 +649,7 @@
             const targetChannel = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
             const senderName = currentUser === 'tw' ? "Elise" : "Theo";
             const iconUrl = new URL("icon.jpg", window.location.href).href; 
-            fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': `Love Travel (${senderName})`, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8', 'Icon': iconUrl } }).catch(e => console.log(e));
+            fetch(`https://ntfy.sh/${targetChannel}`, { method: 'POST', body: message, headers: { 'Title': senderName, 'Priority': priority, 'Tags': tags, 'Content-Type': 'text/plain; charset=utf-8', 'Icon': iconUrl } }).catch(e => console.log(e));
         }
         window.sendBisou = function() {
             const btn = document.getElementById('bisou-btn'); 
