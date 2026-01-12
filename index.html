@@ -38,7 +38,7 @@
             --p-shadow: rgba(0,0,0,0.5);
         }
         
-        /* THEME ANNIVERSAIRE */
+        /* THEME FESTIF (Anniversaire & Pâques) */
         body.birthday-theme {
             background-color: #fffdf5;
             background-image: radial-gradient(#ff9eb5 2px, transparent 2px), radial-gradient(#8ecae6 2px, transparent 2px);
@@ -62,7 +62,7 @@
             font-family: 'Dancing Script', cursive; font-size: 1.3rem; color: var(--pink-dark); 
             margin-top: 5px; display: none; font-weight: bold; background: var(--bg-card); 
             padding: 5px 20px; border-radius: 20px; box-shadow: 0 4px 10px var(--shadow); 
-            border: 1px solid var(--pink); transform: rotate(-2deg); z-index: 10;
+            border: 1px solid var(--pink); transform: rotate(-2deg); z-index: 10; text-align: center;
         }
 
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
@@ -224,29 +224,9 @@
         .modal-img:hover { opacity: 0.8; }
         .lightbox-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; background: none; border: none; cursor: pointer; }
 
-        /* PROJETS & LIVRES */
-        .todo-item { display: flex; align-items: center; background: var(--input-bg); padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--border); justify-content: space-between; }
-        .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--pink-dark); }
-        .todo-text { flex: 1; font-size: 0.9rem; margin-right: 10px; color: var(--text-main); }
-        .todo-text.done { text-decoration: line-through; color: var(--text-sub); }
-        .todo-del { background: none; border: none; color: #faa; cursor: pointer; font-size: 1.2rem; margin-left: auto; }
-        .book-item { background: var(--input-bg); padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .book-title { font-weight: 800; font-size: 1rem; color: var(--text-main); margin-bottom: 5px; display:flex; justify-content:space-between; }
-        .book-total-pages { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 10px; font-weight: 500; }
-        .user-row { display: flex; flex-direction: column; margin-bottom: 12px; border-bottom: 1px dashed var(--border); padding-bottom: 10px; }
-        .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .user-inputs { display: flex; align-items: center; gap: 10px; width: 100%; }
-        .page-input { width: 50px; padding: 4px; border-radius: 6px; border: 1px solid var(--border); text-align: center; font-weight: bold; font-size: 0.9rem; background: var(--bg-card); color: var(--text-main); }
-        .star-rating { display: flex; gap: 1px; }
-        .star { cursor: pointer; font-size: 1.1rem; color: #ddd; transition: 0.2s; }
-        .star.filled { color: #ffb84d; }
-        .star-reset { font-size: 0.7rem; color: var(--text-sub); cursor: pointer; margin-left: 5px; padding: 2px;}
-        .book-progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-left: 10px; }
-        .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
-
         /* FOOTER & UTILS */
         .app-footer { text-align: center; padding: 20px; margin-top: 30px; opacity: 1; }
-        /* Nouveau style Footer V57 */
+        /* Nouveau style Footer V57/58 */
         .footer-content {
             display: inline-flex;
             align-items: center;
@@ -270,7 +250,7 @@
         #notif.show { transform: translateX(-50%) translateY(0); }
         .hidden { display: none; }
 
-        /* --- STYLES ANNIVERSAIRE (V57 CORRECTED) --- */
+        /* --- STYLES OVERLAY (V58) --- */
         #bd-overlay {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -279,49 +259,40 @@
             color: white; text-align: center;
         }
         .bd-title { font-family: 'Pacifico', cursive; font-size: 2.5rem; color: #ffeb3b; margin-bottom: 20px; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
+        /* GATEAU */
         .cake-container { position: relative; width: 220px; height: 200px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; margin-bottom: 50px; }
         .cake-base { width: 100%; height: 80px; background: linear-gradient(to bottom, #f8a5c2, #f78fb3); border-radius: 10px; position: relative; display: flex; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1; }
         .cake-layer { width: 110%; height: 20px; background: #fff; border-radius: 10px; position: absolute; top: -10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        .candles-row { 
-            display: flex; gap: 30px; 
-            position: relative; 
-            z-index: 2; 
-            margin-bottom: -10px;
-        }
+        .candles-row { display: flex; gap: 30px; position: relative; z-index: 2; margin-bottom: -10px; }
         .candle-wrapper { position: relative; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; }
         .candle-wrapper:active { transform: scale(0.95); }
-        .candle-num { 
-            font-size: 5rem; font-weight: 800; color: #ffeb3b; 
-            text-shadow: 0 5px 0 #e1b12c; font-family: 'Outfit'; 
-            -webkit-text-stroke: 2px #333; line-height: 1;
-        }
+        .candle-num { font-size: 5rem; font-weight: 800; color: #ffeb3b; text-shadow: 0 5px 0 #e1b12c; font-family: 'Outfit'; -webkit-text-stroke: 2px #333; line-height: 1; }
         
-        /* FIX V57 : Extinction garantie */
+        /* BUG FIX V58: Utilisation d'opacity pour ne pas casser le layout */
         .flame { 
             width: 20px; height: 35px; background: radial-gradient(white, yellow, orange, red); 
-            border-radius: 50% 50% 20% 20%; 
-            margin-bottom: 5px; 
-            animation: flicker 0.5s infinite alternate; 
-            box-shadow: 0 0 20px orange; opacity: 1; 
-            transform-origin: bottom center;
+            border-radius: 50% 50% 20% 20%; margin-bottom: 5px; 
+            animation: flicker 0.5s infinite alternate; box-shadow: 0 0 20px orange; 
+            opacity: 1; transition: opacity 0.2s;
         }
-        .smoke {
-            width: 8px; height: 8px; background: rgba(200,200,200,0.8); border-radius: 50%;
-            position: absolute; top: 10px; opacity: 0; pointer-events: none;
-        }
+        .smoke { width: 8px; height: 8px; background: rgba(200,200,200,0.8); border-radius: 50%; position: absolute; top: 10px; opacity: 0; pointer-events: none; }
         
-        /* QUAND ETEINT : Display NONE sur la flamme pour être sûr */
-        .candle-wrapper.blown-out .flame { display: none !important; opacity: 0 !important; }
+        .candle-wrapper.blown-out .flame { opacity: 0; } 
         .candle-wrapper.blown-out .smoke { animation: puff 1.5s forwards; }
-        
+
+        /* OEUF DE PAQUES */
+        #easter-egg-container { display:none; flex-direction:column; align-items:center; }
+        .easter-egg { font-size: 100px; cursor: pointer; transition: 0.2s; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); user-select:none; }
+        .crack-1 { transform: rotate(10deg); }
+        .crack-2 { transform: rotate(-10deg) scale(1.1); }
+        .crack-3 { animation: hatch 0.5s forwards; font-size: 120px; }
+        @keyframes hatch { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
         @keyframes flicker { 0% { transform: scale(1); opacity: 0.9; } 100% { transform: scale(1.1); opacity: 1; } }
-        @keyframes puff { 
-            0% { opacity: 0.8; transform: translateY(0) scale(1); } 
-            100% { opacity: 0; transform: translateY(-40px) scale(3); } 
-        }
+        @keyframes puff { 0% { opacity: 0.8; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-40px) scale(3); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         .bd-msg { font-size: 1.1rem; opacity: 0.8; margin-top: 20px; font-style: italic; max-width: 80%; line-height: 1.5; }
         .btn-enter { margin-top: 30px; background: white; color: #333; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; font-size: 1.2rem; cursor: pointer; display: none; animation: slideUp 0.5s; box-shadow: 0 0 20px white; }
@@ -333,12 +304,18 @@
 
     <div id="bd-overlay">
         <div class="bd-title" id="bd-title-text">Joyeux Anniversaire !</div>
-        <div class="cake-container">
+        
+        <div class="cake-container" id="cake-mode-container">
             <div class="candles-row" id="candles-area"></div>
             <div class="cake-base"><div class="cake-layer"></div></div>
         </div>
-        <div class="bd-msg">Fais un vœu et souffle (clique) sur les bougies ! 🕯️</div>
-        <button class="btn-enter" onclick="enterBirthdayApp()">🎁 Entrer dans l'app</button>
+
+        <div id="easter-egg-container">
+            <div class="easter-egg" id="easter-egg" onclick="crackEgg()">🥚</div>
+        </div>
+
+        <div class="bd-msg" id="overlay-msg">Fais un vœu et souffle (clique) sur les bougies ! 🕯️</div>
+        <button class="btn-enter" onclick="enterSpecialApp()">🎁 Entrer dans l'app</button>
     </div>
 
     <div id="notif">💋 Bisou reçu !</div>
@@ -474,7 +451,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v57 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v58 • janvier 2026</div>
         </div>
     </div>
 
@@ -488,53 +465,81 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- GESTION ANNIVERSAIRES (V57) ---
-        const birthdays = [
-            { day: 12, month: 1, name: "Test", age: 24 }, // Modifié à 24 ans
-            { day: 7, month: 3, name: "Théo", age: 21 },
-            { day: 24, month: 4, name: "Elise", age: 24 }
+        // --- GESTION EVENEMENTS (V58) ---
+        // Liste consolidée : Annivs, Pâques, Jours fériés
+        const events = [
+            { d: 12, m: 1, type: 'bday', name: "Test", age: 24 }, // Modifié à 24 ans
+            { d: 7, m: 3, type: 'bday', name: "Théo", age: 21 },
+            { d: 24, m: 4, type: 'bday', name: "Elise", age: 24 },
+            { d: 6, m: 4, type: 'easter' }, // Pâques
+            { d: 1, m: 5, type: 'holiday', title: "Fête du travail 🌿" },
+            { d: 8, m: 5, type: 'holiday', title: "Victoire 1945 🇫🇷" },
+            { d: 14, m: 5, type: 'holiday', title: "Jeudi de l’Ascension ✨" },
+            { d: 25, m: 5, type: 'holiday', title: "Lundi de Pentecôte 🕊️" }
         ];
 
-        let activeBirthday = null;
+        let activeEvent = null;
         let candlesBlown = 0;
+        let eggClicks = 0;
 
-        function checkBirthday() {
+        function checkEvents() {
             const today = new Date();
             const d = today.getDate();
             const m = today.getMonth() + 1; 
             
-            activeBirthday = birthdays.find(b => b.day === d && b.month === m);
+            activeEvent = events.find(e => e.d === d && e.m === m);
             
-            if (activeBirthday) {
-                initBirthdayMode();
+            if (activeEvent) {
+                if(activeEvent.type === 'holiday') {
+                    // Juste le sous-titre, pas d'overlay
+                    const sub = document.getElementById('bd-subtitle');
+                    sub.style.display = "block";
+                    sub.innerText = activeEvent.title;
+                } else {
+                    // Anniv ou Pâques -> Overlay
+                    initOverlayMode();
+                }
             }
         }
 
-        function initBirthdayMode() {
+        function initOverlayMode() {
             const overlay = document.getElementById('bd-overlay');
             overlay.style.display = "flex";
-            document.getElementById('bd-title-text').innerText = "Joyeux Anniversaire " + activeBirthday.name + " !";
-            
-            const ageStr = activeBirthday.age.toString(); 
-            const area = document.getElementById('candles-area');
-            area.innerHTML = "";
-            
-            for(let i=0; i<ageStr.length; i++) {
-                const digit = ageStr[i];
-                const wrapper = document.createElement('div');
-                wrapper.className = 'candle-wrapper';
-                wrapper.id = 'candle-' + i;
-                wrapper.onclick = () => blowCandle(i);
+            const title = document.getElementById('bd-title-text');
+            const msg = document.getElementById('overlay-msg');
+            const cakeBox = document.getElementById('cake-mode-container');
+            const eggBox = document.getElementById('easter-egg-container');
+
+            if (activeEvent.type === 'bday') {
+                title.innerText = "Joyeux Anniversaire " + activeEvent.name + " !";
+                msg.innerText = "Fais un vœu et souffle (clique) sur les bougies ! 🕯️";
+                cakeBox.style.display = 'flex';
+                eggBox.style.display = 'none';
                 
-                wrapper.innerHTML = `
-                    <div class="smoke"></div>
-                    <div class="flame"></div>
-                    <div class="candle-num">${digit}</div>
-                `;
-                area.appendChild(wrapper);
+                // Génération bougies
+                const ageStr = activeEvent.age.toString(); 
+                const area = document.getElementById('candles-area');
+                area.innerHTML = "";
+                for(let i=0; i<ageStr.length; i++) {
+                    const digit = ageStr[i];
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'candle-wrapper';
+                    wrapper.id = 'candle-' + i;
+                    wrapper.onclick = () => blowCandle(i);
+                    wrapper.innerHTML = `<div class="smoke"></div><div class="flame"></div><div class="candle-num">${digit}</div>`;
+                    area.appendChild(wrapper);
+                }
+
+            } else if (activeEvent.type === 'easter') {
+                title.innerText = "Joyeuses Pâques !";
+                msg.innerText = "Tapote l'œuf pour découvrir la surprise...";
+                cakeBox.style.display = 'none';
+                eggBox.style.display = 'flex';
+                eggClicks = 0;
             }
         }
 
+        // LOGIQUE BOUGIES (V58 Corrected)
         window.blowCandle = function(index) {
             const c = document.getElementById('candle-' + index);
             if(c.classList.contains('blown-out')) return;
@@ -542,8 +547,25 @@
             c.classList.add('blown-out');
             candlesBlown++;
 
-            if(candlesBlown >= activeBirthday.age.toString().length) {
+            if(candlesBlown >= activeEvent.age.toString().length) {
                 setTimeout(celebrate, 500);
+            }
+        }
+
+        // LOGIQUE OEUF PAQUES
+        window.crackEgg = function() {
+            const egg = document.getElementById('easter-egg');
+            eggClicks++;
+            
+            if(eggClicks === 1) egg.className = "easter-egg crack-1";
+            else if(eggClicks === 2) egg.className = "easter-egg crack-2";
+            else if(eggClicks === 3) {
+                egg.className = "easter-egg crack-3";
+                setTimeout(() => {
+                    egg.innerText = "🐰";
+                    document.getElementById('overlay-msg').innerText = "Joyeuses Pâques mes amours !";
+                    celebrate();
+                }, 300);
             }
         }
 
@@ -571,15 +593,22 @@
             document.querySelector('.btn-enter').style.display = "block";
         }
 
-        window.enterBirthdayApp = function() {
+        window.enterSpecialApp = function() {
             document.getElementById('bd-overlay').style.display = "none";
+            // Activer le thème festif
             document.body.classList.add('birthday-theme');
             const sub = document.getElementById('bd-subtitle');
             sub.style.display = "block";
-            sub.innerText = `Les ${activeBirthday.age} ans de ${activeBirthday.name} ❤️`;
+            
+            if (activeEvent.type === 'bday') {
+                sub.innerText = `Les ${activeEvent.age} ans de ${activeEvent.name} ❤️`;
+            } else if (activeEvent.type === 'easter') {
+                sub.innerText = "Joyeuses Pâques 🐰";
+            }
         }
 
-        checkBirthday();
+        // Lancer la vérif
+        checkEvents();
 
 
         // --- LOGIQUE MOODS V57 (PATH + EVENTS) ---
