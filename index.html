@@ -38,13 +38,9 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; font-family: 'Outfit', sans-serif; background-color: var(--bg-body); background-image: radial-gradient(var(--dot-pattern) 1px, transparent 1px); background-size: 20px 20px; color: var(--text-main); padding-bottom: 120px; transition: background 0.3s, color 0.3s; }
         
-        /* HEADER SPECIAL ANNIV */
-        header { display: flex; flex-direction: column; align-items: center; padding: 20px 20px 10px 20px; margin-bottom: 10px; position:relative; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 10px 20px; margin-bottom: 10px; }
         .header-btn { background: var(--bg-card); border: 1px solid var(--border); width: 45px; height: 45px; border-radius: 50%; color: var(--text-main); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 10px var(--shadow); transition: 0.2s; }
         .app-title { font-family: 'Pacifico', cursive; font-size: 2.2rem; margin: 0; background: linear-gradient(to right, var(--blue-dark), var(--pink-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 0px rgba(255,255,255,0.2)); padding: 0 10px; line-height: 1.3; }
-        .app-subtitle { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: var(--pink-dark); margin-top: 5px; display: none; }
-
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
         
         .card { background: var(--bg-card); border-radius: 25px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 25px var(--shadow); border: 1px solid var(--border); transition: 0.3s; overflow: hidden; }
@@ -66,6 +62,7 @@
         .plane-icon { font-size: 1.5rem; position: relative; top: -24px; color: var(--text-main); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
+        /* INDICATEUR ONLINE */
         .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 5px; transition:0.3s; vertical-align: middle; }
         .status-dot.online { background: #2ecc71 !important; box-shadow: 0 0 10px #2ecc71; animation: blink 2s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -113,7 +110,7 @@
         .q-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
         .q-action-btn { font-size: 0.7rem; border: none; background: none; cursor: pointer; text-decoration: underline; color: #555; }
 
-        /* JEUX */
+        /* JEUX - V54 REDESIGN */
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .game-btn { 
             flex: 1; padding: 12px; border-radius: 15px; border: 1px solid var(--border); 
@@ -183,7 +180,7 @@
         .letter-close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #aaa; background: none; border: none; cursor: pointer; z-index: 10; }
         .letter-stamp { position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border: 2px double #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4af37; font-size: 0.7rem; font-weight: bold; transform: rotate(-15deg); opacity: 0.7; text-align: center; pointer-events: none; }
 
-        /* GALERIE */
+        /* GALERIE (V50 STYLE) */
         .polaroid-container { display: flex; justify-content: space-around; }
         .polaroid { background: white; padding: 10px 10px 30px 10px; position: relative; box-shadow: 0 5px 15px var(--p-shadow); transform: rotate(-2deg); width: 45%; text-align: center; cursor: pointer; transition: 0.3s; border-radius:0; }
         .polaroid:nth-child(2) { transform: rotate(3deg); }
@@ -236,61 +233,9 @@
         #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #333; color: white; padding: 10px 20px; border-radius: 30px; z-index: 9999; transition: 0.3s; display:flex; align-items:center; gap:10px; }
         #notif.show { transform: translateX(-50%) translateY(0); }
         .hidden { display: none; }
-        
-        /* BIRTHDAY OVERLAY */
-        #birthday-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 99999; justify-content: center; align-items: center; flex-direction: column; color: white; text-align: center; }
-        #birthday-overlay.active { display: flex; }
-        .cake-container { position: relative; margin-bottom: 50px; }
-        .cake-emoji { font-size: 100px; display: block; filter: drop-shadow(0 0 20px rgba(255,100,150,0.8)); }
-        
-        /* BOUGIES AMELIOREES */
-        .candles-row { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); display: flex; gap: 25px; }
-        .candle-wrapper { display: flex; flex-direction: column; align-items: center; cursor: pointer; position: relative; }
-        
-        .candle-number {
-            font-size: 4rem; font-weight: 800; font-family: 'Pacifico';
-            background: linear-gradient(to bottom, #ff9eb5, #ff4b6e);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-            transition: 0.3s;
-        }
-        
-        .flame {
-            width: 20px; height: 30px;
-            background: orange;
-            border-radius: 50% 50% 20% 20%;
-            box-shadow: 0 0 10px orange, 0 0 20px yellow, 0 0 40px white;
-            animation: flicker 0.1s infinite alternate;
-            position: absolute; top: -20px;
-            transition: 0.3s;
-        }
-        
-        .candle-wrapper.off .flame { opacity: 0; transform: scale(0); }
-        .candle-wrapper.off .candle-number { filter: grayscale(100%); opacity: 0.5; }
-
-        @keyframes flicker { 0% { transform: scale(1); opacity:1; } 100% { transform: scale(1.1); opacity:0.8; } }
-        
-        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100000; }
-        #enter-btn { display: none; background: white; color: var(--pink-dark); font-size: 1.2rem; padding: 10px 30px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px white; animation: pulseBtn 1s infinite; z-index: 100001; }
-        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-
     </style>
 </head>
 <body>
-
-    <div id="birthday-overlay">
-        <canvas id="confetti-canvas"></canvas>
-        <div class="cake-container">
-            <div class="candles-row" id="candles-container">
-                </div>
-            <div class="cake-emoji">🎂</div>
-        </div>
-        <h1 id="bd-title" style="font-family:'Pacifico'; font-size:2rem; margin:0;">Joyeux Anniversaire !</h1>
-        <p style="margin-top:10px; font-style:italic; font-size:1.1rem;">Souffle (clique) sur les bougies ! 🌬️</p>
-        <button id="enter-btn" onclick="closeBirthday()">C'est parti ! 🎁</button>
-    </div>
-
-    <audio id="applause-sound" src="https://actions.google.com/sounds/v1/crowds/applause_and_cheering.ogg"></audio>
 
     <div id="notif">💋 Bisou reçu !</div>
 
@@ -301,12 +246,9 @@
     <div id="uno-color-modal"><div class="color-picker-box"><h3>Choisis une couleur</h3><div class="cp-options"><div class="cp-circle" style="background:var(--uno-red)" onclick="chooseUnoColor('red')"></div><div class="cp-circle" style="background:var(--uno-blue)" onclick="chooseUnoColor('blue')"></div><div class="cp-circle" style="background:var(--uno-green)" onclick="chooseUnoColor('green')"></div><div class="cp-circle" style="background:var(--uno-yellow)" onclick="chooseUnoColor('yellow')"></div></div></div></div>
 
     <header>
-        <div class="header-top">
-            <button class="header-btn" id="user-toggle-btn" onclick="switchUser()">🇹🇼</button>
-            <h1 class="app-title">Love Travel</h1>
-            <button class="header-btn" onclick="toggleTheme()">🌗</button>
-        </div>
-        <div id="app-subtitle" class="app-subtitle"></div>
+        <button class="header-btn" id="user-toggle-btn" onclick="switchUser()">🇹🇼</button>
+        <h1 class="app-title">Love Travel</h1>
+        <button class="header-btn" onclick="toggleTheme()">🌗</button>
     </header>
 
     <div class="container">
@@ -323,13 +265,6 @@
                     <div class="compact-counter"><span id="days-count" class="big-num">--</span> <span class="unit" id="days-unit">JOURS</span><span class="separator">•</span><span id="sub-count" class="small-time">-- h et -- min</span></div>
                     <div class="progress-container-modern"><div class="dates-row"><span>14 Fév</span><span>05 Juil</span></div><div class="prog-bar-mini"><div class="prog-fill-mini" id="prog-fill"></div><div class="prog-heart" id="prog-heart">🩷</div></div></div>
                 </div>
-            </div>
-        </div>
-
-        <div class="card" id="card-music">
-            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎧</span> Vibe</div></div>
-            <div class="card-content">
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
         </div>
 
@@ -403,32 +338,9 @@
                     <button onclick="toggleGame('uno')" class="game-btn">Uno</button>
                 </div>
                 
-                <div id="pendu-box" class="game-block">
-                    <div class="game-header"><div class="game-title-text">🔤 Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div>
-                    <canvas id="pendu-canvas" width="200" height="150"></canvas>
-                    <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
-                    <div id="pendu-status" class="status-msg">En attente...</div>
-                    <div id="pendu-setup" style="margin-top:10px;">
-                        <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)">
-                        <button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button>
-                    </div>
-                    <div id="pendu-restart-area" style="display:none;margin-top:10px;">
-                        <button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button>
-                    </div>
-                    <div id="pendu-keyboard" class="keyboard" style="display:none;"></div>
-                    <div class="history-box" id="pendu-history-list"></div>
-                </div>
-
-                <div id="p4-box" class="game-block">
-                    <div class="game-header">
-                        <div class="game-title-text">🔴 Puissance 4</div>
-                        <button class="game-close-btn" onclick="toggleGame('p4')">✕</button>
-                    </div>
-                    <div id="p4-status" class="status-msg">En attente...</div>
-                    <button id="p4-restart-btn" onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--blue-dark);" disabled>Nouvelle Partie</button>
-                    <div class="p4-grid" id="p4-grid"></div>
-                    <div class="history-box" id="p4-history-list"></div>
-                </div>
+                <div id="pendu-box" class="game-block"><div class="game-header"><div class="game-title-text">Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div><canvas id="pendu-canvas" width="200" height="150"></canvas><div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div><div id="pendu-status" class="status-msg">En attente...</div><div id="pendu-setup" style="margin-top:10px;"><input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)"><button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button></div><div id="pendu-restart-area" style="display:none;margin-top:10px;"><button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button></div><div id="pendu-keyboard" class="keyboard" style="display:none;"></div><div class="history-box" id="pendu-history-list"></div></div>
+                
+                <div id="p4-box" class="game-block"><div class="game-header"><div class="game-title-text">Puissance 4</div><button class="game-close-btn" onclick="toggleGame('p4')">✕</button></div><div id="p4-status" class="status-msg">En attente...</div><button id="p4-restart-btn" onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--blue-dark);" disabled>Nouvelle Partie</button><div class="p4-grid" id="p4-grid"></div><div class="history-box" id="p4-history-list"></div></div>
 
                 <div id="uno-box" class="game-block">
                     <div class="game-header"><div class="game-title-text">UNO</div><button class="game-close-btn" onclick="toggleGame('uno')">✕</button></div>
@@ -455,7 +367,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon" style="width:40px; height:40px;">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v56 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v54 • janvier 2026</div>
         </div>
     </div>
 
@@ -479,97 +391,6 @@
             document.getElementById('btn-add-tw').style.display = currentUser === 'tw' ? 'block' : 'none';
         }
         updateIdentityUI();
-
-        // --- BIRTHDAY LOGIC ---
-        window.candlesBlown = 0;
-        window.closeBirthday = function() {
-             document.getElementById('birthday-overlay').classList.remove('active');
-        }
-        
-        function checkBirthday() {
-             const d = new Date();
-             const m = d.getMonth() + 1;
-             const day = d.getDate();
-             
-             // CONFIGURATION DES ANNIVERSAIRES
-             const birthdays = {
-                 '1-12': { name: 'Test', age: 21 },
-                 '3-7': { name: 'Théo', age: 21 },
-                 '4-24': { name: 'Elise', age: 24 }
-             };
-
-             const key = `${m}-${day}`;
-             if (birthdays[key]) {
-                 const bday = birthdays[key];
-                 
-                 // ACTIVE OVERLAY
-                 document.getElementById('birthday-overlay').classList.add('active');
-                 document.body.classList.add('birthday-theme');
-                 
-                 // CHANGE TITLES
-                 document.getElementById('bd-title').innerText = `Joyeux Anniversaire ${bday.name} !`;
-                 const subtitle = document.getElementById('app-subtitle');
-                 subtitle.innerText = `✨ Les ${bday.age} ans de ${bday.name} ✨`;
-                 subtitle.style.display = 'block';
-
-                 // SETUP CANDLES
-                 const container = document.getElementById('candles-container');
-                 container.innerHTML = "";
-                 const digits = bday.age.toString().split('');
-                 
-                 digits.forEach(digit => {
-                     const wrapper = document.createElement('div');
-                     wrapper.className = 'candle-wrapper';
-                     
-                     const flame = document.createElement('div');
-                     flame.className = 'flame';
-                     
-                     const num = document.createElement('span');
-                     num.className = 'candle-number';
-                     num.innerText = digit;
-                     
-                     wrapper.appendChild(flame);
-                     wrapper.appendChild(num);
-                     
-                     wrapper.onclick = function() {
-                         if (!this.classList.contains('off')) {
-                             this.classList.add('off');
-                             window.candlesBlown++;
-                             if (window.candlesBlown === digits.length) {
-                                 // WIN
-                                 document.getElementById('enter-btn').style.display = 'block';
-                                 document.getElementById('applause-sound').play().catch(e=>{});
-                                 launchConfetti();
-                             }
-                         }
-                     }
-                     container.appendChild(wrapper);
-                 });
-             }
-        }
-        // Force check on load
-        checkBirthday();
-
-        // CONFETTI
-        function launchConfetti() {
-            const canvas = document.getElementById('confetti-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            const pieces = [];
-            for(let i=0;i<150;i++) pieces.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height-canvas.height, color:'hsl('+Math.random()*360+',100%,50%)', speed:Math.random()*3+2, size:Math.random()*5+5});
-            function draw() {
-                ctx.clearRect(0,0,canvas.width,canvas.height);
-                pieces.forEach(p => {
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
-                    p.y += p.speed;
-                    if(p.y > canvas.height) p.y = -10;
-                });
-                requestAnimationFrame(draw);
-            }
-            draw();
-        }
 
         window.toggleCard = function(header) {
             if(header.parentElement.id === 'card-voyage') return;
@@ -653,8 +474,7 @@
             s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose'; const setter = h.setter === 'fr' ? 'Théo' : 'Elise'; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`; });
         });
         function renderPendu(game) {
-            const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('pendu-status');
-            const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark'); const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
+            const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('pendu-status'); const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark'); const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
             ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.beginPath(); ctx.strokeStyle = mainColor;
             if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} if(game.mistakes>2){ctx.lineTo(130,20);} if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);} ctx.stroke(); 
             ctx.beginPath(); ctx.strokeStyle = pinkColor; if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} 
@@ -684,7 +504,7 @@
                 const h = d.data(); 
                 const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; 
                 const moves = h.moves || "?";
-                list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${moves} coups</span></div>`; 
+                list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'}</span><span>en ${moves} coups</span></div>`; 
             }); 
         });
 
@@ -792,12 +612,12 @@
             
             if (val === 'p2') {
                 if(deck.length>=2) { opponentHand.push(deck.shift()); opponentHand.push(deck.shift()); }
-                nextTurn = currentUser==='fr'?'tw':'fr'; 
+                nextTurn = currentUser==='fr'?'tw':'fr'; // Next player turn (draws + plays their turn)
             } else if (val === 'p4') {
                 if(deck.length>=4) { for(let i=0;i<4;i++) opponentHand.push(deck.shift()); }
                 nextTurn = currentUser==='fr'?'tw':'fr'; 
             } else if (val === 's') {
-                 nextTurn = currentUser; 
+                 nextTurn = currentUser; // Replay
             }
 
             updateDoc(doc(db, "games", "uno_active"), { deck: deck, discard: newDiscard, hand_fr: currentUser==='fr'?myHand:opponentHand, hand_tw: currentUser==='tw'?myHand:opponentHand, turn: nextTurn, moves: moves });
@@ -806,6 +626,7 @@
         // --- BASICS ---
         function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
         setInterval(updatePresence, 5000); updatePresence();
+        // CONNECTIVITY FIX: 60s Tolerance
         onSnapshot(doc(db, "status", "presence"), (docSnap) => { 
             if(docSnap.exists()) { 
                 const d = docSnap.data(); 
@@ -890,7 +711,7 @@
         });
         window.openGallery = function(role) { const m=document.getElementById('gallery-modal'); const g=document.getElementById('modal-grid'); g.innerHTML=""; allPhotos.filter(p=>p.by===role).forEach(p=>{ 
             const dStr = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleDateString() : "";
-            g.innerHTML+=`<div><img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'"><div class="photo-date">${dStr}</div>${role===currentUser?`<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>`:''}</div>`; 
+            g.innerHTML+=`<div id="photo-${p.id}"><img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'"><div class="photo-date">${dStr}</div>${role===currentUser?`<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>`:''}</div>`; 
         }); m.style.display="block"; }
         window.closeGallery = () => document.getElementById('gallery-modal').style.display='none';
         window.closeLightbox = () => document.getElementById('lightbox').style.display='none';
