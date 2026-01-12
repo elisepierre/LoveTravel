@@ -35,22 +35,16 @@
             --shadow: rgba(0,0,0,0.5); --dot-pattern: rgba(255,255,255,0.05);
             --p-shadow: rgba(0,0,0,0.5);
         }
-        
-        /* THEME ANNIVERSAIRE */
-        body.birthday-theme {
-            background-color: #fff0f5;
-            background-image: radial-gradient(#ffb7b2 10%, transparent 10%), radial-gradient(#ffb7b2 10%, transparent 10%);
-            background-position: 0 0, 25px 25px;
-            background-size: 50px 50px;
-        }
-        /* Petit emoji cadeau en background pattern via CSS pseudo element serait lourd, on garde les points colorés festifs */
-
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; font-family: 'Outfit', sans-serif; background-color: var(--bg-body); background-image: radial-gradient(var(--dot-pattern) 1px, transparent 1px); background-size: 20px 20px; color: var(--text-main); padding-bottom: 120px; transition: background 0.3s, color 0.3s; }
         
-        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 10px 20px; margin-bottom: 10px; }
+        /* HEADER SPECIAL ANNIV */
+        header { display: flex; flex-direction: column; align-items: center; padding: 20px 20px 10px 20px; margin-bottom: 10px; position:relative; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .header-btn { background: var(--bg-card); border: 1px solid var(--border); width: 45px; height: 45px; border-radius: 50%; color: var(--text-main); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 10px var(--shadow); transition: 0.2s; }
         .app-title { font-family: 'Pacifico', cursive; font-size: 2.2rem; margin: 0; background: linear-gradient(to right, var(--blue-dark), var(--pink-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 0px rgba(255,255,255,0.2)); padding: 0 10px; line-height: 1.3; }
+        .app-subtitle { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: var(--pink-dark); margin-top: 5px; display: none; }
+
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
         
         .card { background: var(--bg-card); border-radius: 25px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 25px var(--shadow); border: 1px solid var(--border); transition: 0.3s; overflow: hidden; }
@@ -248,14 +242,36 @@
         #birthday-overlay.active { display: flex; }
         .cake-container { position: relative; margin-bottom: 50px; }
         .cake-emoji { font-size: 100px; display: block; filter: drop-shadow(0 0 20px rgba(255,100,150,0.8)); }
-        .candles-row { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; }
-        .candle-num { font-size: 3rem; font-weight: 800; font-family: 'Pacifico'; position: relative; cursor: pointer; transition: 0.3s; }
-        .candle-num::before { content: '🔥'; font-size: 1.5rem; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); animation: flicker 0.1s infinite alternate; transition: 0.3s; }
-        .candle-num.off::before { opacity: 0; transform: translateX(-50%) scale(0); }
-        .candle-num.off { color: #888; }
-        @keyframes flicker { 0% { opacity: 1; transform: translateX(-50%) scale(1); } 100% { opacity: 0.8; transform: translateX(-50%) scale(1.1); } }
+        
+        /* BOUGIES AMELIOREES */
+        .candles-row { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); display: flex; gap: 25px; }
+        .candle-wrapper { display: flex; flex-direction: column; align-items: center; cursor: pointer; position: relative; }
+        
+        .candle-number {
+            font-size: 4rem; font-weight: 800; font-family: 'Pacifico';
+            background: linear-gradient(to bottom, #ff9eb5, #ff4b6e);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+            transition: 0.3s;
+        }
+        
+        .flame {
+            width: 20px; height: 30px;
+            background: orange;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 10px orange, 0 0 20px yellow, 0 0 40px white;
+            animation: flicker 0.1s infinite alternate;
+            position: absolute; top: -20px;
+            transition: 0.3s;
+        }
+        
+        .candle-wrapper.off .flame { opacity: 0; transform: scale(0); }
+        .candle-wrapper.off .candle-number { filter: grayscale(100%); opacity: 0.5; }
+
+        @keyframes flicker { 0% { transform: scale(1); opacity:1; } 100% { transform: scale(1.1); opacity:0.8; } }
+        
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100000; }
-        #enter-btn { display: none; background: white; color: var(--pink-dark); font-size: 1.2rem; padding: 10px 30px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px white; animation: pulseBtn 1s infinite; }
+        #enter-btn { display: none; background: white; color: var(--pink-dark); font-size: 1.2rem; padding: 10px 30px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px white; animation: pulseBtn 1s infinite; z-index: 100001; }
         @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
     </style>
@@ -269,8 +285,8 @@
                 </div>
             <div class="cake-emoji">🎂</div>
         </div>
-        <h1 style="font-family:'Pacifico'; font-size:2rem; margin:0;">Joyeux Anniversaire !</h1>
-        <p style="margin-top:10px; font-style:italic;">Souffle les bougies (clique dessus) !</p>
+        <h1 id="bd-title" style="font-family:'Pacifico'; font-size:2rem; margin:0;">Joyeux Anniversaire !</h1>
+        <p style="margin-top:10px; font-style:italic; font-size:1.1rem;">Souffle (clique) sur les bougies ! 🌬️</p>
         <button id="enter-btn" onclick="closeBirthday()">C'est parti ! 🎁</button>
     </div>
 
@@ -285,9 +301,12 @@
     <div id="uno-color-modal"><div class="color-picker-box"><h3>Choisis une couleur</h3><div class="cp-options"><div class="cp-circle" style="background:var(--uno-red)" onclick="chooseUnoColor('red')"></div><div class="cp-circle" style="background:var(--uno-blue)" onclick="chooseUnoColor('blue')"></div><div class="cp-circle" style="background:var(--uno-green)" onclick="chooseUnoColor('green')"></div><div class="cp-circle" style="background:var(--uno-yellow)" onclick="chooseUnoColor('yellow')"></div></div></div></div>
 
     <header>
-        <button class="header-btn" id="user-toggle-btn" onclick="switchUser()">🇹🇼</button>
-        <h1 class="app-title">Love Travel</h1>
-        <button class="header-btn" onclick="toggleTheme()">🌗</button>
+        <div class="header-top">
+            <button class="header-btn" id="user-toggle-btn" onclick="switchUser()">🇹🇼</button>
+            <h1 class="app-title">Love Travel</h1>
+            <button class="header-btn" onclick="toggleTheme()">🌗</button>
+        </div>
+        <div id="app-subtitle" class="app-subtitle"></div>
     </header>
 
     <div class="container">
@@ -436,7 +455,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon" style="width:40px; height:40px;">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v55 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v56 • janvier 2026</div>
         </div>
     </div>
 
@@ -461,7 +480,7 @@
         }
         updateIdentityUI();
 
-        // BIRTHDAY LOGIC
+        // --- BIRTHDAY LOGIC ---
         window.candlesBlown = 0;
         window.closeBirthday = function() {
              document.getElementById('birthday-overlay').classList.remove('active');
@@ -471,21 +490,48 @@
              const d = new Date();
              const m = d.getMonth() + 1;
              const day = d.getDate();
-             // Dates: 12 Jan (Test), 7 Mar (Theo), 24 Apr (Elise)
-             if ((m===1 && day===12) || (m===3 && day===7) || (m===4 && day===24)) {
+             
+             // CONFIGURATION DES ANNIVERSAIRES
+             const birthdays = {
+                 '1-12': { name: 'Test', age: 21 },
+                 '3-7': { name: 'Théo', age: 21 },
+                 '4-24': { name: 'Elise', age: 24 }
+             };
+
+             const key = `${m}-${day}`;
+             if (birthdays[key]) {
+                 const bday = birthdays[key];
+                 
+                 // ACTIVE OVERLAY
                  document.getElementById('birthday-overlay').classList.add('active');
                  document.body.classList.add('birthday-theme');
-                 let age = 21;
-                 if (m===4 && day===24) age = 24;
                  
+                 // CHANGE TITLES
+                 document.getElementById('bd-title').innerText = `Joyeux Anniversaire ${bday.name} !`;
+                 const subtitle = document.getElementById('app-subtitle');
+                 subtitle.innerText = `✨ Les ${bday.age} ans de ${bday.name} ✨`;
+                 subtitle.style.display = 'block';
+
+                 // SETUP CANDLES
                  const container = document.getElementById('candles-container');
                  container.innerHTML = "";
-                 const digits = age.toString().split('');
+                 const digits = bday.age.toString().split('');
+                 
                  digits.forEach(digit => {
-                     const span = document.createElement('span');
-                     span.className = 'candle-num';
-                     span.innerText = digit;
-                     span.onclick = function() {
+                     const wrapper = document.createElement('div');
+                     wrapper.className = 'candle-wrapper';
+                     
+                     const flame = document.createElement('div');
+                     flame.className = 'flame';
+                     
+                     const num = document.createElement('span');
+                     num.className = 'candle-number';
+                     num.innerText = digit;
+                     
+                     wrapper.appendChild(flame);
+                     wrapper.appendChild(num);
+                     
+                     wrapper.onclick = function() {
                          if (!this.classList.contains('off')) {
                              this.classList.add('off');
                              window.candlesBlown++;
@@ -497,25 +543,26 @@
                              }
                          }
                      }
-                     container.appendChild(span);
+                     container.appendChild(wrapper);
                  });
              }
         }
+        // Force check on load
         checkBirthday();
 
-        // CONFETTI SIMPLE
+        // CONFETTI
         function launchConfetti() {
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             const pieces = [];
-            for(let i=0;i<100;i++) pieces.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height-canvas.height, color:'hsl('+Math.random()*360+',100%,50%)', speed:Math.random()*3+2});
+            for(let i=0;i<150;i++) pieces.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height-canvas.height, color:'hsl('+Math.random()*360+',100%,50%)', speed:Math.random()*3+2, size:Math.random()*5+5});
             function draw() {
                 ctx.clearRect(0,0,canvas.width,canvas.height);
                 pieces.forEach(p => {
                     ctx.fillStyle = p.color;
-                    ctx.fillRect(p.x, p.y, 10, 10);
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
                     p.y += p.speed;
                     if(p.y > canvas.height) p.y = -10;
                 });
@@ -601,22 +648,13 @@
         // PENDU
         let activePendu = null;
         onSnapshot(doc(db, "games", "pendu_active"), (s) => { activePendu = s.exists() ? s.data() : { state:'setup' }; renderPendu(activePendu); });
-        
         onSnapshot(query(collection(db, "games_pendu_history"), orderBy("timestamp", "desc"), limit(50)), (s) => {
             const list = document.getElementById('pendu-history-list'); list.innerHTML = "";
-            s.forEach(d => {
-                const h = d.data();
-                const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : "";
-                const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose';
-                const setter = h.setter === 'fr' ? 'Théo' : 'Elise';
-                list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`;
-            });
+            s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose'; const setter = h.setter === 'fr' ? 'Théo' : 'Elise'; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`; });
         });
-
         function renderPendu(game) {
             const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('pendu-status');
-            const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark');
-            const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
+            const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark'); const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
             ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.beginPath(); ctx.strokeStyle = mainColor;
             if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} if(game.mistakes>2){ctx.lineTo(130,20);} if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);} ctx.stroke(); 
             ctx.beginPath(); ctx.strokeStyle = pinkColor; if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} 
@@ -632,50 +670,10 @@
         // P4
         let activeP4 = null;
         onSnapshot(doc(db, "games", "p4_active"), (s) => { activeP4 = s.exists() ? s.data() : null; if(activeP4) renderP4(activeP4); else document.getElementById('p4-status').innerText = "Aucune partie en cours"; });
-        
-        onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(50)), (s) => {
-            const list = document.getElementById('p4-history-list'); list.innerHTML = "";
-            s.forEach(d => { 
-                const h = d.data(); 
-                const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : "";
-                list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`; 
-            });
-        });
-
+        onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { const list = document.getElementById('p4-history-list'); list.innerHTML = ""; s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`; }); });
         window.initP4 = function() { setDoc(doc(db, "games", "p4_active"), { board: Array(42).fill(0), turn: currentUser, winner: null, moves: 0, starter: currentUser }); }
-
-        function renderP4(game) {
-            const grid=document.getElementById('p4-grid'); grid.innerHTML="";
-            const status = document.getElementById('p4-status');
-            const btn = document.getElementById('p4-restart-btn');
-            
-            if(game.winner) {
-                status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !";
-                btn.disabled = false; btn.style.opacity = "1";
-            } else {
-                status.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)");
-                btn.disabled = true; btn.style.opacity = "0.5";
-            }
-            
-            for(let i=0; i<42; i++) { 
-                const c=document.createElement('div'); c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); 
-                c.onclick=()=>playP4(i%7); grid.appendChild(c); 
-            }
-        }
-
-        window.playP4 = async function(col) {
-            if(!activeP4||activeP4.winner) return;
-            if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; }
-            let board=[...activeP4.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; }
-            if(row<0) return;
-            const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0};
-            const winnerCode = checkWin(board); let winner = null; let moves = activeP4.moves + 1;
-            if(winnerCode !== 0) { 
-                winner = winnerCode === 1 ? 'fr' : 'tw'; 
-                addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() });
-            }
-            updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves });
-        }
+        function renderP4(game) { const grid=document.getElementById('p4-grid'); grid.innerHTML=""; const status = document.getElementById('p4-status'); const btn = document.getElementById('p4-restart-btn'); if(game.winner) { status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !"; btn.disabled = false; btn.style.opacity = "1"; } else { status.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)"); btn.disabled = true; btn.style.opacity = "0.5"; } for(let i=0; i<42; i++) { const c=document.createElement('div'); c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); c.onclick=()=>playP4(i%7); grid.appendChild(c); } }
+        window.playP4 = async function(col) { if(!activeP4||activeP4.winner) return; if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; } let board=[...activeP4.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; } if(row<0) return; const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0}; const winnerCode = checkWin(board); let winner = null; let moves = activeP4.moves + 1; if(winnerCode !== 0) { winner = winnerCode === 1 ? 'fr' : 'tw'; addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() }); } updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves }); }
 
         // UNO
         let activeUno = null; let pickingWild = false; let wildCardIndex = -1;
@@ -794,12 +792,12 @@
             
             if (val === 'p2') {
                 if(deck.length>=2) { opponentHand.push(deck.shift()); opponentHand.push(deck.shift()); }
-                nextTurn = currentUser==='fr'?'tw':'fr'; // Next player turn (draws + plays their turn)
+                nextTurn = currentUser==='fr'?'tw':'fr'; 
             } else if (val === 'p4') {
                 if(deck.length>=4) { for(let i=0;i<4;i++) opponentHand.push(deck.shift()); }
                 nextTurn = currentUser==='fr'?'tw':'fr'; 
             } else if (val === 's') {
-                 nextTurn = currentUser; // Replay
+                 nextTurn = currentUser; 
             }
 
             updateDoc(doc(db, "games", "uno_active"), { deck: deck, discard: newDiscard, hand_fr: currentUser==='fr'?myHand:opponentHand, hand_tw: currentUser==='tw'?myHand:opponentHand, turn: nextTurn, moves: moves });
@@ -808,7 +806,6 @@
         // --- BASICS ---
         function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
         setInterval(updatePresence, 5000); updatePresence();
-        // CONNECTIVITY FIX: 60s Tolerance
         onSnapshot(doc(db, "status", "presence"), (docSnap) => { 
             if(docSnap.exists()) { 
                 const d = docSnap.data(); 
