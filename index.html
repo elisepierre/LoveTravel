@@ -35,6 +35,16 @@
             --shadow: rgba(0,0,0,0.5); --dot-pattern: rgba(255,255,255,0.05);
             --p-shadow: rgba(0,0,0,0.5);
         }
+        
+        /* THEME ANNIVERSAIRE */
+        body.birthday-theme {
+            background-color: #fff0f5;
+            background-image: radial-gradient(#ffb7b2 10%, transparent 10%), radial-gradient(#ffb7b2 10%, transparent 10%);
+            background-position: 0 0, 25px 25px;
+            background-size: 50px 50px;
+        }
+        /* Petit emoji cadeau en background pattern via CSS pseudo element serait lourd, on garde les points colorés festifs */
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; font-family: 'Outfit', sans-serif; background-color: var(--bg-body); background-image: radial-gradient(var(--dot-pattern) 1px, transparent 1px); background-size: 20px 20px; color: var(--text-main); padding-bottom: 120px; transition: background 0.3s, color 0.3s; }
         
@@ -62,7 +72,6 @@
         .plane-icon { font-size: 1.5rem; position: relative; top: -24px; color: var(--text-main); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
-        /* INDICATEUR ONLINE */
         .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 5px; transition:0.3s; vertical-align: middle; }
         .status-dot.online { background: #2ecc71 !important; box-shadow: 0 0 10px #2ecc71; animation: blink 2s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -110,7 +119,7 @@
         .q-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
         .q-action-btn { font-size: 0.7rem; border: none; background: none; cursor: pointer; text-decoration: underline; color: #555; }
 
-        /* JEUX - V54 REDESIGN */
+        /* JEUX */
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .game-btn { 
             flex: 1; padding: 12px; border-radius: 15px; border: 1px solid var(--border); 
@@ -180,7 +189,7 @@
         .letter-close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #aaa; background: none; border: none; cursor: pointer; z-index: 10; }
         .letter-stamp { position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border: 2px double #d4af37; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4af37; font-size: 0.7rem; font-weight: bold; transform: rotate(-15deg); opacity: 0.7; text-align: center; pointer-events: none; }
 
-        /* GALERIE (V50 STYLE) */
+        /* GALERIE */
         .polaroid-container { display: flex; justify-content: space-around; }
         .polaroid { background: white; padding: 10px 10px 30px 10px; position: relative; box-shadow: 0 5px 15px var(--p-shadow); transform: rotate(-2deg); width: 45%; text-align: center; cursor: pointer; transition: 0.3s; border-radius:0; }
         .polaroid:nth-child(2) { transform: rotate(3deg); }
@@ -233,9 +242,39 @@
         #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #333; color: white; padding: 10px 20px; border-radius: 30px; z-index: 9999; transition: 0.3s; display:flex; align-items:center; gap:10px; }
         #notif.show { transform: translateX(-50%) translateY(0); }
         .hidden { display: none; }
+        
+        /* BIRTHDAY OVERLAY */
+        #birthday-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 99999; justify-content: center; align-items: center; flex-direction: column; color: white; text-align: center; }
+        #birthday-overlay.active { display: flex; }
+        .cake-container { position: relative; margin-bottom: 50px; }
+        .cake-emoji { font-size: 100px; display: block; filter: drop-shadow(0 0 20px rgba(255,100,150,0.8)); }
+        .candles-row { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; }
+        .candle-num { font-size: 3rem; font-weight: 800; font-family: 'Pacifico'; position: relative; cursor: pointer; transition: 0.3s; }
+        .candle-num::before { content: '🔥'; font-size: 1.5rem; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); animation: flicker 0.1s infinite alternate; transition: 0.3s; }
+        .candle-num.off::before { opacity: 0; transform: translateX(-50%) scale(0); }
+        .candle-num.off { color: #888; }
+        @keyframes flicker { 0% { opacity: 1; transform: translateX(-50%) scale(1); } 100% { opacity: 0.8; transform: translateX(-50%) scale(1.1); } }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100000; }
+        #enter-btn { display: none; background: white; color: var(--pink-dark); font-size: 1.2rem; padding: 10px 30px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; box-shadow: 0 0 20px white; animation: pulseBtn 1s infinite; }
+        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
     </style>
 </head>
 <body>
+
+    <div id="birthday-overlay">
+        <canvas id="confetti-canvas"></canvas>
+        <div class="cake-container">
+            <div class="candles-row" id="candles-container">
+                </div>
+            <div class="cake-emoji">🎂</div>
+        </div>
+        <h1 style="font-family:'Pacifico'; font-size:2rem; margin:0;">Joyeux Anniversaire !</h1>
+        <p style="margin-top:10px; font-style:italic;">Souffle les bougies (clique dessus) !</p>
+        <button id="enter-btn" onclick="closeBirthday()">C'est parti ! 🎁</button>
+    </div>
+
+    <audio id="applause-sound" src="https://actions.google.com/sounds/v1/crowds/applause_and_cheering.ogg"></audio>
 
     <div id="notif">💋 Bisou reçu !</div>
 
@@ -265,6 +304,13 @@
                     <div class="compact-counter"><span id="days-count" class="big-num">--</span> <span class="unit" id="days-unit">JOURS</span><span class="separator">•</span><span id="sub-count" class="small-time">-- h et -- min</span></div>
                     <div class="progress-container-modern"><div class="dates-row"><span>14 Fév</span><span>05 Juil</span></div><div class="prog-bar-mini"><div class="prog-fill-mini" id="prog-fill"></div><div class="prog-heart" id="prog-heart">🩷</div></div></div>
                 </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-music">
+            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎧</span> Vibe</div></div>
+            <div class="card-content">
+                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
         </div>
 
@@ -338,9 +384,32 @@
                     <button onclick="toggleGame('uno')" class="game-btn">Uno</button>
                 </div>
                 
-                <div id="pendu-box" class="game-block"><div class="game-header"><div class="game-title-text">Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div><canvas id="pendu-canvas" width="200" height="150"></canvas><div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div><div id="pendu-status" class="status-msg">En attente...</div><div id="pendu-setup" style="margin-top:10px;"><input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)"><button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button></div><div id="pendu-restart-area" style="display:none;margin-top:10px;"><button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button></div><div id="pendu-keyboard" class="keyboard" style="display:none;"></div><div class="history-box" id="pendu-history-list"></div></div>
-                
-                <div id="p4-box" class="game-block"><div class="game-header"><div class="game-title-text">Puissance 4</div><button class="game-close-btn" onclick="toggleGame('p4')">✕</button></div><div id="p4-status" class="status-msg">En attente...</div><button id="p4-restart-btn" onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--blue-dark);" disabled>Nouvelle Partie</button><div class="p4-grid" id="p4-grid"></div><div class="history-box" id="p4-history-list"></div></div>
+                <div id="pendu-box" class="game-block">
+                    <div class="game-header"><div class="game-title-text">🔤 Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div>
+                    <canvas id="pendu-canvas" width="200" height="150"></canvas>
+                    <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
+                    <div id="pendu-status" class="status-msg">En attente...</div>
+                    <div id="pendu-setup" style="margin-top:10px;">
+                        <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)">
+                        <button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button>
+                    </div>
+                    <div id="pendu-restart-area" style="display:none;margin-top:10px;">
+                        <button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button>
+                    </div>
+                    <div id="pendu-keyboard" class="keyboard" style="display:none;"></div>
+                    <div class="history-box" id="pendu-history-list"></div>
+                </div>
+
+                <div id="p4-box" class="game-block">
+                    <div class="game-header">
+                        <div class="game-title-text">🔴 Puissance 4</div>
+                        <button class="game-close-btn" onclick="toggleGame('p4')">✕</button>
+                    </div>
+                    <div id="p4-status" class="status-msg">En attente...</div>
+                    <button id="p4-restart-btn" onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--blue-dark);" disabled>Nouvelle Partie</button>
+                    <div class="p4-grid" id="p4-grid"></div>
+                    <div class="history-box" id="p4-history-list"></div>
+                </div>
 
                 <div id="uno-box" class="game-block">
                     <div class="game-header"><div class="game-title-text">UNO</div><button class="game-close-btn" onclick="toggleGame('uno')">✕</button></div>
@@ -367,7 +436,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon" style="width:40px; height:40px;">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v54 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v55 • janvier 2026</div>
         </div>
     </div>
 
@@ -391,6 +460,69 @@
             document.getElementById('btn-add-tw').style.display = currentUser === 'tw' ? 'block' : 'none';
         }
         updateIdentityUI();
+
+        // BIRTHDAY LOGIC
+        window.candlesBlown = 0;
+        window.closeBirthday = function() {
+             document.getElementById('birthday-overlay').classList.remove('active');
+        }
+        
+        function checkBirthday() {
+             const d = new Date();
+             const m = d.getMonth() + 1;
+             const day = d.getDate();
+             // Dates: 12 Jan (Test), 7 Mar (Theo), 24 Apr (Elise)
+             if ((m===1 && day===12) || (m===3 && day===7) || (m===4 && day===24)) {
+                 document.getElementById('birthday-overlay').classList.add('active');
+                 document.body.classList.add('birthday-theme');
+                 let age = 21;
+                 if (m===4 && day===24) age = 24;
+                 
+                 const container = document.getElementById('candles-container');
+                 container.innerHTML = "";
+                 const digits = age.toString().split('');
+                 digits.forEach(digit => {
+                     const span = document.createElement('span');
+                     span.className = 'candle-num';
+                     span.innerText = digit;
+                     span.onclick = function() {
+                         if (!this.classList.contains('off')) {
+                             this.classList.add('off');
+                             window.candlesBlown++;
+                             if (window.candlesBlown === digits.length) {
+                                 // WIN
+                                 document.getElementById('enter-btn').style.display = 'block';
+                                 document.getElementById('applause-sound').play().catch(e=>{});
+                                 launchConfetti();
+                             }
+                         }
+                     }
+                     container.appendChild(span);
+                 });
+             }
+        }
+        checkBirthday();
+
+        // CONFETTI SIMPLE
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const pieces = [];
+            for(let i=0;i<100;i++) pieces.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height-canvas.height, color:'hsl('+Math.random()*360+',100%,50%)', speed:Math.random()*3+2});
+            function draw() {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                pieces.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, 10, 10);
+                    p.y += p.speed;
+                    if(p.y > canvas.height) p.y = -10;
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
 
         window.toggleCard = function(header) {
             if(header.parentElement.id === 'card-voyage') return;
@@ -469,12 +601,22 @@
         // PENDU
         let activePendu = null;
         onSnapshot(doc(db, "games", "pendu_active"), (s) => { activePendu = s.exists() ? s.data() : { state:'setup' }; renderPendu(activePendu); });
+        
         onSnapshot(query(collection(db, "games_pendu_history"), orderBy("timestamp", "desc"), limit(50)), (s) => {
             const list = document.getElementById('pendu-history-list'); list.innerHTML = "";
-            s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose'; const setter = h.setter === 'fr' ? 'Théo' : 'Elise'; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`; });
+            s.forEach(d => {
+                const h = d.data();
+                const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : "";
+                const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose';
+                const setter = h.setter === 'fr' ? 'Théo' : 'Elise';
+                list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`;
+            });
         });
+
         function renderPendu(game) {
-            const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('pendu-status'); const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark'); const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
+            const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('pendu-status');
+            const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark');
+            const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
             ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.beginPath(); ctx.strokeStyle = mainColor;
             if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} if(game.mistakes>2){ctx.lineTo(130,20);} if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);} ctx.stroke(); 
             ctx.beginPath(); ctx.strokeStyle = pinkColor; if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} 
@@ -490,10 +632,50 @@
         // P4
         let activeP4 = null;
         onSnapshot(doc(db, "games", "p4_active"), (s) => { activeP4 = s.exists() ? s.data() : null; if(activeP4) renderP4(activeP4); else document.getElementById('p4-status').innerText = "Aucune partie en cours"; });
-        onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { const list = document.getElementById('p4-history-list'); list.innerHTML = ""; s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`; }); });
+        
+        onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(50)), (s) => {
+            const list = document.getElementById('p4-history-list'); list.innerHTML = "";
+            s.forEach(d => { 
+                const h = d.data(); 
+                const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : "";
+                list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`; 
+            });
+        });
+
         window.initP4 = function() { setDoc(doc(db, "games", "p4_active"), { board: Array(42).fill(0), turn: currentUser, winner: null, moves: 0, starter: currentUser }); }
-        function renderP4(game) { const grid=document.getElementById('p4-grid'); grid.innerHTML=""; const status = document.getElementById('p4-status'); const btn = document.getElementById('p4-restart-btn'); if(game.winner) { status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !"; btn.disabled = false; btn.style.opacity = "1"; } else { status.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)"); btn.disabled = true; btn.style.opacity = "0.5"; } for(let i=0; i<42; i++) { const c=document.createElement('div'); c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); c.onclick=()=>playP4(i%7); grid.appendChild(c); } }
-        window.playP4 = async function(col) { if(!activeP4||activeP4.winner) return; if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; } let board=[...activeP4.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; } if(row<0) return; const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0}; const winnerCode = checkWin(board); let winner = null; let moves = activeP4.moves + 1; if(winnerCode !== 0) { winner = winnerCode === 1 ? 'fr' : 'tw'; addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() }); } updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves }); }
+
+        function renderP4(game) {
+            const grid=document.getElementById('p4-grid'); grid.innerHTML="";
+            const status = document.getElementById('p4-status');
+            const btn = document.getElementById('p4-restart-btn');
+            
+            if(game.winner) {
+                status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !";
+                btn.disabled = false; btn.style.opacity = "1";
+            } else {
+                status.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)");
+                btn.disabled = true; btn.style.opacity = "0.5";
+            }
+            
+            for(let i=0; i<42; i++) { 
+                const c=document.createElement('div'); c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); 
+                c.onclick=()=>playP4(i%7); grid.appendChild(c); 
+            }
+        }
+
+        window.playP4 = async function(col) {
+            if(!activeP4||activeP4.winner) return;
+            if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; }
+            let board=[...activeP4.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; }
+            if(row<0) return;
+            const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0};
+            const winnerCode = checkWin(board); let winner = null; let moves = activeP4.moves + 1;
+            if(winnerCode !== 0) { 
+                winner = winnerCode === 1 ? 'fr' : 'tw'; 
+                addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() });
+            }
+            updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves });
+        }
 
         // UNO
         let activeUno = null; let pickingWild = false; let wildCardIndex = -1;
@@ -504,7 +686,7 @@
                 const h = d.data(); 
                 const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; 
                 const moves = h.moves || "?";
-                list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'}</span><span>en ${moves} coups</span></div>`; 
+                list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${moves} coups</span></div>`; 
             }); 
         });
 
@@ -711,7 +893,7 @@
         });
         window.openGallery = function(role) { const m=document.getElementById('gallery-modal'); const g=document.getElementById('modal-grid'); g.innerHTML=""; allPhotos.filter(p=>p.by===role).forEach(p=>{ 
             const dStr = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleDateString() : "";
-            g.innerHTML+=`<div id="photo-${p.id}"><img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'"><div class="photo-date">${dStr}</div>${role===currentUser?`<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>`:''}</div>`; 
+            g.innerHTML+=`<div><img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'"><div class="photo-date">${dStr}</div>${role===currentUser?`<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>`:''}</div>`; 
         }); m.style.display="block"; }
         window.closeGallery = () => document.getElementById('gallery-modal').style.display='none';
         window.closeLightbox = () => document.getElementById('lightbox').style.display='none';
