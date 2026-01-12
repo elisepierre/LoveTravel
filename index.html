@@ -12,6 +12,8 @@
     <link rel="apple-touch-icon" href="icon.jpg">
     <link rel="icon" type="image/jpeg" href="icon.jpg">
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <title>Love Travel ✈️</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&family=Pacifico&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
     
@@ -35,12 +37,28 @@
             --shadow: rgba(0,0,0,0.5); --dot-pattern: rgba(255,255,255,0.05);
             --p-shadow: rgba(0,0,0,0.5);
         }
+        
+        /* THEME ANNIVERSAIRE OVERRIDE */
+        body.birthday-theme {
+            background-image: radial-gradient(var(--pink-dark) 15%, transparent 16%), radial-gradient(var(--blue-dark) 15%, transparent 16%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            background-color: #fff5f8;
+        }
+        body.dark-mode.birthday-theme {
+            background-color: #1a050a;
+            background-image: radial-gradient(#ff4b6e 15%, transparent 16%), radial-gradient(#219ebc 15%, transparent 16%);
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; font-family: 'Outfit', sans-serif; background-color: var(--bg-body); background-image: radial-gradient(var(--dot-pattern) 1px, transparent 1px); background-size: 20px 20px; color: var(--text-main); padding-bottom: 120px; transition: background 0.3s, color 0.3s; }
         
-        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 20px 10px 20px; margin-bottom: 10px; }
+        header { display: flex; flex-direction: column; align-items: center; padding: 20px 20px 10px 20px; margin-bottom: 10px; }
+        .header-top { display: flex; justify-content: space-between; width: 100%; align-items: center; }
         .header-btn { background: var(--bg-card); border: 1px solid var(--border); width: 45px; height: 45px; border-radius: 50%; color: var(--text-main); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 10px var(--shadow); transition: 0.2s; }
         .app-title { font-family: 'Pacifico', cursive; font-size: 2.2rem; margin: 0; background: linear-gradient(to right, var(--blue-dark), var(--pink-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 0px rgba(255,255,255,0.2)); padding: 0 10px; line-height: 1.3; }
+        .bd-subtitle { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: var(--pink-dark); margin-top: -5px; display: none; font-weight: bold; }
+
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
         
         .card { background: var(--bg-card); border-radius: 25px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 25px var(--shadow); border: 1px solid var(--border); transition: 0.3s; overflow: hidden; }
@@ -233,9 +251,60 @@
         #notif { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #333; color: white; padding: 10px 20px; border-radius: 30px; z-index: 9999; transition: 0.3s; display:flex; align-items:center; gap:10px; }
         #notif.show { transform: translateX(-50%) translateY(0); }
         .hidden { display: none; }
+
+        /* --- STYLES ANNIVERSAIRE --- */
+        #bd-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92); z-index: 99999;
+            flex-direction: column; justify-content: center; align-items: center;
+            color: white; text-align: center;
+        }
+        .bd-title { font-family: 'Pacifico', cursive; font-size: 2.5rem; color: #ffeb3b; margin-bottom: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .cake-container { position: relative; width: 200px; height: 200px; display: flex; justify-content: center; align-items: flex-end; margin-bottom: 50px; }
+        .cake-base { width: 100%; height: 80px; background: linear-gradient(to bottom, #f8a5c2, #f78fb3); border-radius: 10px; position: relative; display: flex; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .cake-layer { width: 110%; height: 20px; background: #fff; border-radius: 10px; position: absolute; top: -10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        .candles-row { position: absolute; top: -110px; display: flex; gap: 30px; }
+        .candle-wrapper { position: relative; cursor: pointer; transition: 0.2s; }
+        .candle-wrapper:active { transform: scale(0.95); }
+        .candle-num { font-size: 5rem; font-weight: 800; color: #ffeb3b; text-shadow: 0 5px 0 #e1b12c; font-family: 'Outfit'; -webkit-text-stroke: 2px #333; }
+        .flame { 
+            width: 20px; height: 35px; background: radial-gradient(white, yellow, orange, red); 
+            border-radius: 50% 50% 20% 20%; position: absolute; top: -20px; left: 50%; 
+            transform: translateX(-50%); animation: flicker 0.5s infinite alternate; 
+            box-shadow: 0 0 20px orange; opacity: 1; transition: 0.5s;
+        }
+        .smoke {
+            width: 10px; height: 20px; background: rgba(255,255,255,0.5); border-radius: 50%;
+            position: absolute; top: -20px; left: 50%; opacity: 0; pointer-events: none;
+        }
+        .candle-wrapper.blown-out .flame { opacity: 0; }
+        .candle-wrapper.blown-out .smoke { animation: rise-fade 1.5s forwards; }
+        
+        @keyframes flicker { 0% { transform: translateX(-50%) scale(1); opacity: 0.9; } 100% { transform: translateX(-50%) scale(1.1); opacity: 1; } }
+        @keyframes rise-fade { 0% { opacity: 0.8; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(-50px) scale(2); } }
+
+        .bd-msg { font-size: 1.1rem; opacity: 0.8; margin-top: 20px; font-style: italic; max-width: 80%; line-height: 1.5; }
+        .btn-enter { margin-top: 30px; background: white; color: #333; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; font-size: 1.2rem; cursor: pointer; display: none; animation: slideUp 0.5s; box-shadow: 0 0 20px white; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
 </head>
 <body>
+
+    <div id="bd-overlay">
+        <div class="bd-title" id="bd-title-text">Joyeux Anniversaire !</div>
+        <div class="cake-container">
+            <div class="candles-row" id="candles-area">
+                </div>
+            <div class="cake-base"><div class="cake-layer"></div></div>
+        </div>
+        <div class="bd-msg">Fais un vœu et souffle (clique) sur les bougies ! 🕯️</div>
+        <button class="btn-enter" onclick="enterBirthdayApp()">🎁 Entrer dans l'app</button>
+    </div>
 
     <div id="notif">💋 Bisou reçu !</div>
 
@@ -246,9 +315,12 @@
     <div id="uno-color-modal"><div class="color-picker-box"><h3>Choisis une couleur</h3><div class="cp-options"><div class="cp-circle" style="background:var(--uno-red)" onclick="chooseUnoColor('red')"></div><div class="cp-circle" style="background:var(--uno-blue)" onclick="chooseUnoColor('blue')"></div><div class="cp-circle" style="background:var(--uno-green)" onclick="chooseUnoColor('green')"></div><div class="cp-circle" style="background:var(--uno-yellow)" onclick="chooseUnoColor('yellow')"></div></div></div></div>
 
     <header>
-        <button class="header-btn" id="user-toggle-btn" onclick="switchUser()">🇹🇼</button>
-        <h1 class="app-title">Love Travel</h1>
-        <button class="header-btn" onclick="toggleTheme()">🌗</button>
+        <div class="header-top">
+            <button class="header-btn" id="user-toggle-btn" onclick="switchUser()">🇹🇼</button>
+            <h1 class="app-title">Love Travel</h1>
+            <button class="header-btn" onclick="toggleTheme()">🌗</button>
+        </div>
+        <div id="bd-subtitle" class="bd-subtitle"></div>
     </header>
 
     <div class="container">
@@ -367,7 +439,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon" style="width:40px; height:40px;">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v54 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v55 • janvier 2026</div>
         </div>
     </div>
 
@@ -381,6 +453,123 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // --- GESTION ANNIVERSAIRES (V55) ---
+        // Liste des dates
+        const birthdays = [
+            { day: 12, month: 1, name: "Test", age: 21 },
+            { day: 7, month: 3, name: "Théo", age: 21 },
+            { day: 24, month: 4, name: "Elise", age: 24 }
+        ];
+
+        let activeBirthday = null;
+        let candlesBlown = 0;
+
+        // Vérification de la date
+        function checkBirthday() {
+            const today = new Date();
+            const d = today.getDate();
+            const m = today.getMonth() + 1; // 0-11 to 1-12
+            
+            // On cherche si aujourd'hui est un anniv
+            activeBirthday = birthdays.find(b => b.day === d && b.month === m);
+            
+            if (activeBirthday) {
+                initBirthdayMode();
+            }
+        }
+
+        function initBirthdayMode() {
+            // Affichage Overlay
+            const overlay = document.getElementById('bd-overlay');
+            overlay.style.display = "flex";
+            document.getElementById('bd-title-text').innerText = "Joyeux Anniversaire " + activeBirthday.name + " !";
+            
+            // Génération des bougies selon l'âge
+            const ageStr = activeBirthday.age.toString(); // ex: "21"
+            const area = document.getElementById('candles-area');
+            area.innerHTML = "";
+            
+            for(let i=0; i<ageStr.length; i++) {
+                const digit = ageStr[i];
+                const wrapper = document.createElement('div');
+                wrapper.className = 'candle-wrapper';
+                wrapper.id = 'candle-' + i;
+                wrapper.onclick = () => blowCandle(i);
+                
+                wrapper.innerHTML = `
+                    <div class="flame"></div>
+                    <div class="smoke"></div>
+                    <div class="candle-num">${digit}</div>
+                `;
+                area.appendChild(wrapper);
+            }
+        }
+
+        window.blowCandle = function(index) {
+            const c = document.getElementById('candle-' + index);
+            if(c.classList.contains('blown-out')) return;
+
+            c.classList.add('blown-out');
+            candlesBlown++;
+
+            // Audio souffle (optionnel, simple bruit blanc ou juste visuel)
+            
+            // Si toutes bougies éteintes
+            if(candlesBlown >= activeBirthday.age.toString().length) {
+                setTimeout(celebrate, 500);
+            }
+        }
+
+        function celebrate() {
+            // Audio Applaudissements
+            const audio = new Audio("https://actions.google.com/sounds/v1/crowds/crowd_cheering.ogg");
+            audio.volume = 0.5;
+            audio.play().catch(e=>console.log("Audio autoplay bloqué"));
+
+            // Confetti
+            var duration = 3000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff9eb5', '#8ecae6', '#ffeb3b']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff9eb5', '#8ecae6', '#ffeb3b']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            // Afficher bouton entrée
+            document.querySelector('.btn-enter').style.display = "block";
+        }
+
+        window.enterBirthdayApp = function() {
+            document.getElementById('bd-overlay').style.display = "none";
+            // Activer le thème cadeau
+            document.body.classList.add('birthday-theme');
+            // Changer le titre
+            const sub = document.getElementById('bd-subtitle');
+            sub.style.display = "block";
+            sub.innerText = `Les ${activeBirthday.age} ans de ${activeBirthday.name} ❤️`;
+        }
+
+        // Lancer la vérif au chargement
+        checkBirthday();
+
+
+        // --- LOGIQUE EXISTANTE (V54) ---
         let currentUser = localStorage.getItem('userRole') || 'tw';
         if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
         window.toggleTheme = function() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
