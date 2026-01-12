@@ -38,16 +38,17 @@
             --p-shadow: rgba(0,0,0,0.5);
         }
         
-        /* THEME ANNIVERSAIRE OVERRIDE */
+        /* THEME ANNIVERSAIRE OVERRIDE (V56 - Plus doux et lisible) */
         body.birthday-theme {
-            background-image: radial-gradient(var(--pink-dark) 15%, transparent 16%), radial-gradient(var(--blue-dark) 15%, transparent 16%);
-            background-size: 30px 30px;
-            background-position: 0 0, 15px 15px;
-            background-color: #fff5f8;
+            background-color: #fffdf5; /* Crème très clair */
+            /* Petits confettis statiques très discrets en background */
+            background-image: radial-gradient(#ff9eb5 2px, transparent 2px), radial-gradient(#8ecae6 2px, transparent 2px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
         }
         body.dark-mode.birthday-theme {
-            background-color: #1a050a;
-            background-image: radial-gradient(#ff4b6e 15%, transparent 16%), radial-gradient(#219ebc 15%, transparent 16%);
+            background-color: #151010;
+            background-image: radial-gradient(#ff4b6e 2px, transparent 2px), radial-gradient(#219ebc 2px, transparent 2px);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -57,7 +58,23 @@
         .header-top { display: flex; justify-content: space-between; width: 100%; align-items: center; }
         .header-btn { background: var(--bg-card); border: 1px solid var(--border); width: 45px; height: 45px; border-radius: 50%; color: var(--text-main); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 10px var(--shadow); transition: 0.2s; }
         .app-title { font-family: 'Pacifico', cursive; font-size: 2.2rem; margin: 0; background: linear-gradient(to right, var(--blue-dark), var(--pink-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 0px rgba(255,255,255,0.2)); padding: 0 10px; line-height: 1.3; }
-        .bd-subtitle { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: var(--pink-dark); margin-top: -5px; display: none; font-weight: bold; }
+        
+        /* SOUS-TITRE ANNIVERSAIRE (Optimisé lisibilité) */
+        .bd-subtitle { 
+            font-family: 'Dancing Script', cursive; 
+            font-size: 1.3rem; 
+            color: var(--pink-dark); 
+            margin-top: 5px; 
+            display: none; 
+            font-weight: bold;
+            background: var(--bg-card);
+            padding: 5px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px var(--shadow);
+            border: 1px solid var(--pink);
+            transform: rotate(-2deg);
+            z-index: 10;
+        }
 
         .container { max-width: 600px; margin: 0 auto; padding: 0 20px; }
         
@@ -252,7 +269,7 @@
         #notif.show { transform: translateX(-50%) translateY(0); }
         .hidden { display: none; }
 
-        /* --- STYLES ANNIVERSAIRE --- */
+        /* --- STYLES ANNIVERSAIRE (V56 CORRECTED) --- */
         #bd-overlay {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -263,29 +280,49 @@
         .bd-title { font-family: 'Pacifico', cursive; font-size: 2.5rem; color: #ffeb3b; margin-bottom: 20px; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
-        .cake-container { position: relative; width: 200px; height: 200px; display: flex; justify-content: center; align-items: flex-end; margin-bottom: 50px; }
-        .cake-base { width: 100%; height: 80px; background: linear-gradient(to bottom, #f8a5c2, #f78fb3); border-radius: 10px; position: relative; display: flex; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .cake-container { position: relative; width: 220px; height: 200px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; margin-bottom: 50px; }
+        .cake-base { width: 100%; height: 80px; background: linear-gradient(to bottom, #f8a5c2, #f78fb3); border-radius: 10px; position: relative; display: flex; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 1; }
         .cake-layer { width: 110%; height: 20px; background: #fff; border-radius: 10px; position: absolute; top: -10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        .candles-row { position: absolute; top: -110px; display: flex; gap: 30px; }
-        .candle-wrapper { position: relative; cursor: pointer; transition: 0.2s; }
+        /* BOUGIES SUR LE GATEAU */
+        .candles-row { 
+            display: flex; gap: 30px; 
+            position: relative; 
+            z-index: 2; /* Devant le gâteau si besoin, mais ici on veut qu'elles sortent du haut */
+            margin-bottom: -10px; /* Enfoncer légèrement dans le glaçage */
+        }
+        .candle-wrapper { position: relative; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; }
         .candle-wrapper:active { transform: scale(0.95); }
-        .candle-num { font-size: 5rem; font-weight: 800; color: #ffeb3b; text-shadow: 0 5px 0 #e1b12c; font-family: 'Outfit'; -webkit-text-stroke: 2px #333; }
+        .candle-num { 
+            font-size: 5rem; font-weight: 800; color: #ffeb3b; 
+            text-shadow: 0 5px 0 #e1b12c; font-family: 'Outfit'; 
+            -webkit-text-stroke: 2px #333; line-height: 1;
+        }
+        
+        /* FLAMME & FUMÉE (V56 Améliorée) */
         .flame { 
             width: 20px; height: 35px; background: radial-gradient(white, yellow, orange, red); 
-            border-radius: 50% 50% 20% 20%; position: absolute; top: -20px; left: 50%; 
-            transform: translateX(-50%); animation: flicker 0.5s infinite alternate; 
-            box-shadow: 0 0 20px orange; opacity: 1; transition: 0.5s;
+            border-radius: 50% 50% 20% 20%; 
+            margin-bottom: 5px; /* Espace entre flamme et bougie */
+            animation: flicker 0.5s infinite alternate; 
+            box-shadow: 0 0 20px orange; opacity: 1; 
+            transition: transform 0.2s, opacity 0.2s;
+            transform-origin: bottom center;
         }
         .smoke {
-            width: 10px; height: 20px; background: rgba(255,255,255,0.5); border-radius: 50%;
-            position: absolute; top: -20px; left: 50%; opacity: 0; pointer-events: none;
+            width: 8px; height: 8px; background: rgba(200,200,200,0.8); border-radius: 50%;
+            position: absolute; top: 10px; opacity: 0; pointer-events: none;
         }
-        .candle-wrapper.blown-out .flame { opacity: 0; }
-        .candle-wrapper.blown-out .smoke { animation: rise-fade 1.5s forwards; }
         
-        @keyframes flicker { 0% { transform: translateX(-50%) scale(1); opacity: 0.9; } 100% { transform: translateX(-50%) scale(1.1); opacity: 1; } }
-        @keyframes rise-fade { 0% { opacity: 0.8; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(-50px) scale(2); } }
+        /* ETAT ETEINT */
+        .candle-wrapper.blown-out .flame { opacity: 0; transform: scale(0); }
+        .candle-wrapper.blown-out .smoke { animation: puff 1.5s forwards; }
+        
+        @keyframes flicker { 0% { transform: scale(1); opacity: 0.9; } 100% { transform: scale(1.1); opacity: 1; } }
+        @keyframes puff { 
+            0% { opacity: 0.8; transform: translateY(0) scale(1); } 
+            100% { opacity: 0; transform: translateY(-40px) scale(3); } 
+        }
 
         .bd-msg { font-size: 1.1rem; opacity: 0.8; margin-top: 20px; font-style: italic; max-width: 80%; line-height: 1.5; }
         .btn-enter { margin-top: 30px; background: white; color: #333; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; font-size: 1.2rem; cursor: pointer; display: none; animation: slideUp 0.5s; box-shadow: 0 0 20px white; }
@@ -439,7 +476,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon" style="width:40px; height:40px;">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v55 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v56 • janvier 2026</div>
         </div>
     </div>
 
@@ -453,7 +490,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- GESTION ANNIVERSAIRES (V55) ---
+        // --- GESTION ANNIVERSAIRES (V56) ---
         // Liste des dates
         const birthdays = [
             { day: 12, month: 1, name: "Test", age: 21 },
@@ -497,8 +534,8 @@
                 wrapper.onclick = () => blowCandle(i);
                 
                 wrapper.innerHTML = `
-                    <div class="flame"></div>
                     <div class="smoke"></div>
+                    <div class="flame"></div>
                     <div class="candle-num">${digit}</div>
                 `;
                 area.appendChild(wrapper);
@@ -526,7 +563,7 @@
             audio.volume = 0.5;
             audio.play().catch(e=>console.log("Audio autoplay bloqué"));
 
-            // Confetti
+            // Confetti (FIX V56: zIndex très haut)
             var duration = 3000;
             var end = Date.now() + duration;
 
@@ -536,14 +573,16 @@
                     angle: 60,
                     spread: 55,
                     origin: { x: 0 },
-                    colors: ['#ff9eb5', '#8ecae6', '#ffeb3b']
+                    colors: ['#ff9eb5', '#8ecae6', '#ffeb3b'],
+                    zIndex: 200000 // IMPORTANT pour voir les confettis
                 });
                 confetti({
                     particleCount: 5,
                     angle: 120,
                     spread: 55,
                     origin: { x: 1 },
-                    colors: ['#ff9eb5', '#8ecae6', '#ffeb3b']
+                    colors: ['#ff9eb5', '#8ecae6', '#ffeb3b'],
+                    zIndex: 200000
                 });
 
                 if (Date.now() < end) {
