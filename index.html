@@ -25,8 +25,8 @@
             --shadow: rgba(0,0,0,0.05); --dot-pattern: #ffe4e1;
             --voyage-border: linear-gradient(135deg, var(--blue), var(--pink));
             --p-shadow: rgba(0,0,0,0.2);
-            /* UNO COLORS */
-            --uno-red: #ff5555; --uno-blue: #5555ff; --uno-green: #55aa55; --uno-yellow: #ffcc00; --uno-black: #333;
+            /* UNO PASTEL */
+            --uno-red: #ffadad; --uno-blue: #a0c4ff; --uno-green: #caffbf; --uno-yellow: #fdffb6; --uno-black: #555;
         }
         body.dark-mode {
             --bg-body: #121212; --bg-card: #1e1e1e;
@@ -99,7 +99,6 @@
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .game-btn { flex: 1; padding: 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-weight: bold; cursor: pointer; transition: 0.2s; text-align: center; font-size: 0.9rem; box-shadow: 0 4px 5px rgba(0,0,0,0.05); }
         .game-btn:active { transform:scale(0.95); }
-        .game-btn.active-game { border: 2px solid var(--pink-dark); background: #fff0f5; color: var(--pink-dark); }
         
         .game-block { display: none; background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin-bottom: 20px; animation: slideDown 0.3s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -107,7 +106,7 @@
         .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed var(--border); padding-bottom: 5px; }
         .game-title-text { font-weight: 800; text-transform: uppercase; color: var(--text-main); display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
         .game-close-btn { background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--text-sub); }
-        .score-pill { background: var(--bg-card); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; color: var(--pink-dark); }
+        
         .status-msg { text-align: center; font-style: italic; color: var(--text-sub); margin: 10px 0; font-size: 0.9rem; min-height: 20px; }
 
         .history-box { margin-top: 15px; max-height: 100px; overflow-y: auto; font-size: 0.75rem; border-top: 1px solid var(--border); padding-top: 10px; }
@@ -130,16 +129,21 @@
         .uno-board { text-align: center; }
         .uno-top-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.8rem; font-weight: bold; color: var(--text-sub); }
         .uno-table { background: rgba(0,0,0,0.03); border-radius: 20px; padding: 20px; min-height: 150px; display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 20px; }
-        .uno-card { width: 60px; height: 90px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 1.2rem; color: white; text-shadow: 1px 1px 0 rgba(0,0,0,0.5); box-shadow: 0 4px 8px rgba(0,0,0,0.2); cursor: pointer; user-select: none; border: 2px solid white; position: relative; }
+        .uno-card { width: 60px; height: 90px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 1.2rem; color: #555; text-shadow: none; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; user-select: none; border: 2px solid white; position: relative; transition:0.2s; }
+        .uno-card:active { transform:scale(1.1); }
         .uno-card.red { background: var(--uno-red); }
         .uno-card.blue { background: var(--uno-blue); }
         .uno-card.green { background: var(--uno-green); }
         .uno-card.yellow { background: var(--uno-yellow); }
-        .uno-card.black { background: var(--uno-black); }
-        .uno-card.back { background: #333; background-image: repeating-linear-gradient(45deg, #444 0, #444 10px, #333 10px, #333 20px); }
+        .uno-card.black { background: var(--uno-black); color:white; }
+        .uno-card.back { background: #333; background-image: repeating-linear-gradient(45deg, #444 0, #444 10px, #333 10px, #333 20px); color:transparent; }
         .uno-hand { display: flex; overflow-x: auto; padding: 10px; gap: 5px; min-height: 110px; background: rgba(255,255,255,0.5); border-radius: 15px; }
-        .uno-hand::-webkit-scrollbar { height: 5px; }
-        .uno-hand::-webkit-scrollbar-thumb { background: #ccc; border-radius: 5px; }
+        
+        /* UNO COLOR PICKER */
+        #uno-color-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9000; justify-content:center; align-items:center; }
+        .color-picker-box { background:white; padding:20px; border-radius:15px; text-align:center; }
+        .cp-options { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px; }
+        .cp-circle { width:60px; height:60px; border-radius:50%; cursor:pointer; border:2px solid #ddd; }
 
         /* LETTRES */
         .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -216,6 +220,8 @@
     <div id="letter-modal" style="display:none;"><div class="real-letter"><button class="letter-close" onclick="closeLetter()">✕</button><h2 id="modal-letter-title"></h2><p id="modal-letter-content"></p><div class="letter-stamp">POSTE<br>AMOUR</div></div></div>
     <div id="gallery-modal"><div class="modal-header"><h2 style="color:white;font-family:'Outfit'">Galerie</h2><button onclick="closeGallery()" style="background:none;border:none;color:white;font-size:2rem;">✕</button></div><div class="modal-grid" id="modal-grid"></div></div>
     <div id="lightbox" onclick="closeLightbox()"><button class="lightbox-close">✕</button><img id="lightbox-img" src=""></div>
+    
+    <div id="uno-color-modal"><div class="color-picker-box"><h3>Choisis une couleur</h3><div class="cp-options"><div class="cp-circle" style="background:var(--uno-red)" onclick="chooseUnoColor('red')"></div><div class="cp-circle" style="background:var(--uno-blue)" onclick="chooseUnoColor('blue')"></div><div class="cp-circle" style="background:var(--uno-green)" onclick="chooseUnoColor('green')"></div><div class="cp-circle" style="background:var(--uno-yellow)" onclick="chooseUnoColor('yellow')"></div></div></div></div>
 
     <header>
         <button class="header-btn" id="user-toggle-btn" onclick="switchUser()">🇹🇼</button>
@@ -240,13 +246,6 @@
             </div>
         </div>
 
-        <div class="card" id="card-music">
-            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎧</span> Vibe</div></div>
-            <div class="card-content">
-                <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-            </div>
-        </div>
-
         <div class="card" id="card-mood">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>☁️</span> Nos Moods</div></div>
             <div class="card-content">
@@ -261,16 +260,6 @@
                     <div class="mood-btn" onclick="updateMood('😋', 'Je mange, miam !', 3)">😋</div>
                     <div class="mood-btn" onclick="updateMood('🥵', 'Envie de toi...', 4)">🥵</div>
                     <div class="mood-btn" onclick="customMood()" style="color:var(--pink);">✏️</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card" id="card-album">
-            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📸</span> Nos Albums</div></div>
-            <div class="card-content">
-                <div class="polaroid-container">
-                    <div class="polaroid" onclick="openGallery('fr')"><img id="polaroid-img-fr" class="polaroid-img"><div class="polaroid-label">Théo</div><div id="btn-add-fr" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-fr').click()">+ Ajouter photo</div><input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this,'fr')" style="display:none;"></div>
-                    <div class="polaroid" onclick="openGallery('tw')"><img id="polaroid-img-tw" class="polaroid-img"><div class="polaroid-label">Elise</div><div id="btn-add-tw" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-tw').click()">+ Ajouter photo</div><input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this,'tw')" style="display:none;"></div>
                 </div>
             </div>
         </div>
@@ -295,22 +284,53 @@
             <div class="card-content"><div class="input-group"><input type="text" id="book-title" class="input-field" placeholder="Titre..."><input type="number" id="book-pages" class="input-field" style="width:80px;" placeholder="Total P."><button onclick="addBook()" class="btn-action">+</button></div><div id="book-list"></div></div>
         </div>
 
+        <div class="card" id="card-album">
+            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📸</span> Nos Albums</div></div>
+            <div class="card-content">
+                <div class="polaroid-container">
+                    <div class="polaroid" onclick="openGallery('fr')"><img id="polaroid-img-fr" class="polaroid-img"><div class="polaroid-label">Théo</div><div id="btn-add-fr" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-fr').click()">+ Ajouter photo</div><input type="file" id="file-fr" accept="image/*" onchange="handlePhotoUpload(this,'fr')" style="display:none;"></div>
+                    <div class="polaroid" onclick="openGallery('tw')"><img id="polaroid-img-tw" class="polaroid-img"><div class="polaroid-label">Elise</div><div id="btn-add-tw" class="add-photo-btn" onclick="event.stopPropagation();document.getElementById('file-tw').click()">+ Ajouter photo</div><input type="file" id="file-tw" accept="image/*" onchange="handlePhotoUpload(this,'tw')" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="card" id="card-games">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div></div>
             <div class="card-content">
+                
                 <div class="game-selector">
                     <button onclick="toggleGame('pendu')" class="game-btn">Pendu</button>
                     <button onclick="toggleGame('p4')" class="game-btn">Puissance 4</button>
-                    <button onclick="toggleGame('uno')" class="game-btn" style="color:orange;">UNO 🌈</button>
+                    <button onclick="toggleGame('uno')" class="game-btn">Uno</button>
                 </div>
                 
-                <div id="pendu-box" class="game-block"><div class="game-header"><div class="game-title-text">🔤 Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div><canvas id="pendu-canvas" width="200" height="150"></canvas><div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div><div id="pendu-status" class="status-msg">En attente...</div><div id="pendu-setup" style="margin-top:10px;"><input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)"><button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button></div><div id="pendu-restart-area" style="display:none;margin-top:10px;"><button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button></div><div id="pendu-keyboard" class="keyboard" style="display:none;"></div><div class="history-box" id="pendu-history-list"></div></div>
-                
-                <div id="p4-box" class="game-block"><div class="game-header"><div class="game-title-text">🔴 Puissance 4</div><div class="score-pill" id="score-p4">🏆 Théo: 0 | Elise: 0</div><button class="game-close-btn" onclick="toggleGame('p4')">✕</button></div><div id="p4-status" class="status-msg">En attente...</div><button id="p4-restart-btn" onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--pink);" disabled>Nouvelle Partie</button><div class="p4-grid" id="p4-grid"></div><div class="history-box" id="p4-history-list"></div></div>
+                <div id="pendu-box" class="game-block">
+                    <div class="game-header"><div class="game-title-text">🔤 Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div>
+                    <canvas id="pendu-canvas" width="200" height="150"></canvas>
+                    <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
+                    <div id="pendu-status" class="status-msg">En attente...</div>
+                    <div id="pendu-setup" style="margin-top:10px;">
+                        <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)">
+                        <button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button>
+                    </div>
+                    <div id="pendu-restart-area" style="display:none;margin-top:10px;">
+                        <button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button>
+                    </div>
+                    <div id="pendu-keyboard" class="keyboard" style="display:none;"></div>
+                    <div class="history-box" id="pendu-history-list"></div>
+                </div>
+
+                <div id="p4-box" class="game-block">
+                    <div class="game-header"><div class="game-title-text">🔴 Puissance 4</div><button class="game-close-btn" onclick="toggleGame('p4')">✕</button></div>
+                    <div id="p4-status" class="status-msg">En attente...</div>
+                    <button id="p4-restart-btn" onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--blue-dark);" disabled>Nouvelle Partie</button>
+                    <div class="p4-grid" id="p4-grid"></div>
+                    <div class="history-box" id="p4-history-list"></div>
+                </div>
 
                 <div id="uno-box" class="game-block">
-                    <div class="game-header"><div class="game-title-text">🌈 UNO</div><button class="game-close-btn" onclick="toggleGame('uno')">✕</button></div>
-                    <div id="uno-status" class="status-msg" style="font-weight:bold;">Bienvenue au Uno !</div>
+                    <div class="game-header"><div class="game-title-text">🃏 UNO</div><button class="game-close-btn" onclick="toggleGame('uno')">✕</button></div>
+                    <div id="uno-status" class="status-msg">Bienvenue au Uno !</div>
                     <div class="uno-board">
                         <div class="uno-top-info"><span id="uno-opponent-name">Adversaire</span> : <span id="uno-opponent-count">0</span> cartes</div>
                         <div class="uno-table">
@@ -319,8 +339,10 @@
                         </div>
                         <div class="uno-hand" id="uno-player-hand"></div>
                     </div>
-                    <button onclick="initUno()" class="btn-action" style="width:100%;margin-top:10px;background:orange;">Nouvelle Partie</button>
+                    <button id="uno-restart-btn" onclick="initUno()" class="btn-action" style="width:100%;margin-top:10px;background:var(--blue-dark);" disabled>Nouvelle Partie</button>
+                    <div class="history-box" id="uno-history-list"></div>
                 </div>
+
             </div>
         </div>
 
@@ -331,7 +353,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon" style="width:40px; height:40px;">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v51 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v52 • janvier 2026</div>
         </div>
     </div>
 
@@ -382,45 +404,56 @@
             });
         }
 
-        // PENDU (Code V50)
+        // PENDU
         let activePendu = null;
         onSnapshot(doc(db, "games", "pendu_active"), (s) => { activePendu = s.exists() ? s.data() : { state:'setup' }; renderPendu(activePendu); });
         onSnapshot(query(collection(db, "games_pendu_history"), orderBy("timestamp", "desc"), limit(50)), (s) => {
             const list = document.getElementById('pendu-history-list'); list.innerHTML = "";
             s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose'; const setter = h.setter === 'fr' ? 'Théo' : 'Elise'; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`; });
         });
-        function renderPendu(game) { const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('pendu-status'); const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark'); const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark'); ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.beginPath(); ctx.strokeStyle = mainColor; if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} if(game.mistakes>2){ctx.lineTo(130,20);} if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);} ctx.stroke(); ctx.beginPath(); ctx.strokeStyle = pinkColor; if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} ctx.beginPath(); if(game.mistakes>6){ctx.moveTo(130,80);ctx.lineTo(110,95);} if(game.mistakes>7){ctx.moveTo(130,80);ctx.lineTo(150,95);} if(game.mistakes>8){ctx.moveTo(130,110);ctx.lineTo(115,135);} if(game.mistakes>9){ctx.moveTo(130,110);ctx.lineTo(145,135);} ctx.stroke(); if(game.mistakes>10){ctx.font="14px Arial"; ctx.fillStyle=pinkColor; ctx.textAlign="center"; ctx.fillText("x x",130,60);} const restartArea = document.getElementById('pendu-restart-area'); const setupArea = document.getElementById('pendu-setup'); const keyboard = document.getElementById('pendu-keyboard'); if(game.state==='setup'){ status.innerText="En attente d'un mot..."; setupArea.style.display='block'; keyboard.style.display='none'; restartArea.style.display='none'; document.getElementById('pendu-word-display').innerText="???"; } else { setupArea.style.display='none'; let d=""; for(let c of game.word) d+=(game.guessed.includes(c)?c:"_")+" "; document.getElementById('pendu-word-display').innerText=d; const isCreator = game.creator === currentUser; if(game.state==='playing') { status.innerText = isCreator ? "L'autre devine..." : "Devine !"; keyboard.style.display = 'flex'; restartArea.style.display='none'; let k=""; "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l=>{ const disabled = isCreator || game.guessed.includes(l) ? "disabled" : ""; k+=`<button class="key-btn" onclick="playPenduMove('${l}')" ${disabled}>${l}</button>`; }); keyboard.innerHTML=k; } else { status.innerText = game.state==='win' ? "GAGNÉ ! 🎉" : ("PERDU... Le mot était : "+game.word); keyboard.style.display='none'; restartArea.style.display='block'; } } }
+        function renderPendu(game) {
+            const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('pendu-status'); const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark'); const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
+            ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.beginPath(); ctx.strokeStyle = mainColor;
+            if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} if(game.mistakes>2){ctx.lineTo(130,20);} if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);} ctx.stroke(); 
+            ctx.beginPath(); ctx.strokeStyle = pinkColor; if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} 
+            ctx.beginPath(); if(game.mistakes>6){ctx.moveTo(130,80);ctx.lineTo(110,95);} if(game.mistakes>7){ctx.moveTo(130,80);ctx.lineTo(150,95);} if(game.mistakes>8){ctx.moveTo(130,110);ctx.lineTo(115,135);} if(game.mistakes>9){ctx.moveTo(130,110);ctx.lineTo(145,135);} ctx.stroke();
+            if(game.mistakes>10){ctx.font="14px Arial"; ctx.fillStyle=pinkColor; ctx.textAlign="center"; ctx.fillText("x x",130,60);} 
+            const restartArea = document.getElementById('pendu-restart-area'); const setupArea = document.getElementById('pendu-setup'); const keyboard = document.getElementById('pendu-keyboard');
+            if(game.state==='setup'){ status.innerText="En attente d'un mot..."; setupArea.style.display='block'; keyboard.style.display='none'; restartArea.style.display='none'; document.getElementById('pendu-word-display').innerText="???"; } else { setupArea.style.display='none'; let d=""; for(let c of game.word) d+=(game.guessed.includes(c)?c:"_")+" "; document.getElementById('pendu-word-display').innerText=d; const isCreator = game.creator === currentUser; if(game.state==='playing') { status.innerText = isCreator ? "L'autre devine..." : "Devine !"; keyboard.style.display = 'flex'; restartArea.style.display='none'; let k=""; "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l=>{ const disabled = isCreator || game.guessed.includes(l) ? "disabled" : ""; k+=`<button class="key-btn" onclick="playPenduMove('${l}')" ${disabled}>${l}</button>`; }); keyboard.innerHTML=k; } else { status.innerText = game.state==='win' ? "GAGNÉ ! 🎉" : ("PERDU... Le mot était : "+game.word); keyboard.style.display='none'; restartArea.style.display='block'; } }
+        }
         window.startPendu=function(){const w=document.getElementById('pendu-secret').value.toUpperCase().trim(); if(w) setDoc(doc(db,"games","pendu_active"),{state:'playing',word:w,guessed:[],mistakes:0, creator:currentUser});}
         window.startPenduSetup=function(){ setDoc(doc(db,"games","pendu_active"),{state:'setup',word:"",guessed:[],mistakes:0, creator:""}); }
         window.playPenduMove=async function(l){ if(!activePendu||activePendu.state!=='playing')return; const ng=[...activePendu.guessed,l]; let nm=activePendu.mistakes; if(!activePendu.word.includes(l))nm++; let ns='playing'; let save=false; if(nm>=11) { ns='loose'; save=true; } else if(activePendu.word.split('').every(c=>ng.includes(c))) { ns='win'; save=true; } await updateDoc(doc(db,"games","pendu_active"),{guessed:ng,mistakes:nm,state:ns}); if(save) addDoc(collection(db, "games_pendu_history"), { word: activePendu.word, setter: activePendu.creator, result: ns, timestamp: serverTimestamp() }); }
 
-        // P4 (Code V50)
+        // P4
         let activeP4 = null;
         onSnapshot(doc(db, "games", "p4_active"), (s) => { activeP4 = s.exists() ? s.data() : null; if(activeP4) renderP4(activeP4); else document.getElementById('p4-status').innerText = "Aucune partie en cours"; });
-        onSnapshot(doc(db, "games", "p4_scores"), (s) => { const sc = s.exists() ? s.data() : {fr:0, tw:0}; document.getElementById('score-p4').innerText = `🏆 Théo: ${sc.fr} | Elise: ${sc.tw}`; });
         onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { const list = document.getElementById('p4-history-list'); list.innerHTML = ""; s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`; }); });
         window.initP4 = function() { setDoc(doc(db, "games", "p4_active"), { board: Array(42).fill(0), turn: currentUser, winner: null, moves: 0, starter: currentUser }); }
         function renderP4(game) { const grid=document.getElementById('p4-grid'); grid.innerHTML=""; const status = document.getElementById('p4-status'); const btn = document.getElementById('p4-restart-btn'); if(game.winner) { status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !"; btn.disabled = false; btn.style.opacity = "1"; } else { status.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)"); btn.disabled = true; btn.style.opacity = "0.5"; } for(let i=0; i<42; i++) { const c=document.createElement('div'); c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); c.onclick=()=>playP4(i%7); grid.appendChild(c); } }
-        window.playP4 = async function(col) { if(!activeP4||activeP4.winner) return; if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; } let board=[...activeP4.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; } if(row<0) return; const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0}; const winnerCode = checkWin(board); let winner = null; let moves = activeP4.moves + 1; if(winnerCode !== 0) { winner = winnerCode === 1 ? 'fr' : 'tw'; const scoreRef = doc(db, "games", "p4_scores"); const scoreSnap = await getDoc(scoreRef); const scores = scoreSnap.exists() ? scoreSnap.data() : {fr:0, tw:0}; scores[winner]++; setDoc(scoreRef, scores); addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() }); } updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves }); }
+        window.playP4 = async function(col) { if(!activeP4||activeP4.winner) return; if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; } let board=[...activeP4.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; } if(row<0) return; const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0}; const winnerCode = checkWin(board); let winner = null; let moves = activeP4.moves + 1; if(winnerCode !== 0) { winner = winnerCode === 1 ? 'fr' : 'tw'; addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() }); } updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves }); }
 
-        // UNO (LOGIC LITE SYNC)
+        // UNO (LOGIC UPDATED)
         let activeUno = null;
-        onSnapshot(doc(db, "games", "uno_active"), (s) => { activeUno = s.exists() ? s.data() : null; if(activeUno) renderUno(activeUno); });
+        let pickingWild = false;
+        let wildCardIndex = -1;
+        
+        onSnapshot(doc(db, "games", "uno_active"), (s) => { activeUno = s.exists() ? s.data() : null; if(activeUno) renderUno(activeUno); else document.getElementById('uno-status').innerText = "Aucune partie en cours"; });
+        onSnapshot(query(collection(db, "games_uno_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { const list = document.getElementById('uno-history-list'); list.innerHTML = ""; s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span></div>`; }); });
 
         window.initUno = function() {
-            // Simplified Deck: 2 Colors (Red/Blue) for demo to keep it playable fast or Full? Let's do Full Simplified
-            // Colors: red, blue, green, yellow. Values: 0-9. Special: +2 (p2), skip (s), wild (w)
-            // Code format: "red-5", "blue-s", "wild-w", "green-p2"
             const colors = ['red', 'blue', 'green', 'yellow'];
             const values = ['0','1','2','3','4','5','6','7','8','9','p2','s'];
             let deck = [];
-            colors.forEach(c => values.forEach(v => { deck.push(`${c}-${v}`); deck.push(`${c}-${v}`); })); // x2 cards
-            deck.push("black-w", "black-w", "black-w", "black-w"); // 4 wilds
-            deck.sort(() => Math.random() - 0.5); // Shuffle
+            colors.forEach(c => values.forEach(v => { deck.push(`${c}-${v}`); deck.push(`${c}-${v}`); }));
+            deck.push("black-w", "black-w", "black-w", "black-w");
+            deck.push("black-p4", "black-p4", "black-p4", "black-p4"); // +4
+            deck.sort(() => Math.random() - 0.5);
 
             const hand_fr = deck.splice(0, 7);
             const hand_tw = deck.splice(0, 7);
-            const discard = [deck.shift()]; // Start card
+            const discard = [deck.shift()];
+            // If start card is special, ignore effect for simplicity or handle it. Here ignore.
 
             setDoc(doc(db, "games", "uno_active"), {
                 deck: deck, discard: discard, hand_fr: hand_fr, hand_tw: hand_tw, turn: currentUser, winner: null
@@ -428,17 +461,23 @@
         }
 
         function renderUno(game) {
-            document.getElementById('uno-status').innerText = game.winner ? `GAGNANT : ${game.winner==='fr'?'Théo':'Elise'} !` : (game.turn === currentUser ? "À toi de jouer !" : "Tour de l'adversaire...");
+            const btn = document.getElementById('uno-restart-btn');
+            if(game.winner) {
+                document.getElementById('uno-status').innerText = `GAGNANT : ${game.winner==='fr'?'Théo':'Elise'} !`;
+                btn.disabled = false; btn.style.opacity = "1";
+            } else {
+                document.getElementById('uno-status').innerText = (game.turn === currentUser ? "À toi de jouer !" : "Tour de l'adversaire...");
+                btn.disabled = true; btn.style.opacity = "0.5";
+            }
+            
             document.getElementById('uno-opponent-name').innerText = currentUser==='fr'?'Elise':'Théo';
             document.getElementById('uno-opponent-count').innerText = currentUser==='fr' ? game.hand_tw.length : game.hand_fr.length;
             
-            // Discard Pile
             const topCard = game.discard[game.discard.length - 1];
             const [topColor, topVal] = topCard.split('-');
             const pileEl = document.getElementById('uno-discard-pile');
             pileEl.innerHTML = `<div class="uno-card ${topColor}">${formatUnoVal(topVal)}</div>`;
 
-            // My Hand
             const myHand = currentUser==='fr' ? game.hand_fr : game.hand_tw;
             const handEl = document.getElementById('uno-player-hand');
             handEl.innerHTML = "";
@@ -449,19 +488,19 @@
         }
 
         function formatUnoVal(v) {
-            if(v==='p2') return '+2'; if(v==='s') return '🚫'; if(v==='w') return '🌈'; return v;
+            if(v==='p2') return '+2'; if(v==='s') return '🚫'; if(v==='w') return '🌈'; if(v==='p4') return '+4'; return v;
         }
 
         window.drawUnoCard = function() {
             if(!activeUno || activeUno.winner || activeUno.turn !== currentUser) return;
-            const deck = activeUno.deck;
-            if(deck.length === 0) { alert("Pioche vide ! Relance."); return; } // Simplified
+            if(pickingWild) return;
+            
+            let deck = [...activeUno.deck];
+            if(deck.length === 0) { alert("Pioche vide !"); return; } // Should reshuffle discard but for simple version..
             const card = deck.shift();
-            const myHand = currentUser==='fr' ? activeUno.hand_fr : activeUno.hand_tw;
+            const myHand = currentUser==='fr' ? [...activeUno.hand_fr] : [...activeUno.hand_tw];
             myHand.push(card);
             
-            // Auto switch turn after draw? Or allow play? Standard Uno is play if playable.
-            // Simplified: Draw = End Turn
             const nextTurn = currentUser==='fr'?'tw':'fr';
             updateDoc(doc(db, "games", "uno_active"), {
                 deck: deck, [`hand_${currentUser}`]: myHand, turn: nextTurn
@@ -470,61 +509,78 @@
 
         window.playUnoCard = function(idx) {
             if(!activeUno || activeUno.winner || activeUno.turn !== currentUser) return;
-            
-            const myHand = currentUser==='fr' ? activeUno.hand_fr : activeUno.hand_tw;
+            if(pickingWild) return;
+
+            const myHand = currentUser==='fr' ? [...activeUno.hand_fr] : [...activeUno.hand_tw];
             const card = myHand[idx];
             const [color, val] = card.split('-');
             const topCard = activeUno.discard[activeUno.discard.length - 1];
             const [topColor, topVal] = topCard.split('-');
 
-            // Validation logic
             let valid = false;
-            let nextColor = color; // For wildcard logic
 
             if (color === 'black') { 
-                valid = true; 
-                // In real app, prompt for color. Here random/simple or prompt
-                const chosen = prompt("Choisis couleur (red, blue, green, yellow):") || "red";
-                nextColor = chosen.toLowerCase();
-                // We actually change the card stored in discard to have this color for logic
-                // Hack: store "red-w" in discard
+                // WILD or +4 -> Open Modal
+                wildCardIndex = idx;
+                pickingWild = true;
+                document.getElementById('uno-color-modal').style.display = 'flex';
+                return; 
             } else if (color === topColor || val === topVal) {
                 valid = true;
             }
 
-            if (!valid) { alert("Impossible !"); return; }
+            if (!valid) return;
 
-            // Play card
-            myHand.splice(idx, 1);
-            let nextDiscard = card;
-            if(color === 'black') nextDiscard = `${nextColor}-w`; // Save played wild with chosen color
+            // Execute Normal Play
+            executePlay(idx, null);
+        }
+
+        window.chooseUnoColor = function(color) {
+            document.getElementById('uno-color-modal').style.display = 'none';
+            pickingWild = false;
+            executePlay(wildCardIndex, color);
+        }
+
+        function executePlay(idx, chosenColor) {
+            const myHand = currentUser==='fr' ? [...activeUno.hand_fr] : [...activeUno.hand_tw];
+            const card = myHand[idx];
+            const [color, val] = card.split('-');
             
-            activeUno.discard.push(nextDiscard);
+            myHand.splice(idx, 1);
+            
+            let nextDiscard = card;
+            if(chosenColor) nextDiscard = `${chosenColor}-${val}`; // Change to selected color
+            
+            const newDiscard = [...activeUno.discard, nextDiscard];
             
             // Check win
             if (myHand.length === 0) {
                 updateDoc(doc(db, "games", "uno_active"), {
-                    [`hand_${currentUser}`]: myHand, discard: activeUno.discard, winner: currentUser
+                    [`hand_${currentUser}`]: myHand, discard: newDiscard, winner: currentUser
                 });
+                addDoc(collection(db, "games_uno_history"), { winner: currentUser, timestamp: serverTimestamp() });
                 return;
             }
 
             // Special Effects
             let nextTurn = currentUser==='fr'?'tw':'fr';
-            let opponentHand = currentUser==='fr' ? activeUno.hand_tw : activeUno.hand_fr;
+            let opponentHand = currentUser==='fr' ? [...activeUno.hand_tw] : [...activeUno.hand_fr];
+            let deck = [...activeUno.deck];
             
             if (val === 'p2') {
-                opponentHand.push(activeUno.deck.shift());
-                opponentHand.push(activeUno.deck.shift());
-                // Turn skips? In 2 player Uno, skip/reverse/draw means you play again usually. 
-                // Let's standard rules: draw 2 and skip turn -> back to me
-                nextTurn = currentUser; 
+                if(deck.length>=2) { opponentHand.push(deck.shift()); opponentHand.push(deck.shift()); }
+                // Custom rule: Opponent draws AND plays -> So it becomes opponent turn (nextTurn is already correct)
+            } else if (val === 'p4') {
+                if(deck.length>=4) { for(let i=0;i<4;i++) opponentHand.push(deck.shift()); }
+                // Custom rule: Opponent draws AND plays
             } else if (val === 's') {
-                 nextTurn = currentUser; // Skip opponent
+                 // Skip: I play again? Or skip opponent? In 1v1 skip usually implies replay.
+                 // Let's assume standard 1v1 skip = replay
+                 nextTurn = currentUser; 
             }
 
             updateDoc(doc(db, "games", "uno_active"), {
-                deck: activeUno.deck, discard: activeUno.discard,
+                deck: deck, discard: newDiscard,
                 hand_fr: currentUser==='fr'?myHand:opponentHand,
                 hand_tw: currentUser==='tw'?myHand:opponentHand,
                 turn: nextTurn
@@ -552,7 +608,6 @@
             const n = document.getElementById("notif"); n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),3000);
             if(navigator.vibrate) navigator.vibrate(200); 
         }
-        
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
@@ -566,6 +621,57 @@
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
+        window.addLetter = function() { const t=document.getElementById("letter-title").value; const c=document.getElementById("letter-content").value; if(!t||!c)return; addDoc(collection(db,"letters"),{title:t,content:c,by:currentUser,read:false,timestamp:serverTimestamp()}); document.getElementById("letter-title").value="";document.getElementById("letter-content").value=""; sendNtfy("💌 Nouvelle lettre ! ("+getCurrentTime(currentUser)+")","email","low"); }
+        window.openLetterModal = function(l) { document.getElementById('letter-modal').style.display="flex"; document.getElementById('modal-letter-title').innerText=l.title; document.getElementById('modal-letter-content').innerText=l.content; if(l.by!==currentUser && !l.read) updateDoc(doc(db,"letters",l.id),{read:true}); }
+        window.closeLetter = function() { document.getElementById('letter-modal').style.display="none"; }
+        
+        const compressImage = async (file) => { const bmp = await createImageBitmap(file); const cvs = document.createElement('canvas'); cvs.width=bmp.width*0.5; cvs.height=bmp.height*0.5; cvs.getContext('2d').drawImage(bmp,0,0,cvs.width,cvs.height); return cvs.toDataURL(file.type,0.6); };
+        window.handlePhotoUpload = async function(inpt, role) { if(role!==currentUser){alert("Interdit !");return;} const f = inpt.files[0]; if(!f)return; document.getElementById('gallery-modal').style.display="none"; const b64 = await compressImage(f); await addDoc(collection(db,"photos"),{url:b64,by:role,timestamp:serverTimestamp()}); sendNtfy("📸 Nouvelle photo ! ("+getCurrentTime(currentUser)+")","camera","low"); }
+        let allPhotos=[];
+        onSnapshot(query(collection(db,"photos"),orderBy("timestamp","desc")), s=>{
+            allPhotos=s.docs.map(d=>({id:d.id,...d.data()}));
+            const lastFr=allPhotos.find(p=>p.by==='fr'); if(lastFr)document.getElementById('polaroid-img-fr').src=lastFr.url;
+            const lastTw=allPhotos.find(p=>p.by==='tw'); if(lastTw)document.getElementById('polaroid-img-tw').src=lastTw.url;
+        });
+        window.openGallery = function(role) { const m=document.getElementById('gallery-modal'); const g=document.getElementById('modal-grid'); g.innerHTML=""; allPhotos.filter(p=>p.by===role).forEach(p=>{ 
+            const dStr = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleDateString() : "";
+            g.innerHTML+=`<div><img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'"><div class="photo-date">${dStr}</div>${role===currentUser?`<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>`:''}</div>`; 
+        }); m.style.display="block"; }
+        window.closeGallery = () => document.getElementById('gallery-modal').style.display='none';
+        window.closeLightbox = () => document.getElementById('lightbox').style.display='none';
+
+        window.addTodo=function(){const t=document.getElementById('todo-input').value;if(!t)return;addDoc(collection(db,"todos"),{text:t,done:false,created:serverTimestamp()});document.getElementById('todo-input').value="";sendNtfy("📝 Projet ! ("+getCurrentTime(currentUser)+")","clipboard","low");}
+        window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
+        onSnapshot(query(collection(db,"todos"),orderBy("created","desc")),s=>{ const l=document.getElementById('todo-list');l.innerHTML=""; s.forEach(d=>{const t=d.data();l.innerHTML+=`<div class="todo-item"><input type="checkbox" class="todo-check" ${t.done?'checked':''} onchange="toggleTodo('${d.id}',this.checked)"><span class="todo-text ${t.done?'done':''}">${t.text}</span><button onclick="deleteTodo('${d.id}')" class="todo-del">✕</button></div>`;}); });
+
+        window.addBook=function(){const t=document.getElementById('book-title').value;if(!t)return;addDoc(collection(db,"books"),{title:t,pages_total:parseInt(document.getElementById('book-pages').value)||200,created:serverTimestamp(),page_fr:0,rating_fr:0,page_tw:0,rating_tw:0});document.getElementById('book-title').value="";}
+        window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 ${title} terminé ! (${getCurrentTime(currentUser)})`, "tada", "low"); }
+        window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
+        onSnapshot(query(collection(db,"books"),orderBy("created","desc")),s=>{
+             const l=document.getElementById('book-list');l.innerHTML="";
+             s.forEach(docSnap=>{
+                 const book = docSnap.data(); const id = docSnap.id; const totalPages = book.pages_total || 200;
+                 const frPage = book.page_fr || 0; const frRating = book.rating_fr || 0;
+                 const twPage = book.page_tw || 0; const twRating = book.rating_tw || 0;
+                 const frPercent = Math.min((frPage / totalPages) * 100, 100); const twPercent = Math.min((twPage / totalPages) * 100, 100);
+                 const makeStars = (role, currentRating) => {
+                    let html = ''; for(let i=1; i<=5; i++) { const filled = i <= currentRating ? 'filled' : ''; const action = role === currentUser ? `onclick="rateBook('${id}', '${role}', ${i})"` : ''; const cursor = role === currentUser ? 'pointer' : 'default'; html += `<span class="star ${filled}" style="cursor:${cursor}" ${action}>★</span>`; }
+                    if(role === currentUser) html += `<span class="star-reset" onclick="rateBook('${id}', '${role}', 0)">Ø</span>`; return html;
+                 };
+                 const canEditFr = currentUser === 'fr' ? '' : 'disabled'; const canEditTw = currentUser === 'tw' ? '' : 'disabled';
+                 l.innerHTML+=`<div class="book-item"><div class="book-title"><span>${book.title}</span><button style="border:none;background:none;color:var(--text-sub);font-size:0.8rem;cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div><div class="book-total-pages">${totalPages} pages</div><div class="user-row"><div class="row-header"><span style="color:var(--blue);font-weight:bold;font-size:0.8rem;">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div><div class="user-row" style="border:none;"><div class="row-header"><span style="color:var(--pink);font-weight:bold;font-size:0.8rem;">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div></div>`;
+             });
+        });
+
+        // NOTIF BISOUS REÇU
+        onSnapshot(query(collection(db,"actions"),orderBy("timestamp","desc"),limit(1)),s=>{
+            if(!s.empty){const a=s.docs[0].data(); if(a.from!==currentUser && Math.abs(Date.now()-a.timestamp.toMillis())<60000){
+                document.getElementById("notif").innerHTML=`💋 <b>${a.from==='fr'?'Théo':'Elise'}</b> t'envoie un bisou !`;
+                document.getElementById("notif").classList.add("show"); if(navigator.vibrate)navigator.vibrate(200);
+                setTimeout(()=>document.getElementById("notif").classList.remove("show"),4000);
+            }}
+        });
+        
         function updateClocks(){
             const now=new Date();
             document.getElementById('clock-fr').innerText=now.toLocaleTimeString('fr-FR',{timeZone:'Europe/Paris',hour:'2-digit',minute:'2-digit'});
