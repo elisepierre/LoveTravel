@@ -420,22 +420,30 @@
                 <div class="countdown-compact">
                     <div id="countdown-title" class="compact-title">DÉPART DANS</div>
                     <div class="compact-counter"><span id="days-count" class="big-num">--</span> <span class="unit" id="days-unit">JOURS</span><span class="separator">•</span><span id="sub-count" class="small-time">-- h et -- min</span></div>
-                    <div class="progress-container-modern"><div class="dates-row"><span>14 Fév</span><span>05 Juil</span></div><div class="prog-bar-mini"><div class="prog-fill-mini" id="prog-fill"></div><div class="prog-heart" id="prog-heart">🩷</div></div></div>
+                    <div class="progress-container-modern">
+                        <div class="dates-row"><span>14 Fév</span><span>05 Juil</span></div>
+                        <div class="prog-bar-mini">
+                            <div class="prog-fill-mini" id="prog-fill"></div>
+                            <div class="prog-heart" id="prog-heart">🩷</div>
+                        </div>
+                    </div>
                 </div> </div> </div> <div class="card" id="card-mood">
-            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>☁️</span> Nos Moods</div></div>
+            <div class="card-title toggleable" onclick="toggleCard(this)">
+                <div style="display:flex; align-items:center; gap:10px;"><span>☁️</span> Nos Moods</div>
+            </div>
             <div class="card-content">
                 <div class="mood-container">
-                    <div class="mood-person"><div class="avatar-frame"><img src="" id="mood-img-fr" class="avatar-img"></div><div class="mood-msg" id="mood-msg-fr">...</div></div>
+                    <div class="mood-person">
+                        <div class="avatar-frame"><img src="" id="mood-img-fr" class="avatar-img"></div>
+                        <div class="mood-msg" id="mood-msg-fr">...</div>
+                    </div>
                     <div class="mood-person">
                         <div class="avatar-frame" style="position: relative;">
                             <img src="" id="mood-img-tw" class="avatar-img">
-                            
                             <div id="cycle-bubble" onclick="editCycle()">🌸</div>
                         </div>
-                        
                         <div class="mood-msg" id="mood-msg-tw">...</div>
                     </div>
-                </div>
                 </div>
                 <div class="mood-grid">
                     <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !', 0)">🥰</div>
@@ -1161,18 +1169,31 @@
             const el = document.getElementById('cycle-bubble');
             const currentText = el.innerText || ""; // Récupère le texte (ex: 🩸 J-2)
 
-            // --- CAS THÉO : Envoi de message de soutien ---
+            // --- CAS THÉO ---
             if (currentUser === 'fr') {
+                // 1. On récupère la date d'aujourd'hui (ex: "Tue Jan 13 2026")
+                const today = new Date().toDateString();
+                // 2. On regarde la dernière fois qu'il a cliqué
+                const lastSent = localStorage.getItem('lastCycleNotif');
+
+                // 3. Si c'est la même date, on bloque
+                if (lastSent === today) {
+                    alert("Doucement ! Tu lui as déjà envoyé un message aujourd'hui 😉");
+                    return;
+                }
+
+                // 4. Sinon, on envoie la notif
                 if (currentText.includes('🩸')) {
-                    // Si c'est la période rouge
                     sendNtfy("Bon courage ma petite chérie ❤️", "rose", "high");
                     alert("Message de courage envoyé ! 💌");
                 } else {
-                    // Si c'est la période fleur (ou autre)
                     sendNtfy("N'oublie pas ta pilule ma petite chérie 💊", "pill", "high");
                     alert("Rappel pilule envoyé ! 💊");
                 }
-                return; // On s'arrête là pour Théo
+
+                // 5. Et on enregistre la date pour bloquer jusqu'à demain
+                localStorage.setItem('lastCycleNotif', today);
+                return;
             }
 
             // --- CAS ELISE : Modification du cycle ---
