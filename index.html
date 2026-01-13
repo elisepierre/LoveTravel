@@ -932,7 +932,7 @@
         
             // CAS 1 : IDLE (Jeu non commencé ou fini nettoyé)
             if (!game.state || game.state === 'idle') {
-                status.innerText = "Aucune partie en cours";
+                status.innerText = "Prêt pour une partie ?";
                 canvas.style.display = 'none';
                 wordDisplay.style.display = 'none';
                 setupArea.style.display = 'none';
@@ -1016,7 +1016,7 @@
         
             // CAS 1 : Partie pas commencée ou "Fin de partie" cliquée
             if (!game.status || game.status === 'idle') {
-                statusEl.innerText = "Prêt à jouer ?";
+                statusEl.innerText = "Prêt pour une partie ?";
                 grid.style.display = 'none'; // Cache la grille
                 btn.innerText = "Lancer";
                 btn.onclick = initP4;
