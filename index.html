@@ -410,7 +410,19 @@
             <div class="card-content">
                 <div class="mood-container">
                     <div class="mood-person"><div class="avatar-frame"><img src="" id="mood-img-fr" class="avatar-img"></div><div class="mood-msg" id="mood-msg-fr">...</div></div>
-                    <div class="mood-person"><div class="avatar-frame"><img src="" id="mood-img-tw" class="avatar-img"></div><div class="mood-msg" id="mood-msg-tw">...</div></div>
+                    <div class="mood-person">
+                        <div class="avatar-frame">
+                            <img src="" id="mood-img-tw" class="avatar-img">
+                        </div>
+                        
+                        <div style="margin-top:5px; font-size:0.8rem; color:var(--pink-dark); font-weight:bold; cursor:pointer;" 
+                             id="cycle-indicator" 
+                             onclick="resetCycle()">
+                             Chargement...
+                        </div>
+                        
+                    <div class="mood-msg" id="mood-msg-tw">...</div>
+                </div>
                 </div>
                 <div class="mood-grid">
                     <div class="mood-btn" onclick="updateMood('🥰', 'Tu me manques !', 0)">🥰</div>
@@ -492,7 +504,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v61 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v62 • janvier 2026</div>
         </div>
     </div>
 
@@ -767,56 +779,98 @@
             s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose'; const setter = h.setter === 'fr' ? 'Théo' : 'Elise'; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`; });
         });
         function renderPendu(game) {
-            const ctx=document.getElementById('pendu-canvas').getContext('2d'); const status = document.getElementById('pendu-status'); const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark'); const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
-            ctx.clearRect(0,0,200,150); ctx.lineWidth=3; ctx.beginPath(); ctx.strokeStyle = mainColor;
-            if(game.mistakes>0){ctx.moveTo(20,140);ctx.lineTo(180,140);} if(game.mistakes>1){ctx.moveTo(50,140);ctx.lineTo(50,20);} if(game.mistakes>2){ctx.lineTo(130,20);} if(game.mistakes>3){ctx.moveTo(130,20);ctx.lineTo(130,40);} ctx.stroke(); 
-            ctx.beginPath(); ctx.strokeStyle = pinkColor; if(game.mistakes>4){ctx.beginPath();ctx.arc(130,55,15,0,Math.PI*2);ctx.stroke();} if(game.mistakes>5){ctx.beginPath();ctx.moveTo(130,70);ctx.lineTo(130,110);ctx.stroke();} 
-            ctx.beginPath(); if(game.mistakes>6){ctx.moveTo(130,80);ctx.lineTo(110,95);} if(game.mistakes>7){ctx.moveTo(130,80);ctx.lineTo(150,95);} if(game.mistakes>8){ctx.moveTo(130,110);ctx.lineTo(115,135);} if(game.mistakes>9){ctx.moveTo(130,110);ctx.lineTo(145,135);} ctx.stroke();
-            if(game.mistakes>10){ctx.font="14px Arial"; ctx.fillStyle=pinkColor; ctx.textAlign="center"; ctx.fillText("x x",130,60);} 
-            // ... (dessin du canvas au dessus reste pareil) ...
-
+            const ctx = document.getElementById('pendu-canvas').getContext('2d');
+            const status = document.getElementById('pendu-status');
+            const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark');
+            const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
+        
+            // 1. DESSIN DU PENDU
+            ctx.clearRect(0, 0, 200, 150);
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.strokeStyle = mainColor;
+            if (game.mistakes > 0) { ctx.moveTo(20, 140); ctx.lineTo(180, 140); }
+            if (game.mistakes > 1) { ctx.moveTo(50, 140); ctx.lineTo(50, 20); }
+            if (game.mistakes > 2) { ctx.lineTo(130, 20); }
+            if (game.mistakes > 3) { ctx.moveTo(130, 20); ctx.lineTo(130, 40); }
+            ctx.stroke();
+        
+            ctx.beginPath();
+            ctx.strokeStyle = pinkColor;
+            if (game.mistakes > 4) { ctx.beginPath(); ctx.arc(130, 55, 15, 0, Math.PI * 2); ctx.stroke(); }
+            if (game.mistakes > 5) { ctx.beginPath(); ctx.moveTo(130, 70); ctx.lineTo(130, 110); ctx.stroke(); }
+        
+            ctx.beginPath();
+            if (game.mistakes > 6) { ctx.moveTo(130, 80); ctx.lineTo(110, 95); }
+            if (game.mistakes > 7) { ctx.moveTo(130, 80); ctx.lineTo(150, 95); }
+            if (game.mistakes > 8) { ctx.moveTo(130, 110); ctx.lineTo(115, 135); }
+            if (game.mistakes > 9) { ctx.moveTo(130, 110); ctx.lineTo(145, 135); }
+            ctx.stroke();
+        
+            if (game.mistakes > 10) { ctx.font = "14px Arial"; ctx.fillStyle = pinkColor; ctx.textAlign = "center"; ctx.fillText("x x", 130, 60); }
+        
+            // 2. GESTION DES ETATS (IDLE / SETUP / PLAYING / FIN)
             const restartArea = document.getElementById('pendu-restart-area');
-            const setupArea = document.getElementById('pendu-setup'); 
+            const setupArea = document.getElementById('pendu-setup');
             const keyboard = document.getElementById('pendu-keyboard');
             const canvas = document.getElementById('pendu-canvas');
             const wordDisplay = document.getElementById('pendu-word-display');
-            
-            // CAS IDLE (Après "Fin de partie")
-            if (game.state === 'idle') {
+        
+            // CAS 1 : IDLE (Jeu non commencé ou fini nettoyé)
+            if (!game.state || game.state === 'idle') {
                 status.innerText = "Aucune partie en cours";
-                canvas.style.display = 'none'; // Cache le dessin
-                wordDisplay.style.display = 'none'; // Cache les tirets
+                canvas.style.display = 'none';
+                wordDisplay.style.display = 'none';
                 setupArea.style.display = 'none';
                 keyboard.style.display = 'none';
                 
-                // On réutilise la zone de restart pour mettre le bouton "Lancer"
                 restartArea.style.display = 'block';
                 restartArea.innerHTML = `<button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Lancer</button>`;
                 return;
             }
         
-            // Rétablir l'affichage si on n'est pas en idle
+            // On réaffiche les éléments de base si on n'est pas en idle
             canvas.style.display = 'block';
             wordDisplay.style.display = 'block';
-            
-            if(game.state === 'setup'){ 
-                // ... (code existant pour setup) ...
-                // Assure-toi que restartArea est caché
+        
+            // CAS 2 : SETUP (Choix du mot)
+            if (game.state === 'setup') {
+                status.innerText = "En attente d'un mot...";
+                setupArea.style.display = 'block'; // On affiche l'input
+                keyboard.style.display = 'none';
                 restartArea.style.display = 'none';
-                // ...
-            } else { 
-                // ... (code existant pour l'affichage du mot) ...
+                wordDisplay.innerText = "???";
+            } 
+            // CAS 3 : JEU EN COURS OU TERMINE
+            else {
+                setupArea.style.display = 'none'; // On cache l'input
                 
-                if(game.state === 'playing') { 
-                    // ... (code existant playing) ...
-                } else { 
-                    // CAS GAGNÉ OU PERDU
-                    status.innerText = game.state === 'win' ? "GAGNÉ ! 🎉" : ("PERDU... Le mot était : "+game.word); 
-                    keyboard.style.display='none'; 
-                    restartArea.style.display='block'; 
-                    // ICI : Le bouton devient "Fin de partie"
+                // Affichage du mot avec les tirets
+                let d = "";
+                for (let c of game.word) d += (game.guessed.includes(c) ? c : "_") + " ";
+                wordDisplay.innerText = d;
+        
+                const isCreator = game.creator === currentUser;
+        
+                if (game.state === 'playing') {
+                    status.innerText = isCreator ? "L'autre devine..." : "Devine !";
+                    keyboard.style.display = 'flex';
+                    restartArea.style.display = 'none';
+                    
+                    // Génération du clavier
+                    let k = "";
+                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l => {
+                        const disabled = isCreator || game.guessed.includes(l) ? "disabled" : "";
+                        k += `<button class="key-btn" onclick="playPenduMove('${l}')" ${disabled}>${l}</button>`;
+                    });
+                    keyboard.innerHTML = k;
+                } else {
+                    // GAGNÉ OU PERDU
+                    status.innerText = game.state === 'win' ? "GAGNÉ ! 🎉" : ("PERDU... Le mot était : " + game.word);
+                    keyboard.style.display = 'none';
+                    restartArea.style.display = 'block';
                     restartArea.innerHTML = `<button onclick="finishPendu()" class="btn-action" style="background:var(--pink-dark);width:100%;">Fin de partie</button>`;
-                } 
+                }
             }
         }
             
@@ -1054,6 +1108,51 @@
             sendNtfy(`${emoji} ${text} (${getCurrentTime(currentUser)})`, "partly_sunny", "low");
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
+
+        // --- GESTION CYCLE MENSTRUEL ---
+
+        // 1. Écouter les données du cycle
+        onSnapshot(doc(db, "status", "cycle"), (docSnap) => {
+            const el = document.getElementById('cycle-indicator');
+            
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const lastPeriod = data.lastStart.toDate(); // Convertir Timestamp Firebase en Date JS
+                const now = new Date();
+                
+                // Calcul de la différence en jours
+                const diffTime = Math.abs(now - lastPeriod);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        
+                // Affichage intelligent
+                if (diffDays <= 5) {
+                    el.innerHTML = `🩸 Jour ${diffDays}`; // Pendant les règles
+                } else if (diffDays >= 12 && diffDays <= 16) {
+                    el.innerHTML = `🌸 Jour ${diffDays} (Ovul?)`; // Autour de l'ovulation
+                } else {
+                    el.innerHTML = `🌙 Jour ${diffDays}`; // Reste du cycle
+                }
+            } else {
+                // Si pas de données, on initialise (première fois)
+                el.innerText = "🌸 Suivi Cycle";
+            }
+        });
+        
+        // 2. Fonction pour remettre à zéro (Seulement Elise)
+        window.resetCycle = function() {
+            // Sécurité : Seule Elise (tw) peut toucher
+            if (currentUser !== 'tw') {
+                alert("Seule Elise peut mettre à jour son cycle ! 👀");
+                return;
+            }
+        
+            if (confirm("Tes règles ont commencé aujourd'hui ? Cela remettra le compteur à Jour 1.")) {
+                setDoc(doc(db, "status", "cycle"), {
+                    lastStart: serverTimestamp() // Enregistre la date/heure de maintenant
+                });
+                alert("Cycle mis à jour ! Courage ❤️");
+            }
+        }
 
         let allLetters = [];
         const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
