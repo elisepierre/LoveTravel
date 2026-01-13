@@ -136,15 +136,16 @@
         /* JEUX */
         /* Ajout pour l'indicateur de jeu en cours */
         .game-indicator {
-            display: inline-block;
+            display: block; /* Mieux que inline-block dans un flex */
             width: 8px; 
             height: 8px;
-            background-color: #2ecc71; /* Vert */
+            background-color: #2ecc71;
             border-radius: 50%;
-            margin-left: 8px;
+            /* margin-left: 8px;  <-- RETIREZ CETTE LIGNE (géré par gap) */
             box-shadow: 0 0 5px #2ecc71;
-            opacity: 0; /* Caché par défaut */
+            opacity: 0;
             transition: opacity 0.3s;
+            flex-shrink: 0; /* Empêche le point de s'écraser si manque de place */
         }
         
         /* Quand le jeu est actif (classe ajoutée via JS) */
@@ -160,10 +161,24 @@
         }
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .game-btn { 
-            flex: 1; padding: 12px; border-radius: 15px; border: 1px solid var(--border); 
-            background: var(--bg-card); color: var(--text-main); font-weight: bold; cursor: pointer; 
-            transition: 0.2s; text-align: center; font-size: 0.9rem;
+            flex: 1; 
+            padding: 12px 5px; /* Un peu moins de padding latéral pour laisser de la place */
+            border-radius: 15px; 
+            border: 1px solid var(--border); 
+            background: var(--bg-card); 
+            color: var(--text-main); 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            font-size: 0.9rem;
             box-shadow: 0 4px 5px rgba(0,0,0,0.05);
+            
+            /* --- CORRECTION ALIGNEMENT --- */
+            display: flex;              /* Active le mode Flexbox */
+            justify-content: center;    /* Centre tout horizontalement */
+            align-items: center;        /* Centre tout verticalement */
+            gap: 8px;                   /* Espace propre entre le texte et le point */
+            white-space: nowrap;        /* Interdit le retour à la ligne */
         }
         .game-btn:active { transform:scale(0.95); }
         .game-btn.active-game { border: 2px solid var(--pink-dark); background: #fff0f5; color: var(--pink-dark); }
