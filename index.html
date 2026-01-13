@@ -244,6 +244,26 @@
         .book-progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-left: 10px; }
         .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
+        /* Style de la bulle Cycle */
+        #cycle-bubble {
+            position: absolute;
+            top: 10px;          /* Distance du haut */
+            right: 10px;        /* Distance de la droite */
+            background: white;
+            border: 1px solid var(--pink-dark);
+            color: var(--pink-dark);
+            border-radius: 20px; /* Forme arrondie */
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 10;        /* Pour être au-dessus de l'image */
+            transition: transform 0.2s;
+        }
+        #cycle-bubble:active {
+            transform: scale(0.9);
+        }
 
         /* FOOTER & UTILS */
         .app-footer { text-align: center; padding: 20px; margin-top: 30px; opacity: 1; }
@@ -411,17 +431,14 @@
                 <div class="mood-container">
                     <div class="mood-person"><div class="avatar-frame"><img src="" id="mood-img-fr" class="avatar-img"></div><div class="mood-msg" id="mood-msg-fr">...</div></div>
                     <div class="mood-person">
-                        <div class="avatar-frame">
+                        <div class="avatar-frame" style="position: relative;">
                             <img src="" id="mood-img-tw" class="avatar-img">
+                            
+                            <div id="cycle-bubble" onclick="resetCycle()">🌸</div>
                         </div>
                         
-                        <div style="margin-top:5px; font-size:0.8rem; color:var(--pink-dark); font-weight:bold; cursor:pointer;" 
-                             id="cycle-indicator" 
-                             onclick="resetCycle()">
-                             Chargement...
-                        </div>
-                        
-                    <div class="mood-msg" id="mood-msg-tw">...</div>
+                        <div class="mood-msg" id="mood-msg-tw">...</div>
+                    </div>
                 </div>
                 </div>
                 <div class="mood-grid">
@@ -1113,28 +1130,33 @@
 
         // 1. Écouter les données du cycle
         onSnapshot(doc(db, "status", "cycle"), (docSnap) => {
-            const el = document.getElementById('cycle-indicator');
+            // Attention: j'ai changé l'ID pour "cycle-bubble"
+            const el = document.getElementById('cycle-bubble'); 
             
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                const lastPeriod = data.lastStart.toDate(); // Convertir Timestamp Firebase en Date JS
+                const lastPeriod = data.lastStart.toDate();
                 const now = new Date();
                 
-                // Calcul de la différence en jours
                 const diffTime = Math.abs(now - lastPeriod);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
         
-                // Affichage intelligent
+                // FORMAT COURT POUR LA BULLE
                 if (diffDays <= 5) {
-                    el.innerHTML = `🩸 Jour ${diffDays}`; // Pendant les règles
+                    el.innerHTML = `🩸 J-${diffDays}`;      // Ex: 🩸 J-2
+                    el.style.borderColor = "red";           // Bordure rouge
+                    el.style.color = "red";
                 } else if (diffDays >= 12 && diffDays <= 16) {
-                    el.innerHTML = `🌸 Jour ${diffDays} (Ovul?)`; // Autour de l'ovulation
+                    el.innerHTML = `🥚 J-${diffDays}`;      // Ex: 🥚 J-14 (Ovulation)
+                    el.style.borderColor = "var(--pink-dark)";
+                    el.style.color = "var(--pink-dark)";
                 } else {
-                    el.innerHTML = `🌙 Jour ${diffDays}`; // Reste du cycle
+                    el.innerHTML = `🌸 J-${diffDays}`;      // Ex: 🌸 J-20
+                    el.style.borderColor = "var(--pink)";
+                    el.style.color = "var(--text-sub)";
                 }
             } else {
-                // Si pas de données, on initialise (première fois)
-                el.innerText = "🌸 Suivi Cycle";
+                el.innerText = "🌸";
             }
         });
         
