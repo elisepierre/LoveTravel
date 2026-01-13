@@ -421,11 +421,7 @@
                     <div id="countdown-title" class="compact-title">DÉPART DANS</div>
                     <div class="compact-counter"><span id="days-count" class="big-num">--</span> <span class="unit" id="days-unit">JOURS</span><span class="separator">•</span><span id="sub-count" class="small-time">-- h et -- min</span></div>
                     <div class="progress-container-modern"><div class="dates-row"><span>14 Fév</span><span>05 Juil</span></div><div class="prog-bar-mini"><div class="prog-fill-mini" id="prog-fill"></div><div class="prog-heart" id="prog-heart">🩷</div></div></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card" id="card-mood">
+                </div> </div> </div> <div class="card" id="card-mood">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>☁️</span> Nos Moods</div></div>
             <div class="card-content">
                 <div class="mood-container">
@@ -434,7 +430,7 @@
                         <div class="avatar-frame" style="position: relative;">
                             <img src="" id="mood-img-tw" class="avatar-img">
                             
-                            <div id="cycle-bubble" onclick="resetCycle()">🌸</div>
+                            <div id="cycle-bubble" onclick="editCycle()">🌸</div>
                         </div>
                         
                         <div class="mood-msg" id="mood-msg-tw">...</div>
@@ -521,7 +517,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v62 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v63 • janvier 2026</div>
         </div>
     </div>
 
@@ -1206,23 +1202,6 @@
                     newStart.setDate(newStart.getDate() - (day - 1));
                     setDoc(doc(db, "status", "cycle"), { lastStart: newStart }, { merge: true });
                 }
-            }
-        }
-       
-        
-        // 2. Fonction pour remettre à zéro (Seulement Elise)
-        window.resetCycle = function() {
-            // Sécurité : Seule Elise (tw) peut toucher
-            if (currentUser !== 'tw') {
-                alert("Seule Elise peut mettre à jour son cycle ! 👀");
-                return;
-            }
-        
-            if (confirm("Tes règles ont commencé aujourd'hui ? Cela remettra le compteur à Jour 1.")) {
-                setDoc(doc(db, "status", "cycle"), {
-                    lastStart: serverTimestamp() // Enregistre la date/heure de maintenant
-                });
-                alert("Cycle mis à jour ! Courage ❤️");
             }
         }
 
