@@ -247,24 +247,23 @@
         /* Style de la bulle Cycle */
         #cycle-bubble {
             position: absolute;
-            top: 10px;          /* Distance du haut */
-            right: 10px;        /* Distance de la droite */
+            top: -10px;         /* <-- MODIFICATION ICI : Valeur négative pour remonter */
+            right: -5px;        /* <-- AJUSTEMENT : Un peu plus à droite pour faire "badge" */
             background: white;
             border: 1px solid var(--pink-dark);
             color: var(--pink-dark);
-            border-radius: 20px; /* Forme arrondie */
+            border-radius: 20px;
             padding: 2px 8px;
             font-size: 0.7rem;
             font-weight: 800;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             cursor: pointer;
-            z-index: 10;        /* Pour être au-dessus de l'image */
+            z-index: 20;        /* <-- Je l'ai augmenté un peu pour être sûr */
             transition: transform 0.2s;
         }
         #cycle-bubble:active {
             transform: scale(0.9);
         }
-
         /* FOOTER & UTILS */
         .app-footer { text-align: center; padding: 20px; margin-top: 30px; opacity: 1; }
         .footer-content {
