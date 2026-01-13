@@ -135,12 +135,47 @@
 
         /* JEUX */
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+        /* --- MODIFICATION DANS LA SECTION JEUX --- */
+
         .game-btn { 
-            flex: 1; padding: 12px; border-radius: 15px; border: 1px solid var(--border); 
-            background: var(--bg-card); color: var(--text-main); font-weight: bold; cursor: pointer; 
-            transition: 0.2s; text-align: center; font-size: 0.9rem;
-            box-shadow: 0 4px 5px rgba(0,0,0,0.05);
+            /* ... tes styles existants ... */
+            position: relative; /* Important pour la pastille */
+            overflow: visible;
         }
+        
+        /* Indicateur de jeu en cours (Pastille) */
+        .game-btn.game-running::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background: #2ecc71; /* Vert */
+            border: 2px solid white;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot { 0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); } 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); } }
+        
+        /* Styles standardisés pour les Lobbies (P4, Uno, Pendu) */
+        .lobby-container { text-align: center; padding: 20px 0; }
+        .lobby-msg { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main); }
+        .lobby-avatars { display: flex; justify-content: space-around; margin-bottom: 20px; align-items: center; }
+        .lobby-avatar { text-align: center; padding: 10px; border-radius: 15px; transition: 0.2s; border: 2px solid transparent; opacity: 0.6; }
+        .lobby-avatar.ready { opacity: 1; transform: scale(1.1); background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .lobby-avatar.p1.ready { border-color: var(--blue); } /* Théo */
+        .lobby-avatar.p2.ready { border-color: var(--pink); } /* Elise */
+        .lobby-emoji { font-size: 3.5rem; display:block; }
+        .lobby-name { font-weight: bold; margin-top:5px; display:block; }
+        .lobby-status { font-size: 1.5rem; margin-top:5px; display:block; }
+        
+        /* Ecran de résultat standardisé */
+        .game-result-overlay { text-align: center; padding: 20px 0; animation: slideUp 0.5s ease; }
+        .res-emoji { font-size: 4rem; margin-bottom: 10px; }
+        .res-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; color: var(--text-main); }
+        .res-sub { font-size: 1rem; color: var(--text-sub); margin-bottom: 20px; }
+        
         .game-btn:active { transform:scale(0.95); }
         .game-btn.active-game { border: 2px solid var(--pink-dark); background: #fff0f5; color: var(--pink-dark); }
         
@@ -542,43 +577,94 @@
         </div>
 
         <div class="card" id="card-games">
-            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div></div>
+            <div class="card-title toggleable" onclick="toggleCard(this)">
+                <div style="display:flex; align-items:center; gap:10px;"><span>🎮</span> Salle de Jeux</div>
+            </div>
             <div class="card-content">
                 
                 <div class="game-selector">
-                    <button onclick="toggleGame('pendu')" class="game-btn">Pendu</button>
-                    <button onclick="toggleGame('p4')" class="game-btn">Puissance 4</button>
-                    <button onclick="toggleGame('uno')" class="game-btn">Uno</button>
-                    <button onclick="toggleGame('bac')" class="game-btn">Petit Bac</button>
+                    <button id="btn-sel-pendu" onclick="toggleGame('pendu')" class="game-btn">Pendu</button>
+                    <button id="btn-sel-p4" onclick="toggleGame('p4')" class="game-btn">P4</button>
+                    <button id="btn-sel-uno" onclick="toggleGame('uno')" class="game-btn">Uno</button>
+                    <button id="btn-sel-bac" onclick="toggleGame('bac')" class="game-btn">Petit Bac</button>
                 </div>
                 
-                <div id="pendu-box" class="game-block"><div class="game-header"><div class="game-title-text">Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div><canvas id="pendu-canvas" width="200" height="150"></canvas><div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div><div id="pendu-status" class="status-msg">En attente...</div><div id="pendu-setup" style="margin-top:10px;"><input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)"><button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button></div><div id="pendu-restart-area" style="display:none;margin-top:10px;"><button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button></div><div id="pendu-keyboard" class="keyboard" style="display:none;"></div><div class="history-box" id="pendu-history-list"></div></div>
+                <div id="pendu-box" class="game-block">
+                    <div class="game-header"><div class="game-title-text">Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div>
+                    
+                    <div id="pendu-lobby" class="lobby-container">
+                        <div class="lobby-msg" id="pendu-lobby-msg">Qui lance la partie ?</div>
+                        <div id="pendu-setup-input" style="display:none; margin-bottom:15px;">
+                            <input type="text" id="pendu-secret" class="input-field" placeholder="Ton mot secret..." style="text-align:center; font-weight:bold; letter-spacing:2px;">
+                        </div>
+                        <button onclick="startPenduPhase()" id="pendu-start-btn" class="btn-action" style="width:100%; background:var(--blue-dark);">Je propose un mot</button>
+                    </div>
+        
+                    <div id="pendu-game" style="display:none;">
+                        <canvas id="pendu-canvas" width="200" height="150"></canvas>
+                        <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
+                        <div id="pendu-status-msg" class="status-msg" style="margin-bottom:15px;"></div>
+                        <div id="pendu-keyboard" class="keyboard"></div>
+                    </div>
+        
+                    <div id="pendu-result" class="game-result-overlay" style="display:none;">
+                        <div class="res-emoji" id="pendu-res-icon">🎉</div>
+                        <div class="res-title" id="pendu-res-title">Gagné !</div>
+                        <div class="res-sub" id="pendu-res-sub">Le mot était : MOT</div>
+                        <button onclick="resetPendu()" class="btn-action" style="width:100%;">Rejouer</button>
+                    </div>
+        
+                    <div class="history-box" id="pendu-history-list"></div>
+                </div>
                 
-                <div id="p4-box" class="game-block"><div class="game-header"><div class="game-title-text">Puissance 4</div><button class="game-close-btn" onclick="toggleGame('p4')">✕</button></div><div id="p4-status" class="status-msg">En attente...</div><button id="p4-restart-btn" onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--blue-dark);" disabled>Nouvelle Partie</button><div class="p4-grid" id="p4-grid"></div><div class="history-box" id="p4-history-list"></div></div>
-
+                <div id="p4-box" class="game-block">
+                    <div class="game-header"><div class="game-title-text">Puissance 4</div><button class="game-close-btn" onclick="toggleGame('p4')">✕</button></div>
+                    
+                    <div id="p4-lobby" class="lobby-container"></div>
+                    
+                    <div id="p4-game" style="display:none; flex-direction:column; align-items:center;">
+                        <div id="p4-status-msg" class="status-msg" style="margin-bottom:10px;">C'est à toi !</div>
+                        <div class="p4-grid" id="p4-grid"></div>
+                    </div>
+        
+                    <div id="p4-result" class="game-result-overlay" style="display:none;">
+                        <div class="res-emoji" id="p4-res-icon">🏆</div>
+                        <div class="res-title" id="p4-res-title">Victoire !</div>
+                        <button onclick="resetP4()" class="btn-action" style="width:100%;">Rejouer</button>
+                    </div>
+        
+                    <div class="history-box" id="p4-history-list"></div>
+                </div>
+        
                 <div id="uno-box" class="game-block">
                     <div class="game-header"><div class="game-title-text">UNO</div><button class="game-close-btn" onclick="toggleGame('uno')">✕</button></div>
-                    <div id="uno-status" class="status-msg">Bienvenue au Uno !</div>
-                    <div class="uno-board">
-                        <div class="uno-top-info"><span id="uno-opponent-name">Adversaire</span> : <span id="uno-opponent-count">0</span> cartes</div>
-                        <div class="uno-table">
-                            <div class="uno-card back" onclick="drawUnoCard()" title="Piocher">UNO</div>
-                            <div id="uno-discard-pile"></div>
+                    
+                    <div id="uno-lobby" class="lobby-container"></div>
+                    
+                    <div id="uno-game" style="display:none;">
+                        <div class="uno-board">
+                            <div class="uno-top-info"><span id="uno-opponent-name">Adv.</span> : <span id="uno-opponent-count">0</span> cartes</div>
+                            <div class="uno-table">
+                                <div class="uno-card back" onclick="drawUnoCard()">UNO</div>
+                                <div id="uno-discard-pile"></div>
+                            </div>
+                            <div id="uno-status-msg" class="status-msg">À toi !</div>
+                            <div class="uno-hand" id="uno-player-hand"></div>
                         </div>
-                        <div class="uno-hand" id="uno-player-hand"></div>
                     </div>
-                    <button id="uno-restart-btn" onclick="initUno()" class="btn-action" style="width:100%;margin-top:10px;background:var(--blue-dark);" disabled>Nouvelle Partie</button>
+        
+                    <div id="uno-result" class="game-result-overlay" style="display:none;">
+                        <div class="res-emoji" id="uno-res-icon">🃏</div>
+                        <div class="res-title" id="uno-res-title">Terminé !</div>
+                        <button onclick="resetUno()" class="btn-action" style="width:100%;">Rejouer</button>
+                    </div>
+                    
                     <div class="history-box" id="uno-history-list"></div>
                 </div>
-
-               <div id="bac-box" class="game-block">
-                    <div class="game-header">
-                        <div class="game-title-text">Petit Bac</div>
-                        <button class="game-close-btn" onclick="toggleGame('bac')">✕</button>
-                    </div>
-                
+        
+                <div id="bac-box" class="game-block">
+                    <div class="game-header"><div class="game-title-text">Petit Bac</div><button class="game-close-btn" onclick="toggleGame('bac')">✕</button></div>
                     <div id="bac-lobby" style="text-align:center; padding: 20px 0;"></div>
-                
                     <div id="bac-game" style="display:none;">
                         <div class="bac-letter-sticky" id="bac-current-letter">?</div>
                         <div id="bac-inputs"></div>
@@ -587,24 +673,20 @@
                             <button onclick="bacVoteSkip()" id="bac-btn-skip" class="btn-action" style="flex:1; background:#e67e22;">On passe ?</button>
                         </div>
                     </div>
-                
                     <div id="bac-review" style="display:none;">
                         <div id="bac-review-list"></div>
                         <div id="bac-review-actions" style="margin-top:20px;"></div>
                     </div>
-                
                     <div id="bac-finished" style="display:none; text-align:center; padding:10px 0;">
                         <div style="font-size:3rem; margin-bottom:5px;" id="bac-winner-icon">🏆</div>
                         <div style="font-size:1.4rem; font-weight:800; color:var(--text-main);" id="bac-winner-text">Gagnant</div>
                         <div style="font-size:1rem; color:var(--text-sub); margin-bottom:15px;" id="bac-score-text">Score</div>
                         <div id="bac-results-table-container" style="margin-bottom:20px;"></div>
-                        <button onclick="bacReset()" class="btn-action" style="width:100%; background: linear-gradient(to right, var(--blue-dark), var(--pink-dark)); box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                            Lancer
-                        </button>
+                        <button onclick="bacReset()" class="btn-action" style="width:100%;">Rejouer</button>
                     </div>
-                
                     <div class="history-box" id="bac-history-list" style="margin-top:20px; padding-top:10px; border-top:1px solid #eee;"></div>
                 </div>
+        
             </div>
         </div>
         
@@ -615,7 +697,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v66 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v70 • janvier 2026</div>
         </div>
     </div>
 
@@ -628,6 +710,29 @@
         const firebaseConfig = { apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns", authDomain: "lovetravel-35285.firebaseapp.com", projectId: "lovetravel-35285", storageBucket: "lovetravel-35285.firebasestorage.app", messagingSenderId: "189902268760", appId: "1:189902268760:web:b461ce15d8c396be479d2d" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // --- SURVEILLANCE GLOBALE DES JEUX (Pour les points verts) ---
+        function checkActiveGames() {
+            const games = ['pendu', 'p4', 'uno', 'bac'];
+            games.forEach(g => {
+                onSnapshot(doc(db, "games", g + "_active"), (s) => {
+                    const btn = document.getElementById('btn-sel-' + g);
+                    if (!btn) return;
+                    const data = s.data();
+                    // Un jeu est actif s'il n'est pas "waiting", "idle" ou "finished"
+                    // Pour le Pendu: state != 'idle'
+                    // Pour P4/Uno/Bac: status == 'playing'
+                    let isActive = false;
+                    
+                    if (g === 'pendu') isActive = (data && data.state === 'playing');
+                    else isActive = (data && data.status === 'playing');
+        
+                    if (isActive) btn.classList.add('game-running');
+                    else btn.classList.remove('game-running');
+                });
+            });
+        }
+        checkActiveGames();
 
         // --- GESTION EVENEMENTS (V59) ---
         const events = [
@@ -892,182 +997,238 @@
         }
 
         // --- GAMES LOGIC ---
+        // --- PENDU (V67 - Style Lobby) ---
         let activePendu = null;
-        onSnapshot(doc(db, "games", "pendu_active"), (s) => { activePendu = s.exists() ? s.data() : { state:'setup' }; renderPendu(activePendu); });
-        onSnapshot(query(collection(db, "games_pendu_history"), orderBy("timestamp", "desc"), limit(50)), (s) => {
-            const list = document.getElementById('pendu-history-list'); list.innerHTML = "";
-            s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose'; const setter = h.setter === 'fr' ? 'Théo' : 'Elise'; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`; });
+        onSnapshot(doc(db, "games", "pendu_active"), (s) => { 
+            activePendu = s.exists() ? s.data() : { state:'idle' }; 
+            renderPendu(activePendu); 
         });
+        
         function renderPendu(game) {
-            const ctx = document.getElementById('pendu-canvas').getContext('2d');
-            const status = document.getElementById('pendu-status');
-            const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark');
-            const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
+            const lobby = document.getElementById('pendu-lobby');
+            const board = document.getElementById('pendu-game');
+            const result = document.getElementById('pendu-result');
+            const startBtn = document.getElementById('pendu-start-btn');
+            const setupInput = document.getElementById('pendu-setup-input');
+            const msg = document.getElementById('pendu-lobby-msg');
         
-            // 1. DESSIN DU PENDU
-            ctx.clearRect(0, 0, 200, 150);
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.strokeStyle = mainColor;
-            if (game.mistakes > 0) { ctx.moveTo(20, 140); ctx.lineTo(180, 140); }
-            if (game.mistakes > 1) { ctx.moveTo(50, 140); ctx.lineTo(50, 20); }
-            if (game.mistakes > 2) { ctx.lineTo(130, 20); }
-            if (game.mistakes > 3) { ctx.moveTo(130, 20); ctx.lineTo(130, 40); }
-            ctx.stroke();
+            // Reset displays
+            lobby.style.display = 'none';
+            board.style.display = 'none';
+            result.style.display = 'none';
         
-            ctx.beginPath();
-            ctx.strokeStyle = pinkColor;
-            if (game.mistakes > 4) { ctx.beginPath(); ctx.arc(130, 55, 15, 0, Math.PI * 2); ctx.stroke(); }
-            if (game.mistakes > 5) { ctx.beginPath(); ctx.moveTo(130, 70); ctx.lineTo(130, 110); ctx.stroke(); }
-        
-            ctx.beginPath();
-            if (game.mistakes > 6) { ctx.moveTo(130, 80); ctx.lineTo(110, 95); }
-            if (game.mistakes > 7) { ctx.moveTo(130, 80); ctx.lineTo(150, 95); }
-            if (game.mistakes > 8) { ctx.moveTo(130, 110); ctx.lineTo(115, 135); }
-            if (game.mistakes > 9) { ctx.moveTo(130, 110); ctx.lineTo(145, 135); }
-            ctx.stroke();
-        
-            if (game.mistakes > 10) { ctx.font = "14px Arial"; ctx.fillStyle = pinkColor; ctx.textAlign = "center"; ctx.fillText("x x", 130, 60); }
-        
-            // 2. GESTION DES ETATS (IDLE / SETUP / PLAYING / FIN)
-            const restartArea = document.getElementById('pendu-restart-area');
-            const setupArea = document.getElementById('pendu-setup');
-            const keyboard = document.getElementById('pendu-keyboard');
-            const canvas = document.getElementById('pendu-canvas');
-            const wordDisplay = document.getElementById('pendu-word-display');
-        
-            // CAS 1 : IDLE (Jeu non commencé ou fini nettoyé)
+            // 1. LOBBY / SETUP
             if (!game.state || game.state === 'idle') {
-                status.innerText = "Prêt pour une partie ?";
-                canvas.style.display = 'none';
-                wordDisplay.style.display = 'none';
-                setupArea.style.display = 'none';
-                keyboard.style.display = 'none';
-                
-                restartArea.style.display = 'block';
-                restartArea.innerHTML = `<button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Lancer</button>`;
+                lobby.style.display = 'block';
+                setupInput.style.display = 'none';
+                msg.innerText = "Qui veut faire deviner un mot ?";
+                startBtn.innerText = "Je propose un mot";
+                startBtn.onclick = () => {
+                    // Passe en mode saisie locale (pas encore dans la DB)
+                    setupInput.style.display = 'block';
+                    startBtn.innerText = "Valider et Lancer";
+                    startBtn.onclick = submitPenduWord;
+                };
                 return;
             }
         
-            // On réaffiche les éléments de base si on n'est pas en idle
-            canvas.style.display = 'block';
-            wordDisplay.style.display = 'block';
-        
-            // CAS 2 : SETUP (Choix du mot)
-            if (game.state === 'setup') {
-                status.innerText = "En attente d'un mot...";
-                setupArea.style.display = 'block'; // On affiche l'input
-                keyboard.style.display = 'none';
-                restartArea.style.display = 'none';
-                wordDisplay.innerText = "???";
-            } 
-            // CAS 3 : JEU EN COURS OU TERMINE
-            else {
-                setupArea.style.display = 'none'; // On cache l'input
+            // 2. JEU EN COURS
+            if (game.state === 'playing') {
+                board.style.display = 'block';
+                const isSetter = game.creator === currentUser;
                 
-                // Affichage du mot avec les tirets
-                let d = "";
-                for (let c of game.word) d += (game.guessed.includes(c) ? c : "_") + " ";
-                wordDisplay.innerText = d;
+                // Canvas Logic (Dessin)
+                const ctx = document.getElementById('pendu-canvas').getContext('2d');
+                ctx.clearRect(0, 0, 200, 150);
+                ctx.lineWidth = 3; 
+                ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-main');
+                
+                // Base du dessin
+                if(game.mistakes>0) { ctx.beginPath(); ctx.moveTo(20,140); ctx.lineTo(180,140); ctx.stroke(); }
+                if(game.mistakes>1) { ctx.beginPath(); ctx.moveTo(50,140); ctx.lineTo(50,20); ctx.stroke(); }
+                if(game.mistakes>2) { ctx.beginPath(); ctx.lineTo(130,20); ctx.stroke(); }
+                if(game.mistakes>3) { ctx.beginPath(); ctx.moveTo(130,20); ctx.lineTo(130,40); ctx.stroke(); }
+                
+                ctx.strokeStyle = '#ff4b6e'; // Couleur Pendu
+                if(game.mistakes>4) { ctx.beginPath(); ctx.arc(130,55,15,0,Math.PI*2); ctx.stroke(); }
+                if(game.mistakes>5) { ctx.beginPath(); ctx.moveTo(130,70); ctx.lineTo(130,110); ctx.stroke(); }
+                if(game.mistakes>6) { ctx.beginPath(); ctx.moveTo(130,80); ctx.lineTo(110,95); ctx.stroke(); }
+                if(game.mistakes>7) { ctx.beginPath(); ctx.moveTo(130,80); ctx.lineTo(150,95); ctx.stroke(); }
+                if(game.mistakes>8) { ctx.beginPath(); ctx.moveTo(130,110); ctx.lineTo(115,135); ctx.stroke(); }
+                if(game.mistakes>9) { ctx.beginPath(); ctx.moveTo(130,110); ctx.lineTo(145,135); ctx.stroke(); }
         
-                const isCreator = game.creator === currentUser;
+                // Texte
+                let displayW = "";
+                for (let c of game.word) displayW += (game.guessed.includes(c) ? c : "_") + " ";
+                document.getElementById('pendu-word-display').innerText = displayW;
         
-                if (game.state === 'playing') {
-                    status.innerText = isCreator ? "L'autre devine..." : "Devine !";
-                    keyboard.style.display = 'flex';
-                    restartArea.style.display = 'none';
-                    
-                    // Génération du clavier
+                const statusMsg = document.getElementById('pendu-status-msg');
+                const kbd = document.getElementById('pendu-keyboard');
+                
+                if (isSetter) {
+                    statusMsg.innerText = "L'autre essaie de deviner...";
+                    kbd.style.display = 'none';
+                } else {
+                    statusMsg.innerText = "Devine le mot !";
+                    kbd.style.display = 'flex';
                     let k = "";
                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l => {
-                        const disabled = isCreator || game.guessed.includes(l) ? "disabled" : "";
+                        const disabled = game.guessed.includes(l) ? "disabled" : "";
                         k += `<button class="key-btn" onclick="playPenduMove('${l}')" ${disabled}>${l}</button>`;
                     });
-                    keyboard.innerHTML = k;
+                    kbd.innerHTML = k;
+                }
+            } 
+            // 3. RÉSULTAT
+            else if (game.state === 'win' || game.state === 'loose') {
+                result.style.display = 'block';
+                const resTitle = document.getElementById('pendu-res-title');
+                const resIcon = document.getElementById('pendu-res-icon');
+                const resSub = document.getElementById('pendu-res-sub');
+                
+                resSub.innerText = "Le mot était : " + game.word;
+                
+                if (game.state === 'win') {
+                    resTitle.innerText = "BRAVO !";
+                    resIcon.innerText = "🎉";
                 } else {
-                    // GAGNÉ OU PERDU
-                    status.innerText = game.state === 'win' ? "GAGNÉ ! 🎉" : ("PERDU... Le mot était : " + game.word);
-                    keyboard.style.display = 'none';
-                    restartArea.style.display = 'block';
-                    restartArea.innerHTML = `<button onclick="finishPendu()" class="btn-action" style="background:var(--pink-dark);width:100%;">Fin de partie</button>`;
+                    resTitle.innerText = "PERDU...";
+                    resIcon.innerText = "💀";
                 }
             }
         }
-            
-        window.startPendu=function(){const w=document.getElementById('pendu-secret').value.toUpperCase().trim(); if(w) setDoc(doc(db,"games","pendu_active"),{state:'playing',word:w,guessed:[],mistakes:0, creator:currentUser});}
-        window.startPenduSetup=function(){ setDoc(doc(db,"games","pendu_active"),{state:'setup',word:"",guessed:[],mistakes:0, creator:""}); }
-        window.playPenduMove=async function(l){ if(!activePendu||activePendu.state!=='playing')return; const ng=[...activePendu.guessed,l]; let nm=activePendu.mistakes; if(!activePendu.word.includes(l))nm++; let ns='playing'; let save=false; if(nm>=11) { ns='loose'; save=true; } else if(activePendu.word.split('').every(c=>ng.includes(c))) { ns='win'; save=true; } await updateDoc(doc(db,"games","pendu_active"),{guessed:ng,mistakes:nm,state:ns}); if(save) addDoc(collection(db, "games_pendu_history"), { word: activePendu.word, setter: activePendu.creator, result: ns, timestamp: serverTimestamp() }); }
-        window.finishPendu = function() {
-            updateDoc(doc(db,"games","pendu_active"), { state: 'idle', word: "", guessed: [] });
-        }
         
-        let activeP4 = null;
-        onSnapshot(doc(db, "games", "p4_active"), (s) => { activeP4 = s.exists() ? s.data() : null; if(activeP4) renderP4(activeP4); else document.getElementById('p4-status').innerText = "Aucune partie en cours"; });
-        onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { const list = document.getElementById('p4-history-list'); list.innerHTML = ""; s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`; }); });
-        window.initP4 = function() { 
-            setDoc(doc(db, "games", "p4_active"), { 
-                board: Array(42).fill(0), 
-                turn: currentUser, 
-                winner: null, 
-                moves: 0, 
-                status: 'playing' 
-            }); 
-        }
-        function renderP4(game) { 
-            const grid = document.getElementById('p4-grid'); 
-            const statusEl = document.getElementById('p4-status'); 
-            const btn = document.getElementById('p4-restart-btn'); 
-            
-            grid.innerHTML = ""; 
-        
-            // CAS 1 : Partie pas commencée ou "Fin de partie" cliquée
-            if (!game.status || game.status === 'idle') {
-                statusEl.innerText = "Prêt pour une partie ?";
-                grid.style.display = 'none'; // Cache la grille
-                btn.innerText = "Lancer";
-                btn.onclick = initP4;
-                btn.disabled = false; 
-                btn.style.opacity = "1";
-                return; 
-            }
-        
-            // CAS 2 : Partie en cours ou Terminée (Affichage grille)
-            grid.style.display = 'grid'; // Affiche la grille
-            for(let i=0; i<42; i++) { 
-                const c=document.createElement('div'); 
-                c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); 
-                c.onclick=()=>playP4(i%7); 
-                grid.appendChild(c); 
-            }
-        
-            // Gestion de la victoire et du bouton
-            if(game.winner) { 
-                statusEl.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !"; 
-                btn.innerText = "Fin de partie"; // Changement de texte
-                btn.onclick = finishP4; // Nouvelle action
-                btn.disabled = false; 
-                btn.style.opacity = "1"; 
-                
-                // Petit ajout : update le status en 'finished' si ce n'est pas fait
-                if(game.status !== 'finished') updateDoc(doc(db,"games","p4_active"), {status: 'finished'});
-            } else { 
-                statusEl.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)"); 
-                btn.innerText = "Partie en cours...";
-                btn.disabled = true; 
-                btn.style.opacity = "0.5"; 
-            } 
-        }
-        window.playP4 = async function(col) { if(!activeP4||activeP4.winner) return; if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; } let board=[...activeP4.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; } if(row<0) return; const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0}; const winnerCode = checkWin(board); let winner = null; let moves = activeP4.moves + 1; if(winnerCode !== 0) { winner = winnerCode === 1 ? 'fr' : 'tw'; addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() }); } updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves }); }
-        window.finishP4 = function() {
-            updateDoc(doc(db, "games", "p4_active"), { 
-                status: 'idle', 
-                winner: null,
-                board: []
+        window.submitPenduWord = function() {
+            const w = document.getElementById('pendu-secret').value.toUpperCase().trim().replace(/[^A-Z]/g, '');
+            if (w.length < 3) { alert("3 lettres minimum !"); return; }
+            setDoc(doc(db, "games", "pendu_active"), {
+                state: 'playing', word: w, guessed: [], mistakes: 0, creator: currentUser
             });
+            document.getElementById('pendu-secret').value = "";
         }
         
-        let activeUno = null; let pickingWild = false; let wildCardIndex = -1;
-        onSnapshot(doc(db, "games", "uno_active"), (s) => { activeUno = s.exists() ? s.data() : null; if(activeUno) renderUno(activeUno); else document.getElementById('uno-status').innerText = "Aucune partie en cours"; });
+        window.resetPendu = function() {
+            setDoc(doc(db, "games", "pendu_active"), { state: 'idle', word: "", guessed: [] });
+        }
+        
+        // --- FONCTION GÉNÉRIQUE POUR LOBBY (P4 & UNO) ---
+        function renderGameLobby(game, gameName, readyFunc) {
+            const frReady = game.ready_fr;
+            const twReady = game.ready_tw;
+            
+            // Style interactif seulement pour soi-même
+            const frStyle = currentUser === 'fr' ? "cursor:pointer; transform:scale(1.05); border:2px solid var(--blue);" : "";
+            const twStyle = currentUser === 'tw' ? "cursor:pointer; transform:scale(1.05); border:2px solid var(--pink);" : "";
+            
+            return `
+                <div class="lobby-msg">En attente des joueurs...</div>
+                <div class="lobby-avatars">
+                    <div class="lobby-avatar p1 ${frReady?'ready':''}" style="${frStyle}" onclick="${currentUser==='fr'?readyFunc:''}">
+                        <span class="lobby-emoji">${frReady?'🤴':'🧔🏻‍♂️'}</span>
+                        <span class="lobby-name">Théo</span>
+                        <span class="lobby-status">${frReady?'✅':'...'}</span>
+                    </div>
+                    <div class="lobby-avatar p2 ${twReady?'ready':''}" style="${twStyle}" onclick="${currentUser==='tw'?readyFunc:''}">
+                        <span class="lobby-emoji">${twReady?'👸':'👩🏻'}</span>
+                        <span class="lobby-name">Elise</span>
+                        <span class="lobby-status">${twReady?'✅':'...'}</span>
+                    </div>
+                </div>
+                <div style="font-size:0.8rem; color:var(--text-sub);">Clique sur ta tête pour valider !</div>
+            `;
+        }
+        
+        // --- P4 (V67) ---
+        let activeP4 = null;
+        onSnapshot(doc(db, "games", "p4_active"), (s) => { 
+            activeP4 = s.exists() ? s.data() : null; 
+            if(!activeP4) setDoc(doc(db, "games", "p4_active"), { status: 'waiting', ready_fr: false, ready_tw: false });
+            else renderP4(activeP4); 
+        });
+        
+        function renderP4(game) {
+            const lobby = document.getElementById('p4-lobby');
+            const board = document.getElementById('p4-game');
+            const result = document.getElementById('p4-result');
+        
+            lobby.style.display = 'none';
+            board.style.display = 'none';
+            result.style.display = 'none';
+        
+            // 1. LOBBY
+            if (game.status === 'waiting') {
+                lobby.style.display = 'block';
+                lobby.innerHTML = renderGameLobby(game, 'p4', "toggleP4Ready()");
+            }
+            // 2. JEU
+            else if (game.status === 'playing') {
+                board.style.display = 'flex';
+                const grid = document.getElementById('p4-grid');
+                grid.innerHTML = "";
+                
+                // Status Message
+                const msg = document.getElementById('p4-status-msg');
+                if (game.turn === currentUser) msg.innerText = "🔴 À ton tour !";
+                else msg.innerText = "⚪️ L'adversaire réfléchit...";
+                msg.style.color = (game.turn === currentUser) ? "var(--text-main)" : "var(--text-sub)";
+        
+                for(let i=0; i<42; i++) { 
+                    const c=document.createElement('div'); 
+                    c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); 
+                    c.onclick=()=>playP4(i%7); 
+                    grid.appendChild(c); 
+                }
+            }
+            // 3. FIN
+            else if (game.status === 'finished') {
+                result.style.display = 'block';
+                const title = document.getElementById('p4-res-title');
+                const icon = document.getElementById('p4-res-icon');
+                
+                if (game.winner === currentUser) {
+                    title.innerText = "Victoire !"; icon.innerText = "🏆";
+                } else if (game.winner) {
+                    title.innerText = "Défaite..."; icon.innerText = "🥲";
+                } else {
+                    title.innerText = "Match nul"; icon.innerText = "🤝";
+                }
+            }
+        }
+        
+        window.toggleP4Ready = function() {
+            const myReady = !activeP4['ready_'+currentUser];
+            let update = { ['ready_'+currentUser]: myReady };
+            
+            // Si JE deviens prêt et que l'AUTRE est déjà prêt -> Start
+            const opponent = currentUser === 'fr' ? 'tw' : 'fr';
+            if (myReady && activeP4['ready_'+opponent]) {
+                update.status = 'playing';
+                update.board = Array(42).fill(0);
+                update.turn = Math.random()>0.5 ? 'fr' : 'tw'; // Premier joueur aléatoire
+                update.moves = 0;
+                update.winner = null;
+            }
+            updateDoc(doc(db, "games", "p4_active"), update);
+        }
+        
+        window.resetP4 = function() {
+            setDoc(doc(db, "games", "p4_active"), { status: 'waiting', ready_fr: false, ready_tw: false });
+        }
+        
+        // --- UNO (V67 - Harmonisé) ---
+        let activeUno = null; 
+        let pickingWild = false; 
+        let wildCardIndex = -1;
+
+        // Listener Principal
+        onSnapshot(doc(db, "games", "uno_active"), (s) => {
+            activeUno = s.exists() ? s.data() : null;
+            // Si le doc n'existe pas, on le crée en mode 'waiting'
+            if(!activeUno) setDoc(doc(db, "games", "uno_active"), { status: 'waiting', ready_fr: false, ready_tw: false });
+            else renderUno(activeUno);
+        });
+
+        // Historique
         onSnapshot(query(collection(db, "games_uno_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { 
             const list = document.getElementById('uno-history-list'); list.innerHTML = ""; 
             s.forEach(d => { 
@@ -1078,119 +1239,217 @@
             }); 
         });
 
-        window.initUno = function() {
-            const colors = ['red', 'blue', 'green', 'yellow'];
-            const values = ['0','1','2','3','4','5','6','7','8','9','p2','s'];
-            let deck = [];
-            colors.forEach(c => values.forEach(v => { deck.push(`${c}-${v}`); deck.push(`${c}-${v}`); }));
-            deck.push("black-w", "black-w", "black-w", "black-w");
-            deck.push("black-p4", "black-p4", "black-p4", "black-p4");
-            deck.sort(() => Math.random() - 0.5);
-            const hand_fr = deck.splice(0, 7); const hand_tw = deck.splice(0, 7); const discard = [deck.shift()];
-            setDoc(doc(db, "games", "uno_active"), { deck: deck, discard: discard, hand_fr: hand_fr, hand_tw: hand_tw, turn: currentUser, winner: null, moves: 0, status: 'playing'});
-        }
+        // Fonction d'affichage
         function renderUno(game) {
-            const btn = document.getElementById('uno-restart-btn');
-            const boardDiv = document.querySelector('.uno-board'); // Pour cacher le jeu
-        
-            // CAS 1 : Idle / Pas commencé
-            if (!game.status || game.status === 'idle') {
-                document.getElementById('uno-status').innerText = "Prêt pour une partie ?";
-                boardDiv.style.display = 'none'; // Cache les cartes
-                btn.innerText = "Lancer";
-                btn.onclick = initUno;
-                btn.disabled = false;
-                btn.style.opacity = "1";
-                btn.style.background = "var(--blue-dark)";
-                return;
+            const lobby = document.getElementById('uno-lobby');
+            const board = document.getElementById('uno-game');
+            const result = document.getElementById('uno-result');
+
+            // On cache tout par défaut
+            lobby.style.display = 'none';
+            board.style.display = 'none';
+            result.style.display = 'none';
+
+            // CAS 1 : LOBBY (Attente)
+            if (game.status === 'waiting') {
+                lobby.style.display = 'block';
+                // Utilise la fonction générique définie avec le P4
+                lobby.innerHTML = renderGameLobby(game, 'uno', "toggleUnoReady()");
             }
-        
-            // CAS 2 : Partie en cours ou finie (Affiche le plateau)
-            boardDiv.style.display = 'block';
-        
-            if(game.winner) {
-                document.getElementById('uno-status').innerText = `GAGNANT : ${game.winner==='fr'?'Théo':'Elise'} !`;
-                btn.innerText = "Fin de partie";
-                btn.onclick = finishUno;
-                btn.disabled = false; 
-                btn.style.opacity = "1";
-                btn.style.background = "var(--pink-dark)"; // Changement de couleur pour "Fin"
-            } else {
-                document.getElementById('uno-status').innerText = (game.turn === currentUser ? "À toi de jouer !" : "Tour de l'adversaire...");
-                btn.innerText = "Partie en cours...";
-                btn.disabled = true; 
-                btn.style.opacity = "0.5";
+            // CAS 2 : JEU EN COURS
+            else if (game.status === 'playing') {
+                board.style.display = 'block';
+                
+                // Infos adversaire
+                document.getElementById('uno-opponent-name').innerText = currentUser==='fr'?'Elise':'Théo';
+                document.getElementById('uno-opponent-count').innerText = currentUser==='fr' ? (game.hand_tw?.length||0) : (game.hand_fr?.length||0);
+                
+                // Défausse (Carte du milieu)
+                const topCard = game.discard[game.discard.length - 1];
+                const [topColor, topVal] = topCard.split('-');
+                document.getElementById('uno-discard-pile').innerHTML = `<div class="uno-card ${topColor}">${formatUnoVal(topVal)}</div>`;
+                
+                // Ma Main
+                const myHand = currentUser==='fr' ? game.hand_fr : game.hand_tw;
+                const handEl = document.getElementById('uno-player-hand');
+                handEl.innerHTML = "";
+                myHand.forEach((card, idx) => {
+                    const [c, v] = card.split('-');
+                    handEl.innerHTML += `<div class="uno-card ${c}" onclick="playUnoCard(${idx})">${formatUnoVal(v)}</div>`;
+                });
+                
+                // Message de statut
+                const msg = document.getElementById('uno-status-msg');
+                if(game.turn === currentUser) { 
+                    msg.innerText = "À toi de jouer !"; 
+                    msg.style.color = "var(--text-main)"; 
+                } else { 
+                    msg.innerText = "L'adversaire réfléchit..."; 
+                    msg.style.color = "var(--text-sub)"; 
+                }
+
             }
-            
-            document.getElementById('uno-opponent-name').innerText = currentUser==='fr'?'Elise':'Théo';
-            document.getElementById('uno-opponent-count').innerText = currentUser==='fr' ? game.hand_tw.length : game.hand_fr.length;
-            const topCard = game.discard[game.discard.length - 1];
-            const [topColor, topVal] = topCard.split('-');
-            const pileEl = document.getElementById('uno-discard-pile');
-            pileEl.innerHTML = `<div class="uno-card ${topColor}">${formatUnoVal(topVal)}</div>`;
-            const myHand = currentUser==='fr' ? game.hand_fr : game.hand_tw;
-            const handEl = document.getElementById('uno-player-hand');
-            handEl.innerHTML = "";
-            myHand.forEach((card, idx) => {
-                const [c, v] = card.split('-');
-                handEl.innerHTML += `<div class="uno-card ${c}" onclick="playUnoCard(${idx})">${formatUnoVal(v)}</div>`;
-            });
+            // CAS 3 : FIN DE PARTIE
+            else if (game.status === 'finished') {
+                result.style.display = 'block';
+                const title = document.getElementById('uno-res-title');
+                const icon = document.getElementById('uno-res-icon');
+                
+                if (game.winner === currentUser) {
+                    title.innerText = "TU AS GAGNÉ !";
+                    icon.innerText = "😎";
+                } else {
+                    title.innerText = "Tu as perdu...";
+                    icon.innerText = "😭";
+                }
+            }
         }
+
+        // Logique du Lobby (Similaire au P4)
+        window.toggleUnoReady = function() {
+            const myReady = !activeUno['ready_'+currentUser];
+            let update = { ['ready_'+currentUser]: myReady };
+            const opponent = currentUser === 'fr' ? 'tw' : 'fr';
+            
+            // Si les deux sont prêts, on lance l'initialisation du jeu ici
+            if (myReady && activeUno['ready_'+opponent]) {
+                const colors = ['red', 'blue', 'green', 'yellow'];
+                const values = ['0','1','2','3','4','5','6','7','8','9','p2','s'];
+                let deck = [];
+                colors.forEach(c => values.forEach(v => { deck.push(`${c}-${v}`); deck.push(`${c}-${v}`); }));
+                deck.push("black-w", "black-w", "black-w", "black-w");
+                deck.push("black-p4", "black-p4", "black-p4", "black-p4");
+                deck.sort(() => Math.random() - 0.5);
+                
+                const hand_fr = deck.splice(0, 7);
+                const hand_tw = deck.splice(0, 7);
+                const discard = [deck.shift()];
+                
+                update.status = 'playing';
+                update.deck = deck;
+                update.discard = discard;
+                update.hand_fr = hand_fr;
+                update.hand_tw = hand_tw;
+                update.turn = Math.random()>0.5 ? 'fr' : 'tw'; // Premier joueur aléatoire
+                update.moves = 0;
+                update.winner = null;
+            }
+            updateDoc(doc(db, "games", "uno_active"), update);
+        }
+
+        // Actions du Jeu
         function formatUnoVal(v) { if(v==='p2') return '+2'; if(v==='s') return '🚫'; if(v==='w') return '🌈'; if(v==='p4') return '+4'; return v; }
+        
         window.drawUnoCard = function() {
-            if(!activeUno || activeUno.winner || activeUno.turn !== currentUser) return;
+            if(!activeUno || activeUno.status !== 'playing' || activeUno.turn !== currentUser) return;
             if(pickingWild) return;
+            
             let deck = [...activeUno.deck];
+            // Si pioche vide (simplification: on ne re-mélange pas la défausse ici pour faire court, on alerte juste)
             if(deck.length === 0) { alert("Pioche vide !"); return; }
+            
             const card = deck.shift();
             const myHand = currentUser==='fr' ? [...activeUno.hand_fr] : [...activeUno.hand_tw];
             myHand.push(card);
+            
             const moves = activeUno.moves + 1;
             const nextTurn = currentUser==='fr'?'tw':'fr'; 
             updateDoc(doc(db, "games", "uno_active"), { deck: deck, [`hand_${currentUser}`]: myHand, turn: nextTurn, moves: moves });
         }
+
         window.playUnoCard = function(idx) {
-            if(!activeUno || activeUno.winner || activeUno.turn !== currentUser) return;
+            if(!activeUno || activeUno.status !== 'playing' || activeUno.turn !== currentUser) return;
             if(pickingWild) return;
+            
             const myHand = currentUser==='fr' ? [...activeUno.hand_fr] : [...activeUno.hand_tw];
             const card = myHand[idx];
             const [color, val] = card.split('-');
+            
             const topCard = activeUno.discard[activeUno.discard.length - 1];
             const [topColor, topVal] = topCard.split('-');
+            
             let valid = false;
-            if (color === 'black') { wildCardIndex = idx; pickingWild = true; document.getElementById('uno-color-modal').style.display = 'flex'; return; } else if (color === topColor || val === topVal) { valid = true; }
-            if (!valid) return;
+            // Gestion Joker
+            if (color === 'black') { 
+                wildCardIndex = idx; 
+                pickingWild = true; 
+                document.getElementById('uno-color-modal').style.display = 'flex'; 
+                return; 
+            } else if (color === topColor || val === topVal) { 
+                valid = true; 
+            }
+            
+            if (!valid) return; // Carte invalide
             executePlay(idx, null);
         }
-        window.finishUno = function() {
-            updateDoc(doc(db, "games", "uno_active"), { status: 'idle', winner: null });
+
+        // Gestion Joker (Suite)
+        window.chooseUnoColor = function(color) { 
+            document.getElementById('uno-color-modal').style.display = 'none'; 
+            pickingWild = false; 
+            executePlay(wildCardIndex, color); 
         }
-        window.chooseUnoColor = function(color) { document.getElementById('uno-color-modal').style.display = 'none'; pickingWild = false; executePlay(wildCardIndex, color); }
+
+        // Exécution du coup (Mise à jour DB)
         function executePlay(idx, chosenColor) {
             const myHand = currentUser==='fr' ? [...activeUno.hand_fr] : [...activeUno.hand_tw];
             const card = myHand[idx];
             const [color, val] = card.split('-');
-            myHand.splice(idx, 1);
+            
+            myHand.splice(idx, 1); // Enlève la carte de la main
+            
             let nextDiscard = card;
-            if(chosenColor) nextDiscard = `${chosenColor}-${val}`;
+            if(chosenColor) nextDiscard = `${chosenColor}-${val}`; // Applique la couleur choisie sur le Joker
+            
             const newDiscard = [...activeUno.discard, nextDiscard];
             const moves = activeUno.moves + 1;
+
+            // VICTOIRE ?
             if (myHand.length === 0) {
-                updateDoc(doc(db, "games", "uno_active"), { [`hand_${currentUser}`]: myHand, discard: newDiscard, winner: currentUser, moves: moves });
+                updateDoc(doc(db, "games", "uno_active"), { 
+                    [`hand_${currentUser}`]: myHand, 
+                    discard: newDiscard, 
+                    winner: currentUser, 
+                    status: 'finished', // Passage à l'état fini
+                    moves: moves 
+                });
                 addDoc(collection(db, "games_uno_history"), { winner: currentUser, moves: Math.ceil(moves/2), timestamp: serverTimestamp() });
                 return;
             }
+
+            // Gestion des effets (+2, +4, Passe)
             let nextTurn = currentUser==='fr'?'tw':'fr';
             let opponentHand = currentUser==='fr' ? [...activeUno.hand_tw] : [...activeUno.hand_fr];
             let deck = [...activeUno.deck];
+
             if (val === 'p2') {
                 if(deck.length>=2) { opponentHand.push(deck.shift()); opponentHand.push(deck.shift()); }
-                nextTurn = currentUser==='fr'?'tw':'fr'; 
+                // On garde nextTurn tel quel (l'autre passe son tour, donc c'est skip ? Non, au Uno +2 ne fait PAS rejouer, il fait sauter le tour de l'adversaire. Ici on simplifie: l'adversaire pioche et c'est tout, ou il pioche et passe ?)
+                // Règle classique: Adv pioche 2 et passe son tour. Donc c'est à MOI de rejouer ? Ou à l'autre de jouer après avoir pioché ?
+                // Simplification ici : L'adversaire pioche et C'EST SON TOUR (ou on saute ?). 
+                // Dans ton code initial : nextTurn = currentUser === 'fr' ? 'tw' : 'fr'; -> Donc l'adversaire pioche et JOUE.
+                // Si tu veux qu'il saute son tour : nextTurn = currentUser;
+                nextTurn = currentUser==='fr'?'tw':'fr'; // On reste sur ta logique : il pioche et joue.
             } else if (val === 'p4') {
                 if(deck.length>=4) { for(let i=0;i<4;i++) opponentHand.push(deck.shift()); }
                 nextTurn = currentUser==='fr'?'tw':'fr'; 
-            } else if (val === 's') { nextTurn = currentUser; }
-            updateDoc(doc(db, "games", "uno_active"), { deck: deck, discard: newDiscard, hand_fr: currentUser==='fr'?myHand:opponentHand, hand_tw: currentUser==='tw'?myHand:opponentHand, turn: nextTurn, moves: moves });
+            } else if (val === 's') { 
+                nextTurn = currentUser; // Là on rejoue
+            }
+
+            updateDoc(doc(db, "games", "uno_active"), { 
+                deck: deck, 
+                discard: newDiscard, 
+                hand_fr: currentUser==='fr'?myHand:opponentHand, 
+                hand_tw: currentUser==='tw'?myHand:opponentHand, 
+                turn: nextTurn, 
+                moves: moves 
+            });
+        }
+
+        // Reset pour rejouer
+        window.resetUno = function() {
+            setDoc(doc(db, "games", "uno_active"), { status: 'waiting', ready_fr: false, ready_tw: false });
         }
 
         // --- PETIT BAC (V66) ---
