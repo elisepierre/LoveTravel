@@ -190,22 +190,44 @@
         .cp-options { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px; }
         .cp-circle { width:60px; height:60px; border-radius:50%; cursor:pointer; border:2px solid #ddd; }
 
-        /* PETIT BAC */
+        /* PETIT BAC - ESTHÉTIQUE */
         .bac-letter-sticky { 
-            background: var(--pink); color: white; padding: 5px 15px; 
-            border-radius: 20px; display: inline-block; font-weight: bold; 
-            margin-bottom: 10px; position: sticky; top: 0; z-index: 5; 
+            background: linear-gradient(135deg, var(--blue), var(--pink)); 
+            color: white; padding: 8px 20px; 
+            border-radius: 30px; display: inline-block; font-weight: 800; 
+            margin-bottom: 15px; position: sticky; top: 0; z-index: 5; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-size: 1.1rem;
         }
-        .bac-row { margin-bottom: 8px; }
-        .bac-label { font-size: 0.7rem; color: var(--text-sub); font-weight: bold; display: block; }
-        .bac-input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: white; }
         
-        /* Correction */
-        .review-item { background: white; border: 1px solid var(--border); padding: 10px; margin-bottom: 5px; border-radius: 8px; }
-        .review-ans { font-size: 1.1rem; font-weight: bold; color: var(--text-main); margin: 5px 0; }
-        .review-btns { display: flex; gap: 5px; justify-content: center; }
-        .r-btn { flex: 1; border: 1px solid #ddd; background: #f9f9f9; padding: 5px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
-        .r-btn.selected { background: var(--blue); color: white; border-color: var(--blue-dark); }
+        .bac-row { margin-bottom: 12px; text-align: left; }
+        .bac-label { 
+            font-size: 0.75rem; color: var(--pink-dark); 
+            font-weight: 800; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .bac-input { 
+            width: 100%; padding: 12px; border: 2px solid var(--border); 
+            border-radius: 12px; background: white; font-family: 'Outfit'; 
+            transition: 0.2s; font-size: 1rem; color: var(--text-main);
+        }
+        .bac-input:focus { border-color: var(--pink); outline: none; }
+        
+        /* Correction Design */
+        .review-item { 
+            background: white; border: 1px solid var(--border); 
+            padding: 15px; margin-bottom: 10px; border-radius: 15px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .review-ans { font-size: 1.2rem; font-weight: bold; color: var(--text-main); margin: 5px 0 10px 0; }
+        .review-btns { display: flex; gap: 8px; justify-content: center; }
+        .r-btn { 
+            flex: 1; border: none; padding: 10px; border-radius: 10px; 
+            cursor: pointer; font-size: 0.9rem; font-weight: bold; color: var(--text-sub);
+            background: var(--input-bg); transition: 0.2s;
+        }
+        /* Couleurs actives des boutons correction */
+        .r-btn-0.selected { background: #ff7675; color: white; box-shadow: 0 3px 10px rgba(255,118,117,0.4); }
+        .r-btn-1.selected { background: var(--blue); color: white; box-shadow: 0 3px 10px rgba(142,202,230,0.4); }
+        .r-btn-2.selected { background: #55efc4; color: white; box-shadow: 0 3px 10px rgba(85,239,196,0.4); }
         
         /* LETTRES */
         .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -560,6 +582,19 @@
                         <div id="bac-review-list"></div>
                         <div style="text-align:center; margin-top:10px; font-weight:bold;" id="bac-final-score"></div>
                     </div>
+
+                    <div id="bac-finished" style="display:none; text-align:center; padding:20px 0;">
+                        <div style="font-size:4rem; margin-bottom:10px;" id="bac-winner-icon">🏆</div>
+                        <div style="font-size:1.5rem; font-weight:800; color:var(--text-main); margin-bottom:5px;" id="bac-winner-text">Théo gagne !</div>
+                        <div style="font-size:1rem; color:var(--text-sub); margin-bottom:25px;" id="bac-score-text">15 - 12</div>
+                        
+                        <button onclick="bacReset()" class="btn-action" style="width:100%; background: linear-gradient(to right, var(--blue-dark), var(--pink-dark)); box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                            Lancer
+                        </button>
+                    </div>
+                
+                    <div class="history-box" id="bac-history-list"></div>
+                </div>
                 
                     <div class="history-box" id="bac-history-list"></div>
                 </div>
@@ -1184,36 +1219,38 @@
             }
         };
         
-        // 3. Moteur d'affichage
+        // 3. Moteur d'affichage (Mise à jour V63)
         function renderBac(game) {
             const lobby = document.getElementById('bac-lobby');
             const board = document.getElementById('bac-game');
             const review = document.getElementById('bac-review');
+            const finished = document.getElementById('bac-finished'); // Nouvel écran
         
-            // PHASE ATTENTE
+            // Cacher tout par défaut
+            lobby.style.display = 'none';
+            board.style.display = 'none';
+            review.style.display = 'none';
+            finished.style.display = 'none';
+        
+            // --- PHASE ATTENTE ---
             if (game.status === 'waiting') {
-                lobby.style.display = 'block'; board.style.display = 'none'; review.style.display = 'none';
-                
-                document.getElementById('status-fr').style.opacity = game.ready_fr ? "1" : "0.5";
+                lobby.style.display = 'block';
                 document.getElementById('status-fr').innerText = game.ready_fr ? "Théo ✅" : "Théo 🔴";
-                document.getElementById('status-tw').style.opacity = game.ready_tw ? "1" : "0.5";
                 document.getElementById('status-tw').innerText = game.ready_tw ? "Elise ✅" : "Elise 🔴";
                 document.getElementById('bac-letter-display').innerText = "?";
-        
-                // Lancement auto si les deux prêts
-                if (game.ready_fr && game.ready_tw && currentUser === 'fr') { // Un seul déclenche
+                // Auto-start
+                if (game.ready_fr && game.ready_tw && currentUser === 'fr') {
                     updateDoc(doc(db, "games", "bac_active"), { status: 'playing', startTime: serverTimestamp() });
                 }
-                return;
             }
         
-            // PHASE JEU
-            if (game.status === 'playing') {
-                lobby.style.display = 'none'; board.style.display = 'block'; review.style.display = 'none';
+            // --- PHASE JEU ---
+            else if (game.status === 'playing') {
+                board.style.display = 'block';
                 document.getElementById('bac-current-letter').innerText = "Lettre : " + game.letter;
-        
+                
+                // Génération inputs (une seule fois)
                 const container = document.getElementById('bac-inputs');
-                // Génère les inputs une seule fois pour ne pas perdre le focus
                 if (container.innerHTML === "") {
                     bacCategories.forEach((cat, i) => {
                         container.innerHTML += `
@@ -1225,49 +1262,84 @@
                 }
             }
         
-            // PHASE CORRECTION
-            if (game.status === 'review') {
-                lobby.style.display = 'none'; board.style.display = 'none'; review.style.display = 'block';
+            // --- PHASE CORRECTION ---
+            else if (game.status === 'review') {
+                // Sauvegarde d'urgence si on était en train de jouer
+                if (document.getElementById('bac-inputs').innerHTML !== "") { 
+                     bacSendAnswers(); 
+                     document.getElementById('bac-inputs').innerHTML = ""; // Clean pour éviter double envoi
+                }
+        
+                review.style.display = 'block';
                 
-                // Si je suis FR, je note TW (et inversement)
                 const opponent = currentUser === 'fr' ? 'tw' : 'fr';
                 const oppName = opponent === 'fr' ? 'Théo' : 'Elise';
                 const oppAnswers = game[`answers_${opponent}`] || {};
-                const myGivenScores = game[`scores_${opponent}`] || {}; // Scores que J'AI donnés à l'autre
+                const myGivenScores = game[`scores_${opponent}`] || {};
         
                 const list = document.getElementById('bac-review-list');
-                let html = `<div style="text-align:center;margin-bottom:10px;">Valide les réponses de <b>${oppName}</b> :</div>`;
+                let html = `<div style="text-align:center;margin-bottom:15px;font-style:italic;">Valide les réponses de <b style="color:var(--blue-dark)">${oppName}</b></div>`;
                 
                 bacCategories.forEach((cat, i) => {
-                    const ans = oppAnswers[i] || "(Vide)";
-                    const score = myGivenScores[i]; // 0, 1, ou 2
+                    const ans = oppAnswers[i] || "<i>(Rien)</i>";
+                    const score = myGivenScores[i];
         
                     html += `
                     <div class="review-item">
                         <div class="bac-label">${cat}</div>
                         <div class="review-ans">${ans}</div>
                         <div class="review-btns">
-                            <button class="r-btn ${score===0?'selected':''}" onclick="bacRate('${opponent}', ${i}, 0)">0 (Nul/Vide)</button>
-                            <button class="r-btn ${score===1?'selected':''}" onclick="bacRate('${opponent}', ${i}, 1)">1 (Idem)</button>
-                            <button class="r-btn ${score===2?'selected':''}" onclick="bacRate('${opponent}', ${i}, 2)">2 (Validé)</button>
+                            <button class="r-btn r-btn-0 ${score===0?'selected':''}" onclick="bacRate('${opponent}', ${i}, 0)">❌ 0</button>
+                            <button class="r-btn r-btn-1 ${score===1?'selected':''}" onclick="bacRate('${opponent}', ${i}, 1)">🤝 1</button>
+                            <button class="r-btn r-btn-2 ${score===2?'selected':''}" onclick="bacRate('${opponent}', ${i}, 2)">✅ 2</button>
                         </div>
                     </div>`;
                 });
                 
-                // Bouton final
+                // Indicateur d'attente
                 const isDone = Object.keys(myGivenScores).length === bacCategories.length;
-                if(isDone) html += `<div style="color:green; text-align:center; margin-top:10px;">Attente de l'autre...</div>`;
+                if(isDone) html += `<div style="color:#2ecc71; text-align:center; margin-top:15px; font-weight:bold;">✅ Correction terminée, attente de l'autre...</div>`;
                 
                 list.innerHTML = html;
         
-                // Calcul fin de partie
+                // Check si fin
                 const frDone = Object.keys(game.scores_fr || {}).length === bacCategories.length;
                 const twDone = Object.keys(game.scores_tw || {}).length === bacCategories.length;
-        
-                if (frDone && twDone && currentUser === 'fr') { // Un seul cloture
-                    endBacGame(game);
-                }
+                if (frDone && twDone && currentUser === 'fr') { endBacGame(game); }
             }
+        
+            // --- PHASE RÉSULTATS (NOUVEAU) ---
+            else if (game.status === 'finished') {
+                finished.style.display = 'block';
+                
+                // On récupère le dernier gagnant depuis l'historique ou on recalcule vite fait
+                // Pour faire simple, on recalcule l'affichage local basé sur les scores stockés dans activeBac
+                let sFr = 0; Object.values(game.scores_fr || {}).forEach(v => sFr += v);
+                let sTw = 0; Object.values(game.scores_tw || {}).forEach(v => sTw += v);
+        
+                document.getElementById('bac-winner-text').innerText = 
+                    sFr > sTw ? "Théo gagne ! 🎉" : (sTw > sFr ? "Elise gagne ! 🎉" : "Égalité parfaite ! 🤝");
+                
+                document.getElementById('bac-score-text').innerText = `Théo : ${sFr} pts • Elise : ${sTw} pts`;
+                document.getElementById('bac-winner-icon').innerText = sFr > sTw ? "🤴" : (sTw > sFr ? "👸" : "⚖️");
+                
+                // Nettoyage des inputs cachés pour la prochaine fois
+                document.getElementById('bac-inputs').innerHTML = "";
+            }
+        }
+        
+        // Fonction pour relancer (Bouton "Rejouer")
+        window.bacReset = function() {
+            // On remet en 'waiting' et on reset tout
+            setDoc(doc(db, "games", "bac_active"), {
+                status: 'waiting',
+                ready_fr: false, ready_tw: false,
+                skip_fr: false, skip_tw: false,
+                letter: "ABCDEFGHIJKLMNOPRSTUV".charAt(Math.floor(Math.random() * 21)),
+                answers_fr: {}, answers_tw: {},
+                scores_fr: {}, scores_tw: {},
+                startTime: serverTimestamp()
+            });
         }
         
         // 4. Actions Joueurs
