@@ -818,6 +818,7 @@
                     restartArea.innerHTML = `<button onclick="finishPendu()" class="btn-action" style="background:var(--pink-dark);width:100%;">Fin de partie</button>`;
                 } 
             }
+        }
             
         window.startPendu=function(){const w=document.getElementById('pendu-secret').value.toUpperCase().trim(); if(w) setDoc(doc(db,"games","pendu_active"),{state:'playing',word:w,guessed:[],mistakes:0, creator:currentUser});}
         window.startPenduSetup=function(){ setDoc(doc(db,"games","pendu_active"),{state:'setup',word:"",guessed:[],mistakes:0, creator:""}); }
