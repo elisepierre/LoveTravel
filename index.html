@@ -1267,10 +1267,23 @@
             const lastFr=allPhotos.find(p=>p.by==='fr'); if(lastFr)document.getElementById('polaroid-img-fr').src=lastFr.url;
             const lastTw=allPhotos.find(p=>p.by==='tw'); if(lastTw)document.getElementById('polaroid-img-tw').src=lastTw.url;
         });
-        window.openGallery = function(role) { const m=document.getElementById('gallery-modal'); const g=document.getElementById('modal-grid'); g.innerHTML=""; allPhotos.filter(p=>p.by===role).forEach(p=>{ 
-            const dStr = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleDateString() : "";
-            g.innerHTML+=`<div id="photo-${p.id}"><img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'"><div class="photo-date">${dStr}</div>${role===currentUser?`<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>`:''}</div>`; 
-        }); m.style.display="block"; }
+        window.openGallery = function(role) { 
+            const m = document.getElementById('gallery-modal'); 
+            const g = document.getElementById('modal-grid'); 
+            g.innerHTML = ""; 
+            
+            allPhotos.filter(p => p.by === role).forEach(p => { 
+                // CORRECTION ICI : Ajout de 'fr-FR' pour avoir JJ/MM/AAAA
+                const dStr = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleDateString('fr-FR') : "";
+                
+                g.innerHTML += `<div id="photo-${p.id}">
+                    <img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'">
+                    <div class="photo-date">${dStr}</div>
+                    ${role === currentUser ? `<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>` : ''}
+                </div>`; 
+            }); 
+            m.style.display = "block"; 
+        }
         window.closeGallery = () => document.getElementById('gallery-modal').style.display='none';
         window.closeLightbox = () => document.getElementById('lightbox').style.display='none';
 
