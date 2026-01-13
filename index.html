@@ -299,7 +299,13 @@
         }
         .smoke { width: 8px; height: 8px; background: rgba(200,200,200,0.8); border-radius: 50%; position: absolute; top: 10px; opacity: 0; pointer-events: none; }
         
-        .candle-wrapper.blown-out .flame { opacity: 0 !important; transform: scale(0) !important; } 
+        .candle-wrapper.blown-out .flame { 
+            opacity: 0 !important; 
+            visibility: hidden !important; /* Garde la place mais rend invisible */
+            transform: scale(0) !important; 
+            animation: none !important; /* Coupe l'animation de la flamme */
+            transition: none !important; /* Disparition immédiate */
+        }
         .candle-wrapper.blown-out .smoke { animation: puff 1.5s forwards; }
 
         /* OEUF DE PAQUES */
