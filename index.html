@@ -510,6 +510,7 @@
                     <button onclick="toggleGame('pendu')" class="game-btn">Pendu</button>
                     <button onclick="toggleGame('p4')" class="game-btn">Puissance 4</button>
                     <button onclick="toggleGame('uno')" class="game-btn">Uno</button>
+                    <button onclick="toggleGame('bac')" class="game-btn">Petit Bac</button>
                 </div>
                 
                 <div id="pendu-box" class="game-block"><div class="game-header"><div class="game-title-text">Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div><canvas id="pendu-canvas" width="200" height="150"></canvas><div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div><div id="pendu-status" class="status-msg">En attente...</div><div id="pendu-setup" style="margin-top:10px;"><input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)"><button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button></div><div id="pendu-restart-area" style="display:none;margin-top:10px;"><button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button></div><div id="pendu-keyboard" class="keyboard" style="display:none;"></div><div class="history-box" id="pendu-history-list"></div></div>
@@ -832,11 +833,20 @@
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db,"letters",id)); }
 
         window.toggleGame = function(game) {
-            const ids = ['pendu-box', 'p4-box', 'uno-box'];
+            const ids = ['pendu-box', 'p4-box', 'uno-box', 'bac-box'];
+            
             ids.forEach(id => {
                 const el = document.getElementById(id);
-                if(id === game + '-box') el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-                else el.style.display = 'none';
+                // Sécurité : on vérifie si l'élément existe avant de toucher à son style
+                if (el) {
+                    if (id === game + '-box') {
+                        // Si c'est le jeu cliqué, on l'affiche (ou le cache si déjà ouvert)
+                        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+                    } else {
+                        // Sinon on ferme les autres
+                        el.style.display = 'none';
+                    }
+                }
             });
         }
 
