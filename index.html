@@ -134,6 +134,30 @@
         .btn-action:disabled { opacity: 0.5; cursor: not-allowed; background: var(--text-sub); }
 
         /* JEUX */
+        /* Ajout pour l'indicateur de jeu en cours */
+        .game-indicator {
+            display: inline-block;
+            width: 8px; 
+            height: 8px;
+            background-color: #2ecc71; /* Vert */
+            border-radius: 50%;
+            margin-left: 8px;
+            box-shadow: 0 0 5px #2ecc71;
+            opacity: 0; /* Caché par défaut */
+            transition: opacity 0.3s;
+        }
+        
+        /* Quand le jeu est actif (classe ajoutée via JS) */
+        .game-btn.is-running .game-indicator {
+            opacity: 1;
+            animation: pulse-dot 2s infinite;
+        }
+        
+        @keyframes pulse-dot {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .game-btn { 
             flex: 1; padding: 12px; border-radius: 15px; border: 1px solid var(--border); 
@@ -546,10 +570,18 @@
             <div class="card-content">
                 
                 <div class="game-selector">
-                    <button onclick="toggleGame('pendu')" class="game-btn">Pendu</button>
-                    <button onclick="toggleGame('p4')" class="game-btn">Puissance 4</button>
-                    <button onclick="toggleGame('uno')" class="game-btn">Uno</button>
-                    <button onclick="toggleGame('bac')" class="game-btn">Petit Bac</button>
+                    <button id="btn-pendu" onclick="toggleGame('pendu')" class="game-btn">
+                        Pendu <span class="game-indicator"></span>
+                    </button>
+                    <button id="btn-p4" onclick="toggleGame('p4')" class="game-btn">
+                        P4 <span class="game-indicator"></span>
+                    </button>
+                    <button id="btn-uno" onclick="toggleGame('uno')" class="game-btn">
+                        Uno <span class="game-indicator"></span>
+                    </button>
+                    <button id="btn-bac" onclick="toggleGame('bac')" class="game-btn">
+                        Bac <span class="game-indicator"></span>
+                    </button>
                 </div>
                 
                 <div id="pendu-box" class="game-block"><div class="game-header"><div class="game-title-text">Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div><canvas id="pendu-canvas" width="200" height="150"></canvas><div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div><div id="pendu-status" class="status-msg">En attente...</div><div id="pendu-setup" style="margin-top:10px;"><input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)"><button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button></div><div id="pendu-restart-area" style="display:none;margin-top:10px;"><button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button></div><div id="pendu-keyboard" class="keyboard" style="display:none;"></div><div class="history-box" id="pendu-history-list"></div></div>
@@ -874,19 +906,25 @@
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db,"letters",id)); }
 
         window.toggleGame = function(game) {
-            const ids = ['pendu-box', 'p4-box', 'uno-box', 'bac-box'];
+            const ids = ['pendu', 'p4', 'uno', 'bac'];
             
             ids.forEach(id => {
-                const el = document.getElementById(id);
-                // Sécurité : on vérifie si l'élément existe avant de toucher à son style
-                if (el) {
-                    if (id === game + '-box') {
-                        // Si c'est le jeu cliqué, on l'affiche (ou le cache si déjà ouvert)
-                        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-                    } else {
-                        // Sinon on ferme les autres
-                        el.style.display = 'none';
-                    }
+                const box = document.getElementById(id + '-box');
+                const btn = document.getElementById('btn-' + id);
+                
+                if (id === game) {
+                    // Bascule : si ouvert on ferme, si fermé on ouvre
+                    const isOpen = box.style.display === 'block';
+                    box.style.display = isOpen ? 'none' : 'block';
+                    
+                    // Gestion visuelle du bouton "Actif" (onglet ouvert)
+                    if (!isOpen) btn.classList.add('active-game');
+                    else btn.classList.remove('active-game');
+                    
+                } else {
+                    // Ferme les autres
+                    box.style.display = 'none';
+                    btn.classList.remove('active-game');
                 }
             });
         }
@@ -899,6 +937,7 @@
             s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose'; const setter = h.setter === 'fr' ? 'Théo' : 'Elise'; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`; });
         });
         function renderPendu(game) {
+            document.getElementById('btn-pendu').classList.toggle('is-running', game.state === 'playing');
             const ctx = document.getElementById('pendu-canvas').getContext('2d');
             const status = document.getElementById('pendu-status');
             const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark');
@@ -1014,6 +1053,7 @@
             }); 
         }
         function renderP4(game) { 
+            document.getElementById('btn-p4').classList.toggle('is-running', game.status === 'playing');
             const grid = document.getElementById('p4-grid'); 
             const statusEl = document.getElementById('p4-status'); 
             const btn = document.getElementById('p4-restart-btn'); 
@@ -1090,6 +1130,7 @@
             setDoc(doc(db, "games", "uno_active"), { deck: deck, discard: discard, hand_fr: hand_fr, hand_tw: hand_tw, turn: currentUser, winner: null, moves: 0, status: 'playing'});
         }
         function renderUno(game) {
+            document.getElementById('btn-uno').classList.toggle('is-running', game.status === 'playing');
             const btn = document.getElementById('uno-restart-btn');
             const boardDiv = document.querySelector('.uno-board'); // Pour cacher le jeu
         
@@ -1257,6 +1298,8 @@
         
         // 3. MOTEUR D'AFFICHAGE
         function renderBac(game) {
+            const isActive = game.status === 'playing' || game.status === 'review';
+            document.getElementById('btn-bac').classList.toggle('is-running', isActive);
             const lobby = document.getElementById('bac-lobby');
             const board = document.getElementById('bac-game');
             const review = document.getElementById('bac-review');
