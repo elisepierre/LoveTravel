@@ -135,29 +135,32 @@
 
         /* JEUX */
         /* Ajout pour l'indicateur de jeu en cours */
+        /* Pastille par défaut (Grise = Inactif) */
         .game-indicator {
-            display: block; /* Mieux que inline-block dans un flex */
+            display: block;
             width: 8px; 
             height: 8px;
-            background-color: #2ecc71;
+            background-color: #dcdcdc; /* Gris clair */
             border-radius: 50%;
-            /* margin-left: 8px;  <-- RETIREZ CETTE LIGNE (géré par gap) */
-            box-shadow: 0 0 5px #2ecc71;
-            opacity: 0;
-            transition: opacity 0.3s;
-            flex-shrink: 0; /* Empêche le point de s'écraser si manque de place */
+            /* On enlève opacity: 0 pour qu'elle soit toujours visible */
+            opacity: 1; 
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            border: 1px solid transparent; /* Pour éviter un léger décalage au changement de couleur */
         }
         
-        /* Quand le jeu est actif (classe ajoutée via JS) */
+        /* Quand le jeu est actif (Vert + Animation) */
         .game-btn.is-running .game-indicator {
-            opacity: 1;
+            background-color: #2ecc71; /* Vert */
+            box-shadow: 0 0 5px #2ecc71;
             animation: pulse-dot 2s infinite;
         }
         
+        /* L'animation reste la même */
         @keyframes pulse-dot {
-            0% { transform: scale(0.95); opacity: 0.7; }
+            0% { transform: scale(0.95); opacity: 0.8; }
             50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.7; }
+            100% { transform: scale(0.95); opacity: 0.8; }
         }
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .game-btn { 
