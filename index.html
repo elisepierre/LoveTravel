@@ -509,7 +509,7 @@
         // --- GESTION EVENEMENTS (V59) ---
         const events = [
             // J'ai mis Test au 13 janvier (aujourd'hui)
-            { d: 13, m: 1, type: 'bday', name: "Test", age: 24 }, 
+            { d: 13, m: 1, type: 'bday', name: "Théo", age: 21 }, 
             
             // Les autres dates ne changent pas
             { d: 7, m: 3, type: 'bday', name: "Théo", age: 21 },
@@ -725,7 +725,7 @@
             let suffix = "";
             if (d === 14 && m === 2) suffix = "_love";
             else if (d === 6 && m === 4) suffix = "_easter";
-            else if (d === 13 && m === 1) suffix = "_hb";
+            else if (d === 13 && m === 1 && role === 'fr') suffix = "_hb";
             else if (d === 7 && m === 3 && role === 'fr') suffix = "_hb";
             else if (d === 24 && m === 4 && role === 'tw') suffix = "_hb";
             return `MOOD/${role === 'fr' ? 'theo' : 'elise'}_${outfitId}${suffix}.png`;
