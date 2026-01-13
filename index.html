@@ -1126,39 +1126,89 @@
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
-        // --- GESTION CYCLE MENSTRUEL ---
+        // --- GESTION CYCLE (Mode Pilule 💊) ---
 
-        // 1. Écouter les données du cycle
+        // 1. Affichage intelligent
         onSnapshot(doc(db, "status", "cycle"), (docSnap) => {
-            // Attention: j'ai changé l'ID pour "cycle-bubble"
+            // Attention à bien avoir l'ID "cycle-bubble" dans ton HTML
             const el = document.getElementById('cycle-bubble'); 
             
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                const lastPeriod = data.lastStart.toDate();
-                const now = new Date();
+                const type = data.type || 'flower'; // 'blood' ou 'flower'
+                const lastStart = data.lastStart.toDate();
                 
-                const diffTime = Math.abs(now - lastPeriod);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-        
-                // FORMAT COURT POUR LA BULLE
-                if (diffDays <= 5) {
-                    el.innerHTML = `🩸 J-${diffDays}`;      // Ex: 🩸 J-2
-                    el.style.borderColor = "red";           // Bordure rouge
-                    el.style.color = "red";
-                } else if (diffDays >= 12 && diffDays <= 16) {
-                    el.innerHTML = `🥚 J-${diffDays}`;      // Ex: 🥚 J-14 (Ovulation)
-                    el.style.borderColor = "var(--pink-dark)";
-                    el.style.color = "var(--pink-dark)";
+                // Calcul J+X
+                const now = new Date();
+                const diffTime = Math.abs(now - lastStart);
+                const day = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+                // Affichage Icone + Jour
+                const icon = (type === 'blood') ? '🩸' : '🌸';
+                el.innerHTML = `${icon} J-${day}`;
+
+                // Couleurs
+                if (type === 'blood') {
+                    el.style.borderColor = "red";
+                    el.style.color = "#d63031";
                 } else {
-                    el.innerHTML = `🌸 J-${diffDays}`;      // Ex: 🌸 J-20
-                    el.style.borderColor = "var(--pink)";
+                    el.style.borderColor = "var(--pink-dark)";
                     el.style.color = "var(--text-sub)";
                 }
             } else {
-                el.innerText = "🌸";
+                el.innerText = "🌸 J-?";
             }
         });
+
+        // 2. Interaction au clic (Modif pour Elise / Notif pour Théo)
+        window.editCycle = function() {
+            const el = document.getElementById('cycle-bubble');
+            const currentText = el.innerText || ""; // Récupère le texte (ex: 🩸 J-2)
+
+            // --- CAS THÉO : Envoi de message de soutien ---
+            if (currentUser === 'fr') {
+                if (currentText.includes('🩸')) {
+                    // Si c'est la période rouge
+                    sendNtfy("Bon courage ma petite chérie ❤️", "rose", "high");
+                    alert("Message de courage envoyé ! 💌");
+                } else {
+                    // Si c'est la période fleur (ou autre)
+                    sendNtfy("N'oublie pas ta pilule ma petite chérie 💊", "pill", "high");
+                    alert("Rappel pilule envoyé ! 💊");
+                }
+                return; // On s'arrête là pour Théo
+            }
+
+            // --- CAS ELISE : Modification du cycle ---
+            const input = prompt(
+                "Mise à jour Cycle 💊\n\n" +
+                "🩸 Tape 'S' pour SANG (Reset auto à J-1)\n" +
+                "🌸 Tape 'F' pour FLEUR (Garde le jour)\n" +
+                "🔢 Ou écris le JOUR actuel (ex: 5) pour corriger."
+            );
+
+            if (!input) return;
+            const val = input.trim().toUpperCase();
+
+            if (val === 'S') {
+                setDoc(doc(db, "status", "cycle"), { 
+                    type: 'blood', 
+                    lastStart: serverTimestamp() 
+                }, { merge: true });
+            } 
+            else if (val === 'F') {
+                setDoc(doc(db, "status", "cycle"), { type: 'flower' }, { merge: true });
+            } 
+            else {
+                const day = parseInt(val);
+                if (!isNaN(day) && day > 0) {
+                    const newStart = new Date();
+                    newStart.setDate(newStart.getDate() - (day - 1));
+                    setDoc(doc(db, "status", "cycle"), { lastStart: newStart }, { merge: true });
+                }
+            }
+        }
+       
         
         // 2. Fonction pour remettre à zéro (Seulement Elise)
         window.resetCycle = function() {
