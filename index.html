@@ -554,7 +554,27 @@
                 
                 <div id="pendu-box" class="game-block"><div class="game-header"><div class="game-title-text">Pendu</div><button class="game-close-btn" onclick="toggleGame('pendu')">✕</button></div><canvas id="pendu-canvas" width="200" height="150"></canvas><div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div><div id="pendu-status" class="status-msg">En attente...</div><div id="pendu-setup" style="margin-top:10px;"><input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)"><button onclick="startPendu()" class="btn-action" style="width:100%;margin-top:5px;">Lancer</button></div><div id="pendu-restart-area" style="display:none;margin-top:10px;"><button onclick="startPenduSetup()" class="btn-action" style="background:var(--blue-dark);width:100%;">Rejouer</button></div><div id="pendu-keyboard" class="keyboard" style="display:none;"></div><div class="history-box" id="pendu-history-list"></div></div>
                 
-                <div id="p4-box" class="game-block"><div class="game-header"><div class="game-title-text">Puissance 4</div><button class="game-close-btn" onclick="toggleGame('p4')">✕</button></div><canvas id="p4-canvas" width="300" height="260" onclick="playP4(event)" style="cursor:pointer; margin-top:10px;"></canvas><div id="p4-status" class="status-msg">En attente...</div><button id="p4-restart-btn" onclick="initP4()" class="btn-action" style="width:100%;margin-bottom:10px;background:var(--blue-dark);" disabled>Nouvelle Partie</button><div class="p4-grid" id="p4-grid"></div><div class="history-box" id="p4-history-list"></div></div>
+                <div id="p4-box" class="game-block">
+                    <div class="game-header">
+                        <div class="game-title-text">Puissance 4</div>
+                        <button class="game-close-btn" onclick="toggleGame('p4')">✕</button>
+                    </div>
+                
+                    <div style="text-align:center; padding: 10px 0;">
+                        <canvas id="p4-canvas" width="350" height="300" onclick="playP4(event)" 
+                                style="background:transparent; cursor:pointer; touch-action: none; margin: 0 auto; display:block;"></canvas>
+                        
+                        <div id="p4-status" style="margin:10px 0; font-weight:800; color:var(--text-main); height:20px;">Chargement...</div>
+                        
+                        <div id="p4-restart-area" style="display:none; margin-top:10px;"></div>
+                        
+                        <button onclick="startP4()" style="margin-top:20px; font-size:0.7rem; background:#7f8c8d; color:white; border:none; padding:5px 10px; border-radius:5px;">
+                            ⚠️ Forcer une nouvelle partie (Reset)
+                        </button>
+                    </div>
+                    
+                    <div class="history-box" id="p4-history-list"></div>
+                </div>
 
                 <div id="uno-box" class="game-block">
                     <div class="game-header"><div class="game-title-text">UNO</div><button class="game-close-btn" onclick="toggleGame('uno')">✕</button></div>
@@ -1001,113 +1021,143 @@
             updateDoc(doc(db,"games","pendu_active"), { state: 'idle', word: "", guessed: [] });
         }
         
-        // --- PUISSANCE 4 (Version Corrigée V67) ---
+        // --- PUISSANCE 4 (Version V68 - Anti-Crash) ---
         let activeP4 = null;
         
-        // 1. Écouter le jeu
+        // 1. Écoute et Réparation Auto
         onSnapshot(doc(db, "games", "p4_active"), (docSnap) => {
-            activeP4 = docSnap.exists() ? docSnap.data() : null;
-            if (activeP4) renderP4(activeP4);
+            if (docSnap.exists()) {
+                activeP4 = docSnap.data();
+                
+                // SÉCURITÉ : Si le plateau est corrompu (pas un tableau), on reset direct
+                if (!activeP4.board || !Array.isArray(activeP4.board)) {
+                    console.log("Plateau corrompu détecté, réparation...");
+                    startP4(); // Auto-reset
+                } else {
+                    renderP4(activeP4);
+                }
+            } else {
+                // Si aucune partie n'existe, on en crée une
+                startP4();
+            }
         });
         
-        // 2. Affichage
+        // 2. Affichage (Moteur graphique)
         function renderP4(game) {
-            const ctx = document.getElementById('p4-canvas').getContext('2d');
+            const cvs = document.getElementById('p4-canvas');
+            if (!cvs) return; // Sécurité si l'élément n'existe pas
+            const ctx = cvs.getContext('2d');
             const status = document.getElementById('p4-status');
             const restartArea = document.getElementById('p4-restart-area');
             
-            // Nettoyage canvas
-            ctx.clearRect(0, 0, 300, 260);
-        
-            // Dessin du plateau
+            // Paramètres graphiques
             const rows = 6; const cols = 7;
-            const size = 40; const offset = 10;
-            
-            // Fond bleu du plateau
-            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--blue-dark');
-            ctx.fillRect(0, 0, cols * size + offset * 2, rows * size + offset * 2);
+            // On adapte la taille des cercles à la largeur du canvas
+            const size = 50; 
+            const offset = 0; 
         
-            // Dessin des pions
+            // 1. Nettoyage
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+        
+            // 2. Dessin du fond bleu (Le support)
+            ctx.fillStyle = "#2c3e50"; // Bleu foncé joli
+            // On dessine un rectangle aux coins arrondis (visuel)
+            ctx.beginPath();
+            ctx.roundRect(0, 0, 350, 300, 20);
+            ctx.fill();
+        
+            // 3. Dessin des trous et des pions
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     const val = game.board[r][c];
+                    const x = c * size;
+                    const y = r * size;
+                    
                     ctx.beginPath();
-                    ctx.arc(offset + c * size + size/2, offset + r * size + size/2, 16, 0, Math.PI * 2);
+                    // On fait des cercles
+                    ctx.arc(x + size/2, y + size/2, 20, 0, Math.PI * 2);
                     
-                    if (val === 'fr') ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--blue');
-                    else if (val === 'tw') ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--pink');
-                    else ctx.fillStyle = "white"; // Case vide
-                    
-                    ctx.fill();
+                    if (val === 'fr') {
+                        ctx.fillStyle = "#e74c3c"; // Rouge Théo
+                        ctx.fill();
+                        ctx.strokeStyle = "rgba(0,0,0,0.2)"; ctx.stroke(); // Ombre
+                    } 
+                    else if (val === 'tw') {
+                        ctx.fillStyle = "#f1c40f"; // Jaune Elise (Classique P4) ou Rose si tu préfères
+                        ctx.fill();
+                        ctx.strokeStyle = "rgba(0,0,0,0.2)"; ctx.stroke();
+                    } 
+                    else {
+                        ctx.fillStyle = "#ecf0f1"; // Blanc (Vide)
+                        ctx.fill();
+                    }
                     ctx.closePath();
                 }
             }
         
-            // Gestion du statut
+            // 4. Interface
             if (game.status === 'playing') {
                 const isMyTurn = game.turn === currentUser;
-                status.innerText = isMyTurn ? "🟢 C'est à toi !" : ("🔴 Attente de " + (game.turn === 'fr' ? 'Théo' : 'Elise'));
-                status.style.color = isMyTurn ? "#27ae60" : "#7f8c8d";
+                status.innerText = isMyTurn ? "🟢 À toi de jouer !" : ("🔴 Attente de " + (game.turn === 'fr' ? 'Théo' : 'Elise'));
+                status.style.color = isMyTurn ? "#27ae60" : "#95a5a6";
                 restartArea.style.display = 'none';
-        
-                // Ajout d'une zone cliquable transparente sur le canvas pour éviter les bugs de clics
-                // (Géré par l'onclick du canvas dans le HTML qui appelle playP4)
             } else {
                 // FIN DE PARTIE
                 const winnerName = game.winner === 'fr' ? 'Théo' : (game.winner === 'tw' ? 'Elise' : 'Personne');
                 status.innerText = game.winner === 'draw' ? "Match Nul !" : "🏆 " + winnerName + " a gagné !";
+                status.style.color = "var(--text-main)";
+                
                 restartArea.style.display = 'block';
-                restartArea.innerHTML = `<button onclick="startP4()" class="btn-action" style="background:var(--blue-dark); width:100%;">🔄 Rejouer</button>`;
+                restartArea.innerHTML = `
+                    <button onclick="startP4()" class="btn-action" style="background:var(--blue-dark); width:100%; box-shadow:0 4px 10px rgba(0,0,0,0.2);">
+                        🔄 Rejouer
+                    </button>`;
             }
         }
         
-        // 3. Jouer un coup (Clic sur le canvas)
+        // 3. Interaction (Clic)
         window.playP4 = function(event) {
-            if (!activeP4) return;
-        
-            // SÉCURITÉS ANTI-BUG
-            if (activeP4.status !== 'playing') { 
-                // Si le jeu est fini, on ne fait rien (ou on propose de relancer)
-                return; 
-            }
+            if (!activeP4 || activeP4.status !== 'playing') return;
             if (activeP4.turn !== currentUser) { 
-                // Petit feedback visuel ou sonore possible ici, mais pas d'alerte bloquante
-                console.log("Pas ton tour !");
+                // Feedback visuel si ce n'est pas le tour
+                document.getElementById('p4-status').innerText = "⏳ Pas ton tour !";
+                setTimeout(() => renderP4(activeP4), 1000);
                 return; 
             }
         
-            // Calcul de la colonne cliquée
+            // Calcul précis de la colonne
             const rect = document.getElementById('p4-canvas').getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const col = Math.floor((x - 10) / 40);
+            // Echelle pour gérer le responsive
+            const scaleX = document.getElementById('p4-canvas').width / rect.width;
+            
+            const clickX = (event.clientX - rect.left) * scaleX;
+            const col = Math.floor(clickX / 50); // 50 est la variable 'size' définie plus haut
         
             if (col < 0 || col > 6) return;
         
-            // Trouver la ligne vide la plus basse
+            // Logique de gravité (trouver la case vide la plus basse)
             let row = -1;
             for (let r = 5; r >= 0; r--) {
-                if (activeP4.board[r][col] === null) {
+                if (!activeP4.board[r][col]) { // si null ou undefined
                     row = r;
                     break;
                 }
             }
         
             if (row !== -1) {
-                // Copie du board pour modif
+                // Copie propre
                 const newBoard = JSON.parse(JSON.stringify(activeP4.board));
                 newBoard[row][col] = currentUser;
         
                 // Vérif Victoire
                 let winner = checkP4Win(newBoard, row, col, currentUser) ? currentUser : null;
-                
-                // Vérif Match Nul (Plateau plein)
-                let isDraw = !winner && newBoard.every(r => r.every(c => c !== null));
+                let isDraw = !winner && newBoard.every(r => r.every(c => c));
+        
                 if (isDraw) winner = 'draw';
         
                 const nextTurn = winner ? null : (currentUser === 'fr' ? 'tw' : 'fr');
                 const nextStatus = winner ? 'finished' : 'playing';
         
-                // Mise à jour Firebase
                 updateDoc(doc(db, "games", "p4_active"), {
                     board: newBoard,
                     turn: nextTurn,
@@ -1115,9 +1165,9 @@
                     winner: winner,
                     lastMove: serverTimestamp()
                 });
-        
-                // Historique si victoire
+                
                 if (winner) {
+                    // Historique
                     addDoc(collection(db, "games_history"), {
                         game: "Puissance 4",
                         winner: winner,
@@ -1128,21 +1178,27 @@
             }
         }
         
-        // 4. Démarrer / Reset (CORRECTION DU BUG DE BLOCAGE ICI)
+        // 4. Fonction de Reset (Force brute)
         window.startP4 = function() {
-            // On utilise setDoc au lieu de updateDoc pour ÉCRASER toute ancienne donnée corrompue
             setDoc(doc(db, "games", "p4_active"), {
-                board: Array(6).fill(null).map(() => Array(7).fill(null)), // Plateau vide
-                turn: Math.random() < 0.5 ? 'fr' : 'tw', // Qui commence ? Aléatoire
+                // On crée un tableau vide 6x7 explicitement
+                board: [
+                    [null,null,null,null,null,null,null],
+                    [null,null,null,null,null,null,null],
+                    [null,null,null,null,null,null,null],
+                    [null,null,null,null,null,null,null],
+                    [null,null,null,null,null,null,null],
+                    [null,null,null,null,null,null,null]
+                ],
+                turn: Math.random() < 0.5 ? 'fr' : 'tw',
                 status: 'playing',
                 winner: null,
                 lastMove: serverTimestamp()
             });
         }
         
-        // Algo de victoire (inchangé mais inclus pour être sûr)
+        // Algo Victoire (Inchangé)
         function checkP4Win(b, r, c, p) {
-            // Fonctions directions...
             const checkDir = (dr, dc) => {
                 let count = 0;
                 for (let i = -3; i <= 3; i++) {
@@ -1157,6 +1213,8 @@
             };
             return checkDir(0, 1) || checkDir(1, 0) || checkDir(1, 1) || checkDir(1, -1);
         }
+        
+       
         window.playP4 = async function(col) { if(!activeP4||activeP4.winner) return; if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; } let board=[...activeP4.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; } if(row<0) return; const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0}; const winnerCode = checkWin(board); let winner = null; let moves = activeP4.moves + 1; if(winnerCode !== 0) { winner = winnerCode === 1 ? 'fr' : 'tw'; addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() }); } updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves }); }
         window.finishP4 = function() {
             updateDoc(doc(db, "games", "p4_active"), { 
