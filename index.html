@@ -190,7 +190,7 @@
         .cp-options { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px; }
         .cp-circle { width:60px; height:60px; border-radius:50%; cursor:pointer; border:2px solid #ddd; }
 
-        /* PETIT BAC - ESTHÉTIQUE */
+        /* PETIT BAC - ESTHÉTIQUE CORRIGÉ */
         .bac-letter-sticky { 
             background: linear-gradient(135deg, var(--blue), var(--pink)); 
             color: white; padding: 8px 20px; 
@@ -220,14 +220,15 @@
         .review-ans { font-size: 1.2rem; font-weight: bold; color: var(--text-main); margin: 5px 0 10px 0; }
         .review-btns { display: flex; gap: 8px; justify-content: center; }
         .r-btn { 
-            flex: 1; border: none; padding: 10px; border-radius: 10px; 
+            flex: 1; border: 1px solid #eee; padding: 10px; border-radius: 10px; 
             cursor: pointer; font-size: 0.9rem; font-weight: bold; color: var(--text-sub);
             background: var(--input-bg); transition: 0.2s;
         }
-        /* Couleurs actives des boutons correction */
-        .r-btn-0.selected { background: #ff7675; color: white; box-shadow: 0 3px 10px rgba(255,118,117,0.4); }
-        .r-btn-1.selected { background: var(--blue); color: white; box-shadow: 0 3px 10px rgba(142,202,230,0.4); }
-        .r-btn-2.selected { background: #55efc4; color: white; box-shadow: 0 3px 10px rgba(85,239,196,0.4); }
+        
+        /* COULEURS FORCÉES AVEC !IMPORTANT */
+        .r-btn-0.selected { background: #ff7675 !important; color: white !important; border-color: #ff7675 !important; } /* Rouge */
+        .r-btn-1.selected { background: var(--blue) !important; color: white !important; border-color: var(--blue) !important; } /* Bleu */
+        .r-btn-2.selected { background: #55efc4 !important; color: white !important; border-color: #55efc4 !important; } /* Vert */
         
         /* LETTRES */
         .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -1187,35 +1188,55 @@
             updateDoc(doc(db, "games", "uno_active"), { deck: deck, discard: newDiscard, hand_fr: currentUser==='fr'?myHand:opponentHand, hand_tw: currentUser==='tw'?myHand:opponentHand, turn: nextTurn, moves: moves });
         }
 
-        // --- PETIT BAC ---
-        const bacCategories = ["Prénom 🚺", "Prénom 🚹", "Ville", "Pays", "Nourriture", "Métier", "Animal", "Sport", "Objet", "Perso. Fictif", "Star"];
+        // --- PETIT BAC (V64) ---
+        // La liste complète (17 catégories)
+        const allBacCategories = [
+            "Prénom Féminin", "Prénom Masculin", "Ville", "Pays", "Nourriture", "Métier", 
+            "Animal", "Sport", "Objet", "Personnage Fictif", "Personnalité Publique", 
+            "Film", "Marque", "Plante", "Vêtement", "Dessin Animé", "Série Télévisée"
+        ];
         let activeBac = null;
         
-        // Bouton du menu (Ajoute cette ligne dans toggleGame existant ou modifie le HTML du sélecteur)
-        // <button onclick="toggleGame('bac')" class="game-btn">Petit Bac</button>
-        
-        // 1. Écouteur Firebase
         onSnapshot(doc(db, "games", "bac_active"), (s) => {
             activeBac = s.exists() ? s.data() : null;
             if (activeBac) renderBac(activeBac);
         });
         
-        // 2. Initialisation et Prêt
+        // Nouvelle logique de lancement "Prêt / Annuler"
         window.bacSetReady = function() {
-            if (!activeBac || activeBac.status === 'finished') {
-                // Reset si pas de partie
-                setDoc(doc(db, "games", "bac_active"), {
-                    status: 'waiting',
-                    ready_fr: false, ready_tw: false,
-                    skip_fr: false, skip_tw: false,
-                    letter: "ABCDEFGHIJKLMNOPRSTUV".charAt(Math.floor(Math.random() * 21)),
-                    answers_fr: {}, answers_tw: {},
-                    scores_fr: {}, scores_tw: {}, // Scores donnés PAR l'adversaire
-                    startTime: serverTimestamp()
-                });
-                setTimeout(() => updateDoc(doc(db, "games", "bac_active"), { [`ready_${currentUser}`]: true }), 500);
-            } else {
-                updateDoc(doc(db, "games", "bac_active"), { [`ready_${currentUser}`]: true });
+            if (!activeBac) { bacReset(); return; } // Sécurité
+        
+            const amIReady = activeBac[`ready_${currentUser}`];
+            const opponent = currentUser === 'fr' ? 'tw' : 'fr';
+            const isOpponentReady = activeBac[`ready_${opponent}`];
+        
+            // CAS 1 : Je veux ANNULER (j'étais déjà prêt)
+            if (amIReady) {
+                updateDoc(doc(db, "games", "bac_active"), { [`ready_${currentUser}`]: false });
+            } 
+            // CAS 2 : Je me mets PRÊT
+            else {
+                // Si l'adversaire est DÉJÀ prêt, c'est moi qui lance la partie !
+                if (isOpponentReady) {
+                    // 1. Choix Lettre
+                    const letter = "ABCDEFGHIJKLMNOPRSTUV".charAt(Math.floor(Math.random() * 21));
+                    
+                    // 2. Choix 6 Catégories au hasard
+                    const shuffled = [...allBacCategories].sort(() => 0.5 - Math.random());
+                    const selected = shuffled.slice(0, 6);
+        
+                    // 3. Lancement
+                    updateDoc(doc(db, "games", "bac_active"), {
+                        [`ready_${currentUser}`]: true,
+                        status: 'playing',
+                        letter: letter,
+                        currentCategories: selected, // On sauvegarde la sélection pour cette partie
+                        startTime: serverTimestamp()
+                    });
+                } else {
+                    // Sinon, j'attends l'autre
+                    updateDoc(doc(db, "games", "bac_active"), { [`ready_${currentUser}`]: true });
+                }
             }
         };
         
@@ -1224,24 +1245,33 @@
             const lobby = document.getElementById('bac-lobby');
             const board = document.getElementById('bac-game');
             const review = document.getElementById('bac-review');
-            const finished = document.getElementById('bac-finished'); // Nouvel écran
+            const finished = document.getElementById('bac-finished');
         
-            // Cacher tout par défaut
-            lobby.style.display = 'none';
-            board.style.display = 'none';
-            review.style.display = 'none';
-            finished.style.display = 'none';
+            lobby.style.display = 'none'; board.style.display = 'none';
+            review.style.display = 'none'; finished.style.display = 'none';
+        
+            // Les catégories de CETTE partie (ou vide si pas encore lancée)
+            const currentCats = game.currentCategories || [];
         
             // --- PHASE ATTENTE ---
             if (game.status === 'waiting') {
                 lobby.style.display = 'block';
-                document.getElementById('status-fr').innerText = game.ready_fr ? "Théo ✅" : "Théo 🔴";
-                document.getElementById('status-tw').innerText = game.ready_tw ? "Elise ✅" : "Elise 🔴";
-                document.getElementById('bac-letter-display').innerText = "?";
-                // Auto-start
-                if (game.ready_fr && game.ready_tw && currentUser === 'fr') {
-                    updateDoc(doc(db, "games", "bac_active"), { status: 'playing', startTime: serverTimestamp() });
-                }
+                document.getElementById('bac-letter-display').style.display = 'none';
+                
+                // Gestion du bouton Lancer / Annuler
+                const amIReady = game[`ready_${currentUser}`];
+                let btnHtml = amIReady 
+                    ? `<button onclick="bacSetReady()" class="btn-action" style="width:100%; background:#e74c3c;">Annuler ❌</button>`
+                    : `<button onclick="bacSetReady()" class="btn-action" style="width:100%; background:var(--blue-dark);">Prêt ! ✅</button>`;
+        
+                lobby.innerHTML = `
+                    <div style="font-size:1.5rem; font-weight:800; margin-bottom:20px; color:var(--text-main);">Prêt pour une partie ?</div>
+                    <div style="display:flex; justify-content:space-around; margin-bottom:30px;">
+                        <div id="status-fr" style="opacity:${game.ready_fr?1:0.3}; font-weight:bold;">Théo ${game.ready_fr?'✅':'⏳'}</div>
+                        <div id="status-tw" style="opacity:${game.ready_tw?1:0.3}; font-weight:bold;">Elise ${game.ready_tw?'✅':'⏳'}</div>
+                    </div>
+                    ${btnHtml}
+                `;
             }
         
             // --- PHASE JEU ---
@@ -1249,10 +1279,15 @@
                 board.style.display = 'block';
                 document.getElementById('bac-current-letter').innerText = "Lettre : " + game.letter;
                 
-                // Génération inputs (une seule fois)
                 const container = document.getElementById('bac-inputs');
-                if (container.innerHTML === "") {
-                    bacCategories.forEach((cat, i) => {
+                // On régénère si c'est vide ou si les catégories ont changé (nouvelle partie)
+                // Astuce : on vérifie si le premier label correspond à la première catégorie actuelle
+                const firstLabel = container.querySelector('.bac-label');
+                const needRefresh = !firstLabel || firstLabel.innerText !== currentCats[0];
+        
+                if (needRefresh) {
+                    container.innerHTML = "";
+                    currentCats.forEach((cat, i) => {
                         container.innerHTML += `
                             <div class="bac-row">
                                 <span class="bac-label">${cat}</span>
@@ -1260,27 +1295,39 @@
                             </div>`;
                     });
                 }
+        
+                const iSkipped = game[`skip_${currentUser}`];
+                const btnsDiv = board.querySelector('div[style*="display:flex"]');
+                if(btnsDiv) {
+                    btnsDiv.innerHTML = `
+                        <button onclick="bacTryFinish()" class="btn-action" style="flex:1; background:var(--blue-dark);">Terminé !</button>
+                        <button onclick="bacVoteSkip()" class="btn-action" 
+                            style="flex:1; background:${iSkipped ? '#bdc3c7' : '#e67e22'}; cursor:${iSkipped ? 'not-allowed' : 'pointer'};" 
+                            ${iSkipped ? 'disabled' : ''}>
+                            ${iSkipped ? 'En attente...' : 'On passe ?'}
+                        </button>
+                    `;
+                }
             }
         
             // --- PHASE CORRECTION ---
             else if (game.status === 'review') {
-                // Sauvegarde d'urgence si on était en train de jouer
                 if (document.getElementById('bac-inputs').innerHTML !== "") { 
                      bacSendAnswers(); 
-                     document.getElementById('bac-inputs').innerHTML = ""; // Clean pour éviter double envoi
+                     document.getElementById('bac-inputs').innerHTML = ""; 
                 }
         
                 review.style.display = 'block';
-                
                 const opponent = currentUser === 'fr' ? 'tw' : 'fr';
                 const oppName = opponent === 'fr' ? 'Théo' : 'Elise';
                 const oppAnswers = game[`answers_${opponent}`] || {};
                 const myGivenScores = game[`scores_${opponent}`] || {};
         
                 const list = document.getElementById('bac-review-list');
-                let html = `<div style="text-align:center;margin-bottom:15px;font-style:italic;">Valide les réponses de <b style="color:var(--blue-dark)">${oppName}</b></div>`;
+                let html = `<div style="text-align:center;margin-bottom:15px;font-style:italic;">Correction : <b style="color:var(--blue-dark)">${oppName}</b></div>`;
                 
-                bacCategories.forEach((cat, i) => {
+                // On boucle sur currentCats (les 6 de la partie)
+                currentCats.forEach((cat, i) => {
                     const ans = oppAnswers[i] || "<i>(Rien)</i>";
                     const score = myGivenScores[i];
         
@@ -1296,24 +1343,19 @@
                     </div>`;
                 });
                 
-                // Indicateur d'attente
-                const isDone = Object.keys(myGivenScores).length === bacCategories.length;
-                if(isDone) html += `<div style="color:#2ecc71; text-align:center; margin-top:15px; font-weight:bold;">✅ Correction terminée, attente de l'autre...</div>`;
+                const isDone = Object.keys(myGivenScores).length === currentCats.length;
+                if(isDone) html += `<div style="color:#2ecc71; text-align:center; margin-top:15px; font-weight:bold;">✅ Validé, attente de l'autre...</div>`;
                 
                 list.innerHTML = html;
         
-                // Check si fin
-                const frDone = Object.keys(game.scores_fr || {}).length === bacCategories.length;
-                const twDone = Object.keys(game.scores_tw || {}).length === bacCategories.length;
+                const frDone = Object.keys(game.scores_fr || {}).length === currentCats.length;
+                const twDone = Object.keys(game.scores_tw || {}).length === currentCats.length;
                 if (frDone && twDone && currentUser === 'fr') { endBacGame(game); }
             }
         
-            // --- PHASE RÉSULTATS (NOUVEAU) ---
+            // --- PHASE RÉSULTATS ---
             else if (game.status === 'finished') {
                 finished.style.display = 'block';
-                
-                // On récupère le dernier gagnant depuis l'historique ou on recalcule vite fait
-                // Pour faire simple, on recalcule l'affichage local basé sur les scores stockés dans activeBac
                 let sFr = 0; Object.values(game.scores_fr || {}).forEach(v => sFr += v);
                 let sTw = 0; Object.values(game.scores_tw || {}).forEach(v => sTw += v);
         
@@ -1322,8 +1364,6 @@
                 
                 document.getElementById('bac-score-text').innerText = `Théo : ${sFr} pts • Elise : ${sTw} pts`;
                 document.getElementById('bac-winner-icon').innerText = sFr > sTw ? "🤴" : (sTw > sFr ? "👸" : "⚖️");
-                
-                // Nettoyage des inputs cachés pour la prochaine fois
                 document.getElementById('bac-inputs').innerHTML = "";
             }
         }
@@ -1344,11 +1384,13 @@
         
         // 4. Actions Joueurs
         window.bacTryFinish = function() {
-            // Vérifier si tout est rempli
             let allFilled = true;
             let answers = {};
-            bacCategories.forEach((_, i) => {
-                const val = document.getElementById(`bac-in-${i}`).value.trim();
+            const cats = activeBac.currentCategories || []; // On récupère les catégories actives
+            
+            cats.forEach((_, i) => {
+                const el = document.getElementById(`bac-in-${i}`);
+                const val = el ? el.value.trim() : "";
                 if (!val) allFilled = false;
                 answers[i] = val;
             });
@@ -1374,7 +1416,9 @@
         
         window.bacSendAnswers = function() {
             let answers = {};
-            bacCategories.forEach((_, i) => {
+            const cats = activeBac.currentCategories || [];
+            
+            cats.forEach((_, i) => {
                 const el = document.getElementById(`bac-in-${i}`);
                 answers[i] = el ? el.value.trim() : "";
             });
