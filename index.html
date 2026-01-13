@@ -38,7 +38,7 @@
             --p-shadow: rgba(0,0,0,0.5);
         }
         
-        /* THEME FESTIF (Anniversaire & Pâques) */
+        /* THEME FESTIF */
         body.birthday-theme {
             background-color: #fffdf5;
             background-image: radial-gradient(#ff9eb5 2px, transparent 2px), radial-gradient(#8ecae6 2px, transparent 2px);
@@ -119,22 +119,8 @@
         .input-field { flex: 1; min-width: 120px; padding: 12px; border: 2px solid var(--border); border-radius: 12px; font-family: 'Outfit'; outline: none; background: var(--input-bg); color: var(--text-main); }
         .btn-action { background: var(--blue-dark); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: bold; cursor: pointer; height: 45px; }
         .btn-action:disabled { opacity: 0.5; cursor: not-allowed; background: var(--text-sub); }
-        
-        /* QUESTIONS DU JOUR */
-        .question-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 15px; }
-        .q-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; color:var(--text-sub); font-size:0.8rem; }
-        .q-nav { cursor:pointer; font-size:1.2rem; padding:0 10px; user-select: none;}
-        .q-nav.disabled { opacity:0.3; cursor:default; }
-        .q-text { font-size: 1.1rem; font-weight: bold; color: var(--text-main); margin-bottom: 15px; font-family: 'Dancing Script', cursive; }
-        .q-answers { display: flex; flex-direction: column; gap: 10px; text-align: left; }
-        .q-bubble { padding: 10px; border-radius: 10px; font-size: 0.9rem; position: relative; }
-        .q-blur { filter: blur(5px); user-select: none; opacity: 0.5; cursor: not-allowed; }
-        .q-fr { background: #e3f2fd; color: #333; border: 1px solid var(--blue); align-self: flex-start; max-width: 90%; }
-        .q-tw { background: #fff0f5; color: #333; border: 1px solid var(--pink); align-self: flex-end; max-width: 90%; }
-        .q-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
-        .q-action-btn { font-size: 0.7rem; border: none; background: none; cursor: pointer; text-decoration: underline; color: #555; }
 
-        /* JEUX - V54 REDESIGN */
+        /* JEUX */
         .game-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .game-btn { 
             flex: 1; padding: 12px; border-radius: 15px; border: 1px solid var(--border); 
@@ -224,9 +210,30 @@
         .modal-img:hover { opacity: 0.8; }
         .lightbox-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; background: none; border: none; cursor: pointer; }
 
+        /* PROJETS & LIVRES (CSS V57 RESTAURÉ) */
+        .todo-item { display: flex; align-items: center; background: var(--input-bg); padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--border); justify-content: space-between; }
+        .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--pink-dark); }
+        .todo-text { flex: 1; font-size: 0.9rem; margin-right: 10px; color: var(--text-main); }
+        .todo-text.done { text-decoration: line-through; color: var(--text-sub); }
+        .todo-del { background: none; border: none; color: #faa; cursor: pointer; font-size: 1.2rem; margin-left: auto; }
+        
+        .book-item { background: var(--input-bg); padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .book-title { font-weight: 800; font-size: 1rem; color: var(--text-main); margin-bottom: 5px; display:flex; justify-content:space-between; }
+        .book-total-pages { font-size: 0.7rem; color: var(--text-sub); margin-bottom: 10px; font-weight: 500; }
+        .user-row { display: flex; flex-direction: column; margin-bottom: 12px; border-bottom: 1px dashed var(--border); padding-bottom: 10px; }
+        .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .user-inputs { display: flex; align-items: center; gap: 10px; width: 100%; }
+        .page-input { width: 50px; padding: 4px; border-radius: 6px; border: 1px solid var(--border); text-align: center; font-weight: bold; font-size: 0.9rem; background: var(--bg-card); color: var(--text-main); }
+        .star-rating { display: flex; gap: 1px; }
+        .star { cursor: pointer; font-size: 1.1rem; color: #ddd; transition: 0.2s; }
+        .star.filled { color: #ffb84d; }
+        .star-reset { font-size: 0.7rem; color: var(--text-sub); cursor: pointer; margin-left: 5px; padding: 2px;}
+        .book-progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-left: 10px; }
+        .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
+
+
         /* FOOTER & UTILS */
         .app-footer { text-align: center; padding: 20px; margin-top: 30px; opacity: 1; }
-        /* Nouveau style Footer V57/58 */
         .footer-content {
             display: inline-flex;
             align-items: center;
@@ -250,7 +257,7 @@
         #notif.show { transform: translateX(-50%) translateY(0); }
         .hidden { display: none; }
 
-        /* --- STYLES OVERLAY (V58) --- */
+        /* --- STYLES OVERLAY (V59) --- */
         #bd-overlay {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -270,16 +277,16 @@
         .candle-wrapper:active { transform: scale(0.95); }
         .candle-num { font-size: 5rem; font-weight: 800; color: #ffeb3b; text-shadow: 0 5px 0 #e1b12c; font-family: 'Outfit'; -webkit-text-stroke: 2px #333; line-height: 1; }
         
-        /* BUG FIX V58: Utilisation d'opacity pour ne pas casser le layout */
+        /* FIX BOUGIE V59: Opacity + Scale pour assurer que ça "s'éteint" visuellement sans casser le layout */
         .flame { 
             width: 20px; height: 35px; background: radial-gradient(white, yellow, orange, red); 
             border-radius: 50% 50% 20% 20%; margin-bottom: 5px; 
             animation: flicker 0.5s infinite alternate; box-shadow: 0 0 20px orange; 
-            opacity: 1; transition: opacity 0.2s;
+            opacity: 1; transform: scale(1); transition: opacity 0.2s, transform 0.2s;
         }
         .smoke { width: 8px; height: 8px; background: rgba(200,200,200,0.8); border-radius: 50%; position: absolute; top: 10px; opacity: 0; pointer-events: none; }
         
-        .candle-wrapper.blown-out .flame { opacity: 0; } 
+        .candle-wrapper.blown-out .flame { opacity: 0 !important; transform: scale(0) !important; } 
         .candle-wrapper.blown-out .smoke { animation: puff 1.5s forwards; }
 
         /* OEUF DE PAQUES */
@@ -370,18 +377,6 @@
             </div>
         </div>
 
-        <div class="card" id="card-question">
-            <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>💬</span> Question du Jour</div></div>
-            <div class="card-content">
-                <div class="question-box">
-                    <div class="q-header"><span class="q-nav" id="q-nav-prev" onclick="changeQDate(-1)">←</span><span id="q-date-label">Aujourd'hui</span><span class="q-nav" id="q-nav-next" onclick="changeQDate(1)">→</span></div>
-                    <div class="q-text" id="q-text">Chargement...</div>
-                    <div class="q-answers" id="q-answers-area"></div>
-                </div>
-                <div class="input-group" id="q-input-group"><input type="text" id="q-input" class="input-field" placeholder="Ta réponse..."><button onclick="sendAnswer()" class="btn-action">Envoyer</button></div>
-            </div>
-        </div>
-
         <div class="card" id="card-letter">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>💌</span> Boîte aux Lettres</div></div>
             <div class="card-content">
@@ -451,7 +446,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v58 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v59 • janvier 2026</div>
         </div>
     </div>
 
@@ -465,10 +460,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- GESTION EVENEMENTS (V58) ---
-        // Liste consolidée : Annivs, Pâques, Jours fériés
+        // --- GESTION EVENEMENTS (V59) ---
         const events = [
-            { d: 12, m: 1, type: 'bday', name: "Test", age: 24 }, // Modifié à 24 ans
+            { d: 13, m: 1, type: 'easter' }, // AJOUT POUR TEST LE 13 JANVIER
+            { d: 12, m: 1, type: 'bday', name: "Test", age: 24 }, 
             { d: 7, m: 3, type: 'bday', name: "Théo", age: 21 },
             { d: 24, m: 4, type: 'bday', name: "Elise", age: 24 },
             { d: 6, m: 4, type: 'easter' }, // Pâques
@@ -491,12 +486,10 @@
             
             if (activeEvent) {
                 if(activeEvent.type === 'holiday') {
-                    // Juste le sous-titre, pas d'overlay
                     const sub = document.getElementById('bd-subtitle');
                     sub.style.display = "block";
                     sub.innerText = activeEvent.title;
                 } else {
-                    // Anniv ou Pâques -> Overlay
                     initOverlayMode();
                 }
             }
@@ -516,7 +509,6 @@
                 cakeBox.style.display = 'flex';
                 eggBox.style.display = 'none';
                 
-                // Génération bougies
                 const ageStr = activeEvent.age.toString(); 
                 const area = document.getElementById('candles-area');
                 area.innerHTML = "";
@@ -539,7 +531,6 @@
             }
         }
 
-        // LOGIQUE BOUGIES (V58 Corrected)
         window.blowCandle = function(index) {
             const c = document.getElementById('candle-' + index);
             if(c.classList.contains('blown-out')) return;
@@ -552,7 +543,6 @@
             }
         }
 
-        // LOGIQUE OEUF PAQUES
         window.crackEgg = function() {
             const egg = document.getElementById('easter-egg');
             eggClicks++;
@@ -595,7 +585,6 @@
 
         window.enterSpecialApp = function() {
             document.getElementById('bd-overlay').style.display = "none";
-            // Activer le thème festif
             document.body.classList.add('birthday-theme');
             const sub = document.getElementById('bd-subtitle');
             sub.style.display = "block";
@@ -607,11 +596,9 @@
             }
         }
 
-        // Lancer la vérif
         checkEvents();
 
-
-        // --- LOGIQUE MOODS V57 (PATH + EVENTS) ---
+        // --- BASICS ---
         let currentUser = localStorage.getItem('userRole') || 'tw';
         if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-mode');
         window.toggleTheme = function() { document.body.classList.toggle('dark-mode'); localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
@@ -624,38 +611,29 @@
         }
         updateIdentityUI();
 
-        // NOUVELLE FONCTION PATH IMAGES
         function getMoodImage(role, outfitId) {
             const today = new Date();
             const d = today.getDate();
             const m = today.getMonth() + 1;
             let suffix = "";
-
-            // Pâques (6 avril) - TOUT LE MONDE
-            if (d === 6 && m === 4) suffix = "_easter";
-            // Anniversaire Test (12 janv) - TOUT LE MONDE
+            if (d === 13 && m === 1) suffix = "_easter"; // TEST
+            else if (d === 6 && m === 4) suffix = "_easter";
             else if (d === 12 && m === 1) suffix = "_hb";
-            // Anniv Théo (7 mars) - THEO SEUL
             else if (d === 7 && m === 3 && role === 'fr') suffix = "_hb";
-            // Anniv Elise (24 avril) - ELISE SEULE
             else if (d === 24 && m === 4 && role === 'tw') suffix = "_hb";
-
             return `MOOD/${role === 'fr' ? 'theo' : 'elise'}_${outfitId}${suffix}.png`;
         }
 
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
-                // Utilisation de la nouvelle fonction pour le chemin
                 document.getElementById("mood-img-fr").src = getMoodImage('fr', d.fr_outfit || 0);
                 document.getElementById("mood-img-tw").src = getMoodImage('tw', d.tw_outfit || 0);
-                
                 document.getElementById("mood-msg-fr").innerText = d.fr_text || "";
                 document.getElementById("mood-msg-tw").innerText = d.tw_text || "";
             } else { setDoc(doc(db, "status", "moods"), { fr_outfit:0, tw_outfit:0 }); }
         });
 
-        // RESTE DU CODE STANDARD
         window.toggleCard = function(header) {
             if(header.parentElement.id === 'card-voyage') return;
             const content = header.nextElementSibling;
@@ -671,54 +649,6 @@
         window.deletePhoto = async function(id) { if(confirm("Supprimer ?")) { document.getElementById(`photo-${id}`)?.remove(); await deleteDoc(doc(db,"photos",id)); } }
         window.deleteLetter = function(id, e) { e.stopPropagation(); if(confirm("Supprimer ?")) deleteDoc(doc(db,"letters",id)); }
 
-        const questionsList = ["Quel est ton meilleur souvenir de nous ?", "Quelle qualité préfères-tu chez moi ?", "Où veux-tu qu'on aille manger en premier ?", "Quelle chanson te fait penser à moi ?", "Décris notre relation en 3 mots.", "Quel est ton rêve pour nous ?", "Si on pouvait partir demain, on irait où ?", "Qu'est-ce qui te manque le plus ?", "Raconte notre première rencontre vue par toi."]; 
-        const baseQuestions = [ "Quel est ton meilleur souvenir de nous ?", "Quelle qualité préfères-tu chez moi ?", "Où veux-tu qu'on aille manger en premier ?", "Quelle chanson te fait penser à moi ?", "Décris notre relation en 3 mots.", "Quel est ton rêve pour nous ?", "Si on pouvait partir demain, on irait où ?", "Qu'est-ce qui te manque le plus ?", "Raconte notre première rencontre vue par toi." ]; 
-        function getFrenchDate() { return new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Paris"})); }
-        let currentQDate = getFrenchDate();
-
-        function updateQuestionView() {
-            const today = getFrenchDate();
-            if (currentQDate > today) currentQDate = today;
-            
-            const y = currentQDate.getFullYear(); const m = String(currentQDate.getMonth() + 1).padStart(2, '0'); const d = String(currentQDate.getDate()).padStart(2, '0');
-            const dateKey = `${y}-${m}-${d}`; const todayStr = today.toISOString().split('T')[0];
-            const start = new Date("2026-02-14").getTime(); const qTime = currentQDate.getTime(); const diffDays = Math.floor((qTime - start) / (1000 * 60 * 60 * 24));
-            
-            document.getElementById('q-date-label').innerText = (dateKey === todayStr) ? "Aujourd'hui (France)" : currentQDate.toLocaleDateString();
-            document.getElementById('q-nav-next').classList.toggle('disabled', dateKey >= todayStr);
-            document.getElementById('q-nav-next').onclick = (dateKey >= todayStr) ? null : () => changeQDate(1);
-
-            let qIndex = diffDays; if(qIndex < 0) qIndex = 0; 
-            document.getElementById('q-text').innerText = baseQuestions[Math.abs(qIndex) % baseQuestions.length] || "Question surprise";
-
-            onSnapshot(doc(db, "daily_answers", dateKey), (docSnap) => {
-                const data = docSnap.exists() ? docSnap.data() : {};
-                const frAns = data.fr || ""; const twAns = data.tw || "";
-                const area = document.getElementById('q-answers-area'); area.innerHTML = "";
-                const bothAnswered = frAns && twAns;
-                const myAnswer = (currentUser === 'fr' ? frAns : twAns);
-
-                const makeBubble = (user, txt, role) => {
-                    const isMe = currentUser === role;
-                    const blurClass = (!isMe && !bothAnswered) ? "q-blur" : "";
-                    const content = (!isMe && !bothAnswered) ? "Réponse cachée..." : txt;
-                    let actions = "";
-                    if(isMe && dateKey === todayStr) actions = `<div class="q-actions"><button class="q-action-btn" onclick="editQ('${dateKey}')">Modif</button><button class="q-action-btn" onclick="deleteQ('${dateKey}')">Supp</button></div>`;
-                    return `<div class="q-bubble q-${role} ${blurClass}"><b>${user}:</b> ${content} ${actions}</div>`;
-                };
-                if(frAns) area.innerHTML += makeBubble("Théo", frAns, 'fr');
-                if(twAns) area.innerHTML += makeBubble("Elise", twAns, 'tw');
-                if(dateKey === todayStr && !myAnswer) document.getElementById('q-input-group').style.display = 'flex'; else document.getElementById('q-input-group').style.display = 'none';
-                if(!frAns && !twAns) area.innerHTML = "<div style='text-align:center;font-style:italic;font-size:0.8rem;color:#aaa'>Aucune réponse.</div>";
-            });
-        }
-        window.changeQDate = function(offset) { currentQDate.setDate(currentQDate.getDate() + offset); updateQuestionView(); }
-        updateQuestionView();
-        window.sendAnswer = function() { const txt = document.getElementById('q-input').value; if(!txt) return; const y = currentQDate.getFullYear(); const m = String(currentQDate.getMonth() + 1).padStart(2, '0'); const d = String(currentQDate.getDate()).padStart(2, '0'); const key = `${y}-${m}-${d}`; setDoc(doc(db, "daily_answers", key), { [currentUser]: txt }, { merge: true }); document.getElementById('q-input').value = ""; sendNtfy(`💬 Réponse à la question ! (${getCurrentTime(currentUser)})`, "speech_balloon", "low"); }
-        window.deleteQ = function(key) { updateDoc(doc(db, "daily_answers", key), { [currentUser]: "" }); }
-        window.editQ = function(key) { getDoc(doc(db, "daily_answers", key)).then(snap => { if(snap.exists()) { document.getElementById('q-input').value = snap.data()[currentUser]; deleteQ(key); } }); }
-
-        // --- JEUX ---
         window.toggleGame = function(game) {
             const ids = ['pendu-box', 'p4-box', 'uno-box'];
             ids.forEach(id => {
@@ -728,7 +658,7 @@
             });
         }
 
-        // PENDU
+        // --- GAMES LOGIC ---
         let activePendu = null;
         onSnapshot(doc(db, "games", "pendu_active"), (s) => { activePendu = s.exists() ? s.data() : { state:'setup' }; renderPendu(activePendu); });
         onSnapshot(query(collection(db, "games_pendu_history"), orderBy("timestamp", "desc"), limit(50)), (s) => {
@@ -749,7 +679,6 @@
         window.startPenduSetup=function(){ setDoc(doc(db,"games","pendu_active"),{state:'setup',word:"",guessed:[],mistakes:0, creator:""}); }
         window.playPenduMove=async function(l){ if(!activePendu||activePendu.state!=='playing')return; const ng=[...activePendu.guessed,l]; let nm=activePendu.mistakes; if(!activePendu.word.includes(l))nm++; let ns='playing'; let save=false; if(nm>=11) { ns='loose'; save=true; } else if(activePendu.word.split('').every(c=>ng.includes(c))) { ns='win'; save=true; } await updateDoc(doc(db,"games","pendu_active"),{guessed:ng,mistakes:nm,state:ns}); if(save) addDoc(collection(db, "games_pendu_history"), { word: activePendu.word, setter: activePendu.creator, result: ns, timestamp: serverTimestamp() }); }
 
-        // P4
         let activeP4 = null;
         onSnapshot(doc(db, "games", "p4_active"), (s) => { activeP4 = s.exists() ? s.data() : null; if(activeP4) renderP4(activeP4); else document.getElementById('p4-status').innerText = "Aucune partie en cours"; });
         onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { const list = document.getElementById('p4-history-list'); list.innerHTML = ""; s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`; }); });
@@ -757,7 +686,6 @@
         function renderP4(game) { const grid=document.getElementById('p4-grid'); grid.innerHTML=""; const status = document.getElementById('p4-status'); const btn = document.getElementById('p4-restart-btn'); if(game.winner) { status.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !"; btn.disabled = false; btn.style.opacity = "1"; } else { status.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)"); btn.disabled = true; btn.style.opacity = "0.5"; } for(let i=0; i<42; i++) { const c=document.createElement('div'); c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); c.onclick=()=>playP4(i%7); grid.appendChild(c); } }
         window.playP4 = async function(col) { if(!activeP4||activeP4.winner) return; if(activeP4.turn !== currentUser) { alert("Attends ton tour !"); return; } let board=[...activeP4.board]; let row=5; while(row>=0){ if(board[row*7+col]===0){ board[row*7+col]=(currentUser==='fr'?1:2); break; } row--; } if(row<0) return; const checkWin=b=>{for(let r=0;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+1]&&b[i]==b[i+2]&&b[i]==b[i+3])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<7;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+7]&&b[i]==b[i+14]&&b[i]==b[i+21])return b[i]}for(let r=3;r<6;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i-6]&&b[i]==b[i-12]&&b[i]==b[i-18])return b[i]}for(let r=0;r<3;r++)for(let c=0;c<4;c++){let i=r*7+c;if(b[i]&&b[i]==b[i+8]&&b[i]==b[i+16]&&b[i]==b[i+24])return b[i]}return 0}; const winnerCode = checkWin(board); let winner = null; let moves = activeP4.moves + 1; if(winnerCode !== 0) { winner = winnerCode === 1 ? 'fr' : 'tw'; addDoc(collection(db, "games_p4_history"), { winner: winner, moves: Math.ceil(moves/2), timestamp: serverTimestamp() }); } updateDoc(doc(db,"games","p4_active"),{ board:board, turn:currentUser==='fr'?'tw':'fr', winner:winner, moves:moves }); }
 
-        // UNO
         let activeUno = null; let pickingWild = false; let wildCardIndex = -1;
         onSnapshot(doc(db, "games", "uno_active"), (s) => { activeUno = s.exists() ? s.data() : null; if(activeUno) renderUno(activeUno); else document.getElementById('uno-status').innerText = "Aucune partie en cours"; });
         onSnapshot(query(collection(db, "games_uno_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { 
@@ -778,16 +706,9 @@
             deck.push("black-w", "black-w", "black-w", "black-w");
             deck.push("black-p4", "black-p4", "black-p4", "black-p4");
             deck.sort(() => Math.random() - 0.5);
-
-            const hand_fr = deck.splice(0, 7);
-            const hand_tw = deck.splice(0, 7);
-            const discard = [deck.shift()];
-
-            setDoc(doc(db, "games", "uno_active"), {
-                deck: deck, discard: discard, hand_fr: hand_fr, hand_tw: hand_tw, turn: currentUser, winner: null, moves: 0
-            });
+            const hand_fr = deck.splice(0, 7); const hand_tw = deck.splice(0, 7); const discard = [deck.shift()];
+            setDoc(doc(db, "games", "uno_active"), { deck: deck, discard: discard, hand_fr: hand_fr, hand_tw: hand_tw, turn: currentUser, winner: null, moves: 0 });
         }
-
         function renderUno(game) {
             const btn = document.getElementById('uno-restart-btn');
             if(game.winner) {
@@ -797,15 +718,12 @@
                 document.getElementById('uno-status').innerText = (game.turn === currentUser ? "À toi de jouer !" : "Tour de l'adversaire...");
                 btn.disabled = true; btn.style.opacity = "0.5";
             }
-            
             document.getElementById('uno-opponent-name').innerText = currentUser==='fr'?'Elise':'Théo';
             document.getElementById('uno-opponent-count').innerText = currentUser==='fr' ? game.hand_tw.length : game.hand_fr.length;
-            
             const topCard = game.discard[game.discard.length - 1];
             const [topColor, topVal] = topCard.split('-');
             const pileEl = document.getElementById('uno-discard-pile');
             pileEl.innerHTML = `<div class="uno-card ${topColor}">${formatUnoVal(topVal)}</div>`;
-
             const myHand = currentUser==='fr' ? game.hand_fr : game.hand_tw;
             const handEl = document.getElementById('uno-player-hand');
             handEl.innerHTML = "";
@@ -815,80 +733,62 @@
             });
         }
         function formatUnoVal(v) { if(v==='p2') return '+2'; if(v==='s') return '🚫'; if(v==='w') return '🌈'; if(v==='p4') return '+4'; return v; }
-
         window.drawUnoCard = function() {
             if(!activeUno || activeUno.winner || activeUno.turn !== currentUser) return;
             if(pickingWild) return;
-            
             let deck = [...activeUno.deck];
             if(deck.length === 0) { alert("Pioche vide !"); return; }
             const card = deck.shift();
             const myHand = currentUser==='fr' ? [...activeUno.hand_fr] : [...activeUno.hand_tw];
             myHand.push(card);
-            
-            // Draw counts as 1 move
             const moves = activeUno.moves + 1;
             const nextTurn = currentUser==='fr'?'tw':'fr'; 
             updateDoc(doc(db, "games", "uno_active"), { deck: deck, [`hand_${currentUser}`]: myHand, turn: nextTurn, moves: moves });
         }
-
         window.playUnoCard = function(idx) {
             if(!activeUno || activeUno.winner || activeUno.turn !== currentUser) return;
             if(pickingWild) return;
-
             const myHand = currentUser==='fr' ? [...activeUno.hand_fr] : [...activeUno.hand_tw];
             const card = myHand[idx];
             const [color, val] = card.split('-');
             const topCard = activeUno.discard[activeUno.discard.length - 1];
             const [topColor, topVal] = topCard.split('-');
-
             let valid = false;
-            if (color === 'black') { 
-                wildCardIndex = idx; pickingWild = true; document.getElementById('uno-color-modal').style.display = 'flex'; return; 
-            } else if (color === topColor || val === topVal) { valid = true; }
+            if (color === 'black') { wildCardIndex = idx; pickingWild = true; document.getElementById('uno-color-modal').style.display = 'flex'; return; } else if (color === topColor || val === topVal) { valid = true; }
             if (!valid) return;
             executePlay(idx, null);
         }
         window.chooseUnoColor = function(color) { document.getElementById('uno-color-modal').style.display = 'none'; pickingWild = false; executePlay(wildCardIndex, color); }
-
         function executePlay(idx, chosenColor) {
             const myHand = currentUser==='fr' ? [...activeUno.hand_fr] : [...activeUno.hand_tw];
             const card = myHand[idx];
             const [color, val] = card.split('-');
             myHand.splice(idx, 1);
-            
             let nextDiscard = card;
             if(chosenColor) nextDiscard = `${chosenColor}-${val}`;
             const newDiscard = [...activeUno.discard, nextDiscard];
             const moves = activeUno.moves + 1;
-
             if (myHand.length === 0) {
                 updateDoc(doc(db, "games", "uno_active"), { [`hand_${currentUser}`]: myHand, discard: newDiscard, winner: currentUser, moves: moves });
                 addDoc(collection(db, "games_uno_history"), { winner: currentUser, moves: Math.ceil(moves/2), timestamp: serverTimestamp() });
                 return;
             }
-
             let nextTurn = currentUser==='fr'?'tw':'fr';
             let opponentHand = currentUser==='fr' ? [...activeUno.hand_tw] : [...activeUno.hand_fr];
             let deck = [...activeUno.deck];
-            
             if (val === 'p2') {
                 if(deck.length>=2) { opponentHand.push(deck.shift()); opponentHand.push(deck.shift()); }
-                nextTurn = currentUser==='fr'?'tw':'fr'; // Next player turn (draws + plays their turn)
+                nextTurn = currentUser==='fr'?'tw':'fr'; 
             } else if (val === 'p4') {
                 if(deck.length>=4) { for(let i=0;i<4;i++) opponentHand.push(deck.shift()); }
                 nextTurn = currentUser==='fr'?'tw':'fr'; 
-            } else if (val === 's') {
-                 nextTurn = currentUser; // Replay
-            }
-
+            } else if (val === 's') { nextTurn = currentUser; }
             updateDoc(doc(db, "games", "uno_active"), { deck: deck, discard: newDiscard, hand_fr: currentUser==='fr'?myHand:opponentHand, hand_tw: currentUser==='tw'?myHand:opponentHand, turn: nextTurn, moves: moves });
         }
 
-        // --- BASICS ---
+        // --- COMMON ---
         function updatePresence() { setDoc(doc(db, "status", "presence"), { [currentUser]: Date.now() }, { merge: true }); }
         setInterval(updatePresence, 5000); updatePresence();
-        // CONNECTIVITY FIX: 60s Tolerance
         onSnapshot(doc(db, "status", "presence"), (docSnap) => { 
             if(docSnap.exists()) { 
                 const d = docSnap.data(); 
@@ -907,7 +807,7 @@
         
         function sendNtfy(msg, tag, prio) { 
             const iconUrl = new URL("icon.jpg", window.location.href).href; 
-            fetch(`https://ntfy.sh/${currentUser==='tw'?"lovetravel-2026-reception-theo":"lovetravel-2026-reception-elise"}`, { method:'POST', body:msg, headers:{'Title':currentUser==='tw'?"Elise":"Theo",'Priority':"high",'Tags':tag,'Icon':iconUrl} }).catch(e=>{}); 
+            fetch(`https://ntfy.sh/${currentUser==='tw'?"lovetravel-2026-reception-theo":"lovetravel-2026-reception-elise"}`, { method:'POST', body:msg, headers:{'Title':currentUser==='tw'?"Elise":"Theo",'Priority':prio,'Tags':tag,'Icon':iconUrl} }).catch(e=>{}); 
         }
 
         window.sendBisou = function() {
