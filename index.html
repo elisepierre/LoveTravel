@@ -50,6 +50,19 @@
             background-image: radial-gradient(#ff4b6e 2px, transparent 2px), radial-gradient(#219ebc 2px, transparent 2px);
         }
 
+        /* THEME ST VALENTIN */
+        body.love-theme {
+            background-color: #fff0f5; /* Rose très pâle */
+            /* Motif coeurs (SVG encodé ou simple radial gradient simulé) */
+            background-image: radial-gradient(circle, #ffbcd9 20%, transparent 20%), radial-gradient(circle, #ffbcd9 20%, transparent 20%);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+        }
+        body.dark-mode.love-theme {
+            background-color: #2d0a12;
+            background-image: radial-gradient(circle, #800020 20%, transparent 20%), radial-gradient(circle, #800020 20%, transparent 20%);
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; font-family: 'Outfit', sans-serif; background-color: var(--bg-body); background-image: radial-gradient(var(--dot-pattern) 1px, transparent 1px); background-size: 20px 20px; color: var(--text-main); padding-bottom: 120px; transition: background 0.3s, color 0.3s; }
         
@@ -295,6 +308,29 @@
         .crack-1 { transform: rotate(10deg); }
         .crack-2 { transform: rotate(-10deg) scale(1.1); }
         .crack-3 { animation: hatch 0.5s forwards; font-size: 120px; }
+
+        /* ANIMATION COEUR ST VALENTIN */
+        .big-heart {
+            font-size: 100px;
+            cursor: pointer;
+            user-select: none;
+            filter: drop-shadow(0 0 20px rgba(255, 20, 147, 0.5));
+            animation: heartbeat 1.2s infinite;
+            transition: transform 0.1s;
+        }
+        .big-heart:active {
+            transform: scale(0.9); /* Effet d'appui */
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+        
         @keyframes hatch { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
 
         @keyframes flicker { 0% { transform: scale(1); opacity: 0.9; } 100% { transform: scale(1.1); opacity: 1; } }
@@ -319,6 +355,10 @@
 
         <div id="easter-egg-container">
             <div class="easter-egg" id="easter-egg" onclick="crackEgg()">🥚</div>
+        </div>
+
+        <div id="love-container" style="display:none; flex-direction:column; align-items:center;">
+            <div class="big-heart" onclick="clickHeart()">❤️</div>
         </div>
 
         <div class="bd-msg" id="overlay-msg">Fais un vœu et souffle (clique) sur les bougies ! 🕯️</div>
@@ -446,7 +486,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v59 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v60 • janvier 2026</div>
         </div>
     </div>
 
@@ -462,11 +502,16 @@
 
         // --- GESTION EVENEMENTS (V59) ---
         const events = [
-            { d: 13, m: 1, type: 'easter' }, // AJOUT POUR TEST LE 13 JANVIER
-            { d: 12, m: 1, type: 'bday', name: "Test", age: 24 }, 
+            // J'ai mis Test au 13 janvier (aujourd'hui)
+            { d: 13, m: 1, type: 'bday', name: "Test", age: 24 }, 
+            
+            // Les autres dates ne changent pas
             { d: 7, m: 3, type: 'bday', name: "Théo", age: 21 },
             { d: 24, m: 4, type: 'bday', name: "Elise", age: 24 },
-            { d: 6, m: 4, type: 'easter' }, // Pâques
+            { d: 6, m: 4, type: 'easter' },
+            { d: 14, m: 2, type: 'love' }, 
+            
+            // Jours fériés...
             { d: 1, m: 5, type: 'holiday', title: "Fête du travail 🌿" },
             { d: 8, m: 5, type: 'holiday', title: "Victoire 1945 🇫🇷" },
             { d: 14, m: 5, type: 'holiday', title: "Jeudi de l’Ascension ✨" },
@@ -507,6 +552,7 @@
                 title.innerText = "Joyeux Anniversaire " + activeEvent.name + " !";
                 msg.innerText = "Fais un vœu et souffle (clique) sur les bougies ! 🕯️";
                 cakeBox.style.display = 'flex';
+                document.getElementById('love-container').style.display = 'none';
                 eggBox.style.display = 'none';
                 
                 const ageStr = activeEvent.age.toString(); 
@@ -521,11 +567,24 @@
                     wrapper.innerHTML = `<div class="smoke"></div><div class="flame"></div><div class="candle-num">${digit}</div>`;
                     area.appendChild(wrapper);
                 }
+                
+            } else if (activeEvent.type === 'love') {
+                // CONFIGURATION ST VALENTIN
+                title.innerText = "Joyeuse Saint-Valentin !";
+                msg.innerText = "Touche mon cœur pour sentir mon amour... ❤️";
+                
+                // On cache les autres éléments
+                cakeBox.style.display = 'none';
+                eggBox.style.display = 'none';
+                
+                // On affiche le coeur
+                document.getElementById('love-container').style.display = 'flex';
 
             } else if (activeEvent.type === 'easter') {
                 title.innerText = "Joyeuses Pâques !";
                 msg.innerText = "Tapote l'œuf pour découvrir la surprise...";
                 cakeBox.style.display = 'none';
+                document.getElementById('love-container').style.display = 'none';
                 eggBox.style.display = 'flex';
                 eggClicks = 0;
             }
@@ -557,6 +616,45 @@
                     celebrate();
                 }, 300);
             }
+        }
+
+        window.clickHeart = function() {
+            // Audio (optionnel, le même que pour l'anniv)
+            const audio = new Audio("https://actions.google.com/sounds/v1/crowds/crowd_cheering.ogg");
+            audio.volume = 0.3;
+            audio.play().catch(e=>{});
+        
+            // Confettis en forme de COEUR (si possible) ou juste rouge/rose
+            var duration = 2000;
+            var end = Date.now() + duration;
+        
+            (function frame() {
+                // Lance des confettis rouges et roses
+                confetti({
+                    particleCount: 10,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff0000', '#ff69b4', '#ffffff'],
+                    zIndex: 200000
+                });
+                confetti({
+                    particleCount: 10,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff0000', '#ff69b4', '#ffffff'],
+                    zIndex: 200000
+                });
+        
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        
+            // Change le message et affiche le bouton
+            document.getElementById('overlay-msg').innerText = "Je t'aime !";
+            document.querySelector('.btn-enter').style.display = "block";
         }
 
         function celebrate() {
@@ -591,6 +689,9 @@
             
             if (activeEvent.type === 'bday') {
                 sub.innerText = `Les ${activeEvent.age} ans de ${activeEvent.name} ❤️`;
+            } else if (activeEvent.type === 'love') {
+                document.body.classList.add('love-theme');
+                sub.innerText = "Bonne St. Valentin 🌹";
             } else if (activeEvent.type === 'easter') {
                 sub.innerText = "Joyeuses Pâques 🐰";
             }
@@ -616,9 +717,9 @@
             const d = today.getDate();
             const m = today.getMonth() + 1;
             let suffix = "";
-            if (d === 13 && m === 1) suffix = "_easter"; // TEST
+            if (d === 14 && m === 2) suffix = "_love";
             else if (d === 6 && m === 4) suffix = "_easter";
-            else if (d === 12 && m === 1) suffix = "_hb";
+            else if (d === 13 && m === 1) suffix = "_hb";
             else if (d === 7 && m === 3 && role === 'fr') suffix = "_hb";
             else if (d === 24 && m === 4 && role === 'tw') suffix = "_hb";
             return `MOOD/${role === 'fr' ? 'theo' : 'elise'}_${outfitId}${suffix}.png`;
@@ -806,7 +907,7 @@
         function getCurrentTime(role) { return new Date().toLocaleTimeString('fr-FR', { timeZone: role==='fr'?'Europe/Paris':'Asia/Taipei', hour:'2-digit', minute:'2-digit' }); }
         
         function sendNtfy(msg, tag, prio) { 
-            const iconUrl = new URL("icon.jpg", window.location.href).href; 
+            const iconUrl = new URL("icon_2.jpg", window.location.href).href; 
             fetch(`https://ntfy.sh/${currentUser==='tw'?"lovetravel-2026-reception-theo":"lovetravel-2026-reception-elise"}`, { method:'POST', body:msg, headers:{'Title':currentUser==='tw'?"Elise":"Theo",'Priority':prio,'Tags':tag,'Icon':iconUrl} }).catch(e=>{}); 
         }
 
