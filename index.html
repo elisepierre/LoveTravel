@@ -289,21 +289,27 @@
         .bg-2 { background: #55efc4; color: #333; } /* Vert */
 
         /* --- FIX DARK MODE PETIT BAC --- */
-        body.dark-mode .bac-input {
-            background-color: #3b3b3b; /* Fond un peu plus clair que le noir */
-            color: #ffffff !important; /* Texte blanc pur */
+        /* --- FIX CONTRASTE PETIT BAC DARK MODE --- */
+        body.dark-mode .review-item {
+            background-color: #2d2d2d !important; /* Gris foncé */
+            border: 1px solid #444 !important;
+            box-shadow: none;
+        }
+        
+        body.dark-mode .bac-label {
+            color: #ff9eb5; /* Rose clair pour les catégories */
+        }
+        
+        body.dark-mode .review-ans {
+            color: white !important; /* Réponse en blanc pur */
+            text-shadow: 0 1px 2px black;
+        }
+        
+        /* On améliore aussi les boutons de vote (0, 1, 2) en sombre */
+        body.dark-mode .r-btn {
+            background-color: #383838;
+            color: #aaa;
             border-color: #555;
-        }
-        
-        body.dark-mode .review-ans,
-        body.dark-mode .bac-res-ans {
-            color: #ffffff !important; /* Réponses en blanc dans le tableau */
-            font-weight: 500;
-        }
-        
-        /* On force aussi la couleur des inputs quand on tape */
-        body.dark-mode input::placeholder {
-            color: #bbb;
         }
         
         /* LETTRES */
@@ -363,22 +369,36 @@
         /* Style de la bulle Cycle */
         #cycle-bubble {
             position: absolute;
-            top: 5px;         /* <-- MODIFICATION ICI : Valeur négative pour remonter */
-            right: 100px;        /* <-- AJUSTEMENT : Un peu plus à droite pour faire "badge" */
-            background: white;
+            top: 8px;           /* Un peu décollé du haut */
+            right: 8px;         /* Un peu décollé de la droite */
+            
+            /* Design "Badge" compact */
+            background: rgba(255, 255, 255, 0.9); /* Blanc quasi opaque */
+            backdrop-filter: blur(2px);           /* Petit effet flou derrière */
+            
             border: 1px solid var(--pink-dark);
             color: var(--pink-dark);
-            border-radius: 20px;
-            padding: 2px 8px;
-            font-size: 0.7rem;
+            border-radius: 12px;       /* Bien arrondi */
+            padding: 2px 8px;          /* Fin et élégant */
+            font-size: 0.65rem;        /* Discret */
             font-weight: 800;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            letter-spacing: 0.5px;
+            
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Ombre pour le détacher de la photo */
             cursor: pointer;
-            z-index: 20;        /* <-- Je l'ai augmenté un peu pour être sûr */
+            z-index: 20;
             transition: transform 0.2s;
         }
+        
         #cycle-bubble:active {
             transform: scale(0.9);
+        }
+        
+        /* Adaptation Dark Mode pour la bulle */
+        body.dark-mode #cycle-bubble {
+            background: rgba(40, 40, 40, 0.85); /* Fond sombre transparent */
+            border-color: var(--pink);
+            color: var(--pink);
         }
         /* FOOTER & UTILS */
         .app-footer { text-align: center; padding: 20px; margin-top: 30px; opacity: 1; }
