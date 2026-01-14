@@ -287,6 +287,24 @@
         .bg-0 { background: #ff7675; } /* Rouge */
         .bg-1 { background: var(--blue); } /* Bleu */
         .bg-2 { background: #55efc4; color: #333; } /* Vert */
+
+        /* --- FIX DARK MODE PETIT BAC --- */
+        body.dark-mode .bac-input {
+            background-color: #3b3b3b; /* Fond un peu plus clair que le noir */
+            color: #ffffff !important; /* Texte blanc pur */
+            border-color: #555;
+        }
+        
+        body.dark-mode .review-ans,
+        body.dark-mode .bac-res-ans {
+            color: #ffffff !important; /* Réponses en blanc dans le tableau */
+            font-weight: 500;
+        }
+        
+        /* On force aussi la couleur des inputs quand on tape */
+        body.dark-mode input::placeholder {
+            color: #bbb;
+        }
         
         /* LETTRES */
         .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -665,7 +683,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v66 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v71 • janvier 2026</div>
         </div>
     </div>
 
@@ -1351,7 +1369,7 @@
                     
                     <div style="display:flex; justify-content:space-around; margin-bottom:20px; align-items:center;">
                         <div style="text-align:center; padding:10px; border-radius:15px; transition:0.2s; ${frClass}" ${frClick}>
-                            <div style="font-size:3.5rem;">${game.ready_fr ? '🤴🏻' : '🧔🏻'}</div>
+                            <div style="font-size:3.5rem;">${game.ready_fr ? '🤴🏻' : '👨🏻'}</div>
                             <div style="font-weight:bold;">Théo</div>
                             <div style="font-size:1.5rem;">${game.ready_fr ? '✅' : '⏳'}</div>
                         </div>
@@ -1539,15 +1557,25 @@
             
             // Si l'autre a aussi fini, on termine
             const opponent = currentUser === 'fr' ? 'tw' : 'fr';
-            if (activeBac[`review_done_${opponent}`]) {
+            // On vérifie activeBac car on est dans une fonction async/event
+            if (activeBac && activeBac[`review_done_${opponent}`]) {
                 updateDoc(doc(db, "games", "bac_active"), { status: 'finished' });
                 
-                // Ajout à l'historique (optionnel, pour garder une trace)
+                // Calcul des scores
                 let sFr = 0; Object.values(activeBac.scores_fr || {}).forEach(v => sFr += v);
                 let sTw = 0; Object.values(activeBac.scores_tw || {}).forEach(v => sTw += v);
+                
+                // --- CORRECTION ICI : DÉTERMINER LE GAGNANT ---
+                let winner = 'draw'; // Par défaut égalité
+                if (sFr > sTw) winner = 'fr';
+                else if (sTw > sFr) winner = 'tw';
+        
+                // Ajout à l'historique AVEC le gagnant
                 addDoc(collection(db, "games_bac_history"), {
                     letter: activeBac.letter,
-                    score_fr: sFr, score_tw: sTw,
+                    score_fr: sFr, 
+                    score_tw: sTw,
+                    winner: winner, // C'est ce champ qui manquait !
                     timestamp: serverTimestamp()
                 });
             }
