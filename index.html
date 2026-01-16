@@ -369,24 +369,24 @@
         /* Style de la bulle Cycle */
         #cycle-bubble {
             position: absolute;
-            top: 8px;           /* Un peu décollé du haut */
-            right: 8px;         /* Un peu décollé de la droite */
+            /* On le remonte pour qu'il soit HORS de la photo */
+            top: -12px;         
+            right: 5px;
             
-            /* Design "Badge" compact */
-            background: rgba(255, 255, 255, 0.9); /* Blanc quasi opaque */
-            backdrop-filter: blur(2px);           /* Petit effet flou derrière */
-            
+            /* Design propre qui se fond dans la carte */
+            background: var(--bg-card); /* Prend la couleur de fond de la carte (blanc ou noir) */
             border: 1px solid var(--pink-dark);
             color: var(--pink-dark);
-            border-radius: 12px;       /* Bien arrondi */
-            padding: 2px 8px;          /* Fin et élégant */
-            font-size: 0.65rem;        /* Discret */
-            font-weight: 800;
-            letter-spacing: 0.5px;
             
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Ombre pour le détacher de la photo */
-            cursor: pointer;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            
+            /* Petite ombre pour le faire ressortir du fond */
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1); 
             z-index: 20;
+            cursor: pointer;
             transition: transform 0.2s;
         }
         
@@ -394,11 +394,12 @@
             transform: scale(0.9);
         }
         
-        /* Adaptation Dark Mode pour la bulle */
+        /* Adaptation automatique au Dark Mode */
         body.dark-mode #cycle-bubble {
-            background: rgba(40, 40, 40, 0.85); /* Fond sombre transparent */
-            border-color: var(--pink);
+            background: var(--bg-card); /* Deviendra gris foncé comme la carte */
             color: var(--pink);
+            border-color: var(--pink);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
         }
         /* FOOTER & UTILS */
         .app-footer { text-align: center; padding: 20px; margin-top: 30px; opacity: 1; }
