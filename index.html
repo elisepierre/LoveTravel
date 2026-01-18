@@ -366,55 +366,93 @@
         .book-progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-left: 10px; }
         .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
-       /* LE TIMBRE CYCLE (Position absolue sur la bulle) */
-        #cycle-stamp {
-            position: absolute;
-            top: -8px;    /* Dépasse un peu vers le haut */
-            right: -10px; /* Dépasse un peu vers la droite */
-            
-            height: 22px;
-            padding: 0 8px;
-            border-radius: 12px;
-            
-            font-size: 0.65rem;
-            font-weight: 800;
-            line-height: 22px; /* Centrage vertical texte */
-            
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+       /* WIDGET CENTRAL : CYCLE */
+        #cycle-widget {
+            width: 70px; /* Taille du widget */
+            height: 70px;
+            position: relative;
+            flex-shrink: 0; /* Empêche d'être écrasé */
+            margin: 0 5px;  /* Espace avec les avatars */
+            margin-bottom: 25px; /* Aligné avec les visages */
             cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 10;
-            
-            /* Empêche la sélection de texte */
-            user-select: none;
-            white-space: nowrap;
+            transition: transform 0.2s ease;
+            border-radius: 50%;
+            /* Petite ombre douce */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
+            background: var(--bg-card);
         }
         
-        #cycle-stamp:active { transform: scale(0.9); }
+        #cycle-widget:active { transform: scale(0.95); }
         
-        /* ETAT 1 : RÈGLES (Visible et Mignon) */
-        #cycle-stamp.period-mode {
-            background: #ff4b6e; /* Le rose foncé de ton thème */
-            color: white;
-            border: 2px solid white; /* Contour blanc pour détacher du fond */
+        /* L'ANNEAU (Géré par Conic Gradient en JS) */
+        #cycle-ring {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            z-index: 1;
+            /* Par défaut (sera écrasé par le JS) */
+            background: conic-gradient(var(--border) 0%, var(--border) 100%); 
+            transition: background 0.5s ease;
         }
         
-        /* ETAT 2 : NORMAL (Ultra discret, effet verre) */
-        #cycle-stamp.normal-mode {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(2px);
-            color: #999;
-            border: 1px solid #eee;
-            transform: scale(0.9); /* Un peu plus petit quand c'est pas urgent */
+        /* LE CENTRE BLANC (Pour faire l'effet anneau) */
+        #cycle-content {
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px; /* Épaisseur de l'anneau = 4px */
+            background: var(--bg-card); /* Couleur de fond de la carte */
+            border-radius: 50%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
         }
         
-        /* Dark mode fix */
-        body.dark-mode #cycle-stamp.normal-mode {
-            background: #333;
-            border-color: #444;
+        #cycle-day {
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1;
         }
-        body.dark-mode #cycle-stamp.period-mode {
-            border-color: #2d2d2d;
+        
+        #cycle-icon {
+            font-size: 0.8rem;
+            margin-top: 2px;
+        }
+        
+        /* COULEURS DES JOURS SPÉCIAUX (Texte) */
+        .cycle-red-text { color: #ff4b6e; } /* Rose/Rouge règles */
+        .cycle-normal-text { color: var(--text-sub); } /* Gris normal */
+        
+        /* RESPONSIVE : Si l'écran est petit, on ajuste un peu */
+        @media (max-width: 360px) {
+            #cycle-widget { width: 60px; height: 60px; }
+            #cycle-day { font-size: 0.9rem; }
+        }
+
+        /* --- ADAPTATION DARK MODE (Widget Cycle) --- */
+
+        /* 1. Profondeur du widget */
+        body.dark-mode #cycle-widget {
+            background: var(--bg-card); /* Reste gris foncé (#1e1e1e) */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6); /* Ombre plus intense pour l'effet flottant */
+        }
+        
+        /* 2. Le centre du widget */
+        body.dark-mode #cycle-content {
+            background: var(--bg-card); 
+        }
+        
+        /* 3. Texte "Jours Règles" (Effet Néon) */
+        body.dark-mode .cycle-red-text {
+            color: #ff8fa3; /* Rose plus lumineux pour ressortir sur le noir */
+            text-shadow: 0 0 10px rgba(255, 75, 110, 0.5); /* Lueur diffuse */
+        }
+        
+        /* 4. Texte "Jours Normaux" */
+        body.dark-mode .cycle-normal-text {
+            color: #777; /* Gris sombre discret pour ne pas éblouir */
         }
         
         /* FOOTER & UTILS */
@@ -589,16 +627,17 @@
                         <div class="avatar-frame"><img src="" id="mood-img-fr" class="avatar-img"></div>
                         <div class="mood-msg" id="mood-msg-fr">...</div>
                     </div>
+                
+                    <div id="cycle-widget" onclick="editCycle()">
+                        <div id="cycle-ring"></div> <div id="cycle-content">
+                            <div id="cycle-day">J-1</div>
+                            <div id="cycle-icon">🌸</div>
+                        </div>
+                    </div>
+                
                     <div class="mood-person">
-                        <div class="avatar-frame">
-                            <img src="" id="mood-img-tw" class="avatar-img">
-                        </div>
-                    
-                        <div style="position: relative; display: inline-block; margin-top: -10px;">
-                            <div class="mood-msg" id="mood-msg-tw">...</div>
-                            
-                            <div id="cycle-stamp" onclick="editCycle()"></div>
-                        </div>
+                        <div class="avatar-frame"><img src="" id="mood-img-tw" class="avatar-img"></div>
+                        <div class="mood-msg" id="mood-msg-tw">...</div>
                     </div>
                 </div>
                 <div class="mood-grid">
@@ -1696,101 +1735,111 @@
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
         // --- GESTION CYCLE (Mode Pilule 💊) ---
-            // 1. Affichage intelligent (Timbre sur la bulle)
-            onSnapshot(doc(db, "status", "cycle"), (docSnap) => {
-                // Note bien le changement d'ID ici : 'cycle-stamp'
-                const el = document.getElementById('cycle-stamp'); 
+            // 1. GESTION DU CYCLE (Anneau Central)
+        let currentCycleDay = 1; // Variable globale pour stocker le jour actuel
+        
+        onSnapshot(doc(db, "status", "cycle"), (docSnap) => {
+            const ring = document.getElementById('cycle-ring');
+            const txtDay = document.getElementById('cycle-day');
+            const txtIcon = document.getElementById('cycle-icon');
+            
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const lastStart = data.lastStart ? data.lastStart.toDate() : new Date();
                 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const lastStart = data.lastStart ? data.lastStart.toDate() : new Date();
-                    const now = new Date();
-                    const diffTime = Math.abs(now - lastStart);
-                    const day = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                    
-                    // Est-ce la semaine de règles ? (J1 à J5 ou forcé)
-                    const isPeriod = (data.type === 'blood') || (day <= 5);
-            
-                    // Reset des classes
-                    el.className = ''; 
-            
-                    if (isPeriod) {
-                        // Mode "Alerte Mignonne"
-                        el.classList.add('period-mode');
-                        el.innerHTML = `🩸 J-${day}`; 
-                    } else {
-                        // Mode "Info Discrète"
-                        el.classList.add('normal-mode');
-                        // Astuce : un petit espace insécable pour aérer
-                        el.innerHTML = `🌿 J-${day}`;
-                    }
+                // Calcul du jour réel écoulé
+                const now = new Date();
+                const diffTime = Math.abs(now - lastStart);
+                const rawDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                // LOGIQUE MODULO 28 (Boucle infinie 1 à 28)
+                // Si rawDays = 1 -> J1. Si rawDays = 29 -> J1.
+                let dayInCycle = ((rawDays - 1) % 28) + 1;
+                currentCycleDay = dayInCycle; // On sauvegarde pour le clic
+        
+                // ESTHÉTIQUE : RÈGLES (J1-J7) vs NORMAL
+                const isPeriod = dayInCycle <= 7;
+        
+                // 1. Texte et Icône
+                txtDay.innerText = `J-${dayInCycle}`;
+                txtIcon.innerText = isPeriod ? "🩸" : "🌿"; // Goutte ou Feuille
+        
+                // 2. Couleur du Texte
+                if (isPeriod) {
+                    txtDay.className = "cycle-red-text";
                 } else {
-                    el.className = 'normal-mode';
-                    el.innerHTML = "?";
+                    txtDay.className = "cycle-normal-text";
                 }
-            });
+        
+                // 3. L'ANNEAU PROGRESSIF (Conic Gradient)
+                // Calcul du pourcentage (ex: Jour 14 = 50% du cercle)
+                const percentage = (dayInCycle / 28) * 100;
+                
+                let colorStart, colorEnd;
+                
+                if (isPeriod) {
+                    // Dégradé Rouge/Rose pour les règles
+                    colorStart = "#ff9a9e"; 
+                    colorEnd = "#ff4b6e";
+                } else {
+                    // Dégradé Bleu/Pastel pour le reste (Ovulation/Cocon)
+                    colorStart = "#a0c4ff"; 
+                    colorEnd = "#8ecae6";
+                }
+        
+                // Application du CSS dynamique
+                // L'anneau se remplit avec la couleur, le reste est gris clair (#eee)
+                ring.style.background = `conic-gradient(
+                    ${colorEnd} 0%, 
+                    ${colorStart} ${percentage}%, 
+                    var(--border) ${percentage}%
+                )`;
+        
+            } else {
+                txtDay.innerText = "?";
+            }
+        });
         // 2. Interaction au clic (Modif pour Elise / Notif pour Théo)
         window.editCycle = function() {
-            const el = document.getElementById('cycle-bubble');
-            const currentText = el.innerText || ""; // Récupère le texte (ex: 🩸 J-2)
-
-            // --- CAS THÉO ---
+            // --- CÔTÉ THÉO (Envoi de message) ---
             if (currentUser === 'fr') {
-                // 1. On récupère la date d'aujourd'hui (ex: "Tue Jan 13 2026")
                 const today = new Date().toDateString();
-                // 2. On regarde la dernière fois qu'il a cliqué
                 const lastSent = localStorage.getItem('lastCycleNotif');
-
-                // 3. Si c'est la même date, on bloque
+        
                 if (lastSent === today) {
-                    alert("Doucement ! Tu lui as déjà envoyé un message aujourd'hui 😉");
+                    alert("Tu as déjà envoyé ton soutien aujourd'hui ❤️");
                     return;
                 }
-
-                // 4. Sinon, on envoie la notif
-                if (currentText.includes('🩸')) {
-                    sendNtfy("Bon courage ma petite chérie ❤️", "rose", "high");
-                    alert("Message de courage envoyé ! 💌");
+        
+                // Message différent selon la période (Rouge vs Normal)
+                if (currentCycleDay <= 7) {
+                    // Période Rouge -> Courage
+                    sendNtfy("Courage ma petite chérie ❤️ Je t'aime fort.", "rose", "high");
+                    alert("💌 Message de courage envoyé !");
                 } else {
-                    sendNtfy("N'oublie pas ta pilule ma petite chérie 💊", "pill", "high");
-                    alert("Rappel pilule envoyé ! 💊");
+                    // Période Normale -> Pilule
+                    sendNtfy("N'oublie pas ta pilule mon cœur 💊", "pill", "high");
+                    alert("💊 Rappel pilule envoyé !");
                 }
-
-                // 5. Et on enregistre la date pour bloquer jusqu'à demain
+        
                 localStorage.setItem('lastCycleNotif', today);
                 return;
             }
-
-            // --- CAS ELISE : Modification du cycle ---
-            const input = prompt(
-                "Mise à jour Cycle 💊\n\n" +
-                "🩸 Tape 'S' pour SANG (Reset auto à J-1)\n" +
-                "🌸 Tape 'F' pour FLEUR (Garde le jour)\n" +
-                "🔢 Ou écris le JOUR actuel (ex: 5) pour corriger."
+        
+            // --- CÔTÉ ELISE (Réglages) ---
+            // Elise peut cliquer pour remettre à J-1 si besoin (décalage manuel)
+            const confirmReset = confirm(
+                `Nous sommes au jour ${currentCycleDay} du cycle.\n\n` +
+                "Veux-tu réinitialiser le cycle à J-1 (Début des règles) aujourd'hui ?"
             );
-
-            if (!input) return;
-            const val = input.trim().toUpperCase();
-
-            if (val === 'S') {
+        
+            if (confirmReset) {
                 setDoc(doc(db, "status", "cycle"), { 
-                    type: 'blood', 
-                    lastStart: serverTimestamp() 
+                    lastStart: serverTimestamp(),
+                    type: 'auto' // On passe en mode auto 28j
                 }, { merge: true });
-            } 
-            else if (val === 'F') {
-                setDoc(doc(db, "status", "cycle"), { type: 'flower' }, { merge: true });
-            } 
-            else {
-                const day = parseInt(val);
-                if (!isNaN(day) && day > 0) {
-                    const newStart = new Date();
-                    newStart.setDate(newStart.getDate() - (day - 1));
-                    setDoc(doc(db, "status", "cycle"), { lastStart: newStart }, { merge: true });
-                }
             }
         }
-
         let allLetters = [];
         const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
         onSnapshot(qLetters, (snapshot) => {
