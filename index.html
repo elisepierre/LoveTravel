@@ -368,6 +368,18 @@
             color: #aaa;
             border-color: #555;
         }
+
+        /* FIX PETIT BAC - SAISIE DARK MODE */
+        body.dark-mode .bac-input {
+            background-color: var(--input-bg); /* Fond gris foncé (#2c2c2c) */
+            color: white !important;           /* Texte Blanc pur */
+            border-color: #555;                /* Bordure plus discrète */
+        }
+        
+        /* Optionnel : Couleur du texte d'aide (placeholder) */
+        body.dark-mode .bac-input::placeholder {
+            color: #777;
+        }
         
         /* LETTRES */
         .mailbox-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -808,7 +820,7 @@
                         <div style="font-size:1rem; color:var(--text-sub); margin-bottom:15px;" id="bac-score-text">Score</div>
                         <div id="bac-results-table-container" style="margin-bottom:20px;"></div>
                         <button onclick="bacReset()" class="btn-action" style="width:100%; background: linear-gradient(to right, var(--blue-dark), var(--pink-dark)); box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                            Lancer
+                            Fin de partie
                         </button>
                     </div>
                 
@@ -824,7 +836,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v74 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v75 • janvier 2026</div>
         </div>
     </div>
 
@@ -1644,7 +1656,7 @@
                 } else if (isDone) {
                      actionsDiv.innerHTML = `
                         <button onclick="bacConfirmReviewEnd()" class="btn-action" style="width:100%; background:var(--pink-dark); animation:pulse 1s infinite;">
-                            Fin de partie 🏁
+                            Fin de correction
                         </button>`;
                 } else {
                      actionsDiv.innerHTML = `<div style="text-align:center; font-size:0.8rem; color:#999;">Note toutes les réponses pour finir.</div>`;
@@ -1788,18 +1800,26 @@
             updateDoc(doc(db, "games", "bac_active"), { status: 'finished' });
         }
         
-        // Historique
-        onSnapshot(query(collection(db, "games_bac_history"), orderBy("timestamp", "desc"), limit(10)), (s) => {
+        // --- HISTORIQUE PETIT BAC (Harmonisé) ---
+        onSnapshot(query(collection(db, "games_bac_history"), orderBy("timestamp", "desc"), limit(20)), (s) => {
             const list = document.getElementById('bac-history-list');
             list.innerHTML = "";
             s.forEach(d => {
                 const h = d.data();
-                const winName = h.winner === 'fr' ? 'Théo' : (h.winner === 'tw' ? 'Elise' : 'Égalité');
-                const color = h.winner === 'fr' ? 'var(--blue)' : (h.winner === 'tw' ? 'var(--pink)' : '#777');
+                const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : "";
+        
+                // Logique Gagnant
+                let winName = 'Égalité';
+                let winColor = 'var(--text-sub)'; // Gris par défaut
+                
+                if (h.winner === 'fr') { winName = 'Théo'; winColor = 'var(--blue)'; }
+                else if (h.winner === 'tw') { winName = 'Elise'; winColor = 'var(--pink)'; }
+        
                 list.innerHTML += `
                 <div class="hist-row">
-                    <span>Lettre <b>${h.letter}</b></span>
-                    <span style="color:${color}; font-weight:bold;">${winName} (${h.score_fr}-${h.score_tw})</span>
+                    <span>${dateStr} - <b style="color:${winColor}">${winName}</b></span>
+                    
+                    <span>Lettre <b>${h.letter}</b> (${h.score_fr}-${h.score_tw})</span>
                 </div>`;
             });
         });
