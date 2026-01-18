@@ -1109,9 +1109,25 @@
         // --- GAMES LOGIC ---
         let activePendu = null;
         onSnapshot(doc(db, "games", "pendu_active"), (s) => { activePendu = s.exists() ? s.data() : { state:'setup' }; renderPendu(activePendu); });
+        // --- HISTORIQUE PENDU (Coloré) ---
         onSnapshot(query(collection(db, "games_pendu_history"), orderBy("timestamp", "desc"), limit(50)), (s) => {
-            const list = document.getElementById('pendu-history-list'); list.innerHTML = "";
-            s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose'; const setter = h.setter === 'fr' ? 'Théo' : 'Elise'; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${setter} : <b>${h.word}</b></span><span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span></div>`; });
+            const list = document.getElementById('pendu-history-list'); 
+            list.innerHTML = "";
+            s.forEach(d => { 
+                const h = d.data(); 
+                const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; 
+                const resClass = h.result === 'win' ? 'hist-win' : 'hist-loose'; 
+                
+                // Logique couleur
+                const setterName = h.setter === 'fr' ? 'Théo' : 'Elise';
+                const setterColor = h.setter === 'fr' ? 'var(--blue)' : 'var(--pink)';
+                
+                list.innerHTML += `
+                <div class="hist-row">
+                    <span>${dateStr} - <b style="color:${setterColor}">${setterName}</b> : <b>${h.word}</b></span>
+                    <span class="${resClass}">${h.result==='win'?'Trouvé':'Raté'}</span>
+                </div>`; 
+            });
         });
         function renderPendu(game) {
             document.getElementById('btn-pendu').classList.toggle('is-running', game.state === 'playing');
@@ -1219,7 +1235,25 @@
         
         let activeP4 = null;
         onSnapshot(doc(db, "games", "p4_active"), (s) => { activeP4 = s.exists() ? s.data() : null; if(activeP4) renderP4(activeP4); else document.getElementById('p4-status').innerText = "Aucune partie en cours"; });
-        onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { const list = document.getElementById('p4-history-list'); list.innerHTML = ""; s.forEach(d => { const h = d.data(); const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'} a gagné</span><span>en ${h.moves} coups</span></div>`; }); });
+        // --- HISTORIQUE P4 (Coloré) ---
+        onSnapshot(query(collection(db, "games_p4_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { 
+            const list = document.getElementById('p4-history-list'); 
+            list.innerHTML = ""; 
+            s.forEach(d => { 
+                const h = d.data(); 
+                const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; 
+                
+                // Logique couleur
+                const winName = h.winner === 'fr' ? 'Théo' : 'Elise';
+                const winColor = h.winner === 'fr' ? 'var(--blue)' : 'var(--pink)';
+        
+                list.innerHTML += `
+                <div class="hist-row">
+                    <span>${dateStr} - <b style="color:${winColor}">${winName}</b></span>
+                    <span>en ${h.moves} coups</span>
+                </div>`; 
+            }); 
+        });
         window.initP4 = function() { 
             setDoc(doc(db, "games", "p4_active"), { 
                 board: Array(42).fill(0), 
@@ -1285,13 +1319,24 @@
         
         let activeUno = null; let pickingWild = false; let wildCardIndex = -1;
         onSnapshot(doc(db, "games", "uno_active"), (s) => { activeUno = s.exists() ? s.data() : null; if(activeUno) renderUno(activeUno); else document.getElementById('uno-status').innerText = "Aucune partie en cours"; });
+        // --- HISTORIQUE UNO (Coloré) ---
         onSnapshot(query(collection(db, "games_uno_history"), orderBy("timestamp", "desc"), limit(50)), (s) => { 
-            const list = document.getElementById('uno-history-list'); list.innerHTML = ""; 
+            const list = document.getElementById('uno-history-list'); 
+            list.innerHTML = ""; 
             s.forEach(d => { 
                 const h = d.data(); 
                 const dateStr = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleDateString('fr-FR', {day:'2-digit', month:'2-digit'}) : ""; 
                 const moves = h.moves || "?";
-                list.innerHTML += `<div class="hist-row"><span>${dateStr} - ${h.winner==='fr'?'Théo':'Elise'}</span><span>en ${moves} coups</span></div>`; 
+                
+                // Logique couleur
+                const winName = h.winner === 'fr' ? 'Théo' : 'Elise';
+                const winColor = h.winner === 'fr' ? 'var(--blue)' : 'var(--pink)';
+                
+                list.innerHTML += `
+                <div class="hist-row">
+                    <span>${dateStr} - <b style="color:${winColor}">${winName}</b></span>
+                    <span>en ${moves} coups</span>
+                </div>`; 
             }); 
         });
 
