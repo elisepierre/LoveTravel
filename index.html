@@ -1818,9 +1818,37 @@
             }
         });
         
-        // 2. MODIFICATION DU JOUR (Au clic)
+        // 2. INTERACTION AU CLIC (Intelligente selon qui clique)
         window.editCycle = function() {
-            // On demande le nouveau jour
+            
+            // --- CAS A : C'EST THÉO (Il veut envoyer du soutien) ---
+            if (currentUser === 'fr') {
+                const today = new Date().toDateString();
+                const lastSent = localStorage.getItem('lastCycleNotif');
+        
+                // Petit blocage pour qu'il ne spamme pas 50 notifs
+                if (lastSent === today) {
+                    alert("Doucement ! Tu as déjà envoyé ton message aujourd'hui ❤️");
+                    return;
+                }
+        
+                // Si on est dans les 7 premiers jours (Règles)
+                if (currentCycleDay <= 7) {
+                    sendNtfy("Courage ma petite chérie ❤️ Je pense fort à toi.", "rose", "high");
+                    alert("💌 Message 'Courage' envoyé !");
+                } 
+                // Sinon (Reste du cycle)
+                else {
+                    sendNtfy("N'oublie pas ta pilule mon cœur 🌸", "pill", "high");
+                    alert("💊 Rappel 'Pilule' envoyé !");
+                }
+        
+                // On note qu'il a cliqué aujourd'hui
+                localStorage.setItem('lastCycleNotif', today);
+                return; // On arrête là pour lui, il ne modifie pas le jour
+            }
+        
+            // --- CAS B : C'EST ELISE (Tu veux corriger le jour) ---
             const newVal = prompt(
                 `Modifier le cycle (Actuel: J-${currentCycleDay})\n\n` +
                 "Entre le numéro du jour (1 à 28) :"
@@ -1829,17 +1857,16 @@
             if (newVal) {
                 const day = parseInt(newVal);
                 if (!isNaN(day) && day >= 1 && day <= 28) {
-                    // Calcul savant : On recule la date de début pour tomber sur ce jour
+                    // Calcul mathématique pour recaler la date de début
                     const newStart = new Date();
                     newStart.setDate(newStart.getDate() - (day - 1));
                     
-                    // On sauvegarde
+                    // Mise à jour Firebase
                     setDoc(doc(db, "status", "cycle"), { 
                         lastStart: newStart,
                         type: 'auto'
                     }, { merge: true });
                     
-                    // Petit feedback visuel (vibration)
                     if(navigator.vibrate) navigator.vibrate(50);
                 } else {
                     alert("Il faut un chiffre entre 1 et 28 !");
