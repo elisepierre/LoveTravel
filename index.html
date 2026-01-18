@@ -118,11 +118,44 @@
         .prog-heart { position: absolute; top: -6px; font-size: 14px; transform: translateX(-50%); transition: left 1s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
 
         /* MOODS */
-        .mood-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
-        .mood-person { width: 48%; text-align: center; position: relative; }
-        .avatar-frame { width: 100%; height: 140px; display: flex; align-items: flex-end; justify-content: center; position: relative; border-bottom: 1px solid var(--border); }
-        .avatar-img { height: 95%; width: auto; max-width: 100%; object-fit: contain; }
-        .mood-msg { background: var(--bg-card); padding: 8px 12px; border-radius: 15px; font-size: 0.8rem; color: var(--text-main); box-shadow: 0 3px 10px var(--shadow); margin-top: -10px; position: relative; z-index: 2; display: inline-block; max-width: 100%; font-style: italic; border: 1px solid var(--border); }
+        .mood-container { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; /* Centre verticalement Images et Widget */
+            gap: 10px; /* Espace propre entre les éléments */
+            margin-bottom: 20px; 
+        }
+        
+        /* LES COLONNES PERSO (Théo / Elise) */
+        .mood-person { 
+            flex: 1;      /* Chacun prend 50% de l'espace restant */
+            width: 0;     /* MAGIE : Empêche le texte d'élargir la colonne */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .avatar-frame {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            /* Hauteur fixe pour que les têtes soient alignées */
+            height: 120px; 
+            margin-bottom: 5px;
+        }
+        
+        .avatar-img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+        
+        /* Le texte peut être long, il ira à la ligne proprement */
+        .mood-msg {
+            min-width: 100%; /* Prend toute la largeur de sa colonne */
+            word-wrap: break-word; /* Coupe les mots si trop longs */
+        }
         .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .mood-btn { background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 10px; text-align: center; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
         .mood-btn:active { transform: scale(0.95); }
@@ -368,21 +401,20 @@
 
        /* WIDGET CENTRAL : CYCLE */
         #cycle-widget {
-            width: 70px; /* Taille du widget */
+            width: 70px; 
             height: 70px;
             position: relative;
-            flex-shrink: 0; /* Empêche d'être écrasé */
-            margin: 0 5px;  /* Espace avec les avatars */
-            margin-bottom: 25px; /* Aligné avec les visages */
+            flex-shrink: 0; /* Interdit au widget de s'écraser */
+            margin: 0;      /* Plus besoin de margin bizarre, le flex gère */
             cursor: pointer;
-            transition: transform 0.2s ease;
             border-radius: 50%;
-            /* Petite ombre douce */
             box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
             background: var(--bg-card);
+            
+            /* Animation au clic */
+            transition: transform 0.1s;
         }
-        
-        #cycle-widget:active { transform: scale(0.95); }
+        #cycle-widget:active { transform: scale(0.9); }
         
         /* L'ANNEAU (Géré par Conic Gradient en JS) */
         #cycle-ring {
@@ -1734,10 +1766,10 @@
         }
         window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
 
-        // --- GESTION CYCLE (Mode Pilule 💊) ---
-            // 1. GESTION DU CYCLE (Anneau Central)
-        let currentCycleDay = 1; // Variable globale pour stocker le jour actuel
+        // --- GESTION CYCLE ET CLIC ---
+        let currentCycleDay = 1;
         
+        // 1. AFFICHAGE (Fleur vs Goutte)
         onSnapshot(doc(db, "status", "cycle"), (docSnap) => {
             const ring = document.getElementById('cycle-ring');
             const txtDay = document.getElementById('cycle-day');
@@ -1747,99 +1779,75 @@
                 const data = docSnap.data();
                 const lastStart = data.lastStart ? data.lastStart.toDate() : new Date();
                 
-                // Calcul du jour réel écoulé
+                // Calcul jours écoulés
                 const now = new Date();
                 const diffTime = Math.abs(now - lastStart);
                 const rawDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 
-                // LOGIQUE MODULO 28 (Boucle infinie 1 à 28)
-                // Si rawDays = 1 -> J1. Si rawDays = 29 -> J1.
+                // Modulo 28 (1 à 28)
                 let dayInCycle = ((rawDays - 1) % 28) + 1;
-                currentCycleDay = dayInCycle; // On sauvegarde pour le clic
+                currentCycleDay = dayInCycle;
         
-                // ESTHÉTIQUE : RÈGLES (J1-J7) vs NORMAL
+                // Est-ce la semaine de règles ? (J1 à J7)
                 const isPeriod = dayInCycle <= 7;
         
-                // 1. Texte et Icône
+                // TEXTE et ICONE (🌸 après J7)
                 txtDay.innerText = `J-${dayInCycle}`;
-                txtIcon.innerText = isPeriod ? "🩸" : "🌿"; // Goutte ou Feuille
+                txtIcon.innerText = isPeriod ? "🩸" : "🌸"; // Goutte si règles, Fleur sinon
         
-                // 2. Couleur du Texte
+                // COULEURS
                 if (isPeriod) {
                     txtDay.className = "cycle-red-text";
                 } else {
                     txtDay.className = "cycle-normal-text";
                 }
         
-                // 3. L'ANNEAU PROGRESSIF (Conic Gradient)
-                // Calcul du pourcentage (ex: Jour 14 = 50% du cercle)
+                // ANNEAU PROGRESSIF
                 const percentage = (dayInCycle / 28) * 100;
+                let colorStart = isPeriod ? "#ff9a9e" : "#a0c4ff";
+                let colorEnd   = isPeriod ? "#ff4b6e" : "#8ecae6";
                 
-                let colorStart, colorEnd;
-                
-                if (isPeriod) {
-                    // Dégradé Rouge/Rose pour les règles
-                    colorStart = "#ff9a9e"; 
-                    colorEnd = "#ff4b6e";
-                } else {
-                    // Dégradé Bleu/Pastel pour le reste (Ovulation/Cocon)
-                    colorStart = "#a0c4ff"; 
-                    colorEnd = "#8ecae6";
-                }
+                // Dark mode support pour la couleur de fond de l'anneau
+                const bgRing = document.body.classList.contains('dark-mode') ? '#333' : '#eee';
         
-                // Application du CSS dynamique
-                // L'anneau se remplit avec la couleur, le reste est gris clair (#eee)
                 ring.style.background = `conic-gradient(
                     ${colorEnd} 0%, 
                     ${colorStart} ${percentage}%, 
                     var(--border) ${percentage}%
                 )`;
-        
-            } else {
-                txtDay.innerText = "?";
             }
         });
-        // 2. Interaction au clic (Modif pour Elise / Notif pour Théo)
+        
+        // 2. MODIFICATION DU JOUR (Au clic)
         window.editCycle = function() {
-            // --- CÔTÉ THÉO (Envoi de message) ---
-            if (currentUser === 'fr') {
-                const today = new Date().toDateString();
-                const lastSent = localStorage.getItem('lastCycleNotif');
-        
-                if (lastSent === today) {
-                    alert("Tu as déjà envoyé ton soutien aujourd'hui ❤️");
-                    return;
-                }
-        
-                // Message différent selon la période (Rouge vs Normal)
-                if (currentCycleDay <= 7) {
-                    // Période Rouge -> Courage
-                    sendNtfy("Courage ma petite chérie ❤️ Je suis avec toi.", "rose", "high");
-                    alert("💌 Message de courage envoyé !");
-                } else {
-                    // Période Normale -> Pilule
-                    sendNtfy("N'oublie pas ta pilule mon cœur 💊", "pill", "high");
-                    alert("💊 Rappel pilule envoyé !");
-                }
-        
-                localStorage.setItem('lastCycleNotif', today);
-                return;
-            }
-        
-            // --- CÔTÉ ELISE (Réglages) ---
-            // Elise peut cliquer pour remettre à J-1 si besoin (décalage manuel)
-            const confirmReset = confirm(
-                `Nous sommes au jour ${currentCycleDay} du cycle.\n\n` +
-                "Veux-tu réinitialiser le cycle à J-1 (Début des règles) aujourd'hui ?"
+            // On demande le nouveau jour
+            const newVal = prompt(
+                `Modifier le cycle (Actuel: J-${currentCycleDay})\n\n` +
+                "Entre le numéro du jour (1 à 28) :"
             );
         
-            if (confirmReset) {
-                setDoc(doc(db, "status", "cycle"), { 
-                    lastStart: serverTimestamp(),
-                    type: 'auto' // On passe en mode auto 28j
-                }, { merge: true });
+            if (newVal) {
+                const day = parseInt(newVal);
+                if (!isNaN(day) && day >= 1 && day <= 28) {
+                    // Calcul savant : On recule la date de début pour tomber sur ce jour
+                    const newStart = new Date();
+                    newStart.setDate(newStart.getDate() - (day - 1));
+                    
+                    // On sauvegarde
+                    setDoc(doc(db, "status", "cycle"), { 
+                        lastStart: newStart,
+                        type: 'auto'
+                    }, { merge: true });
+                    
+                    // Petit feedback visuel (vibration)
+                    if(navigator.vibrate) navigator.vibrate(50);
+                } else {
+                    alert("Il faut un chiffre entre 1 et 28 !");
+                }
             }
         }
+        
+            
         let allLetters = [];
         const qLetters = query(collection(db, "letters"), orderBy("timestamp", "desc"));
         onSnapshot(qLetters, (snapshot) => {
