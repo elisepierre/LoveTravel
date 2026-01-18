@@ -366,41 +366,47 @@
         .book-progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-left: 10px; }
         .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
-        /* Style de la bulle Cycle */
+        /* PASTILLE CYCLE (Positionnée sous le texte) */
         #cycle-bubble {
-            position: absolute;
-            /* On le remonte pour qu'il soit HORS de la photo */
-            top: -12px;         
-            right: 5px;
+            /* Positionnement */
+            margin: 8px auto 0 auto; /* Petit espace au-dessus, centré horizontalement */
+            display: table; /* Astuce pour qu'il prenne juste la largeur du contenu */
             
-            /* Design propre qui se fond dans la carte */
-            background: var(--bg-card); /* Prend la couleur de fond de la carte (blanc ou noir) */
-            border: 1px solid var(--pink-dark);
-            color: var(--pink-dark);
-            
+            /* Design de base (forme de pilule) */
             border-radius: 20px;
-            padding: 2px 8px;
-            font-size: 0.65rem;
-            font-weight: 800;
-            
-            /* Petite ombre pour le faire ressortir du fond */
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1); 
-            z-index: 20;
+            padding: 3px 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s ease;
+            
+            /* Par défaut (invisible ou très discret) */
+            opacity: 0.8;
         }
         
-        #cycle-bubble:active {
-            transform: scale(0.9);
+        #cycle-bubble:active { transform: scale(0.95); }
+        
+        /* DESIGN 1 : SEMAINE DE RÈGLES (Visible mais doux) */
+        #cycle-bubble.is-period {
+            background: #ffdde5; /* Rose très pâle */
+            color: #d63031;      /* Rouge foncé élégant */
+            border: 1px solid #ffb8c6;
         }
         
-        /* Adaptation automatique au Dark Mode */
-        body.dark-mode #cycle-bubble {
-            background: var(--bg-card); /* Deviendra gris foncé comme la carte */
-            color: var(--pink);
-            border-color: var(--pink);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        /* DESIGN 2 : LE RESTE DU TEMPS (Ultra discret) */
+        #cycle-bubble.is-normal {
+            background: transparent;
+            color: var(--text-sub); /* Gris clair */
+            border: 1px solid var(--border); /* Juste un petit contour gris */
         }
+        
+        /* Ajustement Dark Mode */
+        body.dark-mode #cycle-bubble.is-period {
+            background: #4a2c32; /* Fond sombre rougeâtre */
+            color: #ffadad;      /* Texte rose clair */
+            border-color: #633842;
+        }
+        
         /* FOOTER & UTILS */
         .app-footer { text-align: center; padding: 20px; margin-top: 30px; opacity: 1; }
         .footer-content {
@@ -576,9 +582,9 @@
                     <div class="mood-person">
                         <div class="avatar-frame" style="position: relative;">
                             <img src="" id="mood-img-tw" class="avatar-img">
-                            <div id="cycle-bubble" onclick="editCycle()">🌸</div>
                         </div>
                         <div class="mood-msg" id="mood-msg-tw">...</div>
+                        <div id="cycle-bubble" onclick="editCycle()"></div>
                     </div>
                 </div>
                 <div class="mood-grid">
@@ -1677,35 +1683,34 @@
 
         // --- GESTION CYCLE (Mode Pilule 💊) ---
 
-        // 1. Affichage intelligent
+                // 1. Affichage intelligent (Cycle sous le texte)
         onSnapshot(doc(db, "status", "cycle"), (docSnap) => {
-            // Attention à bien avoir l'ID "cycle-bubble" dans ton HTML
             const el = document.getElementById('cycle-bubble'); 
             
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                const type = data.type || 'flower'; // 'blood' ou 'flower'
-                const lastStart = data.lastStart.toDate();
-                
-                // Calcul J+X
+                const lastStart = data.lastStart ? data.lastStart.toDate() : new Date();
                 const now = new Date();
                 const diffTime = Math.abs(now - lastStart);
                 const day = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-
-                // Affichage Icone + Jour
-                const icon = (type === 'blood') ? '🩸' : '🌸';
-                el.innerHTML = `${icon} J-${day}`;
-
-                // Couleurs
-                if (type === 'blood') {
-                    el.style.borderColor = "red";
-                    el.style.color = "#d63031";
+                
+                // Est-ce la semaine de règles ? (J1 à J5 ou forcé)
+                const isPeriod = (data.type === 'blood') || (day <= 5);
+        
+                el.className = ''; // Reset
+        
+                if (isPeriod) {
+                    // Mode Règles : Pastille Rose
+                    el.classList.add('is-period');
+                    el.innerHTML = `🩸 J-${day}`; // Court et efficace
                 } else {
-                    el.style.borderColor = "var(--pink-dark)";
-                    el.style.color = "var(--text-sub)";
+                    // Mode Normal : Pastille Grise (juste le jour)
+                    el.classList.add('is-normal');
+                    el.innerHTML = `J-${day}`;
                 }
             } else {
-                el.innerText = "🌸 J-?";
+                el.className = 'is-normal';
+                el.innerHTML = "Config.";
             }
         });
 
