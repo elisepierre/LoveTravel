@@ -118,43 +118,67 @@
         .prog-heart { position: absolute; top: -6px; font-size: 14px; transform: translateX(-50%); transition: left 1s ease; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
 
         /* MOODS */
-        .mood-container { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; /* Centre verticalement Images et Widget */
-            gap: 10px; /* Espace propre entre les éléments */
-            margin-bottom: 20px; 
-        }
         
-        /* LES COLONNES PERSO (Théo / Elise) */
-        .mood-person { 
-            flex: 1;      /* Chacun prend 50% de l'espace restant */
-            width: 0;     /* MAGIE : Empêche le texte d'élargir la colonne */
+        /* 1. Le Conteneur Global */
+        .mood-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: space-between;
+            /* On aligne tout en haut pour que les têtes soient au même niveau */
+            align-items: flex-start; 
+            gap: 5px;
+            margin-bottom: 20px;
             position: relative;
         }
+        
+        /* 2. Les Colonnes Personnages (Théo / Elise) */
+        .mood-person {
+            flex: 1;           /* Prend la place dispo */
+            min-width: 0;      /* MAGIE : Permet au texte de rétrécir sans casser la page */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centre l'image et le texte horizontalement */
+        }
+        
+        /* 3. La Zone Image (Hauteur fixe pour alignement parfait) */
         .avatar-frame {
+            height: 130px; /* On fixe la hauteur pour que le rond soit centré par rapport à ça */
             width: 100%;
             display: flex;
+            align-items: flex-end; /* L'image se pose au bas du cadre */
             justify-content: center;
-            align-items: flex-end;
-            /* Hauteur fixe pour que les têtes soient alignées */
-            height: 120px; 
-            margin-bottom: 5px;
+            margin-bottom: -15px; /* Permet à la bulle de chevaucher un peu */
+            z-index: 1;
         }
         
         .avatar-img {
             max-height: 100%;
             max-width: 100%;
             object-fit: contain;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
         }
         
-        /* Le texte peut être long, il ira à la ligne proprement */
+        /* 4. La Bulle de Texte (Encadré citation) */
         .mood-msg {
-            min-width: 100%; /* Prend toute la largeur de sa colonne */
-            word-wrap: break-word; /* Coupe les mots si trop longs */
+            position: relative;
+            z-index: 10; /* IMPORTANT : Passe DEVANT l'image et le reste */
+            
+            background: var(--bg-card);
+            padding: 8px 12px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            
+            font-size: 0.8rem;
+            font-style: italic;
+            color: var(--text-main);
+            text-align: center;
+            line-height: 1.3;
+            
+            /* Gestion des textes longs */
+            width: auto;
+            max-width: 110%; /* Peut dépasser un tout petit peu */
+            min-width: 80px; /* Taille min pour ne pas disparaître */
+            margin-top: 10px; /* Espace sous l'avatar */
         }
         .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .mood-btn { background: var(--input-bg); border: 1px solid var(--border); border-radius: 15px; padding: 10px; text-align: center; font-size: 1.5rem; cursor: pointer; transition: 0.2s; }
@@ -399,21 +423,26 @@
         .book-progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-left: 10px; }
         .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
-       /* WIDGET CENTRAL : CYCLE */
+       /* 5. Le Widget Cycle Central */
         #cycle-widget {
-            width: 70px; 
-            height: 70px;
+            width: 65px; 
+            height: 65px;
+            flex-shrink: 0;
+            
+            /* CENTRAGE VERTICAL PAR RAPPORT AUX AVATARS */
+            /* L'avatar fait 130px de haut. Pour centrer le rond (65px) :
+               (130 - 65) / 2 = ~32px de marge en haut */
+            margin-top: 32px; 
+            
             position: relative;
-            flex-shrink: 0; /* Interdit au widget de s'écraser */
-            margin: 0;      /* Plus besoin de margin bizarre, le flex gère */
             cursor: pointer;
             border-radius: 50%;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
             background: var(--bg-card);
-            
-            /* Animation au clic */
             transition: transform 0.1s;
+            z-index: 5;
         }
+        
         #cycle-widget:active { transform: scale(0.9); }
         
         /* L'ANNEAU (Géré par Conic Gradient en JS) */
@@ -1769,7 +1798,7 @@
         // --- GESTION CYCLE ET CLIC ---
         let currentCycleDay = 1;
         
-        // 1. AFFICHAGE (Fleur vs Goutte)
+        // 1. AFFICHAGE ET LOGIQUE COULEUR
         onSnapshot(doc(db, "status", "cycle"), (docSnap) => {
             const ring = document.getElementById('cycle-ring');
             const txtDay = document.getElementById('cycle-day');
@@ -1784,39 +1813,50 @@
                 const diffTime = Math.abs(now - lastStart);
                 const rawDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                 
-                // Modulo 28 (1 à 28)
+                // Modulo 28
                 let dayInCycle = ((rawDays - 1) % 28) + 1;
                 currentCycleDay = dayInCycle;
         
                 // Est-ce la semaine de règles ? (J1 à J7)
                 const isPeriod = dayInCycle <= 7;
         
-                // TEXTE et ICONE (🌸 après J7)
+                // TEXTE et ICONE
                 txtDay.innerText = `J-${dayInCycle}`;
-                txtIcon.innerText = isPeriod ? "🩸" : "🌸"; // Goutte si règles, Fleur sinon
+                txtIcon.innerText = isPeriod ? "🩸" : "🌸"; 
         
-                // COULEURS
+                // COULEURS DU TEXTE
                 if (isPeriod) {
                     txtDay.className = "cycle-red-text";
                 } else {
                     txtDay.className = "cycle-normal-text";
                 }
         
-                // ANNEAU PROGRESSIF
-                const percentage = (dayInCycle / 28) * 100;
-                let colorStart = isPeriod ? "#ff9a9e" : "#a0c4ff";
-                let colorEnd   = isPeriod ? "#ff4b6e" : "#8ecae6";
+                // --- C'EST ICI QUE LA MAGIE DES COULEURS OPÈRE ---
                 
-                // Dark mode support pour la couleur de fond de l'anneau
-                const bgRing = document.body.classList.contains('dark-mode') ? '#333' : '#eee';
+                // Pourcentage de remplissage du cercle
+                const percentage = (dayInCycle / 28) * 100;
+                
+                let colorStart, colorEnd;
+                
+                if (isPeriod) {
+                    // ROUGE : Rose Tendre -> Rose Vif (Ton préféré)
+                    colorStart = "#ff9a9e"; 
+                    colorEnd = "#ff4b6e";
+                } else {
+                    // BLEU : Bleu Ciel Glacé -> Bleu Océan Profond (Nouveau !)
+                    // Ce fort contraste crée l'effet de relief/dégradé que tu aimes
+                    colorStart = "#a0e7ff"; // Très clair / Lumineux
+                    colorEnd = "#0984e3";   // Profond / Intense
+                }
         
+                // Application du dégradé conique
                 ring.style.background = `conic-gradient(
                     ${colorEnd} 0%, 
                     ${colorStart} ${percentage}%, 
                     var(--border) ${percentage}%
                 )`;
             }
-        });
+});
         
         // 2. INTERACTION AU CLIC (Intelligente selon qui clique)
         window.editCycle = function() {
