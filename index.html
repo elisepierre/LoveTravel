@@ -1097,8 +1097,8 @@
             <div class="card-content">
     
                 <div class="todo-tabs">
-                    <div class="todo-tab tab-dist active" id="t-tab-dist" onclick="switchTodoTab('dist')">📡 À Distance</div>
-                    <div class="todo-tab tab-real" id="t-tab-real" onclick="switchTodoTab('real')">✈️ Retrouvailles</div>
+                    <div class="todo-tab tab-dist active" id="t-tab-dist" onclick="switchTodoTab('dist')">À Distance</div>
+                    <div class="todo-tab tab-real" id="t-tab-real" onclick="switchTodoTab('real')">Retrouvailles</div>
                 </div>
             
                 <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:bold; color:var(--text-sub); margin-bottom:5px;">
@@ -1638,7 +1638,7 @@
                 // On affiche ta JOLIE fenêtre au lieu du 'alert' moche
                 showAlert(
                     "Chut... 🤫", 
-                    `${targetName} rêve de toi en ce moment 🌙.\nOn ne va pas le/la réveiller !`, 
+                    `${targetName} rêve de toi en ce moment 🌙.`, 
                     "💤"
                 );
                 return; // On annule l'envoi du bisou
@@ -2476,7 +2476,7 @@
                 method: 'POST', 
                 body: msg, 
                 headers: {
-                    'Title': currentUser === 'tw' ? "Elise" : "Théo", // Juste le Prénom, propre
+                    'Title': currentUser === 'tw' ? "Elise" : "Theo", // Juste le Prénom, propre
                     'Priority': prio,
                     // 'Tags': tag,  <-- J'ai supprimé cette ligne pour enlever l'emoji du titre
                     'Icon': iconUrl
