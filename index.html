@@ -889,6 +889,21 @@
 </head>
 <body>
 
+    <div id="login-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-body); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:20px;">
+        <h1 class="app-title" style="margin-bottom:30px; font-size:3rem;">Love Travel 🔒</h1>
+        
+        <div style="background:var(--bg-card); padding:30px; border-radius:20px; width:100%; max-width:350px; box-shadow:0 10px 30px rgba(0,0,0,0.1); border:1px solid var(--border); text-align:center;">
+            <p style="margin-bottom:20px; color:var(--text-sub);">Connecte-toi pour accéder à notre monde.</p>
+            
+            <input type="email" id="login-email" class="input-field" placeholder="Email" style="width:100%; margin-bottom:15px;">
+            <input type="password" id="login-pass" class="input-field" placeholder="Mot de passe" style="width:100%; margin-bottom:20px;">
+            
+            <button onclick="loginApp()" class="btn-action" style="width:100%; background:linear-gradient(135deg, var(--blue), var(--pink)); font-size:1.1rem; padding:12px;">Entrer ✨</button>
+            
+            <p id="login-error" style="color:red; font-size:0.8rem; margin-top:15px; display:none;">Erreur d'identifiants</p>
+        </div>
+    </div>
+
     <div id="bd-overlay">
         <div class="bd-title" id="bd-title-text">Joyeux Anniversaire !</div>
         
@@ -1183,11 +1198,63 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, doc, setDoc, getDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyA7ZNlC1ILS9-W3bgxWogUA6ak4c29a4Ns", authDomain: "lovetravel-35285.firebaseapp.com", projectId: "lovetravel-35285", storageBucket: "lovetravel-35285.firebasestorage.app", messagingSenderId: "189902268760", appId: "1:189902268760:web:b461ce15d8c396be479d2d" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // --- CONFIGURATION AUTHENTIFICATION ---
+        const auth = getAuth(app);
+        
+        // 1. Fonction de connexion (Avec mémorisation "Souviens-toi de moi")
+        window.loginApp = function() {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            const errorMsg = document.getElementById('login-error');
+        
+            // On dit à Firebase : "Garde la session ouverte même si je ferme le site"
+            setPersistence(auth, browserLocalPersistence)
+                .then(() => {
+                    return signInWithEmailAndPassword(auth, email, pass);
+                })
+                .then(() => {
+                    errorMsg.style.display = 'none'; // Succès !
+                })
+                .catch((error) => {
+                    errorMsg.style.display = 'block';
+                    errorMsg.innerText = "Accès refusé 😜";
+                    console.error(error);
+                });
+        }
+        
+        // 2. Le Gardien (Vérifie en permanence si tu es connecté)
+        onAuthStateChanged(auth, (user) => {
+            const loginScreen = document.getElementById('login-screen');
+            if (user) {
+                // --- CONNECTÉ ---
+                loginScreen.style.display = 'none'; // On lève le rideau
+                
+                // Identification auto (plus besoin de cliquer sur le drapeau)
+                if(user.email.includes('theo')) {
+                    localStorage.setItem('userRole', 'fr');
+                    currentUser = 'fr';
+                } else if(user.email.includes('elise')) {
+                    localStorage.setItem('userRole', 'tw');
+                    currentUser = 'tw';
+                }
+                updateIdentityUI(); 
+            } else {
+                // --- PAS CONNECTÉ ---
+                loginScreen.style.display = 'flex'; // On baisse le rideau
+            }
+        });
+        
+        // 3. Fonction Déconnexion (À lier à un bouton si tu veux)
+        window.logoutApp = function() {
+            if(confirm("Se déconnecter ?")) signOut(auth);
+        }
 
         // --- GESTION EVENEMENTS (V59) ---
         const events = [
