@@ -422,12 +422,169 @@
         .modal-img:hover { opacity: 0.8; }
         .lightbox-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; background: none; border: none; cursor: pointer; }
 
-        /* PROJETS & LIVRES (CSS V57 RESTAURÉ) */
-        .todo-item { display: flex; align-items: center; background: var(--input-bg); padding: 10px; margin-bottom: 8px; border-radius: 10px; border: 1px solid var(--border); justify-content: space-between; }
-        .todo-check { width: 20px; height: 20px; margin-right: 10px; accent-color: var(--pink-dark); }
-        .todo-text { flex: 1; font-size: 0.9rem; margin-right: 10px; color: var(--text-main); }
-        .todo-text.done { text-decoration: line-through; color: var(--text-sub); }
-        .todo-del { background: none; border: none; color: #faa; cursor: pointer; font-size: 1.2rem; margin-left: auto; }
+        /* --- STYLE PROJETS (Bucket List) --- */
+
+        /* 1. LES ONGLETS (Distance vs Réel) */
+        .todo-tabs { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+        
+        .todo-tab { 
+            flex: 1; 
+            padding: 10px; 
+            text-align: center; 
+            border-radius: 12px; 
+            font-size: 0.85rem; 
+            font-weight: 800; 
+            cursor: pointer; 
+            border: 1px solid var(--border); 
+            color: var(--text-sub); 
+            background: var(--input-bg);
+            transition: all 0.3s ease; 
+        }
+        
+        /* Onglet Actif : Distance (Bleu) */
+        .todo-tab.tab-dist.active { 
+            background: var(--blue); 
+            color: white; 
+            border-color: transparent;
+            box-shadow: 0 4px 10px rgba(142, 202, 230, 0.4); 
+            transform: translateY(-2px);
+        }
+        
+        /* Onglet Actif : Réel (Rose) */
+        .todo-tab.tab-real.active { 
+            background: var(--pink-dark); 
+            color: white; 
+            border-color: transparent;
+            box-shadow: 0 4px 10px rgba(255, 75, 110, 0.4); 
+            transform: translateY(-2px);
+        }
+        
+        /* 2. LA BARRE DE PROGRESSION ADAPTATIVE */
+        /* Par défaut c'est bleu, mais si on est dans 'real' ça devient rose */
+        .progress-dist .book-progress-bar { background: var(--blue); }
+        .progress-real .book-progress-bar { background: var(--pink-dark); }
+        
+        /* 3. LE SÉLECTEUR D'ICÔNES */
+        .cat-selector { 
+            display: flex; 
+            gap: 8px; 
+            margin-bottom: 10px; 
+            justify-content: space-between; 
+        }
+        
+        .cat-option {
+            width: 40px; height: 40px; 
+            border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; 
+            cursor: pointer; 
+            border: 2px solid transparent;
+            background: white; 
+            transition: 0.2s; 
+            opacity: 0.6; 
+            filter: grayscale(100%);
+        }
+        
+        .cat-option:hover { transform: scale(1.1); }
+        
+        /* Quand sélectionné : couleur vive + bordure */
+        .cat-option.selected { 
+            opacity: 1; 
+            filter: grayscale(0%);
+            border-color: var(--c); /* Variable couleur définie en HTML */
+            background: var(--input-bg);
+            transform: translateY(-3px); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* 4. LES ITEMS DE LA LISTE (Style Ticket) */
+        .todo-item {
+            display: flex; 
+            align-items: center; 
+            background: white; 
+            padding: 12px 15px; 
+            margin-bottom: 10px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02); 
+            transition: 0.3s;
+            position: relative; 
+            overflow: hidden;
+        }
+        
+        /* La petite barre de couleur à gauche */
+        .todo-item::before {
+            content: ""; 
+            position: absolute; 
+            left: 0; top: 0; bottom: 0; 
+            width: 6px;
+            background: var(--cat-color, #ccc); /* Couleur dynamique */
+        }
+        
+        .todo-check { 
+            width: 22px; height: 22px; 
+            margin-right: 15px; 
+            accent-color: var(--cat-color, var(--pink)); /* La checkbox prend la couleur de la cat */
+            cursor: pointer; 
+            z-index: 2; 
+        }
+        
+        .todo-content { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        .todo-text { 
+            font-size: 0.95rem; 
+            color: var(--text-main); 
+            font-weight: 600; 
+            transition: 0.3s; 
+        }
+        
+        .todo-cat-icon { 
+            font-size: 0.8rem; 
+            margin-right: 6px; 
+            vertical-align: middle;
+        }
+        
+        /* État Terminé (Barré) */
+        .todo-text.done { 
+            text-decoration: line-through; 
+            color: var(--text-sub); 
+            opacity: 0.7; 
+        }
+        
+        .todo-item.done { 
+            background: var(--input-bg); 
+            border-color: transparent; 
+            box-shadow: none; 
+            opacity: 0.8;
+        }
+        
+        /* Bouton Supprimer */
+        .todo-del { 
+            background: none; 
+            border: none; 
+            color: #ffadad; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            opacity: 0.4; 
+            padding: 5px; 
+            transition: 0.2s; 
+            margin-left: 10px;
+        }
+        .todo-del:hover { opacity: 1; transform: scale(1.1); color: #e74c3c; }
+        
+        /* 5. ADAPTATION DARK MODE */
+        body.dark-mode .cat-option { background: #333; }
+        body.dark-mode .todo-item { background: #2a2a2a; border-color: #444; }
+        body.dark-mode .todo-item.done { background: #1f1f1f; }
+        body.dark-mode .todo-tab { background: #2c2c2c; }
         
         .book-item { background: var(--input-bg); padding: 15px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border); }
         .book-title { font-weight: 800; font-size: 1rem; color: var(--text-main); margin-bottom: 5px; display:flex; justify-content:space-between; }
@@ -839,7 +996,35 @@
 
         <div class="card" id="card-todo">
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>📝</span> Nos Projets</div></div>
-            <div class="card-content"><div class="input-group"><input type="text" id="todo-input" class="input-field" placeholder="Manger une raclette..."><button onclick="addTodo()" class="btn-action">OK</button></div><div id="todo-list"></div></div>
+            <div class="card-content">
+    
+                <div class="todo-tabs">
+                    <div class="todo-tab tab-dist active" id="t-tab-dist" onclick="switchTodoTab('dist')">📡 À Distance</div>
+                    <div class="todo-tab tab-real" id="t-tab-real" onclick="switchTodoTab('real')">✈️ Retrouvailles</div>
+                </div>
+            
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:bold; color:var(--text-sub); margin-bottom:5px;">
+                    <span id="prog-label">Réalisations à distance</span>
+                    <span id="todo-percent">0%</span>
+                </div>
+                <div class="book-progress-track" id="prog-track" style="margin-bottom:20px;">
+                    <div id="todo-progress-bar" class="book-progress-bar" style="width:0%;"></div>
+                </div>
+            
+                <div style="background:var(--input-bg); padding:15px; border-radius:15px; border:1px solid var(--border); margin-bottom:15px;">
+                    <div style="font-size:0.8rem; font-weight:bold; color:var(--text-sub); margin-bottom:10px;">Nouvelle idée :</div>
+                    
+                    <div class="cat-selector" id="todo-cat-selector">
+                        </div>
+            
+                    <div class="input-group" style="margin-bottom:0;">
+                        <input type="text" id="todo-input" class="input-field" placeholder="Qu'on fait ensemble..." style="background:white;">
+                        <button onclick="addTodo()" class="btn-action" style="width:50px;">+</button>
+                    </div>
+                </div>
+            
+                <div id="todo-list"></div>
+            </div>
         </div>
 
         <div class="card" id="card-books">
@@ -2512,10 +2697,167 @@
                 }
             }
         }
-        window.addTodo=function(){const t=document.getElementById('todo-input').value;if(!t)return;addDoc(collection(db,"todos"),{text:t,done:false,created:serverTimestamp()});document.getElementById('todo-input').value="";sendNtfy("📝 Projet ! ("+getCurrentTime(currentUser)+")","clipboard","low");}
-        window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
-        onSnapshot(query(collection(db,"todos"),orderBy("created","desc")),s=>{ const l=document.getElementById('todo-list');l.innerHTML=""; s.forEach(d=>{const t=d.data();l.innerHTML+=`<div class="todo-item"><input type="checkbox" class="todo-check" ${t.done?'checked':''} onchange="toggleTodo('${d.id}',this.checked)"><span class="todo-text ${t.done?'done':''}">${t.text}</span><button onclick="deleteTodo('${d.id}')" class="todo-del">✕</button></div>`;}); });
+        // --- GESTION PROJETS (Distance vs Réel) ---
 
+        let currentTodoTab = 'dist'; // 'dist' ou 'real'
+        let currentTodoCat = 'visio'; // Catégorie par défaut
+        
+        // CONFIGURATION DES CATÉGORIES
+        const todoConfig = {
+            'dist': {
+                label: "Réalisations à distance",
+                cats: [
+                    { id: 'visio', icon: '💻', color: '#a29bfe', name: 'Date Visio' },
+                    { id: 'movie', icon: '🍿', color: '#ff7675', name: 'Ciné Sync' },
+                    { id: 'game',  icon: '🎮', color: '#74b9ff', name: 'Jeu' },
+                    { id: 'call',  icon: '📞', color: '#55efc4', name: 'Appel' },
+                    { id: 'gift',  icon: '📦', color: '#ffeaa7', name: 'Colis' }
+                ]
+            },
+            'real': {
+                label: "Rêves pour plus tard",
+                cats: [
+                    { id: 'travel', icon: '✈️', color: '#a29bfe', name: 'Voyage' },
+                    { id: 'food',   icon: '🍔', color: '#fab1a0', name: 'Resto' },
+                    { id: 'home',   icon: '🏠', color: '#55efc4', name: 'Cocon' },
+                    { id: 'date',   icon: '❤️', color: '#ff7675', name: 'Love' },
+                    { id: 'money',  icon: '💰', color: '#ffeaa7', name: 'Achat' }
+                ]
+            }
+        };
+        
+        // 1. CHANGEMENT D'ONGLET
+        window.switchTodoTab = function(tab) {
+            currentTodoTab = tab;
+            
+            // UI Onglets
+            document.getElementById('t-tab-dist').className = `todo-tab tab-dist ${tab==='dist'?'active':''}`;
+            document.getElementById('t-tab-real').className = `todo-tab tab-real ${tab==='real'?'active':''}`;
+            
+            // UI Barre de progression (Couleur)
+            const track = document.getElementById('prog-track');
+            track.className = `book-progress-track ${tab==='dist'?'progress-dist':'progress-real'}`;
+            document.getElementById('prog-label').innerText = todoConfig[tab].label;
+        
+            // Génération des catégories
+            renderCategories();
+            
+            // Rafraîchissement de la liste (déclenché par le snapshot mais on force le filtre visuel)
+            renderTodoList();
+        }
+        
+        // 2. AFFICHER LES CATÉGORIES
+        function renderCategories() {
+            const container = document.getElementById('todo-cat-selector');
+            container.innerHTML = "";
+            
+            const cats = todoConfig[currentTodoTab].cats;
+            // On sélectionne la première par défaut quand on change d'onglet
+            currentTodoCat = cats[0].id; 
+            
+            cats.forEach(c => {
+                // On crée le bouton
+                const div = document.createElement('div');
+                div.className = `cat-option ${c.id === currentTodoCat ? 'selected' : ''}`;
+                div.style.setProperty('--c', c.color);
+                div.innerText = c.icon;
+                div.onclick = () => {
+                    currentTodoCat = c.id;
+                    // Visuel sélection
+                    document.querySelectorAll('.cat-option').forEach(e => e.classList.remove('selected'));
+                    div.classList.add('selected');
+                };
+                container.appendChild(div);
+            });
+        }
+        
+        // Initialisation au démarrage
+        renderCategories();
+        
+        // 3. AJOUTER UN PROJET
+        window.addTodo = function() {
+            const t = document.getElementById('todo-input').value;
+            if(!t) return;
+            
+            addDoc(collection(db, "todos"), {
+                text: t,
+                done: false,
+                cat: currentTodoCat,
+                tab: currentTodoTab, // On sauvegarde dans quel onglet c'est !
+                created: serverTimestamp()
+            });
+            
+            document.getElementById('todo-input').value = "";
+            const icon = currentTodoTab === 'dist' ? 'wifi' : 'plane';
+            sendNtfy("📝 Nouveau projet ! ("+getCurrentTime(currentUser)+")", icon, "low");
+        }
+        
+        // 4. CHECK & CONFETTIS
+        window.toggleTodo = function(id, state) { 
+            updateDoc(doc(db, "todos", id), { done: state });
+            if (state === true) {
+                confetti({
+                    particleCount: 50, spread: 60, origin: { y: 0.7 },
+                    colors: currentTodoTab === 'dist' ? ['#74b9ff', '#55efc4'] : ['#ff7675', '#a29bfe']
+                });
+                if(navigator.vibrate) navigator.vibrate(100);
+            }
+        }
+        
+        // 5. LISTENER & AFFICHAGE
+        let allTodos = []; // Stockage local pour filtrage
+        
+        onSnapshot(query(collection(db,"todos"), orderBy("created","desc")), s => { 
+            allTodos = s.docs.map(d => ({id: d.id, ...d.data()}));
+            renderTodoList();
+        });
+        
+        function renderTodoList() {
+            const l = document.getElementById('todo-list');
+            l.innerHTML = ""; 
+            
+            // On ne garde que les items de l'onglet actif (ou ceux sans onglet -> 'real' par défaut)
+            const filtered = allTodos.filter(t => (t.tab === currentTodoTab) || (!t.tab && currentTodoTab === 'real'));
+            
+            let total = 0;
+            let doneCount = 0;
+        
+            filtered.forEach(t => {
+                total++;
+                if(t.done) doneCount++;
+        
+                // On retrouve la config de la catégorie (couleur/icone)
+                // On cherche dans les 2 configs au cas où
+                let catConf = todoConfig['dist'].cats.find(c=>c.id===t.cat) || todoConfig['real'].cats.find(c=>c.id===t.cat);
+                // Fallback si catégorie inconnue
+                if(!catConf) catConf = { color: '#ccc', icon: '📌' };
+        
+                l.innerHTML += `
+                <div class="todo-item ${t.done?'done':''}" style="--cat-color:${catConf.color}">
+                    <input type="checkbox" class="todo-check" ${t.done?'checked':''} onchange="toggleTodo('${t.id}', this.checked)">
+                    
+                    <div class="todo-content">
+                        <span class="todo-text ${t.done?'done':''}">
+                            <span class="todo-cat-icon">${catConf.icon}</span> ${t.text}
+                        </span>
+                    </div>
+                    
+                    <button onclick="deleteTodo('${t.id}')" class="todo-del">✕</button>
+                </div>`;
+            });
+        
+            // Mise à jour Barre
+            const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100);
+            document.getElementById('todo-progress-bar').style.width = percent + "%";
+            document.getElementById('todo-percent').innerText = percent + "%";
+            
+            // Message vide
+            if(total === 0) {
+                l.innerHTML = `<div style="text-align:center; color:var(--text-sub); font-style:italic; padding:20px;">
+                    ${currentTodoTab==='dist' ? "Rien de prévu à distance... 💻" : "Ajoute tes rêves ici ! ✨"}
+                </div>`;
+            }
+        }
         window.addBook=function(){const t=document.getElementById('book-title').value;if(!t)return;addDoc(collection(db,"books"),{title:t,pages_total:parseInt(document.getElementById('book-pages').value)||200,created:serverTimestamp(),page_fr:0,rating_fr:0,page_tw:0,rating_tw:0});document.getElementById('book-title').value="";}
         window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 ${title} terminé ! (${getCurrentTime(currentUser)})`, "tada", "low"); }
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
