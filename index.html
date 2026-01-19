@@ -897,11 +897,29 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v78 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v79 • janvier 2026</div>
         </div>
     </div>
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
+
+    <div id="upload-choice-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:var(--bg-card); padding:25px; border-radius:20px; width:85%; max-width:320px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.3); border:1px solid var(--border);">
+            <div style="font-size:3rem; margin-bottom:10px;">🫣</div>
+            <h3 style="font-family:'Pacifico'; margin:0 0 10px 0; color:var(--text-main);">Cacher cette photo ?</h3>
+            <p style="font-size:0.9rem; color:var(--text-sub); margin-bottom:25px; line-height:1.4;">Veux-tu activer le <b>Mode Grattage</b> pour en faire une surprise ? 🎁</p>
+            
+            <div style="display:flex; gap:10px; flex-direction:column;">
+                <button onclick="confirmUpload(true)" class="btn-action" style="background:var(--pink-dark); width:100%; box-shadow:0 4px 10px rgba(255, 75, 110, 0.3);">
+                    Oui, c'est une surprise ! 🎁
+                </button>
+                <button onclick="confirmUpload(false)" class="btn-action" style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--border); width:100%;">
+                    Non, photo normale 📷
+                </button>
+            </div>
+            <button onclick="cancelUpload()" style="margin-top:15px; background:none; border:none; color:var(--text-sub); text-decoration:underline; cursor:pointer;">Annuler</button>
+        </div>
+    </div>
 
     <div id="scratch-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; flex-direction:column;">
         <div style="color:white; font-family:'Pacifico'; font-size:1.5rem; margin-bottom:15px; animation:bounce 2s infinite;">Gratte pour découvrir ! ✨</div>
@@ -2224,30 +2242,62 @@
         const GIFT_PLACEHOLDER = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgNTAwIj48cmVjdCB3aWR0PSI1MDAiIGhlaWdodD0iNTAwIiBmaWxsPSIjZmZmMGYzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMjAwIj7wn46BPC90ZXh0Pjwvc3ZnPg==";
         
         const compressImage = async (file) => { const bmp = await createImageBitmap(file); const cvs = document.createElement('canvas'); cvs.width=bmp.width*0.5; cvs.height=bmp.height*0.5; cvs.getContext('2d').drawImage(bmp,0,0,cvs.width,cvs.height); return cvs.toDataURL(file.type,0.6); };
-        window.handlePhotoUpload = async function(inpt, role) { 
+        // --- VARIABLES TEMPORAIRES POUR L'UPLOAD ---
+        let tempUploadFile = null;
+        let tempUploadRole = null;
+        
+        // 1. DÉBUT : On sélectionne le fichier
+        window.handlePhotoUpload = function(inpt, role) { 
             if(role !== currentUser){ alert("Interdit !"); return; } 
             
             const f = inpt.files[0]; 
             if(!f) return; 
         
-            // --- LA QUESTION MAGIQUE ---
-            // On demande si c'est une photo surprise AVANT d'envoyer
-            const isSurprise = confirm("Voulez-vous cacher cette photo (Mode Grattage 🎁) ?\n\nOK = Oui, c'est une surprise\nAnnuler = Non, photo normale");
-        
-            document.getElementById('gallery-modal').style.display="none"; 
-            const b64 = await compressImage(f); 
+            // On sauvegarde le fichier pour plus tard
+            tempUploadFile = f;
+            tempUploadRole = role;
             
-            // On enregistre l'info "isSurprise" dans Firebase
-            await addDoc(collection(db,"photos"), {
+            // On vide l'input pour pouvoir sélectionner le même fichier si on annule
+            inpt.value = ""; 
+        
+            // On ouvre notre jolie fenêtre de choix
+            document.getElementById('upload-choice-modal').style.display = "flex";
+        }
+        
+        // 2. FIN : On confirme le choix (Oui ou Non)
+        window.confirmUpload = async function(isSurprise) {
+            // On ferme la fenêtre
+            document.getElementById('upload-choice-modal').style.display = "none";
+            document.getElementById('gallery-modal').style.display = "none"; // On ferme aussi la galerie si ouverte
+        
+            if (!tempUploadFile || !tempUploadRole) return;
+        
+            // --- LOGIQUE D'UPLOAD CLASSIQUE ---
+            const b64 = await compressImage(tempUploadFile); 
+            
+            await addDoc(collection(db, "photos"), {
                 url: b64, 
-                by: role, 
-                isSurprise: isSurprise,  // Vrai ou Faux
-                scratched: false,        // Par défaut, ce n'est pas encore gratté
+                by: tempUploadRole, 
+                isSurprise: isSurprise,  // Le choix du bouton (Vrai ou Faux)
+                scratched: false,
                 timestamp: serverTimestamp()
             }); 
             
             const icon = isSurprise ? "gift" : "camera";
-            sendNtfy("📸 Nouvelle photo ! ("+getCurrentTime(currentUser)+")", icon, "low"); 
+            const msg = isSurprise ? "🎁 Photo Surprise !" : "📸 Nouvelle photo !";
+            
+            sendNtfy(`${msg} (${getCurrentTime(currentUser)})`, icon, "low");
+        
+            // Reset des variables
+            tempUploadFile = null;
+            tempUploadRole = null;
+        }
+        
+        // 3. ANNULATION
+        window.cancelUpload = function() {
+            document.getElementById('upload-choice-modal').style.display = "none";
+            tempUploadFile = null;
+            tempUploadRole = null;
         }
         // --- GESTION DES POLAROIDS (Avec cachette surprise) ---
         let allPhotos = [];
@@ -2347,24 +2397,22 @@
             modal.style.display = 'flex';
             img.src = url;
         
-            // 1. On remplit le canvas en GRIS ARGENTÉ (la couche à gratter)
+            // 1. On prépare la zone grise
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = '#b0b0b0'; 
             ctx.fillRect(0, 0, 300, 300);
             
-            // 2. On ajoute des petits "?" pour faire style
             ctx.fillStyle = '#999';
             ctx.font = "30px Arial";
             ctx.fillText("?", 140, 150);
             ctx.fillText("?", 50, 50);
             ctx.fillText("?", 250, 250);
         
-            // 3. Gestion du grattage (Souris + Doigt)
+            // 2. Logique du doigt qui gratte
             let isDrawing = false;
             
             const getPos = (e) => {
                 const rect = cvs.getBoundingClientRect();
-                // Support Tactile ou Souris
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                 return { x: clientX - rect.left, y: clientY - rect.top };
@@ -2372,25 +2420,23 @@
         
             const scratch = (e) => {
                 if (!isDrawing) return;
-                e.preventDefault(); // Empêche le scroll sur mobile
+                e.preventDefault();
                 const pos = getPos(e);
                 
-                // MODE GOMME
                 ctx.globalCompositeOperation = 'destination-out'; 
                 ctx.beginPath();
-                ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2); // Rayon du doigt
+                ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2);
                 ctx.fill();
                 
-                checkWin(); // On vérifie si on a assez gratté
+                checkWin();
             };
         
-            // Events
             cvs.onmousedown = cvs.ontouchstart = (e) => { isDrawing = true; scratch(e); };
             cvs.onmousemove = cvs.ontouchmove = scratch;
             cvs.onmouseup = cvs.ontouchend = () => { isDrawing = false; };
         
+            // 3. Vérification de la victoire
             function checkWin() {
-                // On compte les pixels transparents
                 const imageData = ctx.getImageData(0, 0, 300, 300);
                 let transparent = 0;
                 for (let i = 3; i < imageData.data.length; i += 4) {
@@ -2398,63 +2444,42 @@
                 }
                 const percent = (transparent / (300 * 300)) * 100;
                 
-                // SI 50% EST GRATTÉ -> GAGNÉ !
+                // --- VICTOIRE (Plus de 50% gratté) ---
                 if (percent > 50) { 
-                    confetti({ particleCount: 100, spread: 70, zIndex: 10000 }); // Boom confettis
+                    // A. Stop le grattage pour éviter les bugs
+                    cvs.onmousemove = null; cvs.ontouchmove = null;
                     
-                    // On met à jour la base de données : C'est révélé pour toujours !
+                    // B. Confettis
+                    confetti({ particleCount: 100, spread: 70, zIndex: 10000 }); 
+                    
+                    // C. Sauvegarde Firebase
                     updateDoc(doc(db, "photos", currentScratchId), { scratched: true });
                     
-                    // On ferme le grattage et on ouvre l'image en grand
+                    // D. MISE À JOUR IMMÉDIATE DE LA GALERIE (Le correctif est ici !)
+                    const gridItem = document.getElementById(`photo-${currentScratchId}`);
+                    if (gridItem) {
+                        // 1. On enlève le flou de l'image en arrière-plan
+                        const imgEl = gridItem.querySelector('img');
+                        if (imgEl) {
+                            imgEl.style.filter = "none"; // L'image devient nette
+                            // On change le clic : plus de grattage, ouverture directe
+                            imgEl.onclick = () => showLightbox(url);
+                        }
+                        
+                        // 2. On supprime l'icône cadeau 🎁 qui flotte dessus
+                        // On cherche la div qui contient le cadeau (position absolute)
+                        const giftIcon = gridItem.querySelector('div[style*="absolute"]');
+                        if (giftIcon) giftIcon.remove();
+                    }
+                    
+                    // E. On ferme et on ouvre en grand
                     setTimeout(() => {
                         document.getElementById('scratch-modal').style.display = 'none';
                         showLightbox(img.src);
                     }, 800);
-                    
-                    // Pour éviter que la fonction se relance en boucle
-                    cvs.onmousemove = null; cvs.ontouchmove = null;
                 }
             }
         }
-
-        // Fonction de fin de grattage (Mise à jour instantanée)
-        function finishScratch() {
-            // 1. Animation de victoire
-            confetti({ particleCount: 100, spread: 70, zIndex: 10000 }); 
-            
-            // 2. Sauvegarde en base de données
-            updateDoc(doc(db, "photos", currentScratchId), { scratched: true });
-            
-            // --- DOM UPDATE IMMÉDIAT (Le correctif est ici) ---
-            // On va chercher la photo dans la grille derrière la fenêtre de grattage
-            const gridItem = document.getElementById(`photo-${currentScratchId}`);
-            if (gridItem) {
-                const imgEl = gridItem.querySelector('img');
-                
-                // A. On enlève le flou et le gris
-                imgEl.style.filter = "none";
-                
-                // B. On change le clic pour qu'il ouvre la lightbox au lieu de re-lancer le grattage
-                // On clone l'URL actuelle de l'image cible
-                const finalUrl = document.getElementById('scratch-img-target').src;
-                imgEl.onclick = () => showLightbox(finalUrl);
-                
-                // C. On supprime l'icône cadeau 🎁 qui flotte au-dessus
-                const giftIcon = gridItem.querySelector('div[style*="absolute"]');
-                if (giftIcon) giftIcon.remove();
-            }
-            // ---------------------------------------------------
-        
-            // 3. Transition fluide vers la lightbox
-            setTimeout(() => {
-                document.getElementById('scratch-modal').style.display = 'none';
-                
-                // On ouvre l'image en grand tout de suite
-                const imgUrl = document.getElementById('scratch-img-target').src;
-                showLightbox(imgUrl);
-            }, 800);
-        }
-
         window.addTodo=function(){const t=document.getElementById('todo-input').value;if(!t)return;addDoc(collection(db,"todos"),{text:t,done:false,created:serverTimestamp()});document.getElementById('todo-input').value="";sendNtfy("📝 Projet ! ("+getCurrentTime(currentUser)+")","clipboard","low");}
         window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
         onSnapshot(query(collection(db,"todos"),orderBy("created","desc")),s=>{ const l=document.getElementById('todo-list');l.innerHTML=""; s.forEach(d=>{const t=d.data();l.innerHTML+=`<div class="todo-item"><input type="checkbox" class="todo-check" ${t.done?'checked':''} onchange="toggleTodo('${d.id}',this.checked)"><span class="todo-text ${t.done?'done':''}">${t.text}</span><button onclick="deleteTodo('${d.id}')" class="todo-del">✕</button></div>`;}); });
