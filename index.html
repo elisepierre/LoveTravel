@@ -655,37 +655,69 @@
             background: none;
         }
         
-        /* 2. Nouveaux effets météo sur les CÔTÉS (France / Taïwan) */
+        /* --- CORRECTIF MÉTÉO V2 (Pluie Cinématographique) --- */
+
+        /* La colonne Pays (France / Taiwan) */
         .journey-col {
             position: relative;
             border-radius: 12px;
-            padding: 5px;
+            padding: 8px 5px; /* Un peu plus d'espace */
             transition: background 0.5s ease;
+            overflow: hidden; /* La pluie ne dépasse pas du cadre */
         }
         
-        /* Effet Nuit : Fond bleuté sombre discret sur le pays */
+        /* On s'assure que le texte reste TOUJOURS au-dessus des effets */
+        .journey-col span {
+            position: relative;
+            z-index: 2; /* Texte au premier plan */
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8); /* Petit halo blanc pour lisibilité */
+        }
+        body.dark-mode .journey-col span {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        
+        /* --- EFFET NUIT --- */
         .journey-col.is-night {
-            background: rgba(20, 30, 48, 0.08); /* Ombre douce le jour */
+            background: linear-gradient(to bottom, rgba(20, 30, 48, 0.05), rgba(20, 30, 48, 0.15));
         }
         body.dark-mode .journey-col.is-night {
-            background: rgba(135, 206, 235, 0.1); /* Lueur douce la nuit */
-            box-shadow: 0 0 10px rgba(135, 206, 235, 0.05);
+            background: linear-gradient(to bottom, rgba(10, 20, 40, 0.5), rgba(10, 20, 40, 0.8));
+            border: 1px solid rgba(255,255,255,0.05);
         }
         
-        /* Effet Pluie : Une petite goutte animée à côté du nom */
-        .journey-col.is-rain::after {
-            content: "💧";
+        /* --- EFFET PLUIE (Nouvelle version) --- */
+        .journey-col.is-rain {
+            /* Fond légèrement gris/bleu pour l'ambiance */
+            background: linear-gradient(to bottom, rgba(200, 214, 229, 0.3), rgba(131, 149, 167, 0.3));
+        }
+        body.dark-mode .journey-col.is-rain {
+            background: linear-gradient(to bottom, rgba(50, 60, 70, 0.6), rgba(30, 40, 50, 0.6));
+        }
+        
+        /* L'animation de pluie (Calque au fond) */
+        .journey-col.is-rain::before {
+            content: "";
             position: absolute;
-            top: 0; right: 10px;
-            font-size: 1rem;
-            animation: rainDrop 1s ease-in-out infinite;
-            opacity: 0.8;
+            top: -100%; left: -50%; 
+            width: 200%; height: 200%;
+            z-index: 1; /* Derrière le texte */
+            
+            /* On dessine des traits fins avec un dégradé répété */
+            background: repeating-linear-gradient(
+                170deg,             /* Angle de chute */
+                transparent,
+                transparent 20px,   /* Espace entre les gouttes */
+                rgba(52, 152, 219, 0.2) 20px, /* Couleur goutte (bleu léger) */
+                rgba(52, 152, 219, 0.2) 21px  /* Épaisseur goutte (1px) */
+            );
+            
+            animation: rainFall 0.8s linear infinite;
+            pointer-events: none; /* On peut cliquer à travers */
         }
         
-        @keyframes rainDrop {
-            0% { transform: translateY(-5px) scale(0.8); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(10px) scale(1); opacity: 0; }
+        @keyframes rainFall {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); } /* Défilement continu */
         }
         /* Nuit */
         .weather-night { background: #001d3d; border-radius: 50%; }
