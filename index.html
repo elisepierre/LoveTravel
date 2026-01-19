@@ -789,7 +789,7 @@
             <div class="card-title toggleable" onclick="toggleCard(this)"><div style="display:flex; align-items:center; gap:10px;"><span>💌</span> Boîte aux Lettres</div></div>
             <div class="card-content">
                 <div class="mailbox-tabs"><div class="mailbox-tab active" id="tab-inbox" style="background:var(--pink);color:white;" onclick="showTab('inbox')">Reçus</div><div class="mailbox-tab" id="tab-sent" style="background:transparent;color:var(--text-main);" onclick="showTab('sent')">Envoyés</div></div>
-                <div class="input-group"><input type="text" id="letter-title" class="input-field" placeholder="Ouvrir quand..."><button onclick="addLetter()" class="btn-action" style="background:var(--pink-dark)">+</button></div>
+                <div class="input-group"><input type="text" id="letter-title" class="input-field" placeholder="Ouvrir quand..."><input type="date" id="letter-unlock-date" class="input-field" style="width:130px; font-size:0.75rem;" title="Date d'ouverture"><button onclick="addLetter()" class="btn-action" style="background:var(--pink-dark)">+</button></div>
                 <textarea id="letter-content" class="input-field" placeholder="Ecris ta lettre ici..." style="width:100%;height:80px;resize:none;margin-bottom:15px;"></textarea>
                 <div id="list-inbox" class="letter-list"></div><div id="list-sent" class="letter-list hidden"></div>
             </div>
@@ -2123,15 +2123,58 @@
             const listInbox = document.getElementById("list-inbox"); const listSent = document.getElementById("list-sent");
             listInbox.innerHTML = ""; listSent.innerHTML = "";
             allLetters.forEach(l => {
-                const div = document.createElement("div"); div.className = `envelope-item ${(!l.read && l.by !== currentUser) ? 'unread' : ''}`;
-                div.innerHTML = `<div style="margin-right:15px; font-size:1.5rem;">${l.read ? '📩' : '✉️'}</div><div style="flex:1;"><div style="font-weight:bold; font-size:0.9rem;">${l.title}</div><div style="font-size:0.7rem; color:var(--text-sub);">${l.by === currentUser ? 'Envoyé à l\'autre' : 'De: ' + (l.by==='fr'?'Théo':'Elise')}</div></div>${l.by === currentUser ? `<button onclick="deleteLetter('${l.id}', event)" style="border:none;background:none;color:#faa;">✕</button>` : ''}`;
-                div.onclick = (e) => { if(e.target.tagName === 'BUTTON') return; openLetterModal(l); };
+                // Vérif si verrouillé
+                const now = Date.now();
+                const isLocked = (l.unlockAt && now < l.unlockAt) && l.by !== currentUser; // Je peux lire mes propres lettres
+        
+                const div = document.createElement("div"); 
+                div.className = `envelope-item ${(!l.read && l.by !== currentUser) ? 'unread' : ''}`;
+                
+                // Icône changeante
+                let icon = l.read ? '📩' : '✉️';
+                if (isLocked) icon = '🔒';
+        
+                // Titre changeant
+                let titleDisplay = l.title;
+                if (isLocked) {
+                    const dateObj = new Date(l.unlockAt);
+                    titleDisplay = `À ouvrir le ${dateObj.toLocaleDateString()}`;
+                }
+        
+                div.innerHTML = `<div style="margin-right:15px; font-size:1.5rem;">${icon}</div><div style="flex:1;"><div style="font-weight:bold; font-size:0.9rem;">${titleDisplay}</div><div style="font-size:0.7rem; color:var(--text-sub);">${l.by === currentUser ? 'Moi' : (l.by==='fr'?'Théo':'Elise')}</div></div>`;
+                
+                div.onclick = (e) => { 
+                    if(e.target.tagName === 'BUTTON') return; 
+                    if (isLocked) { alert(`Pas encore ! Attends le ${new Date(l.unlockAt).toLocaleDateString()} 🤫`); return; }
+                    openLetterModal(l); 
+                };
                 if(l.by === currentUser) listSent.appendChild(div); else listInbox.appendChild(div);
             });
         }
         window.showTab('inbox');
 
-        window.addLetter = function() { const t=document.getElementById("letter-title").value; const c=document.getElementById("letter-content").value; if(!t||!c)return; addDoc(collection(db,"letters"),{title:t,content:c,by:currentUser,read:false,timestamp:serverTimestamp()}); document.getElementById("letter-title").value="";document.getElementById("letter-content").value=""; sendNtfy("💌 Nouvelle lettre ! ("+getCurrentTime(currentUser)+")","email","low"); }
+        window.addLetter = function() { 
+            const t=document.getElementById("letter-title").value; 
+            const c=document.getElementById("letter-content").value; 
+            const d=document.getElementById("letter-unlock-date").value; // Récup date
+            
+            if(!t||!c)return; 
+            
+            // On calcule le timestamp de déverrouillage (Minuit le jour J)
+            let unlockTimestamp = null;
+            if(d) unlockTimestamp = new Date(d).getTime();
+        
+            addDoc(collection(db,"letters"),{
+                title:t, content:c, by:currentUser, read:false, 
+                unlockAt: unlockTimestamp, // Nouveau champ
+                timestamp:serverTimestamp()
+            }); 
+            
+            document.getElementById("letter-title").value="";
+            document.getElementById("letter-content").value="";
+            document.getElementById("letter-unlock-date").value="";
+            sendNtfy("💌 Nouvelle lettre !","email","low"); 
+        }
         window.openLetterModal = function(l) { document.getElementById('letter-modal').style.display="flex"; document.getElementById('modal-letter-title').innerText=l.title; document.getElementById('modal-letter-content').innerText=l.content; if(l.by!==currentUser && !l.read) updateDoc(doc(db,"letters",l.id),{read:true}); }
         window.closeLetter = function() { document.getElementById('letter-modal').style.display="none"; }
         
