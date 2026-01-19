@@ -889,10 +889,15 @@
 </head>
 <body>
 
-    <div id="login-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-body); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:20px;">
+    <div id="login-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg-body); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:20px; transition: opacity 0.5s ease;">
+    
         <h1 class="app-title" style="margin-bottom:30px; font-size:3rem;">Love Travel 🔒</h1>
         
-        <div style="background:var(--bg-card); padding:30px; border-radius:20px; width:100%; max-width:350px; box-shadow:0 10px 30px rgba(0,0,0,0.1); border:1px solid var(--border); text-align:center;">
+        <div id="login-loading" style="color:var(--text-sub); font-family:'Pacifico'; font-size:1.5rem; animation:pulse 1s infinite;">
+            Chargement... ✈️
+        </div>
+    
+        <div id="login-box" style="display:none; background:var(--bg-card); padding:30px; border-radius:20px; width:100%; max-width:350px; box-shadow:0 10px 30px rgba(0,0,0,0.1); border:1px solid var(--border); text-align:center;">
             <p style="margin-bottom:20px; color:var(--text-sub);">Connecte-toi pour accéder à notre monde.</p>
             
             <input type="email" id="login-email" class="input-field" placeholder="Email" style="width:100%; margin-bottom:15px;">
@@ -1232,11 +1237,20 @@
         // 2. Le Gardien (Vérifie en permanence si tu es connecté)
         onAuthStateChanged(auth, (user) => {
             const loginScreen = document.getElementById('login-screen');
+            const loginBox = document.getElementById('login-box');
+            const loadingMsg = document.getElementById('login-loading');
+        
             if (user) {
-                // --- CONNECTÉ ---
-                loginScreen.style.display = 'none'; // On lève le rideau
+                // --- CAS 1 : DÉJÀ CONNECTÉ ---
+                // On fait un joli fondu vers la transparence
+                loginScreen.style.opacity = '0';
                 
-                // Identification auto (plus besoin de cliquer sur le drapeau)
+                // Et on supprime l'écran après 0.5 seconde (le temps de l'animation)
+                setTimeout(() => {
+                    loginScreen.style.display = 'none';
+                }, 500);
+        
+                // Identification auto
                 if(user.email.includes('theo')) {
                     localStorage.setItem('userRole', 'fr');
                     currentUser = 'fr';
@@ -1245,9 +1259,12 @@
                     currentUser = 'tw';
                 }
                 updateIdentityUI(); 
+        
             } else {
-                // --- PAS CONNECTÉ ---
-                loginScreen.style.display = 'flex'; // On baisse le rideau
+                // --- CAS 2 : PAS CONNECTÉ ---
+                // On arrête le chargement et on affiche le formulaire
+                loadingMsg.style.display = 'none';
+                loginBox.style.display = 'block';
             }
         });
         
