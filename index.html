@@ -903,6 +903,15 @@
 
     <button id="bisou-btn" onclick="sendBisou()">💋</button>
 
+    <div id="scratch-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; flex-direction:column;">
+        <div style="color:white; font-family:'Pacifico'; font-size:1.5rem; margin-bottom:15px; animation:bounce 2s infinite;">Gratte pour découvrir ! ✨</div>
+        <div style="position:relative; width:300px; height:300px; border-radius:15px; overflow:hidden; box-shadow:0 0 30px rgba(255,255,255,0.2);">
+            <img id="scratch-img-target" src="" style="width:100%; height:100%; object-fit:cover;">
+            <canvas id="scratch-canvas" width="300" height="300" style="position:absolute; top:0; left:0; touch-action:none; cursor:crosshair;"></canvas>
+        </div>
+        <button onclick="document.getElementById('scratch-modal').style.display='none'" style="margin-top:30px; padding:12px 30px; border-radius:30px; border:none; background:white; font-weight:bold; color:#333; cursor:pointer;">Annuler</button>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, doc, setDoc, getDoc, updateDoc, onSnapshot, orderBy, limit, query, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
@@ -2212,32 +2221,167 @@
         window.closeLetter = function() { document.getElementById('letter-modal').style.display="none"; }
         
         const compressImage = async (file) => { const bmp = await createImageBitmap(file); const cvs = document.createElement('canvas'); cvs.width=bmp.width*0.5; cvs.height=bmp.height*0.5; cvs.getContext('2d').drawImage(bmp,0,0,cvs.width,cvs.height); return cvs.toDataURL(file.type,0.6); };
-        window.handlePhotoUpload = async function(inpt, role) { if(role!==currentUser){alert("Interdit !");return;} const f = inpt.files[0]; if(!f)return; document.getElementById('gallery-modal').style.display="none"; const b64 = await compressImage(f); await addDoc(collection(db,"photos"),{url:b64,by:role,timestamp:serverTimestamp()}); sendNtfy("📸 Nouvelle photo ! ("+getCurrentTime(currentUser)+")","camera","low"); }
+        window.handlePhotoUpload = async function(inpt, role) { 
+            if(role !== currentUser){ alert("Interdit !"); return; } 
+            
+            const f = inpt.files[0]; 
+            if(!f) return; 
+        
+            // --- LA QUESTION MAGIQUE ---
+            // On demande si c'est une photo surprise AVANT d'envoyer
+            const isSurprise = confirm("Voulez-vous cacher cette photo (Mode Grattage 🎁) ?\n\nOK = Oui, c'est une surprise\nAnnuler = Non, photo normale");
+        
+            document.getElementById('gallery-modal').style.display="none"; 
+            const b64 = await compressImage(f); 
+            
+            // On enregistre l'info "isSurprise" dans Firebase
+            await addDoc(collection(db,"photos"), {
+                url: b64, 
+                by: role, 
+                isSurprise: isSurprise,  // Vrai ou Faux
+                scratched: false,        // Par défaut, ce n'est pas encore gratté
+                timestamp: serverTimestamp()
+            }); 
+            
+            const icon = isSurprise ? "gift" : "camera";
+            sendNtfy("📸 Nouvelle photo ! ("+getCurrentTime(currentUser)+")", icon, "low"); 
+        }
         let allPhotos=[];
         onSnapshot(query(collection(db,"photos"),orderBy("timestamp","desc")), s=>{
             allPhotos=s.docs.map(d=>({id:d.id,...d.data()}));
             const lastFr=allPhotos.find(p=>p.by==='fr'); if(lastFr)document.getElementById('polaroid-img-fr').src=lastFr.url;
             const lastTw=allPhotos.find(p=>p.by==='tw'); if(lastTw)document.getElementById('polaroid-img-tw').src=lastTw.url;
         });
+        let currentScratchId = null; // Pour savoir quelle photo on gratte
+
         window.openGallery = function(role) { 
             const m = document.getElementById('gallery-modal'); 
             const g = document.getElementById('modal-grid'); 
             g.innerHTML = ""; 
             
             allPhotos.filter(p => p.by === role).forEach(p => { 
-                // CORRECTION ICI : Ajout de 'fr-FR' pour avoir JJ/MM/AAAA
                 const dStr = p.timestamp ? new Date(p.timestamp.toDate()).toLocaleDateString('fr-FR') : "";
                 
-                g.innerHTML += `<div id="photo-${p.id}">
-                    <img src="${p.url}" class="modal-img" onclick="document.getElementById('lightbox').style.display='flex';document.getElementById('lightbox-img').src='${p.url}'">
+                // LOGIQUE D'AFFICHAGE
+                // 1. Est-ce que c'est une surprise ?
+                const isSurprise = p.isSurprise === true;
+                // 2. Est-ce que c'est DÉJÀ gratté ?
+                const isRevealed = p.scratched === true;
+                // 3. Est-ce que c'est MA photo ? (Si oui, je vois tout, pas de suspense pour moi)
+                const isMine = p.by === currentUser;
+        
+                // Condition Finale : Dois-je la cacher ?
+                // On cache SEULEMENT SI : C'est une surprise + Pas encore gratté + Ce n'est pas moi l'auteur
+                const needScratch = isSurprise && !isRevealed && !isMine;
+        
+                // Style : Flou + Noir et Blanc si caché
+                const imgStyle = needScratch ? "filter: blur(15px) grayscale(1);" : "";
+                
+                // Click : Soit on gratte, soit on ouvre la lightbox normale
+                const clickAction = needScratch ? `startScratch('${p.id}', '${p.url}')` : `showLightbox('${p.url}')`;
+        
+                g.innerHTML += `
+                <div id="photo-${p.id}" style="position:relative; overflow:hidden; border-radius:5px;">
+                    <img src="${p.url}" class="modal-img" style="${imgStyle}" onclick="${clickAction}">
+                    
                     <div class="photo-date">${dStr}</div>
-                    ${role === currentUser ? `<div style="color:red;font-size:0.8rem;text-align:center;margin-top:5px;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>` : ''}
+                    
+                    ${role === currentUser ? `<div style="color:red;font-size:0.8rem;text-align:center;cursor:pointer;" onclick="deletePhoto('${p.id}')">Supprimer</div>` : ''}
+                    
+                    ${needScratch ? `<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2.5rem; pointer-events:none; filter:drop-shadow(0 0 10px rgba(0,0,0,0.5));">🎁</div>` : ''}
                 </div>`; 
             }); 
             m.style.display = "block"; 
         }
+        
+        // Fonction utilitaire pour ouvrir la lightbox (plus propre)
+        window.showLightbox = function(url) {
+            document.getElementById('lightbox').style.display='flex';
+            document.getElementById('lightbox-img').src = url;
+        }
+        
         window.closeGallery = () => document.getElementById('gallery-modal').style.display='none';
         window.closeLightbox = () => document.getElementById('lightbox').style.display='none';
+
+        window.startScratch = function(id, url) {
+            currentScratchId = id;
+            const modal = document.getElementById('scratch-modal');
+            const img = document.getElementById('scratch-img-target');
+            const cvs = document.getElementById('scratch-canvas');
+            const ctx = cvs.getContext('2d');
+        
+            modal.style.display = 'flex';
+            img.src = url;
+        
+            // 1. On remplit le canvas en GRIS ARGENTÉ (la couche à gratter)
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = '#b0b0b0'; 
+            ctx.fillRect(0, 0, 300, 300);
+            
+            // 2. On ajoute des petits "?" pour faire style
+            ctx.fillStyle = '#999';
+            ctx.font = "30px Arial";
+            ctx.fillText("?", 140, 150);
+            ctx.fillText("?", 50, 50);
+            ctx.fillText("?", 250, 250);
+        
+            // 3. Gestion du grattage (Souris + Doigt)
+            let isDrawing = false;
+            
+            const getPos = (e) => {
+                const rect = cvs.getBoundingClientRect();
+                // Support Tactile ou Souris
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: clientX - rect.left, y: clientY - rect.top };
+            };
+        
+            const scratch = (e) => {
+                if (!isDrawing) return;
+                e.preventDefault(); // Empêche le scroll sur mobile
+                const pos = getPos(e);
+                
+                // MODE GOMME
+                ctx.globalCompositeOperation = 'destination-out'; 
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2); // Rayon du doigt
+                ctx.fill();
+                
+                checkWin(); // On vérifie si on a assez gratté
+            };
+        
+            // Events
+            cvs.onmousedown = cvs.ontouchstart = (e) => { isDrawing = true; scratch(e); };
+            cvs.onmousemove = cvs.ontouchmove = scratch;
+            cvs.onmouseup = cvs.ontouchend = () => { isDrawing = false; };
+        
+            function checkWin() {
+                // On compte les pixels transparents
+                const imageData = ctx.getImageData(0, 0, 300, 300);
+                let transparent = 0;
+                for (let i = 3; i < imageData.data.length; i += 4) {
+                    if (imageData.data[i] === 0) transparent++;
+                }
+                const percent = (transparent / (300 * 300)) * 100;
+                
+                // SI 50% EST GRATTÉ -> GAGNÉ !
+                if (percent > 50) { 
+                    confetti({ particleCount: 100, spread: 70, zIndex: 10000 }); // Boom confettis
+                    
+                    // On met à jour la base de données : C'est révélé pour toujours !
+                    updateDoc(doc(db, "photos", currentScratchId), { scratched: true });
+                    
+                    // On ferme le grattage et on ouvre l'image en grand
+                    setTimeout(() => {
+                        document.getElementById('scratch-modal').style.display = 'none';
+                        showLightbox(img.src);
+                    }, 800);
+                    
+                    // Pour éviter que la fonction se relance en boucle
+                    cvs.onmousemove = null; cvs.ontouchmove = null;
+                }
+            }
+        }
 
         window.addTodo=function(){const t=document.getElementById('todo-input').value;if(!t)return;addDoc(collection(db,"todos"),{text:t,done:false,created:serverTimestamp()});document.getElementById('todo-input').value="";sendNtfy("📝 Projet ! ("+getCurrentTime(currentUser)+")","clipboard","low");}
         window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
