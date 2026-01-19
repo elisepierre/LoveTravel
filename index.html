@@ -63,6 +63,16 @@
             background-image: radial-gradient(circle, #800020 20%, transparent 20%), radial-gradient(circle, #800020 20%, transparent 20%);
         }
 
+        /* MODE DODO */
+        body.is-sleeping::after {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 20, 0.4); /* Filtre nuit */
+            pointer-events: none; z-index: 9990;
+            backdrop-filter: grayscale(0.5);
+            transition: 0.5s;
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; font-family: 'Outfit', sans-serif; background-color: var(--bg-body); background-image: radial-gradient(var(--dot-pattern) 1px, transparent 1px); background-size: 20px 20px; color: var(--text-main); padding-bottom: 120px; transition: background 0.3s, color 0.3s; }
         
@@ -1069,6 +1079,9 @@
             return `MOOD/${role === 'fr' ? 'theo' : 'elise'}_${outfitId}${suffix}.png`;
         }
 
+        // Remplace ton onSnapshot "moods" actuel par celui-ci :
+        let opponentIsSleeping = false; // Variable globale
+        
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
@@ -1076,8 +1089,31 @@
                 document.getElementById("mood-img-tw").src = getMoodImage('tw', d.tw_outfit || 0);
                 document.getElementById("mood-msg-fr").innerText = d.fr_text || "";
                 document.getElementById("mood-msg-tw").innerText = d.tw_text || "";
-            } else { setDoc(doc(db, "status", "moods"), { fr_outfit:0, tw_outfit:0 }); }
+        
+                // GESTION MODE DODO
+                const myOutfit = currentUser === 'fr' ? d.fr_outfit : d.tw_outfit;
+                const oppOutfit = currentUser === 'fr' ? d.tw_outfit : d.fr_outfit;
+                
+                // 1. Si JE dors (Mood 2), mon écran s'assombrit
+                if (myOutfit === 2) document.body.classList.add('is-sleeping');
+                else document.body.classList.remove('is-sleeping');
+        
+                // 2. On note si l'autre dort (pour le bouton bisou)
+                opponentIsSleeping = (oppOutfit === 2);
+            }
         });
+        
+        // Remplace ta fonction sendBisou par celle-ci :
+        window.sendBisou = function() {
+            if (opponentIsSleeping) {
+                alert("Chut... 🤫 L'autre dort !\nOn ne va pas le/la réveiller.");
+                return; // On annule le bisou
+            }
+            addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
+            sendNtfy(`💋 Bisou envoyé ! (${getCurrentTime(currentUser)})`, "kiss,heart", "high");
+            const n = document.getElementById("notif"); n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),3000);
+            if(navigator.vibrate) navigator.vibrate(200); 
+        }
 
         window.toggleCard = function(header) {
             if(header.parentElement.id === 'card-voyage') return;
@@ -1848,12 +1884,6 @@
             fetch(`https://ntfy.sh/${currentUser==='tw'?"lovetravel-2026-reception-theo":"lovetravel-2026-reception-elise"}`, { method:'POST', body:msg, headers:{'Title':currentUser==='tw'?"Elise":"Theo",'Priority':prio,'Tags':tag,'Icon':iconUrl} }).catch(e=>{}); 
         }
 
-        window.sendBisou = function() {
-            addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
-            sendNtfy(`💋 Bisou envoyé ! (${getCurrentTime(currentUser)})`, "kiss,heart", "high");
-            const n = document.getElementById("notif"); n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),3000);
-            if(navigator.vibrate) navigator.vibrate(200); 
-        }
         window.updateMood = function(emoji, text, outfitId) {
             setDoc(doc(db, "status", "moods"), { [currentUser+"_emoji"]: emoji, [currentUser+"_text"]: text, [currentUser+"_outfit"]: (outfitId !== undefined ? outfitId : 5) }, { merge: true });
             sendNtfy(`${emoji} ${text} (${getCurrentTime(currentUser)})`, "partly_sunny", "low");
