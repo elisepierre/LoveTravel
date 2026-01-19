@@ -100,11 +100,9 @@
 
         /* VOYAGE */
         .journey-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .journey-col { text-align: center; flex: 1; }
         .place-name { display: block; font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--text-sub); margin-bottom: 5px; }
         .place-time { display: block; font-size: 1.6rem; font-weight: 800; color: var(--text-main); line-height: 1; }
         .place-weather { font-size: 0.8rem; color: var(--text-sub); margin-top: 5px; display: block; }
-        .journey-visual { flex: 1; text-align: center; position: relative; padding: 0 10px; }
         .path-line { border-top: 2px dashed var(--text-sub); opacity: 0.3; width: 100%; position: relative; top: -10px; }
         .plane-icon { font-size: 1.5rem; position: relative; top: -24px; color: var(--text-main); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
@@ -641,14 +639,54 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* EFFETS MÉTÉO SUR LA CARTE VOYAGE */
-        .journey-visual { overflow: hidden; position: relative; border-radius: 50%; width: 60px; height: 60px; margin: 0 auto; }
-        /* Pluie */
-        .weather-rain::before {
-            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: url('https://i.imgur.com/7Q3l9Fw.png'); /* Texture pluie simple */
-            opacity: 0.5; animation: rain 0.5s linear infinite; pointer-events: none;
+        /* --- CORRECTIF MÉTÉO & AVION --- */
+
+        /* 1. On restaure la zone centrale (Ligne + Avion) */
+        .journey-visual {
+            flex: 1; /* Reprend toute la largeur disponible */
+            text-align: center;
+            position: relative;
+            padding: 0 10px;
+            overflow: visible; /* L'avion peut dépasser si besoin */
+            
+            /* On annule le "rond" qui cachait l'avion */
+            width: auto; height: auto; 
+            border-radius: 0; margin: 0; 
+            background: none;
         }
-        @keyframes rain { 0% { transform: translateY(0); } 100% { transform: translateY(20px); } }
+        
+        /* 2. Nouveaux effets météo sur les CÔTÉS (France / Taïwan) */
+        .journey-col {
+            position: relative;
+            border-radius: 12px;
+            padding: 5px;
+            transition: background 0.5s ease;
+        }
+        
+        /* Effet Nuit : Fond bleuté sombre discret sur le pays */
+        .journey-col.is-night {
+            background: rgba(20, 30, 48, 0.08); /* Ombre douce le jour */
+        }
+        body.dark-mode .journey-col.is-night {
+            background: rgba(135, 206, 235, 0.1); /* Lueur douce la nuit */
+            box-shadow: 0 0 10px rgba(135, 206, 235, 0.05);
+        }
+        
+        /* Effet Pluie : Une petite goutte animée à côté du nom */
+        .journey-col.is-rain::after {
+            content: "💧";
+            position: absolute;
+            top: 0; right: 10px;
+            font-size: 1rem;
+            animation: rainDrop 1s ease-in-out infinite;
+            opacity: 0.8;
+        }
+        
+        @keyframes rainDrop {
+            0% { transform: translateY(-5px) scale(0.8); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(10px) scale(1); opacity: 0; }
+        }
         /* Nuit */
         .weather-night { background: #001d3d; border-radius: 50%; }
         .weather-night .plane-icon { color: white; text-shadow: 0 0 5px yellow; }
@@ -1888,28 +1926,38 @@
         });
         async function updateWeather() { 
             try { 
-                // On récupère aussi le weathercode et is_day
-                const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.77,24.99&longitude=3.08,121.30&current_weather=true"); 
-                const d=await r.json(); 
+                const r = await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.77,24.99&longitude=3.08,121.30&current_weather=true"); 
+                const d = await r.json(); 
                 
-                // FRANCE
+                // On cible les deux colonnes (0 = France, 1 = Taïwan)
+                const cols = document.querySelectorAll('.journey-col');
+        
+                // --- FRANCE ---
                 const tFr = Math.round(d[0].current_weather.temperature);
                 const isDayFr = d[0].current_weather.is_day === 1;
                 const codeFr = d[0].current_weather.weathercode;
-                document.getElementById('weather-fr').innerText=`${getWeatherIcon(codeFr, isDayFr)} ${tFr}°C`;
+                
+                document.getElementById('weather-fr').innerText = `${getWeatherIcon(codeFr, isDayFr)} ${tFr}°C`;
+                
+                // Appliquer les effets visuels France
+                cols[0].classList.toggle('is-night', !isDayFr); // Active 'Nuit' si pas jour
+                cols[0].classList.toggle('is-rain', codeFr >= 51); // Active 'Pluie' si code météo > 51
         
-                // TAIWAN
+                // --- TAÏWAN ---
                 const tTw = Math.round(d[1].current_weather.temperature);
                 const isDayTw = d[1].current_weather.is_day === 1;
                 const codeTw = d[1].current_weather.weathercode;
-                document.getElementById('weather-tw').innerText=`${getWeatherIcon(codeTw, isDayTw)} ${tTw}°C`;
                 
-                // Optionnel : Ajouter la classe .weather-rain sur la carte voyage si code > 50
-                // (Nécessite d'adapter ton HTML pour cibler le conteneur visuel spécifique)
+                document.getElementById('weather-tw').innerText = `${getWeatherIcon(codeTw, isDayTw)} ${tTw}°C`;
+        
+                // Appliquer les effets visuels Taïwan
+                cols[1].classList.toggle('is-night', !isDayTw);
+                cols[1].classList.toggle('is-rain', codeTw >= 51);
         
             } catch(e){ console.log(e); } 
         }
-        
+
+        // (Garde ta fonction getWeatherIcon identique)
         function getWeatherIcon(code, isDay) {
             if (code >= 95) return "⚡";
             if (code >= 51) return "🌧️";
