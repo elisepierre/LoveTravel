@@ -2120,34 +2120,57 @@
             }
         }
         window.updateMailboxView = function() {
-            const listInbox = document.getElementById("list-inbox"); const listSent = document.getElementById("list-sent");
-            listInbox.innerHTML = ""; listSent.innerHTML = "";
+            const listInbox = document.getElementById("list-inbox"); 
+            const listSent = document.getElementById("list-sent");
+            listInbox.innerHTML = ""; 
+            listSent.innerHTML = "";
+        
             allLetters.forEach(l => {
-                // Vérif si verrouillé
+                // 1. Vérification du verrouillage (Capsule Temporelle)
                 const now = Date.now();
-                const isLocked = (l.unlockAt && now < l.unlockAt) && l.by !== currentUser; // Je peux lire mes propres lettres
+                // Une lettre est verrouillée SI : il y a une date future ET ce n'est pas moi qui l'ai écrite
+                const isLocked = (l.unlockAt && now < l.unlockAt) && l.by !== currentUser;
         
                 const div = document.createElement("div"); 
                 div.className = `envelope-item ${(!l.read && l.by !== currentUser) ? 'unread' : ''}`;
                 
-                // Icône changeante
+                // 2. Icône (Cadenas ou Enveloppe)
                 let icon = l.read ? '📩' : '✉️';
                 if (isLocked) icon = '🔒';
         
-                // Titre changeant
+                // 3. Titre (Masqué si verrouillé)
                 let titleDisplay = l.title;
+                let subText = l.by === currentUser ? 'Moi' : (l.by==='fr'?'De: Théo':'De: Elise');
+                
                 if (isLocked) {
                     const dateObj = new Date(l.unlockAt);
                     titleDisplay = `À ouvrir le ${dateObj.toLocaleDateString()}`;
+                    subText = "🔒 Secret...";
                 }
         
-                div.innerHTML = `<div style="margin-right:15px; font-size:1.5rem;">${icon}</div><div style="flex:1;"><div style="font-weight:bold; font-size:0.9rem;">${titleDisplay}</div><div style="font-size:0.7rem; color:var(--text-sub);">${l.by === currentUser ? 'Moi' : (l.by==='fr'?'Théo':'Elise')}</div></div>`;
+                // 4. Construction HTML (AVEC LE BOUTON SUPPRIMER RETROUVÉ !)
+                // J'ai rajouté la partie ${l.by === currentUser ? button... : ''} à la fin
+                div.innerHTML = `
+                    <div style="margin-right:15px; font-size:1.5rem;">${icon}</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:bold; font-size:0.9rem;">${titleDisplay}</div>
+                        <div style="font-size:0.7rem; color:var(--text-sub);">${subText}</div>
+                    </div>
+                    ${l.by === currentUser ? `<button onclick="deleteLetter('${l.id}', event)" style="border:none;background:none;color:#faa;font-weight:bold;cursor:pointer;padding:5px;">✕</button>` : ''}
+                `;
                 
+                // 5. Clic sur l'enveloppe
                 div.onclick = (e) => { 
+                    // Si on clique sur le bouton supprimer, on ne fait rien d'autre
                     if(e.target.tagName === 'BUTTON') return; 
-                    if (isLocked) { alert(`Pas encore ! Attends le ${new Date(l.unlockAt).toLocaleDateString()} 🤫`); return; }
+                    
+                    if (isLocked) { 
+                        alert(`Patience... Cette lettre s'ouvrira le ${new Date(l.unlockAt).toLocaleDateString()} 🤫`); 
+                        return; 
+                    }
                     openLetterModal(l); 
                 };
+        
                 if(l.by === currentUser) listSent.appendChild(div); else listInbox.appendChild(div);
             });
         }
