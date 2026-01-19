@@ -2147,10 +2147,8 @@
                     if (l.unlockAt) {
                         const dateObj = new Date(l.unlockAt);
                         // Ex: "Moi • Ouvre le 14/02/2026"
-                        subText = `Moi • ⏳ Ouvre le ${dateObj.toLocaleDateString()}`;
-                    } else {
-                        subText = "Moi";
-                    }
+                        subText = `Accessible le ${dateObj.toLocaleDateString()}`;
+                    } 
                 } 
                 // CAS B : J'ai REÇU la lettre (Boîte de réception)
                 else {
