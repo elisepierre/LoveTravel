@@ -899,6 +899,64 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* --- MODE ENVIE DE TOI (HOT) --- */
+        body.is-burning {
+            /* Fond dégradé rouge passion animé */
+            background: linear-gradient(-45deg, #ff9a9e, #ff4b6e, #fa709a, #fee140);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            color: #4a0010; /* Texte légèrement plus foncé pour le contraste */
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Modification des cartes pour qu'elles s'intègrent mieux */
+        body.is-burning .card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ff4b6e;
+            box-shadow: 0 10px 30px rgba(255, 75, 110, 0.3);
+        }
+        
+        /* Particules de chaleur (Flammes qui montent) */
+        body.is-burning::before {
+            content: "🔥";
+            position: fixed;
+            bottom: -50px; left: 10%;
+            font-size: 2rem;
+            opacity: 0;
+            z-index: 0;
+            animation: riseUp 4s infinite ease-in;
+        }
+        body.is-burning::after {
+            content: "❤️‍🔥";
+            position: fixed;
+            bottom: -50px; right: 20%;
+            font-size: 1.5rem;
+            opacity: 0;
+            z-index: 0;
+            animation: riseUp 5s 2s infinite ease-in;
+        }
+        
+        @keyframes riseUp {
+            0% { bottom: -50px; opacity: 0; transform: scale(1); }
+            50% { opacity: 0.6; }
+            100% { bottom: 80%; opacity: 0; transform: scale(1.5) rotate(20deg); }
+        }
+        
+        /* Dark Mode adaptation */
+        body.dark-mode.is-burning {
+            background: linear-gradient(-45deg, #2d0a12, #5c1122, #2d0a12);
+            color: #ffccd5;
+        }
+        body.dark-mode.is-burning .card {
+            background: rgba(30, 30, 30, 0.9);
+            border-color: #5c1122;
+        }
+
     </style>
 </head>
 <body>
@@ -1511,9 +1569,14 @@
         // Remplace ton onSnapshot "moods" actuel par celui-ci :
         let opponentIsSleeping = false; // Variable globale
         
+        // Variable pour éviter que l'alerte ne se lance en boucle
+        let hasTriggeredHotMatch = false;
+        
         onSnapshot(doc(db, "status", "moods"), (doc) => {
             if (doc.exists()) {
                 const d = doc.data();
+                
+                // 1. Mise à jour classique des images/textes
                 document.getElementById("mood-img-fr").src = getMoodImage('fr', d.fr_outfit || 0);
                 document.getElementById("mood-img-tw").src = getMoodImage('tw', d.tw_outfit || 0);
                 document.getElementById("mood-msg-fr").innerText = d.fr_text || "";
@@ -1523,12 +1586,44 @@
                 const myOutfit = currentUser === 'fr' ? d.fr_outfit : d.tw_outfit;
                 const oppOutfit = currentUser === 'fr' ? d.tw_outfit : d.fr_outfit;
                 
-                // 1. Si JE dors (Mood 2), mon écran s'assombrit
                 if (myOutfit === 2) document.body.classList.add('is-sleeping');
                 else document.body.classList.remove('is-sleeping');
         
-                // 2. On note si l'autre dort (pour le bouton bisou)
                 opponentIsSleeping = (oppOutfit === 2);
+        
+                // --- NOUVEAU : GESTION MODE "ENVIE DE TOI" (HOT) ---
+                // L'index 4 correspond au smiley 🥵
+                const isFrHot = d.fr_outfit === 4;
+                const isTwHot = d.tw_outfit === 4;
+        
+                if (isFrHot && isTwHot) {
+                    // A. On active le CSS (Fond rouge pulsant + flammes)
+                    document.body.classList.add('is-burning');
+        
+                    // B. Petit effet de surprise (une seule fois)
+                    if (!hasTriggeredHotMatch) {
+                        hasTriggeredHotMatch = true;
+                        
+                        // Confettis de feu !
+                        confetti({
+                            particleCount: 100,
+                            spread: 70,
+                            origin: { y: 0.6 },
+                            colors: ['#ff0000', '#ffa500', '#ffffff'], // Rouge, Orange, Blanc
+                            scalar: 1.2
+                        });
+                        
+                        // Petite notif coquine
+                        if(currentUser === 'fr') showAlert("Ouh là...", "Il fait très chaud ici, Elise a la même envie que toi... 🔥", "🥵");
+                        else showAlert("Ouh là...", "Il fait très chaud ici, Théo a la même envie que toi... 🔥", "🥵");
+                        
+                        if(navigator.vibrate) navigator.vibrate([100,50,100,50,500]); // Vibration style battement cœur
+                    }
+                } else {
+                    // Si l'un des deux change d'avis, on enlève le mode
+                    document.body.classList.remove('is-burning');
+                    hasTriggeredHotMatch = false;
+                }
             }
         });
         
