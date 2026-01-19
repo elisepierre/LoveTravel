@@ -640,6 +640,19 @@
         .btn-enter { margin-top: 30px; background: white; color: #333; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; font-size: 1.2rem; cursor: pointer; display: none; animation: slideUp 0.5s; box-shadow: 0 0 20px white; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* EFFETS MÉTÉO SUR LA CARTE VOYAGE */
+        .journey-visual { overflow: hidden; position: relative; border-radius: 50%; width: 60px; height: 60px; margin: 0 auto; }
+        /* Pluie */
+        .weather-rain::before {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: url('https://i.imgur.com/7Q3l9Fw.png'); /* Texture pluie simple */
+            opacity: 0.5; animation: rain 0.5s linear infinite; pointer-events: none;
+        }
+        @keyframes rain { 0% { transform: translateY(0); } 100% { transform: translateY(20px); } }
+        /* Nuit */
+        .weather-night { background: #001d3d; border-radius: 50%; }
+        .weather-night .plane-icon { color: white; text-shadow: 0 0 5px yellow; }
+
     </style>
 </head>
 <body>
@@ -846,7 +859,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v75 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v77 • janvier 2026</div>
         </div>
     </div>
 
@@ -1106,7 +1119,7 @@
         // Remplace ta fonction sendBisou par celle-ci :
         window.sendBisou = function() {
             if (opponentIsSleeping) {
-                alert("Chut... 🤫 L'autre dort !\nOn ne va pas le/la réveiller.");
+                alert("Chut... 🤫 L'autre dort !");
                 return; // On annule le bisou
             }
             addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
@@ -1873,7 +1886,37 @@
                 document.getElementById('dot-tw').classList.toggle('online', isOnlineTw); 
             } 
         });
-        async function updateWeather() { try { const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.77,24.99&longitude=3.08,121.30&current_weather=true"); const d=await r.json(); document.getElementById('weather-fr').innerText=`☀️ ${Math.round(d[0].current_weather.temperature)}°C`; document.getElementById('weather-tw').innerText=`☀️ ${Math.round(d[1].current_weather.temperature)}°C`; } catch(e){} }
+        async function updateWeather() { 
+            try { 
+                // On récupère aussi le weathercode et is_day
+                const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=45.77,24.99&longitude=3.08,121.30&current_weather=true"); 
+                const d=await r.json(); 
+                
+                // FRANCE
+                const tFr = Math.round(d[0].current_weather.temperature);
+                const isDayFr = d[0].current_weather.is_day === 1;
+                const codeFr = d[0].current_weather.weathercode;
+                document.getElementById('weather-fr').innerText=`${getWeatherIcon(codeFr, isDayFr)} ${tFr}°C`;
+        
+                // TAIWAN
+                const tTw = Math.round(d[1].current_weather.temperature);
+                const isDayTw = d[1].current_weather.is_day === 1;
+                const codeTw = d[1].current_weather.weathercode;
+                document.getElementById('weather-tw').innerText=`${getWeatherIcon(codeTw, isDayTw)} ${tTw}°C`;
+                
+                // Optionnel : Ajouter la classe .weather-rain sur la carte voyage si code > 50
+                // (Nécessite d'adapter ton HTML pour cibler le conteneur visuel spécifique)
+        
+            } catch(e){ console.log(e); } 
+        }
+        
+        function getWeatherIcon(code, isDay) {
+            if (code >= 95) return "⚡";
+            if (code >= 51) return "🌧️";
+            if (code >= 71) return "❄️";
+            if (!isDay) return "🌙";
+            return "☀️";
+        }
         updateWeather();
         const dateDepart = new Date("2026-02-14T00:00:00+01:00").getTime(); const dateRetour = new Date("2026-07-05T08:00:00+02:00").getTime(); 
         function updateCountdown() { const now=new Date().getTime(); let p=0; if(now>dateDepart && now<dateRetour) p=((now-dateDepart)/(dateRetour-dateDepart))*100; if(now>dateRetour) p=100; const dist=(now<dateDepart?dateDepart:dateRetour)-now; const dDisplay=dist>0?dist:0; const days=Math.floor(dDisplay/(1000*60*60*24)); document.getElementById('days-count').innerText=days; document.getElementById('days-unit').innerText=days<=1?"JOUR":"JOURS"; document.getElementById('sub-count').innerText=`${Math.floor((dDisplay%(1000*60*60*24))/(1000*60*60))} h et ${Math.floor((dDisplay%(1000*60*60))/(1000*60))} min`; document.getElementById('countdown-title').innerText=now<dateDepart?"DÉPART DANS":"RETROUVAILLES DANS"; document.getElementById("prog-fill").style.width=p+"%"; document.getElementById("prog-heart").style.left=p+"%"; } setInterval(updateCountdown,1000);
