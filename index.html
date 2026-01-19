@@ -1532,15 +1532,38 @@
             }
         });
         
-        // Remplace ta fonction sendBisou par celle-ci :
+        // Fonction d'envoi de bisou (Avec protection Dodo stylée)
         window.sendBisou = function() {
+            
+            // 1. VÉRIFICATION MODE DODO
             if (opponentIsSleeping) {
-                alert("Chut... 🤫 L'autre dort !");
-                return; // On annule le bisou
+                // On détermine le prénom de l'autre
+                const targetName = currentUser === 'fr' ? 'Elise' : 'Théo';
+                
+                // On affiche ta JOLIE fenêtre au lieu du 'alert' moche
+                showAlert(
+                    "Chut... 🤫", 
+                    `${targetName} rêve de toi en ce moment 🌙.\nOn ne va pas le/la réveiller !`, 
+                    "💤"
+                );
+                return; // On annule l'envoi du bisou
             }
-            addDoc(collection(db, "actions"), { type: 'bisou', from: currentUser, timestamp: serverTimestamp() });
+        
+            // 2. ENVOI NORMAL (Si l'autre ne dort pas)
+            addDoc(collection(db, "actions"), { 
+                type: 'bisou', 
+                from: currentUser, 
+                timestamp: serverTimestamp() 
+            });
+            
             sendNtfy(`💋 Bisou envoyé ! (${getCurrentTime(currentUser)})`, "kiss,heart", "high");
-            const n = document.getElementById("notif"); n.classList.add("show"); setTimeout(()=>n.classList.remove("show"),3000);
+            
+            // Petite notif visuelle en bas
+            const n = document.getElementById("notif"); 
+            n.innerText = "💋 Bisou envoyé !"; // On s'assure du texte
+            n.classList.add("show"); 
+            setTimeout(() => n.classList.remove("show"), 3000);
+            
             if(navigator.vibrate) navigator.vibrate(200); 
         }
 
@@ -2350,7 +2373,20 @@
         
         function sendNtfy(msg, tag, prio) { 
             const iconUrl = new URL("icon_2.jpg", window.location.href).href; 
-            fetch(`https://ntfy.sh/${currentUser==='tw'?"lovetravel-2026-reception-theo":"lovetravel-2026-reception-elise"}`, { method:'POST', body:msg, headers:{'Title':currentUser==='tw'?"Elise":"Theo",'Priority':prio,'Tags':tag,'Icon':iconUrl} }).catch(e=>{}); 
+            
+            // On définit le canal de réception
+            const topic = currentUser === 'tw' ? "lovetravel-2026-reception-theo" : "lovetravel-2026-reception-elise";
+            
+            fetch(`https://ntfy.sh/${topic}`, { 
+                method: 'POST', 
+                body: msg, 
+                headers: {
+                    'Title': currentUser === 'tw' ? "Elise" : "Théo", // Juste le Prénom, propre
+                    'Priority': prio,
+                    // 'Tags': tag,  <-- J'ai supprimé cette ligne pour enlever l'emoji du titre
+                    'Icon': iconUrl
+                } 
+            }).catch(e => {}); 
         }
 
         window.updateMood = function(emoji, text, outfitId) {
@@ -2442,7 +2478,7 @@
         
                 // Si déjà envoyé aujourd'hui
                 if (lastSent === today) {
-                    showAlert("Doucement tigre !", "Tu as déjà envoyé ton message de soutien aujourd'hui. Reviens demain ! ❤️", "⏳");
+                    showAlert("Doucement beau gosse !", "Tu as déjà envoyé ton message de soutien aujourd'hui. Reviens demain ! ❤️", "⏳");
                     return;
                 }
         
