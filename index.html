@@ -2417,6 +2417,44 @@
             }
         }
 
+        // Fonction de fin de grattage (Mise à jour instantanée)
+        function finishScratch() {
+            // 1. Animation de victoire
+            confetti({ particleCount: 100, spread: 70, zIndex: 10000 }); 
+            
+            // 2. Sauvegarde en base de données
+            updateDoc(doc(db, "photos", currentScratchId), { scratched: true });
+            
+            // --- DOM UPDATE IMMÉDIAT (Le correctif est ici) ---
+            // On va chercher la photo dans la grille derrière la fenêtre de grattage
+            const gridItem = document.getElementById(`photo-${currentScratchId}`);
+            if (gridItem) {
+                const imgEl = gridItem.querySelector('img');
+                
+                // A. On enlève le flou et le gris
+                imgEl.style.filter = "none";
+                
+                // B. On change le clic pour qu'il ouvre la lightbox au lieu de re-lancer le grattage
+                // On clone l'URL actuelle de l'image cible
+                const finalUrl = document.getElementById('scratch-img-target').src;
+                imgEl.onclick = () => showLightbox(finalUrl);
+                
+                // C. On supprime l'icône cadeau 🎁 qui flotte au-dessus
+                const giftIcon = gridItem.querySelector('div[style*="absolute"]');
+                if (giftIcon) giftIcon.remove();
+            }
+            // ---------------------------------------------------
+        
+            // 3. Transition fluide vers la lightbox
+            setTimeout(() => {
+                document.getElementById('scratch-modal').style.display = 'none';
+                
+                // On ouvre l'image en grand tout de suite
+                const imgUrl = document.getElementById('scratch-img-target').src;
+                showLightbox(imgUrl);
+            }, 800);
+        }
+
         window.addTodo=function(){const t=document.getElementById('todo-input').value;if(!t)return;addDoc(collection(db,"todos"),{text:t,done:false,created:serverTimestamp()});document.getElementById('todo-input').value="";sendNtfy("📝 Projet ! ("+getCurrentTime(currentUser)+")","clipboard","low");}
         window.toggleTodo = function(id, state) { updateDoc(doc(db, "todos", id), { done: state }); }
         onSnapshot(query(collection(db,"todos"),orderBy("created","desc")),s=>{ const l=document.getElementById('todo-list');l.innerHTML=""; s.forEach(d=>{const t=d.data();l.innerHTML+=`<div class="todo-item"><input type="checkbox" class="todo-check" ${t.done?'checked':''} onchange="toggleTodo('${d.id}',this.checked)"><span class="todo-text ${t.done?'done':''}">${t.text}</span><button onclick="deleteTodo('${d.id}')" class="todo-del">✕</button></div>`;}); });
@@ -2424,20 +2462,77 @@
         window.addBook=function(){const t=document.getElementById('book-title').value;if(!t)return;addDoc(collection(db,"books"),{title:t,pages_total:parseInt(document.getElementById('book-pages').value)||200,created:serverTimestamp(),page_fr:0,rating_fr:0,page_tw:0,rating_tw:0});document.getElementById('book-title').value="";}
         window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 ${title} terminé ! (${getCurrentTime(currentUser)})`, "tada", "low"); }
         window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
-        onSnapshot(query(collection(db,"books"),orderBy("created","desc")),s=>{
-             const l=document.getElementById('book-list');l.innerHTML="";
-             s.forEach(docSnap=>{
-                 const book = docSnap.data(); const id = docSnap.id; const totalPages = book.pages_total || 200;
-                 const frPage = book.page_fr || 0; const frRating = book.rating_fr || 0;
-                 const twPage = book.page_tw || 0; const twRating = book.rating_tw || 0;
-                 const frPercent = Math.min((frPage / totalPages) * 100, 100); const twPercent = Math.min((twPage / totalPages) * 100, 100);
-                 const makeStars = (role, currentRating) => {
-                    let html = ''; for(let i=1; i<=5; i++) { const filled = i <= currentRating ? 'filled' : ''; const action = role === currentUser ? `onclick="rateBook('${id}', '${role}', ${i})"` : ''; const cursor = role === currentUser ? 'pointer' : 'default'; html += `<span class="star ${filled}" style="cursor:${cursor}" ${action}>★</span>`; }
-                    if(role === currentUser) html += `<span class="star-reset" onclick="rateBook('${id}', '${role}', 0)">Ø</span>`; return html;
-                 };
-                 const canEditFr = currentUser === 'fr' ? '' : 'disabled'; const canEditTw = currentUser === 'tw' ? '' : 'disabled';
-                 l.innerHTML+=`<div class="book-item"><div class="book-title"><span>${book.title}</span><button style="border:none;background:none;color:var(--text-sub);font-size:0.8rem;cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div><div class="book-total-pages">${totalPages} pages</div><div class="user-row"><div class="row-header"><span style="color:var(--blue);font-weight:bold;font-size:0.8rem;">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div><div class="user-row" style="border:none;"><div class="row-header"><span style="color:var(--pink);font-weight:bold;font-size:0.8rem;">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div><div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div></div>`;
-             });
+        // Remplace tout le bloc onSnapshot des livres par celui-ci :
+        onSnapshot(query(collection(db,"books"),orderBy("created","desc")), s => {
+            const l = document.getElementById('book-list');
+            l.innerHTML = "";
+            
+            s.forEach(docSnap => {
+                const book = docSnap.data(); 
+                const id = docSnap.id; 
+                const totalPages = book.pages_total || 200;
+                const frPage = book.page_fr || 0; const frRating = book.rating_fr || 0;
+                const twPage = book.page_tw || 0; const twRating = book.rating_tw || 0;
+                const frPercent = Math.min((frPage / totalPages) * 100, 100); 
+                const twPercent = Math.min((twPage / totalPages) * 100, 100);
+                
+                // --- CORRECTIF ETOILES ---
+                const makeStars = (role, currentRating) => {
+                    let html = ''; 
+                    // 1. Les 5 étoiles
+                    for(let i=1; i<=5; i++) { 
+                        const filled = i <= currentRating ? 'filled' : ''; 
+                        // Seul le propriétaire du rôle peut cliquer
+                        const action = role === currentUser ? `onclick="rateBook('${id}', '${role}', ${i})"` : ''; 
+                        const cursor = role === currentUser ? 'pointer' : 'default'; 
+                        html += `<span class="star ${filled}" style="cursor:${cursor}" ${action}>★</span>`; 
+                    }
+                    
+                    // 2. Le bouton Reset (Ø)
+                    // ASTUCE : On l'affiche toujours, mais on le cache avec visibility:hidden si ce n'est pas moi.
+                    // Cela garde l'espace occupé (layout) identique pour les deux lignes.
+                    const visibility = role === currentUser ? 'visible' : 'hidden';
+                    
+                    html += `<span class="star-reset" style="visibility:${visibility};" onclick="rateBook('${id}', '${role}', 0)">Ø</span>`; 
+                    
+                    return html;
+                };
+                // -------------------------
+        
+                const canEditFr = currentUser === 'fr' ? '' : 'disabled'; 
+                const canEditTw = currentUser === 'tw' ? '' : 'disabled';
+                
+                l.innerHTML += `
+                <div class="book-item">
+                    <div class="book-title">
+                        <span>${book.title}</span>
+                        <button style="border:none;background:none;color:var(--text-sub);font-size:0.8rem;cursor:pointer;" onclick="deleteBook('${id}')">✕</button>
+                    </div>
+                    <div class="book-total-pages">${totalPages} pages</div>
+                    
+                    <div class="user-row">
+                        <div class="row-header">
+                            <span style="color:var(--blue);font-weight:bold;font-size:0.8rem;">THÉO</span>
+                            <div class="star-rating">${makeStars('fr', frRating)}</div>
+                        </div>
+                        <div class="user-inputs">
+                            <input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0">
+                            <div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-row" style="border:none;">
+                        <div class="row-header">
+                            <span style="color:var(--pink);font-weight:bold;font-size:0.8rem;">ELISE</span>
+                            <div class="star-rating">${makeStars('tw', twRating)}</div>
+                        </div>
+                        <div class="user-inputs">
+                            <input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0">
+                            <div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div>
+                        </div>
+                    </div>
+                </div>`;
+            });
         });
 
         // NOTIF BISOUS REÇU
