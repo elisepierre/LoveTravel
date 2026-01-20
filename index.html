@@ -902,13 +902,15 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* --- MODE ENVIE DE TOI (HOT) --- */
+        /* --- MODE ENVIE DE TOI (HOT) - VERSION ÉLÉGANTE --- */
         body.is-burning {
-            /* Fond dégradé rouge passion animé */
-            background: linear-gradient(-45deg, #ff9a9e, #ff4b6e, #fa709a, #fee140);
+            /* Nouveau dégradé : Pêche douce vers Rose romantique (Sans jaune fluo) */
+            background: linear-gradient(-45deg, #ffc3a0, #ffafbd, #ffc3a0);
             background-size: 400% 400%;
-            animation: gradientBG 10s ease infinite;
-            color: #4a0010; /* Texte légèrement plus foncé pour le contraste */
+            animation: gradientBG 15s ease infinite; /* Animation plus lente et sensuelle */
+            
+            /* On change la couleur du texte pour un bordeaux doux (plus lisible) */
+            color: #5e2a35; 
         }
         
         @keyframes gradientBG {
@@ -917,14 +919,14 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* Modification des cartes pour qu'elles s'intègrent mieux */
+        /* On garde les cartes propres mais avec une légère teinte rosée */
         body.is-burning .card {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #ff4b6e;
-            box-shadow: 0 10px 30px rgba(255, 75, 110, 0.3);
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid #ffc3a0;
+            box-shadow: 0 10px 30px rgba(255, 175, 189, 0.4);
         }
         
-        /* Particules de chaleur (Flammes qui montent) */
+        /* Particules de chaleur (Plus discrètes) */
         body.is-burning::before {
             content: "🔥";
             position: fixed;
@@ -932,32 +934,36 @@
             font-size: 2rem;
             opacity: 0;
             z-index: 0;
-            animation: riseUp 4s infinite ease-in;
+            filter: blur(1px); /* Un peu flou pour l'ambiance */
+            animation: riseUp 5s infinite ease-in;
         }
+        
         body.is-burning::after {
-            content: "❤️‍🔥";
+            content: "❤️"; /* Cœur rouge simple au lieu du cœur en feu */
             position: fixed;
             bottom: -50px; right: 20%;
             font-size: 1.5rem;
             opacity: 0;
             z-index: 0;
-            animation: riseUp 5s 2s infinite ease-in;
+            filter: blur(1px);
+            animation: riseUp 6s 2s infinite ease-in;
         }
         
         @keyframes riseUp {
             0% { bottom: -50px; opacity: 0; transform: scale(1); }
-            50% { opacity: 0.6; }
-            100% { bottom: 80%; opacity: 0; transform: scale(1.5) rotate(20deg); }
+            50% { opacity: 0.4; } /* Moins opaque pour ne pas gêner la lecture */
+            100% { bottom: 80%; opacity: 0; transform: scale(1.2) rotate(20deg); }
         }
         
-        /* Dark Mode adaptation */
+        /* Dark Mode adaptation (On garde le sombre intense, ça marche bien) */
         body.dark-mode.is-burning {
-            background: linear-gradient(-45deg, #2d0a12, #5c1122, #2d0a12);
+            background: linear-gradient(-45deg, #4a0e16, #751a2a, #4a0e16);
             color: #ffccd5;
         }
         body.dark-mode.is-burning .card {
-            background: rgba(30, 30, 30, 0.9);
-            border-color: #5c1122;
+            background: rgba(40, 10, 15, 0.9);
+            border-color: #751a2a;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         /* Cœur flottant */
