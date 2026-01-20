@@ -1029,7 +1029,7 @@
     <header>
         <div class="header-top">
             <button class="header-btn" id="user-toggle-btn" onclick="switchUser()">🇹🇼</button>
-            <h1 class="app-title">Love Travel</h1>
+            <h1 class="app-title" onclick="clickTitle()">Love Travel</h1>
             <button class="header-btn" onclick="toggleTheme()">🌗</button>
         </div>
         <div id="bd-subtitle" class="bd-subtitle"></div>
@@ -1061,19 +1061,19 @@
             <div class="card-content">
                 <div class="mood-container">
                     <div class="mood-person">
-                        <div class="avatar-frame"><img src="" id="mood-img-fr" class="avatar-img"></div>
+                        <div class="avatar-frame"><img src="" id="mood-img-fr" class="avatar-img chatouille-img" data-role="fr"></div>
                         <div class="mood-msg" id="mood-msg-fr">...</div>
                     </div>
-                
+                    
                     <div id="cycle-widget" onclick="editCycle()">
                         <div id="cycle-ring"></div> <div id="cycle-content">
                             <div id="cycle-day">J-1</div>
                             <div id="cycle-icon">🌸</div>
                         </div>
                     </div>
-                
+                    
                     <div class="mood-person">
-                        <div class="avatar-frame"><img src="" id="mood-img-tw" class="avatar-img"></div>
+                        <div class="avatar-frame"><img src="" id="mood-img-tw" class="avatar-img chatouille-img" data-role="tw"></div>
                         <div class="mood-msg" id="mood-msg-tw">...</div>
                     </div>
                 </div>
@@ -3328,26 +3328,41 @@
             }
         }
 
-        // GESTION APPUI LONG SUR AVATAR
-        // Ajoute l'ID 'my-avatar' sur ton image de profil dans le HTML
-        const avatar = document.getElementById('my-avatar'); // Assure-toi d'avoir mis id="my-avatar" sur ta photo
-        
-        if (avatar) {
+        /// GESTION APPUI LONG SUR AVATAR (Chatouilleux)
+        document.querySelectorAll('.chatouille-img').forEach(img => {
             let pressTimer;
         
-            avatar.addEventListener('touchstart', () => {
-                pressTimer = setTimeout(() => {
-                    // Action après 1 seconde d'appui
-                    if(navigator.vibrate) navigator.vibrate(500);
-                    confetti({ particleCount: 30, spread: 50, origin: { x: currentUser==='fr'?0.2:0.8, y: 0.1 } });
-                    showAlert("Hé ! 😂", "Arrête de me chatouiller !", "🤭");
-                }, 800);
-            });
+            // Fonction qui déclenche la chatouille
+            const triggerTickle = () => {
+                // On vérifie si c'est bien MON avatar (pour ne pas chatouiller l'autre à distance)
+                const role = img.getAttribute('data-role');
+                if (role !== currentUser) return; // Si je clique sur l'autre, rien ne se passe (ou autre effet si tu veux)
         
-            avatar.addEventListener('touchend', () => {
-                clearTimeout(pressTimer);
+                if(navigator.vibrate) navigator.vibrate(500);
+                
+                // Confettis qui partent de l'avatar
+                const rect = img.getBoundingClientRect();
+                const xRatio = (rect.left + rect.width/2) / window.innerWidth;
+                const yRatio = (rect.top + rect.height/2) / window.innerHeight;
+                
+                confetti({ particleCount: 30, spread: 50, origin: { x: xRatio, y: yRatio } });
+                showAlert("Hé ! 😂", "Arrête de me chatouiller !", "🤭");
+            };
+        
+            // Pour le TACTILE (Mobile)
+            img.addEventListener('touchstart', (e) => {
+                pressTimer = setTimeout(triggerTickle, 800); // 800ms d'appui
             });
-        }
+            img.addEventListener('touchend', () => clearTimeout(pressTimer));
+            img.addEventListener('touchmove', () => clearTimeout(pressTimer)); // Si on bouge le doigt, ça annule
+        
+            // Pour la SOURIS (Ordi)
+            img.addEventListener('mousedown', () => {
+                pressTimer = setTimeout(triggerTickle, 800);
+            });
+            img.addEventListener('mouseup', () => clearTimeout(pressTimer));
+            img.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+        });
 
     </script>
 </body>
