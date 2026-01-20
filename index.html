@@ -600,64 +600,78 @@
         .book-progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; margin-left: 10px; }
         .book-progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 4px; }
 
-       /* 5. Le Widget Cycle Central */
+       /* --- WIDGET CYCLE (Style Premium) --- */
         #cycle-widget {
-            width: 65px; 
-            height: 65px;
+            width: 70px; 
+            height: 70px;
             flex-shrink: 0;
-            
-            /* CENTRAGE VERTICAL PAR RAPPORT AUX AVATARS */
-            /* L'avatar fait 130px de haut. Pour centrer le rond (65px) :
-               (130 - 65) / 2 = ~32px de marge en haut */
-            margin-top: 32px; 
-            
+            margin-top: 30px; /* Centrage vertical par rapport aux avatars */
             position: relative;
             cursor: pointer;
             border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
+            
+            /* Ombre portée douce pour le détacher du fond */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            
             background: var(--bg-card);
-            transition: transform 0.1s;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Rebond */
             z-index: 5;
         }
         
-        #cycle-widget:active { transform: scale(0.9); }
+        #cycle-widget:active { 
+            transform: scale(0.9); /* Effet d'appui */
+        }
         
-        /* L'ANNEAU (Géré par Conic Gradient en JS) */
+        /* L'ANNEAU (La couleur qui tourne) */
         #cycle-ring {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             border-radius: 50%;
             z-index: 1;
-            /* Par défaut (sera écrasé par le JS) */
-            background: conic-gradient(var(--border) 0%, var(--border) 100%); 
-            transition: background 0.5s ease;
+            /* Le dégradé sera géré par le JS, ici on met une base propre */
+            background: var(--border); 
         }
         
-        /* LE CENTRE BLANC (Pour faire l'effet anneau) */
+        /* LE CENTRE (Cache le milieu de l'anneau) */
         #cycle-content {
             position: absolute;
-            top: 4px; left: 4px; right: 4px; bottom: 4px; /* Épaisseur de l'anneau = 4px */
-            background: var(--bg-card); /* Couleur de fond de la carte */
+            /* Épaisseur de l'anneau = 5px (70px total - 60px contenu / 2) */
+            top: 5px; left: 5px; right: 5px; bottom: 5px; 
+            
+            background: var(--bg-card);
             border-radius: 50%;
             z-index: 2;
+            
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: var(--text-main);
+            
+            /* Petite ombre interne pour donner de la profondeur (Effet cuvette) */
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
         
         #cycle-day {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 800;
             line-height: 1;
+            font-family: 'Outfit', sans-serif;
         }
         
         #cycle-icon {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             margin-top: 2px;
         }
+        
+        /* DARK MODE ADAPTATION */
+        body.dark-mode #cycle-widget {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* Ombre plus forte en sombre */
+        }
+        body.dark-mode #cycle-content {
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
         
         /* COULEURS DES JOURS SPÉCIAUX (Texte) */
         .cycle-red-text { color: #ff4b6e; } /* Rose/Rouge règles */
@@ -669,18 +683,7 @@
             #cycle-day { font-size: 0.9rem; }
         }
 
-        /* --- ADAPTATION DARK MODE (Widget Cycle) --- */
-
-        /* 1. Profondeur du widget */
-        body.dark-mode #cycle-widget {
-            background: var(--bg-card); /* Reste gris foncé (#1e1e1e) */
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6); /* Ombre plus intense pour l'effet flottant */
-        }
-        
-        /* 2. Le centre du widget */
-        body.dark-mode #cycle-content {
-            background: var(--bg-card); 
-        }
+        /* /* --- ADAPTATION DARK MODE (Widget Cycle) ---  */
         
         /* 3. Texte "Jours Règles" (Effet Néon) */
         body.dark-mode .cycle-red-text {
