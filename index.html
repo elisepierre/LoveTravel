@@ -2708,39 +2708,49 @@
         
             allLetters.forEach(l => {
                 const now = Date.now();
-                // C'est verrouillé si la date est future ET que ce n'est PAS moi l'auteur
                 const isLocked = (l.unlockAt && now < l.unlockAt) && l.by !== currentUser;
+        
+                // --- 1. RECUPERATION DATE D'ENVOI ---
+                let sentDateStr = "À l'instant";
+                if (l.timestamp) {
+                    // Conversion du format Firebase vers une date lisible
+                    const dateObj = l.timestamp.toDate ? l.timestamp.toDate() : new Date(l.timestamp);
+                    sentDateStr = dateObj.toLocaleDateString('fr-FR', {day: '2-digit', month: '2-digit', year: '2-digit'}); // Donne "20/01/26"
+                }
         
                 const div = document.createElement("div"); 
                 div.className = `envelope-item ${(!l.read && l.by !== currentUser) ? 'unread' : ''}`;
                 
-                // 1. L'ICÔNE
                 let icon = l.read ? '📩' : '✉️';
                 if (isLocked) icon = '🔒';
         
-                // 2. LE TITRE ET LE SOUS-TITRE
                 let titleDisplay = l.title;
                 let subText = "";
         
+                // --- 2. AFFICHAGE DES INFOS AVEC LA DATE ---
+                
                 // CAS A : C'est MOI qui ai envoyé (Envoyés)
                 if (l.by === currentUser) {
-                    // J'affiche la date que j'ai choisie pour m'en souvenir
                     if (l.unlockAt) {
-                        const dateObj = new Date(l.unlockAt);
-                        // Ex: "Moi • Ouvre le 14/02/2026"
-                        subText = `Accessible le ${dateObj.toLocaleDateString()}`;
-                    } 
+                        const dateUnlock = new Date(l.unlockAt).toLocaleDateString('fr-FR');
+                        // Affiche : "Ouvre le 14/02 • Écrit le 20/01"
+                        subText = `🔓 Ouvre le ${dateUnlock} • ✍️ ${sentDateStr}`;
+                    } else {
+                        // Affiche : "Écrit le 20/01/26"
+                        subText = `✍️ Envoyé le ${sentDateStr}`;
+                    }
                 } 
                 // CAS B : J'ai REÇU la lettre (Boîte de réception)
                 else {
                     if (isLocked) {
-                        // Si c'est bloqué, je cache le titre
-                        const dateObj = new Date(l.unlockAt);
-                        titleDisplay = `À ouvrir le ${dateObj.toLocaleDateString()}`;
-                        subText = "🔒 Secret...";
+                        const dateUnlock = new Date(l.unlockAt).toLocaleDateString('fr-FR');
+                        titleDisplay = `À ouvrir le ${dateUnlock}`;
+                        // Affiche : "Secret... (Reçu le 20/01)"
+                        subText = `🔒 Secret... (Reçu le ${sentDateStr})`;
                     } else {
-                        // Sinon j'affiche de qui ça vient
-                        subText = l.by==='fr' ? 'De: Théo' : 'De: Elise';
+                        const fromName = l.by==='fr' ? 'Théo' : 'Elise';
+                        // Affiche : "De: Théo • 20/01/26"
+                        subText = `De: ${fromName} • 📅 ${sentDateStr}`;
                     }
                 }
         
@@ -2748,7 +2758,7 @@
                     <div style="margin-right:15px; font-size:1.5rem;">${icon}</div>
                     <div style="flex:1;">
                         <div style="font-weight:bold; font-size:0.9rem;">${titleDisplay}</div>
-                        <div style="font-size:0.7rem; color:var(--text-sub);">${subText}</div>
+                        <div style="font-size:0.75rem; color:var(--text-sub); margin-top:2px;">${subText}</div>
                     </div>
                     ${l.by === currentUser ? `<button onclick="deleteLetter('${l.id}', event)" style="border:none;background:none;color:#faa;font-weight:bold;cursor:pointer;padding:5px;">✕</button>` : ''}
                 `;
@@ -2764,7 +2774,7 @@
         
                 if(l.by === currentUser) listSent.appendChild(div); else listInbox.appendChild(div);
             });
-        }    
+        }
         window.showTab('inbox');
 
         window.addLetter = function() { 
