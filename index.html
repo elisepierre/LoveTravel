@@ -960,6 +960,19 @@
             border-color: #5c1122;
         }
 
+        /* Cœur flottant */
+        .float-heart {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none; /* On clique à travers */
+            animation: floatUp 1s ease-out forwards;
+            z-index: 9999;
+        }
+        @keyframes floatUp {
+            0% { transform: scale(0.5) translateY(0); opacity: 1; }
+            100% { transform: scale(1.5) translateY(-100px); opacity: 0; }
+        }
+
     </style>
 </head>
 <body>
@@ -3242,6 +3255,47 @@
             document.getElementById('clock-fr').innerText=now.toLocaleTimeString('fr-FR',{timeZone:'Europe/Paris',hour:'2-digit',minute:'2-digit'});
             document.getElementById('clock-tw').innerText=now.toLocaleTimeString('fr-FR',{timeZone:'Asia/Taipei',hour:'2-digit',minute:'2-digit'});
         } setInterval(updateClocks,1000); updateClocks();
+
+        // EASTER EGG 1 : Double Tap Love
+        document.body.addEventListener('dblclick', (e) => {
+            const heart = document.createElement('div');
+            heart.className = 'float-heart';
+            heart.innerText = '❤️';
+            heart.style.left = (e.clientX - 15) + 'px'; // Centré sous le doigt
+            heart.style.top = (e.clientY - 15) + 'px';
+            document.body.appendChild(heart);
+            
+            // Vibration légère
+            if(navigator.vibrate) navigator.vibrate(50);
+            
+            // Nettoyage après 1 seconde
+            setTimeout(() => heart.remove(), 1000);
+        });
+        // EASTER EGG 3 : Secret du Titre
+        let titleClicks = 0;
+        let titleTimer = null;
+        
+        // Trouve ton élément h1 ou le header et ajoute onclick="clickTitle()"
+        // Dans le HTML : <h1 ... onclick="clickTitle()">Love Travel</h1>
+        
+        window.clickTitle = function() {
+            titleClicks++;
+            
+            // Reset si on arrête de cliquer pendant 1 seconde
+            clearTimeout(titleTimer);
+            titleTimer = setTimeout(() => { titleClicks = 0; }, 1000);
+            
+            // Si 5 clics atteints
+            if (titleClicks === 5) {
+                // JACKPOT !
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.2 } });
+                
+                // Optionnel : Jouer un petit son ou afficher une photo dossier
+                showAlert("JACKPOT AMOUR ! 🎰", "Tu as trouvé le passage secret ! Je t'aime plus que tout ❤️", "💎");
+                
+                titleClicks = 0; // Reset
+            }
+        }
 
     </script>
 </body>
