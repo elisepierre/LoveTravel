@@ -171,7 +171,7 @@
                     <div class="mood-btn" onclick="updateMood('😴', 'Zzz Zzz', 2)">😴</div>
                     <div class="mood-btn" onclick="updateMood('😋', 'Je mangeee !', 3)">😋</div>
                     <div class="mood-btn" onclick="updateMood('🥵', 'Envie de toi...', 4)">🥵</div>
-                    <div class="mood-btn" onclick="customMood()" style="color:var(--pink);">✏️</div>
+                    <div class="mood-btn" onclick="openCustomMood()" style="color:var(--pink);">✏️</div>
                 </div>
             </div>
         </div>
@@ -426,6 +426,21 @@
                 <div class="cp-circle blue" onclick="chooseUnoColor('blue')"></div>
                 <div class="cp-circle green" onclick="chooseUnoColor('green')"></div>
                 <div class="cp-circle yellow" onclick="chooseUnoColor('yellow')"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-mood-modal" style="display:none;">
+        <div class="custom-mood-box">
+            <div class="emoji-header">✨</div>
+            <h3 class="mood-modal-title">Ton mood actuel ?</h3>
+            <p class="mood-modal-desc">Dis à l'autre ce que tu ressens...</p>
+            
+            <input type="text" id="custom-mood-input" class="input-field mood-input" placeholder="Ex: Je pense à toi..." maxlength="30" autocomplete="off">
+            
+            <div class="mood-actions">
+                <button onclick="closeCustomMood()" class="btn-action neutral-btn">Annuler</button>
+                <button onclick="confirmCustomMood()" class="btn-action pink-btn">Valider</button>
             </div>
         </div>
     </div>
