@@ -1289,6 +1289,18 @@
             <div style="margin-top:15px; font-size:0.8rem; color:var(--text-sub); cursor:pointer; text-decoration:underline;" onclick="resetCycleFull()">C'est le 1er jour de mes règles (J-1)</div>
         </div>
     </div>
+
+    <div id="jackpot-modal" onclick="this.style.display='none'" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:20000; justify-content:center; align-items:center; flex-direction:column; cursor:pointer;">
+    
+        <div style="background:white; padding:15px 15px 50px 15px; border-radius:5px; transform:rotate(-3deg); animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <img src="https://via.placeholder.com/300x400?text=NOUS+<3" style="width:280px; height:auto; display:block; border:1px solid #ddd;">
+            <div style="font-family:'Dancing Script'; font-size:1.8rem; color:#333; text-align:center; margin-top:15px;">
+                Jackpot mon amour ! ❤️
+            </div>
+        </div>
+        
+        <div style="color:white; margin-top:20px; font-size:0.9rem; opacity:0.8;">(Tape pour fermer)</div>
+    </div>
     
 
     <script type="module">
@@ -3271,13 +3283,11 @@
             // Nettoyage après 1 seconde
             setTimeout(() => heart.remove(), 1000);
         });
-        // EASTER EGG 3 : Secret du Titre
+        // EASTER EGG : JACKPOT PHOTO
         let titleClicks = 0;
         let titleTimer = null;
         
-        // Trouve ton élément h1 ou le header et ajoute onclick="clickTitle()"
-        // Dans le HTML : <h1 ... onclick="clickTitle()">Love Travel</h1>
-        
+        // Assure-toi que ton <h1 class="app-title"> a bien onclick="clickTitle()" dans le HTML !
         window.clickTitle = function() {
             titleClicks++;
             
@@ -3287,14 +3297,56 @@
             
             // Si 5 clics atteints
             if (titleClicks === 5) {
-                // JACKPOT !
-                confetti({ particleCount: 200, spread: 100, origin: { y: 0.2 } });
+                // 1. Confettis
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.3 }, colors:['#FFD700', '#ff4b6e'] });
                 
-                // Optionnel : Jouer un petit son ou afficher une photo dossier
-                showAlert("JACKPOT AMOUR ! 🎰", "Tu as trouvé le passage secret ! Je t'aime plus que tout ❤️", "💎");
+                // 2. Ouvrir la photo
+                document.getElementById('jackpot-modal').style.display = 'flex';
+                
+                // 3. Vibration
+                if(navigator.vibrate) navigator.vibrate([100,50,100,50,500]);
                 
                 titleClicks = 0; // Reset
             }
+        }
+
+        // NOTIFICATION BATTERIE FAIBLE
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(function(battery) {
+                // On vérifie au chargement
+                checkBattery(battery.level);
+                // Et si ça change
+                battery.addEventListener('levelchange', function() { checkBattery(this.level); });
+            });
+        }
+        
+        function checkBattery(level) {
+            // Si batterie < 20% et qu'on n'a pas déjà prévenu
+            if (level < 0.2 && !sessionStorage.getItem('lowBatMsg')) {
+                showAlert("Batterie Faible 🪫", "Ton téléphone est fatigué, mais mon amour pour toi est à 100% ! ❤️", "⚡️");
+                sessionStorage.setItem('lowBatMsg', 'true'); // Pour ne pas le dire 10 fois
+            }
+        }
+
+        // GESTION APPUI LONG SUR AVATAR
+        // Ajoute l'ID 'my-avatar' sur ton image de profil dans le HTML
+        const avatar = document.getElementById('my-avatar'); // Assure-toi d'avoir mis id="my-avatar" sur ta photo
+        
+        if (avatar) {
+            let pressTimer;
+        
+            avatar.addEventListener('touchstart', () => {
+                pressTimer = setTimeout(() => {
+                    // Action après 1 seconde d'appui
+                    if(navigator.vibrate) navigator.vibrate(500);
+                    confetti({ particleCount: 30, spread: 50, origin: { x: currentUser==='fr'?0.2:0.8, y: 0.1 } });
+                    showAlert("Hé ! 😂", "Arrête de me chatouiller !", "🤭");
+                }, 800);
+            });
+        
+            avatar.addEventListener('touchend', () => {
+                clearTimeout(pressTimer);
+            });
         }
 
     </script>
