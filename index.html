@@ -3340,13 +3340,13 @@
             }
         }
 
-        // GESTION APPUI LONG SUR AVATAR (Chatouilleux & Sans Menu Système)
+        // GESTION APPUI LONG SUR AVATAR (Chatouille sur L'AUTRE)
         document.querySelectorAll('.chatouille-img').forEach(img => {
             let pressTimer;
         
-            // 1. BLOQUER LE MENU CONTEXTUEL (La correction est ici)
+            // 1. BLOQUER LE MENU CONTEXTUEL (Sur les deux, pour faire propre)
             img.addEventListener('contextmenu', (e) => {
-                e.preventDefault(); // Interdit le clic droit ou menu long
+                e.preventDefault(); 
                 e.stopPropagation();
                 return false;
             });
@@ -3354,23 +3354,31 @@
             // Fonction qui déclenche la chatouille
             const triggerTickle = () => {
                 const role = img.getAttribute('data-role');
-                if (role !== currentUser) return; // Uniquement sur MON avatar
+                
+                // --- CORRECTION ICI ---
+                // Si c'est MON avatar, on ne fait rien (on ne se chatouille pas soi-même)
+                if (role === currentUser) return; 
         
+                // Si on arrive ici, c'est qu'on touche l'avatar de l'AUTRE
                 if(navigator.vibrate) navigator.vibrate(500);
                 
-                // Confettis positionnés sur l'avatar
+                // Confettis sur l'avatar visé
                 const rect = img.getBoundingClientRect();
                 const xRatio = (rect.left + rect.width/2) / window.innerWidth;
                 const yRatio = (rect.top + rect.height/2) / window.innerHeight;
                 
                 confetti({ particleCount: 30, spread: 50, origin: { x: xRatio, y: yRatio } });
-                showAlert("Hé ! 😂", "Arrête de me chatouiller !", "🤭");
+                
+                // Message adapté (C'est l'autre qui parle)
+                const targetName = role === 'fr' ? 'Théo' : 'Elise';
+                showAlert("Guili Guili ! 👐", `${targetName} est très chatouilleux(se) !`, "😂");
+                
+                // Optionnel : Tu peux aussi envoyer une notif à l'autre ici avec sendNtfy() !
             };
         
             // TACTILE (Mobile)
             img.addEventListener('touchstart', (e) => {
-                // e.preventDefault(); // Optionnel : Décommente si ça scroll quand tu appuies
-                pressTimer = setTimeout(triggerTickle, 800);
+                pressTimer = setTimeout(triggerTickle, 800); // Appui long de 0.8s
             });
             img.addEventListener('touchend', () => clearTimeout(pressTimer));
             img.addEventListener('touchmove', () => clearTimeout(pressTimer));
