@@ -404,6 +404,14 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 .cp-circle.blue { background: var(--uno-blue); }
 .cp-circle.green { background: var(--uno-green); }
 .cp-circle.yellow { background: var(--uno-yellow); }
+#custom-mood-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 15000; justify-content: center; align-items: center; animation: fadeIn 0.3s ease; }
+.custom-mood-box { background: var(--bg-card); width: 85%; max-width: 320px; padding: 25px; border-radius: 25px; border: 1px solid var(--border); text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.9); animation: popIn 0.3s forwards; }
+.emoji-header { font-size: 3rem; margin-bottom: 10px; animation: float 3s infinite ease-in-out; }
+.mood-modal-title { font-family: 'Pacifico', cursive; color: var(--text-main); margin: 0 0 5px 0; font-size: 1.5rem; }
+.mood-modal-desc { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 20px; }
+.mood-input { width: 100%; background: var(--input-bg); border: 2px solid var(--border); text-align: center; font-size: 1.1rem; padding: 15px; border-radius: 15px; margin-bottom: 20px; color: var(--text-main); transition: 0.3s; }
+.mood-input:focus { border-color: var(--pink); box-shadow: 0 0 0 4px rgba(255, 158, 181, 0.2); }
+.mood-actions { display: flex; gap: 10px; }
 
 /* --- ANIMATIONS GLOBALES --- */
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
@@ -421,6 +429,7 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 .float-heart { position: fixed; font-size: 2rem; pointer-events: none; animation: floatUp 1s ease-out forwards; z-index: 9999; }
 @keyframes floatUp { 0% { transform: scale(0.5) translateY(0); opacity: 1; } 100% { transform: scale(1.5) translateY(-100px); opacity: 0; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* --- RESPONSIVE --- */
 @media (max-width: 360px) {
