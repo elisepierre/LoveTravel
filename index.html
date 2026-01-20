@@ -1215,7 +1215,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v82 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v83 • janvier 2026</div>
         </div>
     </div>
 
@@ -1352,6 +1352,8 @@
 
         // --- GESTION EVENEMENTS (V59) ---
         const events = [
+            { d: 20, m: 1, type: 'easter' },
+            
             { d: 7, m: 3, type: 'bday', name: "Théo", age: 21 },
             { d: 24, m: 4, type: 'bday', name: "Elise", age: 24 },
             { d: 6, m: 4, type: 'easter' },
@@ -1564,6 +1566,7 @@
             let suffix = "";
             if (d === 14 && m === 2) suffix = "_love";
             else if (d === 6 && m === 4) suffix = "_easter";
+            else if (d === 20 && m === 1) suffix = "_easter";
             else if (d === 7 && m === 3 && role === 'fr') suffix = "_hb";
             else if (d === 24 && m === 4 && role === 'tw') suffix = "_hb";
             return `MOOD/${role === 'fr' ? 'theo' : 'elise'}_${outfitId}${suffix}.png`;
