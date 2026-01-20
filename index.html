@@ -973,6 +973,18 @@
             100% { transform: scale(1.5) translateY(-100px); opacity: 0; }
         }
 
+        /* Bloquer le menu par défaut sur les avatars */
+        .chatouille-img {
+            -webkit-touch-callout: none; /* Indispensable pour iOS */
+            -webkit-user-select: none;   /* Safari */
+            -khtml-user-select: none;
+            -moz-user-select: none;      /* Firefox */
+            -ms-user-select: none;       /* IE/Edge */
+            user-select: none;           /* Standard */
+            -webkit-user-drag: none;     /* Empêche de glisser l'image */
+            touch-action: manipulation;  /* Améliore la réactivité */
+        }
+
     </style>
 </head>
 <body>
@@ -1228,7 +1240,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v83 • janvier 2026</div>
+            <div style="font-size:0.7rem;color:var(--text-sub);margin-top:10px;">Love Travel v85 • janvier 2026</div>
         </div>
     </div>
 
@@ -1293,7 +1305,7 @@
     <div id="jackpot-modal" onclick="this.style.display='none'" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:20000; justify-content:center; align-items:center; flex-direction:column; cursor:pointer;">
     
         <div style="background:white; padding:15px 15px 50px 15px; border-radius:5px; transform:rotate(-3deg); animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-            <img src="https://via.placeholder.com/300x400?text=NOUS+<3" style="width:280px; height:auto; display:block; border:1px solid #ddd;">
+            <img src="icon.jpg" style="width:280px; height:auto; display:block; border:1px solid #ddd;">
             <div style="font-family:'Dancing Script'; font-size:1.8rem; color:#333; text-align:center; margin-top:15px;">
                 Jackpot mon amour ! ❤️
             </div>
@@ -3328,19 +3340,25 @@
             }
         }
 
-        /// GESTION APPUI LONG SUR AVATAR (Chatouilleux)
+        // GESTION APPUI LONG SUR AVATAR (Chatouilleux & Sans Menu Système)
         document.querySelectorAll('.chatouille-img').forEach(img => {
             let pressTimer;
         
+            // 1. BLOQUER LE MENU CONTEXTUEL (La correction est ici)
+            img.addEventListener('contextmenu', (e) => {
+                e.preventDefault(); // Interdit le clic droit ou menu long
+                e.stopPropagation();
+                return false;
+            });
+        
             // Fonction qui déclenche la chatouille
             const triggerTickle = () => {
-                // On vérifie si c'est bien MON avatar (pour ne pas chatouiller l'autre à distance)
                 const role = img.getAttribute('data-role');
-                if (role !== currentUser) return; // Si je clique sur l'autre, rien ne se passe (ou autre effet si tu veux)
+                if (role !== currentUser) return; // Uniquement sur MON avatar
         
                 if(navigator.vibrate) navigator.vibrate(500);
                 
-                // Confettis qui partent de l'avatar
+                // Confettis positionnés sur l'avatar
                 const rect = img.getBoundingClientRect();
                 const xRatio = (rect.left + rect.width/2) / window.innerWidth;
                 const yRatio = (rect.top + rect.height/2) / window.innerHeight;
@@ -3349,21 +3367,21 @@
                 showAlert("Hé ! 😂", "Arrête de me chatouiller !", "🤭");
             };
         
-            // Pour le TACTILE (Mobile)
+            // TACTILE (Mobile)
             img.addEventListener('touchstart', (e) => {
-                pressTimer = setTimeout(triggerTickle, 800); // 800ms d'appui
+                // e.preventDefault(); // Optionnel : Décommente si ça scroll quand tu appuies
+                pressTimer = setTimeout(triggerTickle, 800);
             });
             img.addEventListener('touchend', () => clearTimeout(pressTimer));
-            img.addEventListener('touchmove', () => clearTimeout(pressTimer)); // Si on bouge le doigt, ça annule
+            img.addEventListener('touchmove', () => clearTimeout(pressTimer));
         
-            // Pour la SOURIS (Ordi)
+            // SOURIS (Ordi)
             img.addEventListener('mousedown', () => {
                 pressTimer = setTimeout(triggerTickle, 800);
             });
             img.addEventListener('mouseup', () => clearTimeout(pressTimer));
             img.addEventListener('mouseleave', () => clearTimeout(pressTimer));
         });
-
     </script>
 </body>
 </html>
