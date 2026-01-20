@@ -313,7 +313,9 @@ window.updateMood = function(emoji, text, outfitId) {
     sendNtfy(`${emoji} ${text} (${getCurrentTime(currentUser)})`, "partly_sunny", "low");
 }
 
-window.customMood = function() { const text = prompt("Ta phrase :"); if(text) updateMood("✨", text, 5); }
+window.openCustomMood = function() { const m=document.getElementById('custom-mood-modal'), i=document.getElementById('custom-mood-input'); m.style.display='flex'; i.value=""; setTimeout(()=>i.focus(),100); i.onkeydown=(e)=>{if(e.key==='Enter')confirmCustomMood()}; }
+window.closeCustomMood = function() { document.getElementById('custom-mood-modal').style.display = 'none'; }
+window.confirmCustomMood = function() { const i=document.getElementById('custom-mood-input'), t=i.value.trim(); if(t){ updateMood("✨",t,5); closeCustomMood(); if(navigator.vibrate)navigator.vibrate(50); } else { i.style.border="2px solid red"; setTimeout(()=>i.style.border="2px solid var(--border)",500); } }
 
 /* --- 7. CYCLE WIDGET --- */
 let currentCycleDay = 1;
