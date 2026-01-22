@@ -252,9 +252,9 @@ body.dark-mode .todo-item.done { background: #1f1f1f; }
 /* --- JEU: PENDU --- */
 #pendu-canvas { display: block; margin: 0 auto 10px auto; border-bottom: 2px solid var(--text-main); width: 200px; height: 150px; }
 .pendu-word { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin: 15px 0; color: var(--text-main); text-align: center; }
-#pendu-setup { display: flex !important; flex-direction: column !important; align-items: center !important; gap: 15px !important; width: 100% !important; margin-top: 20px !important; }
-#pendu-secret { width: 80% !important; text-align: center !important; margin: 0 !important; }
-.pendu-btn { width: 80% !important; margin: 0 !important; display: block !important; }
+#pendu-setup { display: block !important; width: 100% !important; text-align: center !important; margin-top: 20px !important; }
+#pendu-secret { display: block !important; width: 80% !important; margin: 0 auto 15px auto !important; text-align: center !important; }
+.pendu-btn { display: block !important; width: 80% !important; margin: 0 auto !important; float: none !important; }
 .keyboard { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 15px; }
 .key-btn { width: 30px; height: 35px; border: 1px solid var(--border); border-radius: 5px; background: white; cursor: pointer; font-weight: bold; color: #333; }
 .key-btn:disabled { opacity: 0.3; background: #ddd; }
