@@ -704,94 +704,88 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 }
 
 /* --- RESTAURANTS --- */
+/* --- RESTAURANTS --- */
 .resto-item {
     background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 15px;
     margin-bottom: 15px;
-    position: relative;
-    transition: 0.2s;
+    overflow: hidden; /* Important pour l'accordéon */
+    transition: 0.3s;
+}
+
+/* La partie visible tout le temps (Header) */
+.resto-main-view {
+    padding: 15px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    cursor: pointer; /* Montre qu'on peut cliquer */
 }
+
 .resto-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-.resto-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+
+.resto-info { display: flex; align-items: center; gap: 10px; }
 .resto-icon {
-    font-size: 1.5rem;
-    background: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    font-size: 1.5rem; background: white; width: 40px; height: 40px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0;
 }
-.resto-name {
-    font-weight: 800;
-    color: var(--text-main);
-    font-size: 1rem;
+.resto-name { font-weight: 800; color: var(--text-main); font-size: 1rem; }
+
+/* Date de visite */
+.resto-date-badge {
+    font-size: 0.7rem; color: var(--text-sub);
+    background: rgba(0,0,0,0.05); padding: 2px 8px; border-radius: 10px;
+    align-self: flex-start; display: inline-block;
 }
+
 .resto-map-btn {
-    background: #e8f5e9;
-    color: #2ecc71;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    background: #e8f5e9; color: #2ecc71; border: none;
+    padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;
+    text-decoration: none; display: flex; align-items: center; gap: 5px;
+    z-index: 2; /* Pour cliquer dessus sans déclencher l'accordéon */
 }
-.resto-map-btn:hover { background: #d5f5e3; }
 
-.resto-actions {
+/* Zone cachée (Détails & Commentaires) */
+.resto-details {
+    display: none; /* Caché par défaut */
+    padding: 0 15px 15px 15px;
     border-top: 1px dashed var(--border);
-    padding-top: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: rgba(255,255,255,0.3);
+    animation: slideDown 0.3s ease;
 }
-.btn-validate-resto {
-    background: linear-gradient(135deg, var(--blue), var(--pink));
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
-}
+.resto-details.open { display: block; }
 
-/* Ratings Resto */
+/* Notes centrées */
 .resto-ratings {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 5px;
+    display: flex; gap: 20px; justify-content: center; /* Centre horizontalement */
+    margin: 15px 0;
 }
-.user-rate-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-}
-.rate-label { font-size: 0.65rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+.user-rate-col { display: flex; flex-direction: column; align-items: center; } /* Centre verticalement */
+.rate-label { font-size: 0.65rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
 .fr-col { color: var(--blue-dark); }
 .tw-col { color: var(--pink-dark); }
+
+/* Zone commentaires */
+.comments-section { display: flex; flex-direction: column; gap: 10px; }
+.comment-box {
+    background: white; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
+    font-size: 0.85rem; position: relative;
+}
+.comment-box h4 { margin: 0 0 5px 0; font-size: 0.75rem; color: var(--text-sub); text-transform: uppercase; }
+.comment-input {
+    width: 100%; border: none; font-family: 'Outfit'; resize: none;
+    background: transparent; outline: none; color: var(--text-main);
+}
+.btn-validate-resto {
+    background: linear-gradient(135deg, var(--blue), var(--pink)); color: white;
+    border: none; padding: 10px; border-radius: 20px; font-weight: bold; width: 100%; margin-top: 10px;
+}
 
 /* --- ANIMATIONS GLOBALES --- */
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
