@@ -252,7 +252,28 @@ body.dark-mode .todo-item.done { background: #1f1f1f; }
 /* --- JEU: PENDU --- */
 #pendu-canvas { display: block; margin: 0 auto 10px auto; border-bottom: 2px solid var(--text-main); width: 200px; height: 150px; }
 .pendu-word { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin: 15px 0; color: var(--text-main); text-align: center; }
-#pendu-setup {display: flex; flex-direction: column;align-items: center;gap: 15px; margin-top: 20px;width: 100%;}
+/* --- FIX PENDU FINAL --- */
+#pendu-setup {
+    /* Pas de !important sur display, sinon le jeu ne peut pas le cacher */
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Le bouton généré par le JS aura cette classe */
+.pendu-btn-js {
+    width: 80%;
+    padding: 10px;
+    background: var(--blue-dark);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
 #pendu-secret {width: 80% !important;text-align: center !important;margin: 0 !important;}
 .pendu-btn {width: 80% !important;margin: 0 !important;display: block !important;}
 .keyboard { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 15px; }
