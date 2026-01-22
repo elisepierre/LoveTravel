@@ -1304,63 +1304,56 @@ function scrollToBottom() {
     div.scrollTop = div.scrollHeight;
 }
 
+/* --- GESTION CHAT (AVEC MODIF/SUPP) --- */
+
+let chatMsgIdToEdit = null; // Stocke l'ID du message ciblé
+let chatMsgTextToEdit = null; // Stocke le texte actuel
+
 function initChatListener() {
-    // On écoute les messages (triés par date)
     const q = query(collection(db, "chat"), orderBy("timestamp", "asc")); 
     
     chatUnsubscribe = onSnapshot(q, (snapshot) => {
         const div = document.getElementById('chat-messages');
-        let html = "";
+        div.innerHTML = ""; // On vide pour tout re-rendre proprement
         
+        // Si aucun message
+        if (snapshot.empty) {
+            div.innerHTML = '<div class="chat-placeholder">C\'est calme ici...<br>Lance la conversation ! 💬</div>';
+            return;
+        }
+
         snapshot.forEach(doc => {
             const msg = doc.data();
+            const msgId = doc.id;
             const isMe = msg.sender === currentUser;
             
-            // --- LOGIQUE DOUBLE HORAIRE ---
+            // --- HORAIRES (Ton code précédent) ---
             let timeDisplay = "";
-            
             if(msg.timestamp) {
                 const date = msg.timestamp.toDate();
-                
-                // 1. Définir les fuseaux horaires
                 const myZone = currentUser === 'fr' ? 'Europe/Paris' : 'Asia/Taipei';
                 const otherZone = currentUser === 'fr' ? 'Asia/Taipei' : 'Europe/Paris';
-                
-                // 2. Formater l'heure locale (Moi)
-                const myTime = date.toLocaleTimeString('fr-FR', {
-                    timeZone: myZone, 
-                    hour:'2-digit', 
-                    minute:'2-digit'
-                });
-
-                // 3. Formater l'heure distante (L'autre)
-                const otherTime = date.toLocaleTimeString('fr-FR', {
-                    timeZone: otherZone, 
-                    hour:'2-digit', 
-                    minute:'2-digit'
-                });
-
-                // 4. Construction de l'affichage : "MonHeure (AutreHeure)"
+                const myTime = date.toLocaleTimeString('fr-FR', {timeZone: myZone, hour:'2-digit', minute:'2-digit'});
+                const otherTime = date.toLocaleTimeString('fr-FR', {timeZone: otherZone, hour:'2-digit', minute:'2-digit'});
                 timeDisplay = `${myTime} <span style="font-size:0.85em; opacity:0.7;">(${otherTime})</span>`;
             }
-            // -----------------------------
 
-            const bubbleClass = isMe ? `msg-me ${currentUser}` : "msg-other";
+            // Création de la bulle
+            const bubble = document.createElement('div');
+            bubble.className = `msg-bubble ${isMe ? `msg-me ${currentUser}` : "msg-other"}`;
+            bubble.innerHTML = `${msg.text} <span class="msg-time">${timeDisplay}</span>`;
             
-            html += `
-                <div class="msg-bubble ${bubbleClass}">
-                    ${msg.text}
-                    <span class="msg-time">${timeDisplay}</span>
-                </div>
-            `;
+            // --- AJOUT DU LONG PRESS (Uniquement sur tes messages) ---
+            if (isMe) {
+                addLongPressEvent(bubble, msgId, msg.text);
+            }
+
+            div.appendChild(bubble);
         });
         
-        if (html === "") html = '<div class="chat-placeholder">C\'est calme ici...<br>Lance la conversation ! 💬</div>';
-        
-        div.innerHTML = html;
         scrollToBottom();
 
-        // Gestion du badge de notification
+        // Badge Notif
         if (!isChatOpen && snapshot.docChanges().some(change => change.type === 'added')) {
             const lastDoc = snapshot.docs[snapshot.docs.length - 1];
             if (lastDoc && lastDoc.data().sender !== currentUser) {
@@ -1370,6 +1363,74 @@ function initChatListener() {
             }
         }
     });
+}
+
+// Fonction utilitaire pour gérer l'appui long (Mobile + PC)
+function addLongPressEvent(element, id, text) {
+    let timer;
+
+    // Pour PC (Clic droit)
+    element.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        openChatOptions(id, text);
+    });
+
+    // Pour Mobile (Touch)
+    const startPress = () => {
+        element.classList.add('pressing'); // Feedback visuel
+        timer = setTimeout(() => {
+            element.classList.remove('pressing');
+            if(navigator.vibrate) navigator.vibrate(50); // Petite vibration
+            openChatOptions(id, text);
+        }, 600); // 600ms d'appui
+    };
+
+    const cancelPress = () => {
+        element.classList.remove('pressing');
+        clearTimeout(timer);
+    };
+
+    element.addEventListener('touchstart', startPress);
+    element.addEventListener('touchend', cancelPress);
+    element.addEventListener('touchmove', cancelPress); // Annule si on scroll
+    element.addEventListener('mousedown', startPress); // Pour tester à la souris
+    element.addEventListener('mouseup', cancelPress);
+    element.addEventListener('mouseleave', cancelPress);
+}
+
+// --- LOGIQUE MODAL ACTIONS ---
+
+window.openChatOptions = function(id, text) {
+    chatMsgIdToEdit = id;
+    chatMsgTextToEdit = text;
+    document.getElementById('chat-options-modal').style.display = 'flex';
+}
+
+window.closeChatOptions = function() {
+    document.getElementById('chat-options-modal').style.display = 'none';
+    chatMsgIdToEdit = null;
+    chatMsgTextToEdit = null;
+}
+
+window.deleteMsgAction = async function() {
+    if(confirm("Supprimer ce message pour de bon ?")) {
+        await deleteDoc(doc(db, "chat", chatMsgIdToEdit));
+        closeChatOptions();
+    }
+}
+
+window.editMsgAction = async function() {
+    // On ferme le modal d'options
+    closeChatOptions();
+    
+    // On demande le nouveau texte (simple prompt pour l'instant)
+    const newText = prompt("Modifier le message :", chatMsgTextToEdit);
+    
+    if (newText !== null && newText.trim() !== "" && newText !== chatMsgTextToEdit) {
+        await updateDoc(doc(db, "chat", chatMsgIdToEdit), {
+            text: newText.trim()
+        });
+    }
 }
 // Lancer l'écouteur au démarrage
 initChatListener();
