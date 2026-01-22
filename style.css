@@ -703,6 +703,96 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     cursor: pointer;
 }
 
+/* --- RESTAURANTS --- */
+.resto-item {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 15px;
+    position: relative;
+    transition: 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.resto-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.resto-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.resto-icon {
+    font-size: 1.5rem;
+    background: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.resto-name {
+    font-weight: 800;
+    color: var(--text-main);
+    font-size: 1rem;
+}
+.resto-map-btn {
+    background: #e8f5e9;
+    color: #2ecc71;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.resto-map-btn:hover { background: #d5f5e3; }
+
+.resto-actions {
+    border-top: 1px dashed var(--border);
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.btn-validate-resto {
+    background: linear-gradient(135deg, var(--blue), var(--pink));
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* Ratings Resto */
+.resto-ratings {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 5px;
+}
+.user-rate-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+.rate-label { font-size: 0.65rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+.fr-col { color: var(--blue-dark); }
+.tw-col { color: var(--pink-dark); }
+
 /* --- ANIMATIONS GLOBALES --- */
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
