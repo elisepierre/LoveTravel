@@ -1309,11 +1309,6 @@ function scrollToBottom() {
 let chatMsgIdToEdit = null; // Stocke l'ID du message ciblé
 let chatMsgTextToEdit = null; // Stocke le texte actuel
 
-/* --- GESTION CHAT (VERSION RAPIDE & INLINE) --- */
-
-let chatMsgIdToEdit = null;
-let chatMsgTextToEdit = null;
-
 function initChatListener() {
     const q = query(collection(db, "chat"), orderBy("timestamp", "asc")); 
     
