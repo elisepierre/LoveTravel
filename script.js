@@ -1318,12 +1318,13 @@ window.addRestaurant = function() {
     addDoc(collection(db, "restaurants"), {
         name: name,
         type: type,
-        link: link,
-        status: 'wish', // Par défaut dans "À tester"
+        link: link, // Si vide, ce sera une chaîne vide
+        status: 'wish',
         addedBy: currentUser,
         created: serverTimestamp(),
-        rating_fr: 0,
-        rating_tw: 0
+        rating_fr: 0, rating_tw: 0,
+        comment_fr: "", comment_tw: "",
+        eatenDate: null
     });
 
     document.getElementById('resto-name').value = "";
@@ -1331,11 +1332,8 @@ window.addRestaurant = function() {
     sendNtfy(`🍽️ Nouveau resto ajouté : ${name} !`, "fries", "low");
 }
 
-// 2. Changer d'onglet
 window.switchRestoTab = function(tab) {
     currentRestoTab = tab;
-    
-    // Style des onglets
     const tWish = document.getElementById('tab-resto-wish');
     const tDone = document.getElementById('tab-resto-done');
     
@@ -1349,24 +1347,50 @@ window.switchRestoTab = function(tab) {
     renderRestos();
 }
 
-// 3. Passer en "Validé" (On y a mangé)
+// 3. Validation avec Date
 window.validateResto = function(id) {
-    if(confirm("Vous avez testé ce resto ? Bon appétit ! 😋")) {
-        updateDoc(doc(db, "restaurants", id), { status: 'done', eatenDate: serverTimestamp() });
+    // On demande la date (par défaut aujourd'hui)
+    const today = new Date().toISOString().split('T')[0];
+    const dateVal = prompt("Quelle date on y a mangé ? (AAAA-MM-JJ)", today);
+    
+    if(dateVal) {
+        updateDoc(doc(db, "restaurants", id), { 
+            status: 'done', 
+            eatenDate: dateVal // On stocke la date choisie
+        });
         confetti({ particleCount: 100, colors: ['#ff9eb5', '#8ecae6'] });
     }
 }
 
-// 4. Noter un resto (Même logique que les livres)
+// 4. Système de notation et commentaires
 window.rateResto = function(id, role, rating) {
     updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating });
 }
 
-window.deleteResto = function(id) {
+window.saveRestoComment = function(id, role, text) {
+    updateDoc(doc(db, "restaurants", id), { [`comment_${role}`]: text });
+}
+
+window.deleteResto = function(id, e) {
+    e.stopPropagation(); // Empêche d'ouvrir l'accordéon quand on supprime
     if(confirm("Supprimer ce resto ?")) deleteDoc(doc(db, "restaurants", id));
 }
 
-// 5. Charger et Afficher
+// 5. Accordéon (Un seul ouvert à la fois)
+window.toggleRestoDetails = function(id) {
+    const details = document.getElementById(`details-${id}`);
+    const isOpen = details.classList.contains('open');
+
+    // On ferme TOUS les détails d'abord
+    document.querySelectorAll('.resto-details').forEach(el => el.classList.remove('open'));
+
+    // Si celui-ci n'était pas ouvert, on l'ouvre
+    if(!isOpen) {
+        details.classList.add('open');
+    }
+}
+
+// 6. Charger et Afficher
 onSnapshot(query(collection(db, "restaurants"), orderBy("created", "desc")), (snapshot) => {
     allRestos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
     renderRestos();
@@ -1386,30 +1410,52 @@ function renderRestos() {
     }
 
     filtered.forEach(r => {
-        // Lien Maps ou recherche auto
-        const mapUrl = r.link ? r.link : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.name + " restaurant")}`;
+        // --- LOGIQUE D'AFFICHAGE ---
         
-        // Génération des étoiles
+        // 1. Bouton Maps (Seulement si lien existe)
+        let mapBtnHtml = "";
+        if (r.link && r.link.trim() !== "") {
+            mapBtnHtml = `<a href="${r.link}" target="_blank" class="resto-map-btn" onclick="event.stopPropagation()">📍 Maps</a>`;
+        }
+
+        // 2. Date (Seulement si validé)
+        let dateHtml = "";
+        if (currentRestoTab === 'done' && r.eatenDate) {
+            // Formatage de la date (AAAA-MM-JJ -> JJ/MM/AAAA)
+            const d = new Date(r.eatenDate);
+            const dateStr = d.toLocaleDateString('fr-FR');
+            dateHtml = `<div class="resto-date-badge">Le ${dateStr}</div>`;
+        }
+
+        // 3. Etoiles
         const makeStars = (role, currentRating) => {
             let html = ''; 
             for(let i=1; i<=5; i++) { 
                 const filled = i <= currentRating ? 'filled' : ''; 
-                const action = role === currentUser ? `onclick="rateResto('${r.id}', '${role}', ${i})"` : ''; 
-                const cursor = role === currentUser ? 'pointer' : 'default';
-                html += `<span class="star ${filled}" style="font-size:1rem; cursor:${cursor}" ${action}>★</span>`; 
+                // On permet de noter uniquement dans l'onglet "Done" et si c'est notre rôle
+                const canRate = currentRestoTab === 'done' && role === currentUser;
+                const action = canRate ? `onclick="rateResto('${r.id}', '${role}', ${i})"` : ''; 
+                const cursor = canRate ? 'pointer' : 'default';
+                html += `<span class="star ${filled}" style="font-size:1.1rem; cursor:${cursor}" ${action}>★</span>`; 
             }
             return html;
         };
 
-        // Contenu selon l'onglet
-        let footerContent = "";
+        // 4. Contenu déroulant (Différent selon Wish ou Done)
+        let detailsContent = "";
         
         if (currentRestoTab === 'wish') {
-            // Bouton "On a testé !"
-            footerContent = `<button onclick="validateResto('${r.id}')" class="btn-validate-resto">On a mangé ici ! 😋</button>`;
+            detailsContent = `<button onclick="validateResto('${r.id}')" class="btn-validate-resto">On a mangé ici ! 😋</button>`;
         } else {
-            // Zone de notation
-            footerContent = `
+            // Zone Commentaires & Notes
+            const commFr = r.comment_fr || "";
+            const commTw = r.comment_tw || "";
+            
+            // On désactive l'édition du commentaire de l'autre
+            const disableFr = currentUser === 'fr' ? '' : 'readonly';
+            const disableTw = currentUser === 'tw' ? '' : 'readonly';
+
+            detailsContent = `
                 <div class="resto-ratings">
                     <div class="user-rate-col fr-col">
                         <span class="rate-label">Théo</span>
@@ -1421,31 +1467,47 @@ function renderRestos() {
                         <div class="star-rating">${makeStars('tw', r.rating_tw)}</div>
                     </div>
                 </div>
+
+                <div class="comments-section">
+                    <div class="comment-box" style="border-left: 3px solid var(--blue);">
+                        <h4>Théo 👨🏻</h4>
+                        <textarea class="comment-input" placeholder="L'avis du chef..." rows="2" ${disableFr} onchange="saveRestoComment('${r.id}', 'fr', this.value)">${commFr}</textarea>
+                    </div>
+                    <div class="comment-box" style="border-left: 3px solid var(--pink);">
+                        <h4>Elise 👩🏻</h4>
+                        <textarea class="comment-input" placeholder="La critique gastro..." rows="2" ${disableTw} onchange="saveRestoComment('${r.id}', 'tw', this.value)">${commTw}</textarea>
+                    </div>
+                </div>
             `;
         }
 
+        // --- CONSTRUCTION HTML ---
+        // On met onclick sur la vue principale pour dérouler
         list.innerHTML += `
             <div class="resto-item">
-                <div class="resto-header">
-                    <div class="resto-info">
-                        <div class="resto-icon">${r.type || '🍽️'}</div>
-                        <div class="resto-name">${r.name}</div>
+                <div class="resto-main-view" onclick="toggleRestoDetails('${r.id}')">
+                    <div class="resto-header">
+                        <div class="resto-info">
+                            <div class="resto-icon">${r.type || '🍽️'}</div>
+                            <div>
+                                <div class="resto-name">${r.name}</div>
+                                ${dateHtml}
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:5px; align-items:center;">
+                            ${mapBtnHtml}
+                            <button onclick="deleteResto('${r.id}', event)" style="background:none; border:none; color:#ffadad; font-size:1rem; cursor:pointer; padding:5px;">✕</button>
+                        </div>
                     </div>
-                    <a href="${mapUrl}" target="_blank" class="resto-map-btn">📍 Maps</a>
                 </div>
                 
-                <div class="resto-actions">
-                    ${footerContent}
+                <div class="resto-details" id="details-${r.id}">
+                    ${detailsContent}
                 </div>
-                
-                <button onclick="deleteResto('${r.id}')" style="position:absolute; top:5px; right:5px; background:none; border:none; color:#ffadad; font-size:0.8rem; cursor:pointer;">✕</button>
             </div>
         `;
     });
-}
-
-// Initialiser l'onglet par défaut
-switchRestoTab('wish');        
+}      
 
 /* --- GESTION CHAT (AVEC MODIF/SUPP) --- */
 
