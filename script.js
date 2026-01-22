@@ -1303,6 +1303,150 @@ function scrollToBottom() {
     div.scrollTop = div.scrollHeight;
 }
 
+/* --- 14. RESTAURANTS --- */
+let currentRestoTab = 'wish'; // 'wish' ou 'done'
+let allRestos = [];
+
+// 1. Ajouter un resto
+window.addRestaurant = function() {
+    const name = document.getElementById('resto-name').value.trim();
+    const type = document.getElementById('resto-type').value;
+    const link = document.getElementById('resto-link').value.trim();
+
+    if(!name) return;
+
+    addDoc(collection(db, "restaurants"), {
+        name: name,
+        type: type,
+        link: link,
+        status: 'wish', // Par défaut dans "À tester"
+        addedBy: currentUser,
+        created: serverTimestamp(),
+        rating_fr: 0,
+        rating_tw: 0
+    });
+
+    document.getElementById('resto-name').value = "";
+    document.getElementById('resto-link').value = "";
+    sendNtfy(`🍽️ Nouveau resto ajouté : ${name} !`, "fries", "low");
+}
+
+// 2. Changer d'onglet
+window.switchRestoTab = function(tab) {
+    currentRestoTab = tab;
+    
+    // Style des onglets
+    const tWish = document.getElementById('tab-resto-wish');
+    const tDone = document.getElementById('tab-resto-done');
+    
+    if(tab === 'wish') {
+        tWish.classList.add('active'); tWish.style.background = 'var(--blue)'; tWish.style.color = 'white';
+        tDone.classList.remove('active'); tDone.style.background = 'var(--input-bg)'; tDone.style.color = 'var(--text-sub)';
+    } else {
+        tDone.classList.add('active'); tDone.style.background = 'var(--pink)'; tDone.style.color = 'white';
+        tWish.classList.remove('active'); tWish.style.background = 'var(--input-bg)'; tWish.style.color = 'var(--text-sub)';
+    }
+    renderRestos();
+}
+
+// 3. Passer en "Validé" (On y a mangé)
+window.validateResto = function(id) {
+    if(confirm("Vous avez testé ce resto ? Bon appétit ! 😋")) {
+        updateDoc(doc(db, "restaurants", id), { status: 'done', eatenDate: serverTimestamp() });
+        confetti({ particleCount: 100, colors: ['#ff9eb5', '#8ecae6'] });
+    }
+}
+
+// 4. Noter un resto (Même logique que les livres)
+window.rateResto = function(id, role, rating) {
+    updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating });
+}
+
+window.deleteResto = function(id) {
+    if(confirm("Supprimer ce resto ?")) deleteDoc(doc(db, "restaurants", id));
+}
+
+// 5. Charger et Afficher
+onSnapshot(query(collection(db, "restaurants"), orderBy("created", "desc")), (snapshot) => {
+    allRestos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+    renderRestos();
+});
+
+function renderRestos() {
+    const list = document.getElementById('resto-list');
+    list.innerHTML = "";
+    
+    const filtered = allRestos.filter(r => r.status === currentRestoTab);
+
+    if (filtered.length === 0) {
+        list.innerHTML = `<div style="text-align:center; color:var(--text-sub); font-style:italic; padding:20px;">
+            ${currentRestoTab === 'wish' ? "Le frigo est vide... Ajoute une adresse ! 🍕" : "Aucun festin mémorable pour l'instant..."}
+        </div>`;
+        return;
+    }
+
+    filtered.forEach(r => {
+        // Lien Maps ou recherche auto
+        const mapUrl = r.link ? r.link : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.name + " restaurant")}`;
+        
+        // Génération des étoiles
+        const makeStars = (role, currentRating) => {
+            let html = ''; 
+            for(let i=1; i<=5; i++) { 
+                const filled = i <= currentRating ? 'filled' : ''; 
+                const action = role === currentUser ? `onclick="rateResto('${r.id}', '${role}', ${i})"` : ''; 
+                const cursor = role === currentUser ? 'pointer' : 'default';
+                html += `<span class="star ${filled}" style="font-size:1rem; cursor:${cursor}" ${action}>★</span>`; 
+            }
+            return html;
+        };
+
+        // Contenu selon l'onglet
+        let footerContent = "";
+        
+        if (currentRestoTab === 'wish') {
+            // Bouton "On a testé !"
+            footerContent = `<button onclick="validateResto('${r.id}')" class="btn-validate-resto">On a mangé ici ! 😋</button>`;
+        } else {
+            // Zone de notation
+            footerContent = `
+                <div class="resto-ratings">
+                    <div class="user-rate-col fr-col">
+                        <span class="rate-label">Théo</span>
+                        <div class="star-rating">${makeStars('fr', r.rating_fr)}</div>
+                    </div>
+                    <div style="width:1px; background:var(--border);"></div>
+                    <div class="user-rate-col tw-col">
+                        <span class="rate-label">Elise</span>
+                        <div class="star-rating">${makeStars('tw', r.rating_tw)}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        list.innerHTML += `
+            <div class="resto-item">
+                <div class="resto-header">
+                    <div class="resto-info">
+                        <div class="resto-icon">${r.type || '🍽️'}</div>
+                        <div class="resto-name">${r.name}</div>
+                    </div>
+                    <a href="${mapUrl}" target="_blank" class="resto-map-btn">📍 Maps</a>
+                </div>
+                
+                <div class="resto-actions">
+                    ${footerContent}
+                </div>
+                
+                <button onclick="deleteResto('${r.id}')" style="position:absolute; top:5px; right:5px; background:none; border:none; color:#ffadad; font-size:0.8rem; cursor:pointer;">✕</button>
+            </div>
+        `;
+    });
+}
+
+// Initialiser l'onglet par défaut
+switchRestoTab('wish');        
+
 /* --- GESTION CHAT (AVEC MODIF/SUPP) --- */
 
 let chatMsgIdToEdit = null; // Stocke l'ID du message ciblé
