@@ -287,19 +287,23 @@
                         <button class="game-close-btn" onclick="toggleGame('pendu')">✕</button>
                     </div>
                     <canvas id="pendu-canvas" width="200" height="150"></canvas>
+                    
                     <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
                     <div id="pendu-status" class="status-msg">En attente...</div>
+                
+                    <div id="pendu-setup"></div>
                     
-                    <div id="pendu-setup">
-                        <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret">
-                        <button onclick="startPendu()" class="btn-action pendu-btn">Lancer</button>
-                    </div>
-                    
-                    <div id="pendu-restart-area" style="display:none;margin-top:10px;">
-                        <button onclick="startPenduSetup()" class="btn-action blue-bg full-width">Rejouer</button>
-                    </div>
+                    <div id="pendu-restart-area" style="display:none; margin-top:10px;"></div>
                     <div id="pendu-keyboard" class="keyboard" style="display:none;"></div>
                     <div class="history-box" id="pendu-history-list"></div>
+                    
+                    <div class="game-chat-section" id="chat-section-pendu">
+                        <div class="chat-window" id="chat-window-pendu"></div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chat-input-pendu" class="chat-input-mini" placeholder="Papoter..." onkeydown="if(event.key==='Enter') sendGameChat('pendu')">
+                            <button class="chat-send-btn" onclick="sendGameChat('pendu')">➤</button>
+                        </div>
+                    </div>
                 </div>
                 
                 <div id="p4-box" class="game-block">
