@@ -1305,9 +1305,8 @@ function scrollToBottom() {
 }
 
 function initChatListener() {
-    // On écoute les 50 derniers messages
+    // On écoute les messages (triés par date)
     const q = query(collection(db, "chat"), orderBy("timestamp", "asc")); 
-    // Note: Pour optimiser, tu pourrais ajouter limit(50) dans tes imports firestore au début du fichier
     
     chatUnsubscribe = onSnapshot(q, (snapshot) => {
         const div = document.getElementById('chat-messages');
@@ -1317,45 +1316,60 @@ function initChatListener() {
             const msg = doc.data();
             const isMe = msg.sender === currentUser;
             
-            // Format heure
-            let timeStr = "";
+            // --- LOGIQUE DOUBLE HORAIRE ---
+            let timeDisplay = "";
+            
             if(msg.timestamp) {
                 const date = msg.timestamp.toDate();
-                timeStr = date.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+                
+                // 1. Définir les fuseaux horaires
+                const myZone = currentUser === 'fr' ? 'Europe/Paris' : 'Asia/Taipei';
+                const otherZone = currentUser === 'fr' ? 'Asia/Taipei' : 'Europe/Paris';
+                
+                // 2. Formater l'heure locale (Moi)
+                const myTime = date.toLocaleTimeString('fr-FR', {
+                    timeZone: myZone, 
+                    hour:'2-digit', 
+                    minute:'2-digit'
+                });
+
+                // 3. Formater l'heure distante (L'autre)
+                const otherTime = date.toLocaleTimeString('fr-FR', {
+                    timeZone: otherZone, 
+                    hour:'2-digit', 
+                    minute:'2-digit'
+                });
+
+                // 4. Construction de l'affichage : "MonHeure (AutreHeure)"
+                timeDisplay = `${myTime} <span style="font-size:0.85em; opacity:0.7;">(${otherTime})</span>`;
             }
-            
-            // Classe CSS
+            // -----------------------------
+
             const bubbleClass = isMe ? `msg-me ${currentUser}` : "msg-other";
             
             html += `
                 <div class="msg-bubble ${bubbleClass}">
                     ${msg.text}
-                    <span class="msg-time">${timeStr}</span>
+                    <span class="msg-time">${timeDisplay}</span>
                 </div>
             `;
         });
         
-        // Si vide
         if (html === "") html = '<div class="chat-placeholder">C\'est calme ici...<br>Lance la conversation ! 💬</div>';
         
         div.innerHTML = html;
         scrollToBottom();
 
-        // Gestion de la notification (Badge rouge)
+        // Gestion du badge de notification
         if (!isChatOpen && snapshot.docChanges().some(change => change.type === 'added')) {
-            // On vérifie si le dernier message n'est pas de nous
             const lastDoc = snapshot.docs[snapshot.docs.length - 1];
             if (lastDoc && lastDoc.data().sender !== currentUser) {
                 unreadMessages++;
-                const badge = document.getElementById('chat-badge');
-                badge.classList.remove('hidden');
-                
-                // Petit son ou vibration discret
+                document.getElementById('chat-badge').classList.remove('hidden');
                 if(navigator.vibrate) navigator.vibrate([50, 50]);
             }
         }
     });
 }
-
 // Lancer l'écouteur au démarrage
 initChatListener();
