@@ -252,6 +252,8 @@ body.dark-mode .todo-item.done { background: #1f1f1f; }
 /* --- JEU: PENDU --- */
 #pendu-canvas { display: block; margin: 0 auto; border-bottom: 2px solid var(--text-main); margin-bottom: 10px; width: 200px; height: 150px; }
 .pendu-word { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin: 15px 0; color: var(--text-main); text-align: center; }
+#pendu-setup { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 15px; }
+#pendu-secret { text-align: center; width: 90%; }
 .keyboard { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
 .key-btn { width: 30px; height: 35px; border: 1px solid var(--border); border-radius: 5px; background: white; cursor: pointer; font-weight: bold; color: #333; }
 .key-btn:disabled { opacity: 0.3; background: #ddd; }
