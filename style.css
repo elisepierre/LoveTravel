@@ -787,6 +787,89 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     border: none; padding: 10px; border-radius: 20px; font-weight: bold; width: 100%; margin-top: 10px;
 }
 
+/* --- RESTO V2 STYLES --- */
+
+/* Sélecteur Emoji Food */
+.food-picker-container {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    scrollbar-width: none; /* Cache scrollbar Firefox */
+}
+.food-picker-container::-webkit-scrollbar { display: none; } /* Cache scrollbar Chrome */
+
+.food-option {
+    flex-shrink: 0;
+    width: 45px;
+    height: 45px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: 0.2s;
+    opacity: 0.6;
+    filter: grayscale(1);
+}
+.food-option.selected {
+    opacity: 1;
+    filter: grayscale(0);
+    border-color: var(--blue);
+    background: var(--input-bg);
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Modal Date Roulettes */
+.date-picker-wheel {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    justify-content: center;
+}
+.date-picker-wheel select {
+    padding: 10px;
+    font-size: 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    font-weight: bold;
+    color: var(--text-main);
+    outline: none;
+    text-align: center;
+    appearance: none; /* Enlève la flèche moche par défaut */
+}
+
+/* Galerie Resto */
+.resto-photo-btn {
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    width: fit-content;
+}
+.gallery-thumb {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+
 /* --- ANIMATIONS GLOBALES --- */
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
