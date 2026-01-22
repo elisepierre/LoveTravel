@@ -436,12 +436,7 @@ function renderPendu(game) {
     const mainColor = getComputedStyle(document.body).getPropertyValue('--blue-dark');
     const pinkColor = getComputedStyle(document.body).getPropertyValue('--pink-dark');
 
-    // GESTION CHAT
-    if(typeof renderGameChatUI === "function") {
-        renderGameChatUI('pendu', game.state === 'idle' ? null : (game.chat || []));
-    }
-
-    // DESSIN DU PENDU (inchangé)
+    // DESSIN DU PENDU
     ctx.clearRect(0, 0, 200, 150); ctx.lineWidth = 3; ctx.beginPath(); ctx.strokeStyle = mainColor;
     if (game.mistakes > 0) { ctx.moveTo(20, 140); ctx.lineTo(180, 140); }
     if (game.mistakes > 1) { ctx.moveTo(50, 140); ctx.lineTo(50, 20); }
@@ -459,18 +454,18 @@ function renderPendu(game) {
     ctx.stroke();
     if (game.mistakes > 10) { ctx.font = "14px Arial"; ctx.fillStyle = pinkColor; ctx.textAlign = "center"; ctx.fillText("x x", 130, 60); }
 
-    // ÉLÉMENTS DU DOM
+    // ÉLÉMENTS DOM
     const restartArea = document.getElementById('pendu-restart-area');
     const setupArea = document.getElementById('pendu-setup');
     const keyboard = document.getElementById('pendu-keyboard');
     const canvas = document.getElementById('pendu-canvas');
     const wordDisplay = document.getElementById('pendu-word-display');
 
-    // ÉTAT 1 : JEU FERMÉ OU FINI (IDLE)
+    // 1. JEU OFF ou FINI
     if (!game.state || game.state === 'idle') {
         status.innerText = "Prêt pour une partie ?";
         canvas.style.display = 'none'; wordDisplay.style.display = 'none'; 
-        setupArea.style.display = 'none'; // On cache le setup
+        setupArea.style.display = 'none'; 
         keyboard.style.display = 'none';
         restartArea.style.display = 'block';
         restartArea.innerHTML = `<button onclick="startPenduSetup()" class="btn-action blue-bg full-width">Lancer une partie</button>`;
@@ -479,22 +474,20 @@ function renderPendu(game) {
 
     canvas.style.display = 'block'; wordDisplay.style.display = 'block';
 
-    // ÉTAT 2 : CONFIGURATION (SETUP) -> C'est ici qu'on affiche l'input et le bouton
+    // 2. CONFIGURATION (SETUP) -> C'est ici qu'on affiche l'input et le bouton
     if (game.state === 'setup') {
         status.innerText = "Choisis un mot secret...";
-        // ON FORCE LE FLEX ICI POUR LE CENTRAGE
-        setupArea.style.display = 'flex'; 
-        // ON INJECTE LE HTML ICI (Plus de doublons)
+        setupArea.style.display = 'flex'; // On affiche le bloc centré
+        // On injecte le HTML proprement ici
         setupArea.innerHTML = `
             <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret" style="text-align:center; width:80%;">
             <button onclick="startPendu()" class="pendu-btn-js">Valider le mot</button>
         `;
-        
         keyboard.style.display = 'none'; restartArea.style.display = 'none'; wordDisplay.innerText = "???";
     } 
-    // ÉTAT 3 : EN JEU (PLAYING)
+    // 3. EN JEU (PLAYING)
     else {
-        setupArea.style.display = 'none'; // ON CACHE LE SETUP
+        setupArea.style.display = 'none'; // On cache le setup
         let d = ""; for (let c of game.word) d += (game.guessed.includes(c) ? c : "_") + " ";
         wordDisplay.innerText = d;
         const isCreator = game.creator === currentUser;
