@@ -260,6 +260,42 @@
             </div>
         </div>
 
+        <div class="card" id="card-resto">
+            <div class="card-title toggleable" onclick="toggleCard(this)">
+                <div class="card-head-wrap"><span>🍽️</span> Nos Adresses</div>
+            </div>
+            <div class="card-content">
+                <div class="todo-tabs">
+                    <div class="todo-tab active" id="tab-resto-wish" onclick="switchRestoTab('wish')">À Tester 🤤</div>
+                    <div class="todo-tab" id="tab-resto-done" onclick="switchRestoTab('done')">Validés ✅</div>
+                </div>
+        
+                <div class="new-todo-box">
+                    <div class="todo-helper-text">Nouvelle découverte :</div>
+                    <div class="input-group">
+                        <input type="text" id="resto-name" class="input-field" placeholder="Nom du resto...">
+                        <select id="resto-type" class="input-field small-input" style="width:100px;">
+                            <option value="🍕">🍕</option>
+                            <option value="🍔">🍔</option>
+                            <option value="🍣">🍣</option>
+                            <option value="🍜">🍜</option>
+                            <option value="🌮">🌮</option>
+                            <option value="🥗">🥗</option>
+                            <option value="🥩">🥩</option>
+                            <option value="🍰">🍰</option>
+                            <option value="🍹">🍹</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-0">
+                        <input type="text" id="resto-link" class="input-field input-white" placeholder="Lien Google Maps (optionnel)">
+                        <button onclick="addRestaurant()" class="btn-action small-btn">+</button>
+                    </div>
+                </div>
+        
+                <div id="resto-list"></div>
+            </div>
+        </div>
+
         <div class="card" id="card-games">
             <div class="card-title toggleable" onclick="toggleCard(this)">
                 <div class="card-head-wrap"><span>🎮</span> Salle de Jeux</div>
