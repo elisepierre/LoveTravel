@@ -254,6 +254,7 @@ body.dark-mode .todo-item.done { background: #1f1f1f; }
 .pendu-word { font-size: 1.5rem; letter-spacing: 5px; font-weight: bold; margin: 15px 0; color: var(--text-main); text-align: center; }
 #pendu-setup { display: flex; flex-direction: column !important; align-items: center !important; gap: 15px !important; margin-top: 20px !important; width: 100% !important; }
 #pendu-secret { text-align: center !important; width: 80% !important; margin-bottom: 0 !important; }
+#pendu-start-btn { width: 80% !important; margin-top: 0 !important; }
 .keyboard { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 15px; }
 .key-btn { width: 30px; height: 35px; border: 1px solid var(--border); border-radius: 5px; background: white; cursor: pointer; font-weight: bold; color: #333; }
 .key-btn:disabled { opacity: 0.3; background: #ddd; }
