@@ -1309,12 +1309,16 @@ function scrollToBottom() {
 let chatMsgIdToEdit = null; // Stocke l'ID du message ciblé
 let chatMsgTextToEdit = null; // Stocke le texte actuel
 
+/* --- GESTION CHAT (VERSION RAPIDE & INLINE) --- */
+
+let chatMsgIdToEdit = null;
+let chatMsgTextToEdit = null;
+
 function initChatListener() {
     const q = query(collection(db, "chat"), orderBy("timestamp", "asc")); 
     
     chatUnsubscribe = onSnapshot(q, (snapshot) => {
         const div = document.getElementById('chat-messages');
-        div.innerHTML = ""; // On vide pour tout re-rendre proprement
         
         // Si aucun message
         if (snapshot.empty) {
@@ -1322,12 +1326,19 @@ function initChatListener() {
             return;
         }
 
+        // On ne vide pas tout brutalement si on est en train d'éditer, 
+        // mais pour faire simple et éviter les bugs de synchro, on reconstruit.
+        // L'édition sera annulée si un nouveau message arrive pile en même temps, 
+        // mais c'est rare.
+        const currentEditId = document.querySelector('.edit-mode-input')?.dataset.id;
+        div.innerHTML = ""; 
+
         snapshot.forEach(doc => {
             const msg = doc.data();
             const msgId = doc.id;
             const isMe = msg.sender === currentUser;
             
-            // --- HORAIRES (Ton code précédent) ---
+            // --- HORAIRES ---
             let timeDisplay = "";
             if(msg.timestamp) {
                 const date = msg.timestamp.toDate();
@@ -1340,10 +1351,19 @@ function initChatListener() {
 
             // Création de la bulle
             const bubble = document.createElement('div');
+            // IMPORTANT : On donne un ID à la bulle pour la retrouver
+            bubble.id = `msg-${msgId}`;
             bubble.className = `msg-bubble ${isMe ? `msg-me ${currentUser}` : "msg-other"}`;
+            
+            // Si c'est ce message qu'on édite (cas rare de rafraichissement), on remet l'input
+            if(currentEditId === msgId) {
+                // On laisse la logique d'édition gérer ça, ou on affiche le texte normal
+                // Pour simplifier, on affiche le texte normal, l'utilisateur réappuiera si besoin.
+            }
+            
             bubble.innerHTML = `${msg.text} <span class="msg-time">${timeDisplay}</span>`;
             
-            // --- AJOUT DU LONG PRESS (Uniquement sur tes messages) ---
+            // Ajout du Long Press
             if (isMe) {
                 addLongPressEvent(bubble, msgId, msg.text);
             }
@@ -1365,40 +1385,35 @@ function initChatListener() {
     });
 }
 
-// Fonction utilitaire pour gérer l'appui long (Mobile + PC)
 function addLongPressEvent(element, id, text) {
     let timer;
-
-    // Pour PC (Clic droit)
+    // PC (Clic droit)
     element.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         openChatOptions(id, text);
     });
-
-    // Pour Mobile (Touch)
+    // Mobile (Touch)
     const startPress = () => {
-        element.classList.add('pressing'); // Feedback visuel
+        element.classList.add('pressing'); 
         timer = setTimeout(() => {
             element.classList.remove('pressing');
-            if(navigator.vibrate) navigator.vibrate(50); // Petite vibration
+            if(navigator.vibrate) navigator.vibrate(50); 
             openChatOptions(id, text);
-        }, 600); // 600ms d'appui
+        }, 600); 
     };
-
     const cancelPress = () => {
         element.classList.remove('pressing');
         clearTimeout(timer);
     };
-
     element.addEventListener('touchstart', startPress);
     element.addEventListener('touchend', cancelPress);
-    element.addEventListener('touchmove', cancelPress); // Annule si on scroll
-    element.addEventListener('mousedown', startPress); // Pour tester à la souris
+    element.addEventListener('touchmove', cancelPress); 
+    element.addEventListener('mousedown', startPress); 
     element.addEventListener('mouseup', cancelPress);
     element.addEventListener('mouseleave', cancelPress);
 }
 
-// --- LOGIQUE MODAL ACTIONS ---
+/* --- ACTIONS DU CHAT --- */
 
 window.openChatOptions = function(id, text) {
     chatMsgIdToEdit = id;
@@ -1408,29 +1423,57 @@ window.openChatOptions = function(id, text) {
 
 window.closeChatOptions = function() {
     document.getElementById('chat-options-modal').style.display = 'none';
-    chatMsgIdToEdit = null;
-    chatMsgTextToEdit = null;
 }
 
+// 1. SUPPRESSION DIRECTE (Plus de confirm)
 window.deleteMsgAction = async function() {
-    if(confirm("Supprimer ce message pour de bon ?")) {
+    closeChatOptions(); // On ferme le menu
+    if(chatMsgIdToEdit) {
         await deleteDoc(doc(db, "chat", chatMsgIdToEdit));
-        closeChatOptions();
     }
 }
 
-window.editMsgAction = async function() {
-    // On ferme le modal d'options
-    closeChatOptions();
+// 2. ÉDITION DIRECTE (Inline)
+window.editMsgAction = function() {
+    closeChatOptions(); // On ferme le menu
+
+    const bubble = document.getElementById(`msg-${chatMsgIdToEdit}`);
+    if(!bubble) return;
+
+    // On remplace le contenu de la bulle par un INPUT
+    bubble.innerHTML = `
+        <div class="edit-box-inline">
+            <input type="text" class="edit-msg-input" id="input-edit-${chatMsgIdToEdit}" value="${chatMsgTextToEdit}" autocomplete="off">
+            <button onclick="saveEditAction('${chatMsgIdToEdit}')" class="btn-save-edit">OK</button>
+        </div>
+    `;
+
+    // On met le focus direct dans l'input
+    const input = document.getElementById(`input-edit-${chatMsgIdToEdit}`);
+    input.focus();
+
+    // Si on appuie sur Entrée dans l'input, ça valide
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') saveEditAction(chatMsgIdToEdit);
+    });
+}
+
+// Sauvegarde de l'édition
+window.saveEditAction = async function(id) {
+    const input = document.getElementById(`input-edit-${id}`);
+    if(!input) return;
+
+    const newText = input.value.trim();
     
-    // On demande le nouveau texte (simple prompt pour l'instant)
-    const newText = prompt("Modifier le message :", chatMsgTextToEdit);
-    
-    if (newText !== null && newText.trim() !== "" && newText !== chatMsgTextToEdit) {
-        await updateDoc(doc(db, "chat", chatMsgIdToEdit), {
-            text: newText.trim()
-        });
+    // Si vide ou inchangé, on remet comme avant (via le listener snapshot qui va se rafraichir ou on force)
+    if (newText && newText !== chatMsgTextToEdit) {
+        await updateDoc(doc(db, "chat", id), { text: newText });
+    } else {
+        // Si rien n'a changé, on force le rafraichissement pour enlever l'input
+        // (Le snapshot ne se déclenche pas si pas de modif DB, donc on le fait manuellement ici pour l'UI)
+        initChatListener(); 
     }
 }
+
 // Lancer l'écouteur au démarrage
 initChatListener();
