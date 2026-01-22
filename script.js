@@ -527,23 +527,27 @@ function renderP4(game) {
     const statusEl = document.getElementById('p4-status'); 
     const btn = document.getElementById('p4-restart-btn'); 
     
-    // GESTION CHAT
-    renderGameChatUI('p4', game.status === 'idle' ? null : (game.chat || []));
+    // GESTION CHAT (Sécurisé : ne plante pas si le HTML manque)
+    if(document.getElementById('chat-section-p4') && typeof renderGameChatUI === "function") {
+        renderGameChatUI('p4', game.status === 'idle' ? null : (game.chat || []));
+    }
 
     grid.innerHTML = ""; 
 
+    // CAS 1 : PARTIE NON COMMENCÉE
     if (!game.status || game.status === 'idle') {
         statusEl.innerText = "Prêt pour une partie ?";
-        statusEl.classList.remove('active-turn'); // On enlève le style "Gros"
-        statusEl.style.color = ""; // Reset couleur
+        statusEl.classList.remove('active-turn'); // ON ENLÈVE LE STYLE GROS
+        statusEl.style.color = ""; 
         grid.style.display = 'none'; 
         btn.innerText = "Lancer"; btn.onclick = initP4; btn.disabled = false; btn.style.opacity = "1";
         return; 
     }
 
-    // MODE JEU
-    statusEl.classList.add('active-turn'); // On met le style "Gros"
+    // CAS 2 : PARTIE EN COURS
+    statusEl.classList.add('active-turn'); // ON AJOUTE LE STYLE GROS
     grid.style.display = 'grid'; 
+    
     for(let i=0; i<42; i++) { 
         const c=document.createElement('div'); 
         c.className="p4-cell "+(game.board[i]===1?'p1':(game.board[i]===2?'p2':'')); 
@@ -558,7 +562,7 @@ function renderP4(game) {
         if(game.status !== 'finished') updateDoc(doc(db,"games","p4_active"), {status: 'finished'});
     } else { 
         statusEl.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)"); 
-        statusEl.style.color = game.turn === 'fr' ? 'var(--blue-dark)' : 'var(--pink-dark)'; // COULEUR DYNAMIQUE
+        statusEl.style.color = game.turn === 'fr' ? 'var(--blue-dark)' : 'var(--pink-dark)';
         btn.innerText = "Partie en cours..."; btn.disabled = true; btn.style.opacity = "0.5"; 
     } 
 }
@@ -610,20 +614,23 @@ function renderUno(game) {
     const boardDiv = document.querySelector('.uno-board'); 
     const statusEl = document.getElementById('uno-status');
 
-    // GESTION CHAT
-    renderGameChatUI('uno', game.status === 'idle' ? null : (game.chat || []));
+    // GESTION CHAT (Sécurisé)
+    if(document.getElementById('chat-section-uno') && typeof renderGameChatUI === "function") {
+        renderGameChatUI('uno', game.status === 'idle' ? null : (game.chat || []));
+    }
 
+    // CAS 1 : PARTIE NON COMMENCÉE
     if (!game.status || game.status === 'idle') {
         statusEl.innerText = "Prêt pour une partie ?";
-        statusEl.classList.remove('active-turn');
+        statusEl.classList.remove('active-turn'); // ON ENLÈVE LE STYLE GROS
         statusEl.style.color = "";
         boardDiv.style.display = 'none'; 
         btn.innerText = "Lancer"; btn.onclick = initUno; btn.disabled = false; btn.style.opacity = "1"; btn.style.background = "var(--blue-dark)";
         return;
     }
 
-    // MODE JEU
-    statusEl.classList.add('active-turn');
+    // CAS 2 : PARTIE EN COURS
+    statusEl.classList.add('active-turn'); // ON AJOUTE LE STYLE GROS
     boardDiv.style.display = 'block';
 
     if(game.winner) {
@@ -632,7 +639,6 @@ function renderUno(game) {
         btn.innerText = "Fin de partie"; btn.onclick = finishUno; btn.disabled = false; btn.style.opacity = "1"; btn.style.background = "var(--pink-dark)"; 
     } else {
         statusEl.innerText = (game.turn === currentUser ? "À toi de jouer !" : "Tour de l'adversaire...");
-        // Couleur : Bleu si c'est Théo, Rose si Elise (peu importe qui regarde)
         statusEl.style.color = game.turn === 'fr' ? 'var(--blue-dark)' : 'var(--pink-dark)';
         btn.innerText = "Partie en cours..."; btn.disabled = true; btn.style.opacity = "0.5";
     }
