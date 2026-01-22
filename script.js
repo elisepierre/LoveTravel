@@ -1274,7 +1274,6 @@ window.toggleChat = function() {
         unreadMessages = 0;
         badge.classList.add('hidden');
         scrollToBottom();
-        document.getElementById('chat-input').focus();
     }
 }
 
