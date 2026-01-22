@@ -267,35 +267,52 @@
             <div class="card-content">
                 <div class="todo-tabs">
                     <div class="todo-tab active" id="tab-resto-wish" onclick="switchRestoTab('wish')">À Tester</div>
-                    <div class="todo-tab" id="tab-resto-done" onclick="switchRestoTab('done')">Historique</div>
+                    <div class="todo-tab" id="tab-resto-done" onclick="switchRestoTab('done')">Déjà fait</div>
                 </div>
         
                 <div class="new-todo-box">
-                    <div class="todo-helper-text">Nouvelle découverte :</div>
-                    <div class="input-group">
-                        <input type="text" id="resto-name" class="input-field" placeholder="Nom du resto...">
-                        <select id="resto-type" class="input-field small-input" style="width:100px;">
-                            <option value="🍕">🍕</option>
-                            <option value="🍔">🍔</option>
-                            <option value="🍣">🍣</option>
-                            <option value="🍜">🍜</option>
-                            <option value="🌮">🌮</option>
-                            <option value="🥗">🥗</option>
-                            <option value="🥩">🥩</option>
-                            <option value="🍰">🍰</option>
-                            <option value="🍹">🍹</option>
-                        </select>
-                    </div>
+                    <div class="todo-helper-text">On mange quoi ?</div>
+                    
+                    <div class="food-picker-container" id="food-picker">
+                        </div>
+        
                     <div class="input-group mb-0">
-                        <input type="text" id="resto-link" class="input-field input-white" placeholder="Lien Google Maps (optionnel)">
+                        <input type="text" id="resto-name" class="input-field" placeholder="Nom du resto...">
                         <button onclick="addRestaurant()" class="btn-action small-btn">+</button>
                     </div>
+                    <input type="text" id="resto-link" class="input-field input-white full-width mt-10" placeholder="Lien Maps (optionnel)" style="margin-top:10px;">
                 </div>
         
                 <div id="resto-list"></div>
             </div>
         </div>
-
+        
+        <div id="resto-date-modal" class="modal-overlay" style="display:none;">
+            <div class="modal-content-small">
+                <h3>Quand a-t-on mangé là ? 📅</h3>
+                <div class="date-picker-wheel">
+                    <select id="date-day"></select>
+                    <select id="date-month"></select>
+                    <select id="date-year"></select>
+                </div>
+                <button onclick="confirmRestoDate()" class="btn-action pink-btn full-width mt-10">Valider la date</button>
+                <button onclick="closeRestoDateModal()" class="link-cancel">Annuler</button>
+            </div>
+        </div>
+        
+        <div id="resto-gallery-modal" class="modal-overlay" style="display:none; align-items:flex-start; padding-top:50px; overflow-y:auto;">
+            <div class="modal-content" style="width:95%; max-width:400px;">
+                <div class="modal-header" style="margin-bottom:10px;">
+                    <h3 id="gallery-resto-title" style="margin:0; font-size:1.2rem;">Photos du resto</h3>
+                    <button onclick="closeRestoGallery()" class="close-icon" style="font-size:1.5rem;">✕</button>
+                </div>
+                
+                <div id="resto-gallery-grid" class="modal-grid" style="grid-template-columns: repeat(3, 1fr); gap:5px;"></div>
+                
+                <button onclick="document.getElementById('resto-photo-upload').click()" class="btn-action blue-bg full-width mt-20">📸 Ajouter une photo</button>
+                <input type="file" id="resto-photo-upload" accept="image/*" style="display:none;" onchange="handleRestoPhotoUpload(this)">
+            </div>
+        </div>
         <div class="card" id="card-games">
             <div class="card-title toggleable" onclick="toggleCard(this)">
                 <div class="card-head-wrap"><span>🎮</span> Salle de Jeux</div>
