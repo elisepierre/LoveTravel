@@ -1303,22 +1303,45 @@ function scrollToBottom() {
     div.scrollTop = div.scrollHeight;
 }
 
-/* --- 14. RESTAURANTS --- */
-let currentRestoTab = 'wish'; // 'wish' ou 'done'
+/* --- 14. RESTAURANTS V2 (COMPLETE) --- */
+let currentRestoTab = 'wish'; 
 let allRestos = [];
+let selectedRestoType = '🍽️'; // Emoji par défaut
+let pendingRestoValidationId = null; // Stocke l'ID en cours de validation
+let currentGalleryRestoId = null; // Stocke l'ID du resto dont on regarde les photos
+
+// Liste des emojis dispos
+const foodEmojis = ["🍕","🍔","🍣","🍜","🌮","🥗","🥩","🍰","🍹","🥐","🧀","🍗","🍟","🍩"];
+
+// Initialisation du sélecteur d'emoji au démarrage
+function initFoodPicker() {
+    const container = document.getElementById('food-picker');
+    container.innerHTML = "";
+    foodEmojis.forEach(emoji => {
+        const div = document.createElement('div');
+        div.className = `food-option ${emoji === selectedRestoType ? 'selected' : ''}`;
+        div.innerText = emoji;
+        div.onclick = () => {
+            selectedRestoType = emoji;
+            document.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
+            div.classList.add('selected');
+        };
+        container.appendChild(div);
+    });
+}
+initFoodPicker(); // On lance la création
 
 // 1. Ajouter un resto
 window.addRestaurant = function() {
     const name = document.getElementById('resto-name').value.trim();
-    const type = document.getElementById('resto-type').value;
     const link = document.getElementById('resto-link').value.trim();
 
     if(!name) return;
 
     addDoc(collection(db, "restaurants"), {
         name: name,
-        type: type,
-        link: link, // Si vide, ce sera une chaîne vide
+        type: selectedRestoType, // On utilise la variable globale
+        link: link,
         status: 'wish',
         addedBy: currentUser,
         created: serverTimestamp(),
@@ -1347,50 +1370,133 @@ window.switchRestoTab = function(tab) {
     renderRestos();
 }
 
-// 3. Validation avec Date
-window.validateResto = function(id) {
-    // On demande la date (par défaut aujourd'hui)
-    const today = new Date().toISOString().split('T')[0];
-    const dateVal = prompt("Quelle date on y a mangé ? (AAAA-MM-JJ)", today);
-    
-    if(dateVal) {
-        updateDoc(doc(db, "restaurants", id), { 
-            status: 'done', 
-            eatenDate: dateVal // On stocke la date choisie
-        });
-        confetti({ particleCount: 100, colors: ['#ff9eb5', '#8ecae6'] });
-    }
-}
-
-// 4. Système de notation et commentaires
-window.rateResto = function(id, role, rating) {
-    updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating });
-}
-
-window.saveRestoComment = function(id, role, text) {
-    updateDoc(doc(db, "restaurants", id), { [`comment_${role}`]: text });
-}
-
+// 2. Suppression INSTANTANÉE (Sans confirm)
 window.deleteResto = function(id, e) {
-    e.stopPropagation(); // Empêche d'ouvrir l'accordéon quand on supprime
-    if(confirm("Supprimer ce resto ?")) deleteDoc(doc(db, "restaurants", id));
+    e.stopPropagation(); 
+    deleteDoc(doc(db, "restaurants", id));
 }
 
-// 5. Accordéon (Un seul ouvert à la fois)
+// 3. Validation avec Date (Modal Roulettes)
+window.openDateModal = function(id) {
+    pendingRestoValidationId = id;
+    const modal = document.getElementById('resto-date-modal');
+    
+    // Remplissage des selects si vide
+    const dSelect = document.getElementById('date-day');
+    const mSelect = document.getElementById('date-month');
+    const ySelect = document.getElementById('date-year');
+
+    if(dSelect.children.length === 0) {
+        for(let i=1; i<=31; i++) dSelect.innerHTML += `<option value="${i}">${i}</option>`;
+        const months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+        months.forEach((m, i) => mSelect.innerHTML += `<option value="${i+1}">${m}</option>`);
+        for(let i=2024; i<=2030; i++) ySelect.innerHTML += `<option value="${i}">${i}</option>`;
+    }
+
+    // Mettre la date d'aujourd'hui par défaut
+    const today = new Date();
+    dSelect.value = today.getDate();
+    mSelect.value = today.getMonth() + 1;
+    ySelect.value = today.getFullYear();
+
+    modal.style.display = 'flex';
+}
+
+window.closeRestoDateModal = function() {
+    document.getElementById('resto-date-modal').style.display = 'none';
+    pendingRestoValidationId = null;
+}
+
+window.confirmRestoDate = function() {
+    if(!pendingRestoValidationId) return;
+    
+    const d = document.getElementById('date-day').value.padStart(2, '0');
+    const m = document.getElementById('date-month').value.padStart(2, '0');
+    const y = document.getElementById('date-year').value;
+    const dateStr = `${y}-${m}-${d}`; // Format ISO pour trier facilement
+
+    updateDoc(doc(db, "restaurants", pendingRestoValidationId), { 
+        status: 'done', 
+        eatenDate: dateStr 
+    });
+    
+    confetti({ particleCount: 100, colors: ['#ff9eb5', '#8ecae6'] });
+    closeRestoDateModal();
+}
+
+// 4. Galerie Photos
+window.openRestoGallery = function(id, name, e) {
+    e.stopPropagation(); // Ne pas ouvrir/fermer l'accordéon
+    currentGalleryRestoId = id;
+    document.getElementById('gallery-resto-title').innerText = name;
+    document.getElementById('resto-gallery-modal').style.display = 'flex';
+    loadRestoPhotos(id);
+}
+
+window.closeRestoGallery = function() {
+    document.getElementById('resto-gallery-modal').style.display = 'none';
+    currentGalleryRestoId = null;
+}
+
+function loadRestoPhotos(restoId) {
+    const grid = document.getElementById('resto-gallery-grid');
+    grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;'>Chargement...</div>";
+    
+    const q = query(collection(db, "resto_photos"), where("restoId", "==", restoId), orderBy("timestamp", "desc"));
+    // Note: Pour utiliser 'where', assure-toi d'importer 'where' depuis firebase-firestore au début du fichier !
+    // Si tu ne veux pas modifier tes imports, on peut faire un filtrage manuel simple ici car il y a peu de photos :
+    
+    // Méthode sans 'where' (plus simple si tu ne veux pas toucher aux imports) :
+    const qAll = query(collection(db, "resto_photos"), orderBy("timestamp", "desc"));
+    onSnapshot(qAll, (snap) => {
+        grid.innerHTML = "";
+        const photos = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(p => p.restoId === restoId);
+        
+        if(photos.length === 0) {
+            grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;color:#888;font-style:italic;'>Pas encore de photo... 📸</div>";
+            return;
+        }
+        
+        photos.forEach(p => {
+            grid.innerHTML += `
+                <div style="position:relative;">
+                    <img src="${p.url}" class="gallery-thumb" onclick="showLightbox('${p.url}')">
+                    <button onclick="deleteRestoPhoto('${p.id}')" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.5);color:white;border:none;width:20px;height:20px;cursor:pointer;">✕</button>
+                </div>`;
+        });
+    });
+}
+
+window.handleRestoPhotoUpload = async function(input) {
+    if(!input.files[0] || !currentGalleryRestoId) return;
+    const file = input.files[0];
+    const b64 = await compressImage(file); // Réutilise ta fonction existante
+    
+    await addDoc(collection(db, "resto_photos"), {
+        url: b64,
+        restoId: currentGalleryRestoId,
+        by: currentUser,
+        timestamp: serverTimestamp()
+    });
+    input.value = ""; // Reset
+}
+
+window.deleteRestoPhoto = function(id) {
+    if(confirm("Supprimer cette photo ?")) deleteDoc(doc(db, "resto_photos", id));
+}
+
+// 5. Fonctions existantes (Notes, Commentaires, Accordéon)
+window.rateResto = function(id, role, rating) { updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating }); }
+window.saveRestoComment = function(id, role, text) { updateDoc(doc(db, "restaurants", id), { [`comment_${role}`]: text }); }
+
 window.toggleRestoDetails = function(id) {
     const details = document.getElementById(`details-${id}`);
     const isOpen = details.classList.contains('open');
-
-    // On ferme TOUS les détails d'abord
     document.querySelectorAll('.resto-details').forEach(el => el.classList.remove('open'));
-
-    // Si celui-ci n'était pas ouvert, on l'ouvre
-    if(!isOpen) {
-        details.classList.add('open');
-    }
+    if(!isOpen) details.classList.add('open');
 }
 
-// 6. Charger et Afficher
+// 6. RENDER
 onSnapshot(query(collection(db, "restaurants"), orderBy("created", "desc")), (snapshot) => {
     allRestos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
     renderRestos();
@@ -1404,35 +1510,27 @@ function renderRestos() {
 
     if (filtered.length === 0) {
         list.innerHTML = `<div style="text-align:center; color:var(--text-sub); font-style:italic; padding:20px;">
-            ${currentRestoTab === 'wish' ? "Le frigo est vide... Ajoute une adresse ! 🍕" : "Aucun festin mémorable pour l'instant..."}
+            ${currentRestoTab === 'wish' ? "Ajoute une adresse ! 🍕" : "Aucun festin mémorable..."}
         </div>`;
         return;
     }
 
     filtered.forEach(r => {
-        // --- LOGIQUE D'AFFICHAGE ---
-        
-        // 1. Bouton Maps (Seulement si lien existe)
         let mapBtnHtml = "";
         if (r.link && r.link.trim() !== "") {
             mapBtnHtml = `<a href="${r.link}" target="_blank" class="resto-map-btn" onclick="event.stopPropagation()">📍 Maps</a>`;
         }
 
-        // 2. Date (Seulement si validé)
         let dateHtml = "";
         if (currentRestoTab === 'done' && r.eatenDate) {
-            // Formatage de la date (AAAA-MM-JJ -> JJ/MM/AAAA)
-            const d = new Date(r.eatenDate);
-            const dateStr = d.toLocaleDateString('fr-FR');
-            dateHtml = `<div class="resto-date-badge">Le ${dateStr}</div>`;
+            const parts = r.eatenDate.split('-'); // YYYY-MM-DD
+            dateHtml = `<div class="resto-date-badge">Le ${parts[2]}/${parts[1]}/${parts[0]}</div>`;
         }
 
-        // 3. Etoiles
         const makeStars = (role, currentRating) => {
             let html = ''; 
             for(let i=1; i<=5; i++) { 
                 const filled = i <= currentRating ? 'filled' : ''; 
-                // On permet de noter uniquement dans l'onglet "Done" et si c'est notre rôle
                 const canRate = currentRestoTab === 'done' && role === currentUser;
                 const action = canRate ? `onclick="rateResto('${r.id}', '${role}', ${i})"` : ''; 
                 const cursor = canRate ? 'pointer' : 'default';
@@ -1441,58 +1539,38 @@ function renderRestos() {
             return html;
         };
 
-        // 4. Contenu déroulant (Différent selon Wish ou Done)
         let detailsContent = "";
         
         if (currentRestoTab === 'wish') {
-            detailsContent = `<button onclick="validateResto('${r.id}')" class="btn-validate-resto">On a mangé ici ! 😋</button>`;
+            detailsContent = `<button onclick="openDateModal('${r.id}')" class="btn-validate-resto">On a mangé ici ! 😋</button>`;
         } else {
-            // Zone Commentaires & Notes
-            const commFr = r.comment_fr || "";
-            const commTw = r.comment_tw || "";
-            
-            // On désactive l'édition du commentaire de l'autre
+            const commFr = r.comment_fr || ""; const commTw = r.comment_tw || "";
             const disableFr = currentUser === 'fr' ? '' : 'readonly';
             const disableTw = currentUser === 'tw' ? '' : 'readonly';
 
             detailsContent = `
                 <div class="resto-ratings">
-                    <div class="user-rate-col fr-col">
-                        <span class="rate-label">Théo</span>
-                        <div class="star-rating">${makeStars('fr', r.rating_fr)}</div>
-                    </div>
+                    <div class="user-rate-col fr-col"><span class="rate-label">Théo</span><div class="star-rating">${makeStars('fr', r.rating_fr)}</div></div>
                     <div style="width:1px; background:var(--border);"></div>
-                    <div class="user-rate-col tw-col">
-                        <span class="rate-label">Elise</span>
-                        <div class="star-rating">${makeStars('tw', r.rating_tw)}</div>
-                    </div>
+                    <div class="user-rate-col tw-col"><span class="rate-label">Elise</span><div class="star-rating">${makeStars('tw', r.rating_tw)}</div></div>
                 </div>
+                
+                <button onclick="openRestoGallery('${r.id}', '${r.name.replace(/'/g, "\\'")}', event)" class="resto-photo-btn">📷 Voir les photos</button>
 
-                <div class="comments-section">
-                    <div class="comment-box" style="border-left: 3px solid var(--blue);">
-                        <h4>Théo 👨🏻</h4>
-                        <textarea class="comment-input" placeholder="L'avis du chef..." rows="2" ${disableFr} onchange="saveRestoComment('${r.id}', 'fr', this.value)">${commFr}</textarea>
-                    </div>
-                    <div class="comment-box" style="border-left: 3px solid var(--pink);">
-                        <h4>Elise 👩🏻</h4>
-                        <textarea class="comment-input" placeholder="La critique gastro..." rows="2" ${disableTw} onchange="saveRestoComment('${r.id}', 'tw', this.value)">${commTw}</textarea>
-                    </div>
+                <div class="comments-section mt-10">
+                    <div class="comment-box" style="border-left: 3px solid var(--blue);"><h4>Théo 👨🏻</h4><textarea class="comment-input" placeholder="..." rows="2" ${disableFr} onchange="saveRestoComment('${r.id}', 'fr', this.value)">${commFr}</textarea></div>
+                    <div class="comment-box" style="border-left: 3px solid var(--pink);"><h4>Elise 👩🏻</h4><textarea class="comment-input" placeholder="..." rows="2" ${disableTw} onchange="saveRestoComment('${r.id}', 'tw', this.value)">${commTw}</textarea></div>
                 </div>
             `;
         }
 
-        // --- CONSTRUCTION HTML ---
-        // On met onclick sur la vue principale pour dérouler
         list.innerHTML += `
             <div class="resto-item">
                 <div class="resto-main-view" onclick="toggleRestoDetails('${r.id}')">
                     <div class="resto-header">
                         <div class="resto-info">
                             <div class="resto-icon">${r.type || '🍽️'}</div>
-                            <div>
-                                <div class="resto-name">${r.name}</div>
-                                ${dateHtml}
-                            </div>
+                            <div><div class="resto-name">${r.name}</div>${dateHtml}</div>
                         </div>
                         <div style="display:flex; gap:5px; align-items:center;">
                             ${mapBtnHtml}
@@ -1500,14 +1578,11 @@ function renderRestos() {
                         </div>
                     </div>
                 </div>
-                
-                <div class="resto-details" id="details-${r.id}">
-                    ${detailsContent}
-                </div>
+                <div class="resto-details" id="details-${r.id}">${detailsContent}</div>
             </div>
         `;
     });
-}      
+}
 
 /* --- GESTION CHAT (AVEC MODIF/SUPP) --- */
 
