@@ -630,6 +630,36 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     transition: 0.2s;
 }
 
+/* --- EDIT INLINE STYLE --- */
+.edit-box-inline {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+
+.edit-msg-input {
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 0.9rem;
+    color: #333;
+    outline: none;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.btn-save-edit {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 /* --- ANIMATIONS GLOBALES --- */
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
