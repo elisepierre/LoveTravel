@@ -289,14 +289,16 @@
                     <canvas id="pendu-canvas" width="200" height="150"></canvas>
                     <div id="pendu-word-display" class="pendu-word">_ _ _ _ _</div>
                     <div id="pendu-status" class="status-msg">En attente...</div>
-                    <div id="pendu-setup" class="game-controls">
+                    
+                    <div id="pendu-setup">
                         <input type="text" id="pendu-secret" class="input-field" placeholder="Mot secret (sans accent)">
-                        <button onclick="startPendu()" class="btn-action full-width mt-5">Lancer</button>
+                        <button onclick="startPendu()" class="btn-action">Lancer</button>
                     </div>
-                    <div id="pendu-restart-area" class="hidden mt-10">
-                        <button onclick="startPenduSetup()" class="btn-action blue-btn full-width">Rejouer</button>
+                    
+                    <div id="pendu-restart-area" style="display:none;margin-top:10px;">
+                        <button onclick="startPenduSetup()" class="btn-action blue-bg full-width">Rejouer</button>
                     </div>
-                    <div id="pendu-keyboard" class="keyboard hidden"></div>
+                    <div id="pendu-keyboard" class="keyboard" style="display:none;"></div>
                     <div class="history-box" id="pendu-history-list"></div>
                 </div>
                 
@@ -306,7 +308,9 @@
                         <button class="game-close-btn" onclick="toggleGame('p4')">✕</button>
                     </div>
                     <div id="p4-status" class="status-msg">En attente...</div>
-                    <button id="p4-restart-btn" onclick="initP4()" class="btn-action blue-btn full-width mb-10" disabled>Nouvelle Partie</button>
+                    
+                    <button id="p4-restart-btn" onclick="initP4()" class="btn-action" disabled>Nouvelle Partie</button>
+                    
                     <div class="p4-grid" id="p4-grid"></div>
                     <div class="history-box" id="p4-history-list"></div>
                 </div>
