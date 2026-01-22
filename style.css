@@ -496,12 +496,55 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 }
 
 /* Adaptation Mobile : Le chat prend plus de place mais reste "flottant" */
+/* Adaptation Mobile : Version compacte et transparente */
 @media (max-width: 450px) {
     #chat-window {
         left: 5%;
         width: 90%;
-        bottom: 110px; /* Juste au dessus de la nav/boutons */
-        height: 50vh; 
+        bottom: 100px; /* Juste au-dessus de la navigation */
+        
+        /* CHANGEMENT ICI : On réduit la hauteur */
+        height: 280px; /* Hauteur fixe raisonnable (environ 30% de l'écran) */
+        
+        /* Transparence pour voir le jeu derrière */
+        background: rgba(255, 255, 255, 0.85); 
+        backdrop-filter: blur(4px); /* Floute le jeu derrière pour lire le texte */
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    /* Si le mode sombre est activé, on adapte la transparence */
+    body.dark-mode #chat-window {
+        background: rgba(30, 30, 30, 0.85);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Messages plus petits sur mobile pour en afficher plus */
+    .msg-bubble {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        margin-bottom: 2px; /* Moins d'espace entre les bulles */
+    }
+
+    /* Header plus fin */
+    .chat-header {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    /* Zone de saisie plus compacte */
+    .chat-input-zone {
+        padding: 5px 10px;
+    }
+    
+    #chat-input {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        height: 35px; /* Plus fin */
+    }
+    
+    .chat-send-btn {
+        width: 35px;
+        height: 35px;
     }
 }
 
