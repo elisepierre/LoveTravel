@@ -1256,3 +1256,106 @@ document.querySelectorAll('.chatouille-img').forEach(img => {
     img.addEventListener('mouseup', () => clearTimeout(pressTimer));
     img.addEventListener('mouseleave', () => clearTimeout(pressTimer));
 });
+
+/* --- 13. SYSTEME DE CHAT --- */
+let isChatOpen = false;
+let unreadMessages = 0;
+let chatUnsubscribe = null;
+
+window.toggleChat = function() {
+    const win = document.getElementById('chat-window');
+    const badge = document.getElementById('chat-badge');
+    
+    isChatOpen = !isChatOpen;
+    win.style.display = isChatOpen ? 'flex' : 'none';
+    
+    if (isChatOpen) {
+        // Remise à zéro du badge
+        unreadMessages = 0;
+        badge.classList.add('hidden');
+        scrollToBottom();
+        document.getElementById('chat-input').focus();
+    }
+}
+
+window.sendChatMessage = function() {
+    const input = document.getElementById('chat-input');
+    const txt = input.value.trim();
+    if (!txt) return;
+
+    addDoc(collection(db, "chat"), {
+        text: txt,
+        sender: currentUser,
+        timestamp: serverTimestamp()
+    });
+
+    input.value = "";
+    // Optionnel : petite vibration
+    if(navigator.vibrate) navigator.vibrate(20);
+}
+
+// Envoyer avec la touche "Entrée"
+document.getElementById('chat-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') window.sendChatMessage();
+});
+
+function scrollToBottom() {
+    const div = document.getElementById('chat-messages');
+    div.scrollTop = div.scrollHeight;
+}
+
+function initChatListener() {
+    // On écoute les 50 derniers messages
+    const q = query(collection(db, "chat"), orderBy("timestamp", "asc")); 
+    // Note: Pour optimiser, tu pourrais ajouter limit(50) dans tes imports firestore au début du fichier
+    
+    chatUnsubscribe = onSnapshot(q, (snapshot) => {
+        const div = document.getElementById('chat-messages');
+        let html = "";
+        
+        snapshot.forEach(doc => {
+            const msg = doc.data();
+            const isMe = msg.sender === currentUser;
+            
+            // Format heure
+            let timeStr = "";
+            if(msg.timestamp) {
+                const date = msg.timestamp.toDate();
+                timeStr = date.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+            }
+            
+            // Classe CSS
+            const bubbleClass = isMe ? `msg-me ${currentUser}` : "msg-other";
+            
+            html += `
+                <div class="msg-bubble ${bubbleClass}">
+                    ${msg.text}
+                    <span class="msg-time">${timeStr}</span>
+                </div>
+            `;
+        });
+        
+        // Si vide
+        if (html === "") html = '<div class="chat-placeholder">C\'est calme ici...<br>Lance la conversation ! 💬</div>';
+        
+        div.innerHTML = html;
+        scrollToBottom();
+
+        // Gestion de la notification (Badge rouge)
+        if (!isChatOpen && snapshot.docChanges().some(change => change.type === 'added')) {
+            // On vérifie si le dernier message n'est pas de nous
+            const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+            if (lastDoc && lastDoc.data().sender !== currentUser) {
+                unreadMessages++;
+                const badge = document.getElementById('chat-badge');
+                badge.classList.remove('hidden');
+                
+                // Petit son ou vibration discret
+                if(navigator.vibrate) navigator.vibrate([50, 50]);
+            }
+        }
+    });
+}
+
+// Lancer l'écouteur au démarrage
+initChatListener();
