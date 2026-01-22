@@ -369,7 +369,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" class="spotify-icon">
                 </a>
             </div>
-            <div class="footer-version">Love Travel v85 • janvier 2026</div>
+            <div class="footer-version">Love Travel v87 • janvier 2026</div>
         </div>
     </div>
 
@@ -443,6 +443,24 @@
                 <button onclick="closeCustomMood()" class="btn-action neutral-btn">Annuler</button>
                 <button onclick="confirmCustomMood()" class="btn-action pink-btn">Valider</button>
             </div>
+        </div>
+    </div>
+
+    <button id="chat-btn" onclick="toggleChat()">
+        💬 <span id="chat-badge" class="chat-badge hidden"></span>
+    </button>
+    
+    <div id="chat-window">
+        <div class="chat-header" onclick="toggleChat()">
+            <span>Discussion ❤️</span>
+            <button class="chat-close">✕</button>
+        </div>
+        <div id="chat-messages">
+            <div class="chat-placeholder">Dis-lui un petit mot doux...</div>
+        </div>
+        <div class="chat-input-zone">
+            <input type="text" id="chat-input" placeholder="Ton message..." autocomplete="off">
+            <button onclick="sendChatMessage()" class="chat-send-btn">➤</button>
         </div>
     </div>
 
