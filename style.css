@@ -445,6 +445,161 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 .mood-input:focus { border-color: var(--pink); box-shadow: 0 0 0 4px rgba(255, 158, 181, 0.2); }
 .mood-actions { display: flex; gap: 10px; }
 
+/* --- MINI CHAT FLOTTANT --- */
+#chat-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 25px; /* À l'opposé du bouton Bisou */
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    font-size: 1.8rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    z-index: 9000;
+    transition: transform 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#chat-btn:active { transform: scale(0.9); }
+
+.chat-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 15px;
+    height: 15px;
+    background: #ff4757;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+.chat-badge.hidden { display: none; }
+
+#chat-window {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    bottom: 100px;
+    left: 25px;
+    width: 300px;
+    height: 400px;
+    background: var(--bg-card);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    border: 1px solid var(--border);
+    z-index: 9001;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUpChat 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Adaptation Mobile : Le chat prend plus de place mais reste "flottant" */
+@media (max-width: 450px) {
+    #chat-window {
+        left: 5%;
+        width: 90%;
+        bottom: 110px; /* Juste au dessus de la nav/boutons */
+        height: 50vh; 
+    }
+}
+
+@keyframes slideUpChat { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+.chat-header {
+    background: linear-gradient(135deg, var(--blue), var(--pink));
+    padding: 12px 15px;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+.chat-close { background: none; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+
+#chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--input-bg);
+}
+
+.chat-placeholder { text-align: center; color: var(--text-sub); font-size: 0.8rem; font-style: italic; margin-top: 50%; }
+
+/* Bulles de message */
+.msg-bubble {
+    max-width: 80%;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+    position: relative;
+    animation: popIn 0.2s;
+}
+
+.msg-me {
+    align-self: flex-end;
+    background: var(--blue);
+    color: white;
+    border-bottom-right-radius: 2px;
+}
+/* Si c'est Elise (tw) qui se voit, elle est en rose, sinon bleu.
+   On gérera la couleur via JS ou classe spécifique.
+   Ici : msg-me = couleur de l'utilisateur courant.
+*/
+.msg-me.fr { background: var(--blue); }
+.msg-me.tw { background: var(--pink); }
+
+.msg-other {
+    align-self: flex-start;
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    border-bottom-left-radius: 2px;
+}
+
+.msg-time {
+    font-size: 0.6rem;
+    opacity: 0.7;
+    margin-top: 4px;
+    text-align: right;
+    display: block;
+}
+
+.chat-input-zone {
+    padding: 10px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-card);
+    display: flex;
+    gap: 8px;
+}
+#chat-input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    outline: none;
+    font-size: 0.9rem;
+}
+.chat-send-btn {
+    background: var(--text-main);
+    color: var(--bg-body);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* --- ANIMATIONS GLOBALES --- */
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
