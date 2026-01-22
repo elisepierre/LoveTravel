@@ -526,14 +526,23 @@ function renderP4(game) {
     const grid = document.getElementById('p4-grid'); 
     const statusEl = document.getElementById('p4-status'); 
     const btn = document.getElementById('p4-restart-btn'); 
+    
+    // GESTION CHAT
+    renderGameChatUI('p4', game.status === 'idle' ? null : (game.chat || []));
+
     grid.innerHTML = ""; 
 
     if (!game.status || game.status === 'idle') {
         statusEl.innerText = "Prêt pour une partie ?";
-        grid.style.display = 'none'; btn.innerText = "Lancer"; btn.onclick = initP4; btn.disabled = false; btn.style.opacity = "1";
+        statusEl.classList.remove('active-turn'); // On enlève le style "Gros"
+        statusEl.style.color = ""; // Reset couleur
+        grid.style.display = 'none'; 
+        btn.innerText = "Lancer"; btn.onclick = initP4; btn.disabled = false; btn.style.opacity = "1";
         return; 
     }
 
+    // MODE JEU
+    statusEl.classList.add('active-turn'); // On met le style "Gros"
     grid.style.display = 'grid'; 
     for(let i=0; i<42; i++) { 
         const c=document.createElement('div'); 
@@ -544,10 +553,12 @@ function renderP4(game) {
 
     if(game.winner) { 
         statusEl.innerText = game.winner === 'fr' ? "🏆 BRAVO THÉO !" : "🏆 BRAVO ELISE !"; 
+        statusEl.style.color = game.winner === 'fr' ? 'var(--blue-dark)' : 'var(--pink-dark)';
         btn.innerText = "Fin de partie"; btn.onclick = finishP4; btn.disabled = false; btn.style.opacity = "1"; 
         if(game.status !== 'finished') updateDoc(doc(db,"games","p4_active"), {status: 'finished'});
     } else { 
         statusEl.innerText = (game.turn === 'fr' ? "Au tour de Théo (Bleu)" : "Au tour d'Elise (Rose)"); 
+        statusEl.style.color = game.turn === 'fr' ? 'var(--blue-dark)' : 'var(--pink-dark)'; // COULEUR DYNAMIQUE
         btn.innerText = "Partie en cours..."; btn.disabled = true; btn.style.opacity = "0.5"; 
     } 
 }
@@ -597,19 +608,32 @@ function renderUno(game) {
     document.getElementById('btn-uno').classList.toggle('is-running', game.status === 'playing');
     const btn = document.getElementById('uno-restart-btn');
     const boardDiv = document.querySelector('.uno-board'); 
+    const statusEl = document.getElementById('uno-status');
+
+    // GESTION CHAT
+    renderGameChatUI('uno', game.status === 'idle' ? null : (game.chat || []));
 
     if (!game.status || game.status === 'idle') {
-        document.getElementById('uno-status').innerText = "Prêt pour une partie ?";
-        boardDiv.style.display = 'none'; btn.innerText = "Lancer"; btn.onclick = initUno; btn.disabled = false; btn.style.opacity = "1"; btn.style.background = "var(--blue-dark)";
+        statusEl.innerText = "Prêt pour une partie ?";
+        statusEl.classList.remove('active-turn');
+        statusEl.style.color = "";
+        boardDiv.style.display = 'none'; 
+        btn.innerText = "Lancer"; btn.onclick = initUno; btn.disabled = false; btn.style.opacity = "1"; btn.style.background = "var(--blue-dark)";
         return;
     }
 
+    // MODE JEU
+    statusEl.classList.add('active-turn');
     boardDiv.style.display = 'block';
+
     if(game.winner) {
-        document.getElementById('uno-status').innerText = `GAGNANT : ${game.winner==='fr'?'Théo':'Elise'} !`;
+        statusEl.innerText = `GAGNANT : ${game.winner==='fr'?'Théo':'Elise'} !`;
+        statusEl.style.color = game.winner === 'fr' ? 'var(--blue-dark)' : 'var(--pink-dark)';
         btn.innerText = "Fin de partie"; btn.onclick = finishUno; btn.disabled = false; btn.style.opacity = "1"; btn.style.background = "var(--pink-dark)"; 
     } else {
-        document.getElementById('uno-status').innerText = (game.turn === currentUser ? "À toi de jouer !" : "Tour de l'adversaire...");
+        statusEl.innerText = (game.turn === currentUser ? "À toi de jouer !" : "Tour de l'adversaire...");
+        // Couleur : Bleu si c'est Théo, Rose si Elise (peu importe qui regarde)
+        statusEl.style.color = game.turn === 'fr' ? 'var(--blue-dark)' : 'var(--pink-dark)';
         btn.innerText = "Partie en cours..."; btn.disabled = true; btn.style.opacity = "0.5";
     }
     
