@@ -704,15 +704,65 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 }
 
 /* --- RESTAURANTS --- */
-/* --- RESTAURANTS --- */
+/* --- RESTO V5 : DESIGN ÉPURÉ --- */
+
+/* On prépare l'item pour accueillir des éléments flottants */
 .resto-item {
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    margin-bottom: 15px;
-    overflow: hidden; /* Important pour l'accordéon */
-    transition: 0.3s;
+    position: relative; /* Indispensable pour le positionnement absolu */
+    padding-right: 45px; /* On garde de la place à droite pour les boutons */
 }
+
+/* Conteneur vertical à droite */
+.resto-floating-actions {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    display: flex;
+    flex-direction: column; /* On empile verticalement */
+    gap: 8px; /* Espace entre la croix et le crayon */
+    z-index: 5; /* Au-dessus du reste */
+}
+
+/* Style des mini boutons ronds */
+.btn-mini-action {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    transition: transform 0.2s, background 0.2s;
+    font-size: 0.9rem;
+    padding: 0;
+}
+.btn-mini-action:active { transform: scale(0.9); }
+
+/* Couleurs spécifiques */
+.btn-delete-red { color: #ff6b6b; border-color: #ffe0e0; font-weight: bold; }
+.btn-edit-blue { color: var(--blue-dark); border-color: var(--blue); font-size: 0.8rem; }
+
+/* Ajustement du header pour que les infos prennent la place */
+.resto-header {
+    align-items: flex-start; /* Aligne en haut */
+}
+.resto-info {
+    width: 100%; /* Prend toute la largeur dispo */
+}
+
+/* Dark Mode support */
+body.dark-mode .btn-mini-action {
+    background: #2d2d2d;
+    border-color: #555;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+
+
+
 
 /* La partie visible tout le temps (Header) */
 .resto-main-view {
@@ -723,13 +773,7 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     cursor: pointer; /* Montre qu'on peut cliquer */
 }
 
-.resto-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 
-.resto-info { display: flex; align-items: center; gap: 10px; }
 .resto-icon {
     font-size: 1.5rem; background: white; width: 40px; height: 40px;
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
