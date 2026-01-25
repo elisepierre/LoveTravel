@@ -1303,7 +1303,7 @@ function scrollToBottom() {
     div.scrollTop = div.scrollHeight;
 }
 
-/* --- 14. RESTAURANTS V4 (DARK MODE, DELETE CONFIRM & UPLOAD FIX) --- */
+/* --- 14. RESTAURANTS (COMPLETE & DEBUGGÉE) --- */
 let currentRestoTab = 'wish'; 
 let allRestos = [];
 let selectedRestoType = '🍽️'; 
@@ -1311,10 +1311,11 @@ let editSelectedType = '🍽️';
 let pendingRestoValidationId = null; 
 let currentGalleryRestoId = null; 
 let currentEditRestoId = null; 
-let pendingDeleteId = null; // Pour la suppression
+let pendingDeleteId = null; 
 
 const foodEmojis = ["🍕","🍔","🍣","🍜","🌮","🥗","🥩","🍰","🍹","🥐","🧀","🍗","🍟","🍩","🍽️"];
 
+// Init des sélecteurs d'emojis
 function initFoodPickers() {
     const container = document.getElementById('food-picker');
     if(container) {
@@ -1402,9 +1403,11 @@ window.openEditResto = function(id, name, link, type, e) {
     document.getElementById('edit-resto-link').value = link || "";
     
     const editContainer = document.getElementById('food-picker-edit');
-    editContainer.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
-    const targetEmoji = document.getElementById(`edit-emoji-${editSelectedType}`);
-    if(targetEmoji) targetEmoji.classList.add('selected');
+    if(editContainer) {
+        editContainer.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
+        const targetEmoji = document.getElementById(`edit-emoji-${editSelectedType}`);
+        if(targetEmoji) targetEmoji.classList.add('selected');
+    }
 
     document.getElementById('resto-edit-modal').style.display = 'flex';
 }
@@ -1429,7 +1432,7 @@ window.saveRestoEdit = function() {
     }
 }
 
-// --- SUPPRESSION ESTHETIQUE ---
+// --- SUPPRESSION & VALIDATION ---
 
 window.askDeleteResto = function(id, e) {
     e.stopPropagation();
@@ -1449,11 +1452,9 @@ window.confirmRestoDeletion = async function() {
     }
 }
 
-// --- DATE ---
 window.openDateModal = function(id) {
     pendingRestoValidationId = id;
     const modal = document.getElementById('resto-date-modal');
-    // ... (Logique de remplissage des selects identique)
     const dSelect = document.getElementById('date-day');
     const mSelect = document.getElementById('date-month');
     const ySelect = document.getElementById('date-year');
@@ -1488,28 +1489,41 @@ window.confirmRestoDate = function() {
     closeRestoDateModal();
 }
 
-/* --- LIGHTBOX & GALERIE --- */
+// --- GALERIE & LIGHTBOX ---
 
-// 1. Ouvrir la photo en grand
 window.showLightbox = function(url) {
     const modal = document.getElementById('lightbox-modal');
     const img = document.getElementById('lightbox-img');
-    img.src = url;
-    modal.style.display = "flex"; // Utilise flex pour centrer
-    modal.style.justifyContent = "center";
-    modal.style.alignItems = "center";
+    if(modal && img) {
+        img.src = url;
+        modal.style.display = "flex";
+        modal.style.justifyContent = "center";
+        modal.style.alignItems = "center";
+    }
 }
 
-// 2. Fermer la photo
 window.closeLightbox = function() {
     document.getElementById('lightbox-modal').style.display = "none";
 }
 
-// 3. Charger les photos (Mise à jour pour le clic)
+window.openRestoGallery = function(id, name, e) {
+    e.stopPropagation(); 
+    currentGalleryRestoId = id;
+    document.getElementById('gallery-resto-title').innerText = name;
+    document.getElementById('resto-gallery-modal').style.display = 'flex';
+    loadRestoPhotos(id);
+}
+
+window.closeRestoGallery = function() {
+    document.getElementById('resto-gallery-modal').style.display = 'none';
+    currentGalleryRestoId = null;
+}
+
 function loadRestoPhotos(restoId) {
     const grid = document.getElementById('resto-gallery-grid');
     grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;'>Chargement...</div>";
     
+    // On charge tout puis on filtre (évite le bug des index Firestore)
     const qAll = query(collection(db, "resto_photos"), orderBy("timestamp", "desc"));
     
     onSnapshot(qAll, (snap) => {
@@ -1524,8 +1538,8 @@ function loadRestoPhotos(restoId) {
         }
         
         photos.forEach(p => {
-            // Note le onclick="showLightbox" sur l'image
-            // Note le bouton delete SANS confirm
+            // Note: Le onclick sur l'image ouvre la Lightbox
+            // Note: Le bouton supprimer n'a plus de confirm()
             grid.innerHTML += `
                 <div style="position:relative;">
                     <img src="${p.url}" class="gallery-thumb" onclick="showLightbox('${p.url}')">
@@ -1535,16 +1549,57 @@ function loadRestoPhotos(restoId) {
     });
 }
 
-// 4. Suppression photo SANS CONFIRMATION
+window.handleRestoPhotoUpload = async function(input) {
+    if(!input.files[0] || !currentGalleryRestoId) return;
+    
+    // Loader sur le bouton
+    const btn = input.previousElementSibling; 
+    const oldText = btn.innerText;
+    btn.innerText = "Envoi...";
+    btn.disabled = true;
+
+    try {
+        const file = input.files[0];
+        // Utilise ta fonction compressImage existante
+        const b64 = await compressImage(file); 
+        await addDoc(collection(db, "resto_photos"), {
+            url: b64,
+            restoId: currentGalleryRestoId,
+            by: currentUser,
+            timestamp: serverTimestamp()
+        });
+    } catch(e) { console.error(e); alert("Erreur upload"); }
+
+    input.value = ""; 
+    btn.innerText = oldText;
+    btn.disabled = false;
+}
+
 window.deleteRestoPhoto = function(id) {
-    // Directement la suppression, pas de confirm()
+    // Suppression directe sans confirmation
     deleteDoc(doc(db, "resto_photos", id));
 }
 
-// --- RENDER (AFFICHAGE DES RESTOS AVEC STYLE FLOTTANT) ---
-// Remplace bien ton ancienne fonction renderRestos par celle-ci pour voir le changement de style !
+// --- RENDER & ECOUTEUR (C'EST ICI QUE CA AFFICHE) ---
+
+window.rateResto = function(id, role, rating) { updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating }); }
+window.saveRestoComment = function(id, role, text) { updateDoc(doc(db, "restaurants", id), { [`comment_${role}`]: text }); }
+
+window.toggleRestoDetails = function(id) {
+    const details = document.getElementById(`details-${id}`);
+    const isOpen = details.classList.contains('open');
+    document.querySelectorAll('.resto-details').forEach(el => el.classList.remove('open'));
+    if(!isOpen) details.classList.add('open');
+}
+
+// --- IMPORTANT : C'est cette partie qui charge les données ! Ne pas effacer ---
+onSnapshot(query(collection(db, "restaurants"), orderBy("created", "desc")), (snapshot) => {
+    allRestos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+    renderRestos();
+});
 
 function renderRestos() {
+    // Memoriser l'ouverture pour éviter la fermeture auto
     const currentlyOpenElement = document.querySelector('.resto-details.open');
     let savedOpenId = null;
     if (currentlyOpenElement) savedOpenId = currentlyOpenElement.id;
@@ -1554,7 +1609,7 @@ function renderRestos() {
     
     let filtered = allRestos.filter(r => r.status === currentRestoTab);
 
-    // Tri
+    // Tri par date de visite pour les "Validés"
     if (currentRestoTab === 'done') {
         filtered.sort((a, b) => {
             if (a.eatenDate && b.eatenDate) return b.eatenDate.localeCompare(a.eatenDate);
@@ -1618,7 +1673,7 @@ function renderRestos() {
         const safeName = r.name.replace(/'/g, "\\'");
         const safeLink = r.link ? r.link.replace(/'/g, "\\'") : "";
 
-        // LA STRUCTURE HTML IMPORTANTE POUR LE STYLE
+        // GENERATION HTML AVEC BOUTONS FLOTTANTS
         list.innerHTML += `
             <div class="resto-item">
                 <div class="resto-main-view" onclick="toggleRestoDetails('${r.id}')">
