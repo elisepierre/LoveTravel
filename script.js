@@ -1303,35 +1303,59 @@ function scrollToBottom() {
     div.scrollTop = div.scrollHeight;
 }
 
-/* --- 14. RESTAURANTS V2 (COMPLETE) --- */
+/* --- 14. RESTAURANTS V3 (CORRIGÉ & ÉDITABLE) --- */
 let currentRestoTab = 'wish'; 
 let allRestos = [];
-let selectedRestoType = '🍽️'; // Emoji par défaut
-let pendingRestoValidationId = null; // Stocke l'ID en cours de validation
-let currentGalleryRestoId = null; // Stocke l'ID du resto dont on regarde les photos
+let selectedRestoType = '🍽️'; 
+let editSelectedType = '🍽️'; // Pour la modale d'édition
+let pendingRestoValidationId = null; 
+let currentGalleryRestoId = null; 
+let currentEditRestoId = null; // ID du resto en cours de modif
 
-// Liste des emojis dispos
-const foodEmojis = ["🍕","🍔","🍣","🍜","🌮","🥗","🥩","🍰","🍹","🥐","🧀","🍗","🍟","🍩"];
+// Emojis dispos
+const foodEmojis = ["🍕","🍔","🍣","🍜","🌮","🥗","🥩","🍰","🍹","🥐","🧀","🍗","🍟","🍩","🍽️"];
 
-// Initialisation du sélecteur d'emoji au démarrage
-function initFoodPicker() {
+// Initialisation des sélecteurs (Ajout & Edit)
+function initFoodPickers() {
+    // 1. Pour l'ajout
     const container = document.getElementById('food-picker');
-    container.innerHTML = "";
-    foodEmojis.forEach(emoji => {
-        const div = document.createElement('div');
-        div.className = `food-option ${emoji === selectedRestoType ? 'selected' : ''}`;
-        div.innerText = emoji;
-        div.onclick = () => {
-            selectedRestoType = emoji;
-            document.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
-            div.classList.add('selected');
-        };
-        container.appendChild(div);
-    });
-}
-initFoodPicker(); // On lance la création
+    if(container) {
+        container.innerHTML = "";
+        foodEmojis.forEach(emoji => {
+            const div = document.createElement('div');
+            div.className = `food-option ${emoji === selectedRestoType ? 'selected' : ''}`;
+            div.innerText = emoji;
+            div.onclick = () => {
+                selectedRestoType = emoji;
+                container.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
+                div.classList.add('selected');
+            };
+            container.appendChild(div);
+        });
+    }
 
-// 1. Ajouter un resto
+    // 2. Pour l'édition (Similaire mais indépendant)
+    const editContainer = document.getElementById('food-picker-edit');
+    if(editContainer) {
+        editContainer.innerHTML = "";
+        foodEmojis.forEach(emoji => {
+            const div = document.createElement('div');
+            div.id = `edit-emoji-${emoji}`; // ID unique pour le cibler
+            div.className = `food-option`;
+            div.innerText = emoji;
+            div.onclick = () => {
+                editSelectedType = emoji;
+                editContainer.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
+                div.classList.add('selected');
+            };
+            editContainer.appendChild(div);
+        });
+    }
+}
+initFoodPickers(); 
+
+// --- GESTION PRINCIPALE ---
+
 window.addRestaurant = function() {
     const name = document.getElementById('resto-name').value.trim();
     const link = document.getElementById('resto-link').value.trim();
@@ -1340,11 +1364,11 @@ window.addRestaurant = function() {
 
     addDoc(collection(db, "restaurants"), {
         name: name,
-        type: selectedRestoType, // On utilise la variable globale
+        type: selectedRestoType,
         link: link,
         status: 'wish',
         addedBy: currentUser,
-        created: serverTimestamp(),
+        created: serverTimestamp(), // Sert au tri "Plus récent"
         rating_fr: 0, rating_tw: 0,
         comment_fr: "", comment_tw: "",
         eatenDate: null
@@ -1370,18 +1394,58 @@ window.switchRestoTab = function(tab) {
     renderRestos();
 }
 
-// 2. Suppression INSTANTANÉE (Sans confirm)
+// --- MODIFICATION RESTO (NEW) ---
+
+window.openEditResto = function(id, name, link, type, e) {
+    e.stopPropagation(); // Empêche l'accordéon de s'ouvrir
+    currentEditRestoId = id;
+    editSelectedType = type || '🍽️';
+
+    // Remplir les champs
+    document.getElementById('edit-resto-name').value = name;
+    document.getElementById('edit-resto-link').value = link || "";
+    
+    // Sélectionner le bon emoji
+    const editContainer = document.getElementById('food-picker-edit');
+    editContainer.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
+    const targetEmoji = document.getElementById(`edit-emoji-${editSelectedType}`);
+    if(targetEmoji) targetEmoji.classList.add('selected');
+
+    document.getElementById('resto-edit-modal').style.display = 'flex';
+}
+
+window.closeRestoEditModal = function() {
+    document.getElementById('resto-edit-modal').style.display = 'none';
+    currentEditRestoId = null;
+}
+
+window.saveRestoEdit = function() {
+    if(!currentEditRestoId) return;
+    const newName = document.getElementById('edit-resto-name').value.trim();
+    const newLink = document.getElementById('edit-resto-link').value.trim();
+    
+    if(newName) {
+        updateDoc(doc(db, "restaurants", currentEditRestoId), {
+            name: newName,
+            link: newLink,
+            type: editSelectedType
+        });
+        closeRestoEditModal();
+    }
+}
+
+// --- SUPPRESSION & VALIDATION ---
+
 window.deleteResto = function(id, e) {
     e.stopPropagation(); 
+    // Suppression directe sans confirmation
     deleteDoc(doc(db, "restaurants", id));
 }
 
-// 3. Validation avec Date (Modal Roulettes)
 window.openDateModal = function(id) {
     pendingRestoValidationId = id;
     const modal = document.getElementById('resto-date-modal');
     
-    // Remplissage des selects si vide
     const dSelect = document.getElementById('date-day');
     const mSelect = document.getElementById('date-month');
     const ySelect = document.getElementById('date-year');
@@ -1393,7 +1457,6 @@ window.openDateModal = function(id) {
         for(let i=2024; i<=2030; i++) ySelect.innerHTML += `<option value="${i}">${i}</option>`;
     }
 
-    // Mettre la date d'aujourd'hui par défaut
     const today = new Date();
     dSelect.value = today.getDate();
     mSelect.value = today.getMonth() + 1;
@@ -1409,24 +1472,20 @@ window.closeRestoDateModal = function() {
 
 window.confirmRestoDate = function() {
     if(!pendingRestoValidationId) return;
-    
     const d = document.getElementById('date-day').value.padStart(2, '0');
     const m = document.getElementById('date-month').value.padStart(2, '0');
     const y = document.getElementById('date-year').value;
-    const dateStr = `${y}-${m}-${d}`; // Format ISO pour trier facilement
+    const dateStr = `${y}-${m}-${d}`;
 
-    updateDoc(doc(db, "restaurants", pendingRestoValidationId), { 
-        status: 'done', 
-        eatenDate: dateStr 
-    });
-    
+    updateDoc(doc(db, "restaurants", pendingRestoValidationId), { status: 'done', eatenDate: dateStr });
     confetti({ particleCount: 100, colors: ['#ff9eb5', '#8ecae6'] });
     closeRestoDateModal();
 }
 
-// 4. Galerie Photos
+// --- GALERIE PHOTO (CORRECTIF BUG) ---
+
 window.openRestoGallery = function(id, name, e) {
-    e.stopPropagation(); // Ne pas ouvrir/fermer l'accordéon
+    e.stopPropagation(); 
     currentGalleryRestoId = id;
     document.getElementById('gallery-resto-title').innerText = name;
     document.getElementById('resto-gallery-modal').style.display = 'flex';
@@ -1442,15 +1501,15 @@ function loadRestoPhotos(restoId) {
     const grid = document.getElementById('resto-gallery-grid');
     grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;'>Chargement...</div>";
     
-    const q = query(collection(db, "resto_photos"), where("restoId", "==", restoId), orderBy("timestamp", "desc"));
-    // Note: Pour utiliser 'where', assure-toi d'importer 'where' depuis firebase-firestore au début du fichier !
-    // Si tu ne veux pas modifier tes imports, on peut faire un filtrage manuel simple ici car il y a peu de photos :
-    
-    // Méthode sans 'where' (plus simple si tu ne veux pas toucher aux imports) :
+    // CORRECTION : On récupère TOUT et on filtre en JS car 'where' n'est pas importé
     const qAll = query(collection(db, "resto_photos"), orderBy("timestamp", "desc"));
+    
     onSnapshot(qAll, (snap) => {
         grid.innerHTML = "";
-        const photos = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(p => p.restoId === restoId);
+        // Filtrage client-side pour éviter le crash
+        const photos = snap.docs
+            .map(d => ({id:d.id, ...d.data()}))
+            .filter(p => p.restoId === restoId);
         
         if(photos.length === 0) {
             grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;color:#888;font-style:italic;'>Pas encore de photo... 📸</div>";
@@ -1461,7 +1520,7 @@ function loadRestoPhotos(restoId) {
             grid.innerHTML += `
                 <div style="position:relative;">
                     <img src="${p.url}" class="gallery-thumb" onclick="showLightbox('${p.url}')">
-                    <button onclick="deleteRestoPhoto('${p.id}')" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.5);color:white;border:none;width:20px;height:20px;cursor:pointer;">✕</button>
+                    <button onclick="deleteRestoPhoto('${p.id}')" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.5);color:white;border:none;width:25px;height:25px;border-radius:0 0 0 5px;cursor:pointer;">✕</button>
                 </div>`;
         });
     });
@@ -1470,7 +1529,7 @@ function loadRestoPhotos(restoId) {
 window.handleRestoPhotoUpload = async function(input) {
     if(!input.files[0] || !currentGalleryRestoId) return;
     const file = input.files[0];
-    const b64 = await compressImage(file); // Réutilise ta fonction existante
+    const b64 = await compressImage(file); 
     
     await addDoc(collection(db, "resto_photos"), {
         url: b64,
@@ -1478,17 +1537,18 @@ window.handleRestoPhotoUpload = async function(input) {
         by: currentUser,
         timestamp: serverTimestamp()
     });
-    input.value = ""; // Reset
+    input.value = ""; 
 }
 
 window.deleteRestoPhoto = function(id) {
     if(confirm("Supprimer cette photo ?")) deleteDoc(doc(db, "resto_photos", id));
 }
 
-// 5. Fonctions existantes (Notes, Commentaires, Accordéon)
+// --- AFFICHAGE & TRI ---
+
+// Fonctions utilitaires
 window.rateResto = function(id, role, rating) { updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating }); }
 window.saveRestoComment = function(id, role, text) { updateDoc(doc(db, "restaurants", id), { [`comment_${role}`]: text }); }
-
 window.toggleRestoDetails = function(id) {
     const details = document.getElementById(`details-${id}`);
     const isOpen = details.classList.contains('open');
@@ -1496,7 +1556,7 @@ window.toggleRestoDetails = function(id) {
     if(!isOpen) details.classList.add('open');
 }
 
-// 6. RENDER
+// Listener principal avec TRI AUTOMATIQUE (orderBy created desc = Plus récent en haut)
 onSnapshot(query(collection(db, "restaurants"), orderBy("created", "desc")), (snapshot) => {
     allRestos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
     renderRestos();
@@ -1506,7 +1566,16 @@ function renderRestos() {
     const list = document.getElementById('resto-list');
     list.innerHTML = "";
     
-    const filtered = allRestos.filter(r => r.status === currentRestoTab);
+    // Filtrage
+    let filtered = allRestos.filter(r => r.status === currentRestoTab);
+
+    // Si on est dans "Validés", on peut vouloir trier par date de visite (eatenDate)
+    if (currentRestoTab === 'done') {
+        filtered.sort((a, b) => {
+            if (a.eatenDate && b.eatenDate) return b.eatenDate.localeCompare(a.eatenDate); // Plus récent en premier
+            return 0;
+        });
+    }
 
     if (filtered.length === 0) {
         list.innerHTML = `<div style="text-align:center; color:var(--text-sub); font-style:italic; padding:20px;">
@@ -1523,7 +1592,7 @@ function renderRestos() {
 
         let dateHtml = "";
         if (currentRestoTab === 'done' && r.eatenDate) {
-            const parts = r.eatenDate.split('-'); // YYYY-MM-DD
+            const parts = r.eatenDate.split('-'); 
             dateHtml = `<div class="resto-date-badge">Le ${parts[2]}/${parts[1]}/${parts[0]}</div>`;
         }
 
@@ -1540,7 +1609,6 @@ function renderRestos() {
         };
 
         let detailsContent = "";
-        
         if (currentRestoTab === 'wish') {
             detailsContent = `<button onclick="openDateModal('${r.id}')" class="btn-validate-resto">On a mangé ici ! 😋</button>`;
         } else {
@@ -1554,15 +1622,17 @@ function renderRestos() {
                     <div style="width:1px; background:var(--border);"></div>
                     <div class="user-rate-col tw-col"><span class="rate-label">Elise</span><div class="star-rating">${makeStars('tw', r.rating_tw)}</div></div>
                 </div>
-                
                 <button onclick="openRestoGallery('${r.id}', '${r.name.replace(/'/g, "\\'")}', event)" class="resto-photo-btn">📷 Voir les photos</button>
-
                 <div class="comments-section mt-10">
                     <div class="comment-box" style="border-left: 3px solid var(--blue);"><h4>Théo 👨🏻</h4><textarea class="comment-input" placeholder="..." rows="2" ${disableFr} onchange="saveRestoComment('${r.id}', 'fr', this.value)">${commFr}</textarea></div>
                     <div class="comment-box" style="border-left: 3px solid var(--pink);"><h4>Elise 👩🏻</h4><textarea class="comment-input" placeholder="..." rows="2" ${disableTw} onchange="saveRestoComment('${r.id}', 'tw', this.value)">${commTw}</textarea></div>
                 </div>
             `;
         }
+
+        // Échapper les apostrophes pour le onclick
+        const safeName = r.name.replace(/'/g, "\\'");
+        const safeLink = r.link ? r.link.replace(/'/g, "\\'") : "";
 
         list.innerHTML += `
             <div class="resto-item">
@@ -1574,6 +1644,7 @@ function renderRestos() {
                         </div>
                         <div style="display:flex; gap:5px; align-items:center;">
                             ${mapBtnHtml}
+                            <button onclick="openEditResto('${r.id}', '${safeName}', '${safeLink}', '${r.type}', event)" class="btn-edit-resto">✏️</button>
                             <button onclick="deleteResto('${r.id}', event)" style="background:none; border:none; color:#ffadad; font-size:1rem; cursor:pointer; padding:5px;">✕</button>
                         </div>
                     </div>
