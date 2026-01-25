@@ -1488,26 +1488,28 @@ window.confirmRestoDate = function() {
     closeRestoDateModal();
 }
 
-// --- GALERIE PHOTO (CORRIGÉ & SÉCURISÉ) ---
+/* --- LIGHTBOX & GALERIE --- */
 
-window.openRestoGallery = function(id, name, e) {
-    e.stopPropagation(); 
-    currentGalleryRestoId = id;
-    document.getElementById('gallery-resto-title').innerText = name;
-    document.getElementById('resto-gallery-modal').style.display = 'flex';
-    loadRestoPhotos(id);
+// 1. Ouvrir la photo en grand
+window.showLightbox = function(url) {
+    const modal = document.getElementById('lightbox-modal');
+    const img = document.getElementById('lightbox-img');
+    img.src = url;
+    modal.style.display = "flex"; // Utilise flex pour centrer
+    modal.style.justifyContent = "center";
+    modal.style.alignItems = "center";
 }
 
-window.closeRestoGallery = function() {
-    document.getElementById('resto-gallery-modal').style.display = 'none';
-    currentGalleryRestoId = null;
+// 2. Fermer la photo
+window.closeLightbox = function() {
+    document.getElementById('lightbox-modal').style.display = "none";
 }
 
+// 3. Charger les photos (Mise à jour pour le clic)
 function loadRestoPhotos(restoId) {
     const grid = document.getElementById('resto-gallery-grid');
     grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;'>Chargement...</div>";
     
-    // On charge tout et on filtre (méthode robuste sans index)
     const qAll = query(collection(db, "resto_photos"), orderBy("timestamp", "desc"));
     
     onSnapshot(qAll, (snap) => {
@@ -1522,73 +1524,27 @@ function loadRestoPhotos(restoId) {
         }
         
         photos.forEach(p => {
+            // Note le onclick="showLightbox" sur l'image
+            // Note le bouton delete SANS confirm
             grid.innerHTML += `
                 <div style="position:relative;">
                     <img src="${p.url}" class="gallery-thumb" onclick="showLightbox('${p.url}')">
-                    <button onclick="deleteRestoPhoto('${p.id}')" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.5);color:white;border:none;width:25px;height:25px;cursor:pointer;">✕</button>
+                    <button onclick="deleteRestoPhoto('${p.id}')" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.6);color:white;border:none;width:24px;height:24px;border-radius:0 0 0 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
                 </div>`;
         });
     });
 }
 
-// Fonction d'upload vérifiée
-window.handleRestoPhotoUpload = async function(input) {
-    if(!input.files[0]) return;
-    if(!currentGalleryRestoId) {
-        alert("Erreur : Aucun restaurant sélectionné");
-        return;
-    }
-
-    // Petit loader visuel sur le bouton
-    const btn = input.previousElementSibling; 
-    const oldText = btn.innerText;
-    btn.innerText = "Envoi en cours...";
-    btn.disabled = true;
-
-    try {
-        const file = input.files[0];
-        // On utilise la fonction compressImage globale (définie au début du fichier script.js)
-        const b64 = await compressImage(file); 
-        
-        await addDoc(collection(db, "resto_photos"), {
-            url: b64,
-            restoId: currentGalleryRestoId,
-            by: currentUser,
-            timestamp: serverTimestamp()
-        });
-    } catch (error) {
-        console.error("Erreur upload:", error);
-        alert("Erreur lors de l'envoi de l'image.");
-    }
-
-    // Reset du bouton
-    input.value = ""; 
-    btn.innerText = oldText;
-    btn.disabled = false;
-}
-
+// 4. Suppression photo SANS CONFIRMATION
 window.deleteRestoPhoto = function(id) {
-    if(confirm("Supprimer cette photo ?")) deleteDoc(doc(db, "resto_photos", id));
+    // Directement la suppression, pas de confirm()
+    deleteDoc(doc(db, "resto_photos", id));
 }
 
-// --- RENDER ---
-
-window.rateResto = function(id, role, rating) { updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating }); }
-window.saveRestoComment = function(id, role, text) { updateDoc(doc(db, "restaurants", id), { [`comment_${role}`]: text }); }
-window.toggleRestoDetails = function(id) {
-    const details = document.getElementById(`details-${id}`);
-    const isOpen = details.classList.contains('open');
-    document.querySelectorAll('.resto-details').forEach(el => el.classList.remove('open'));
-    if(!isOpen) details.classList.add('open');
-}
-
-onSnapshot(query(collection(db, "restaurants"), orderBy("created", "desc")), (snapshot) => {
-    allRestos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-    renderRestos();
-});
+// --- RENDER (AFFICHAGE DES RESTOS AVEC STYLE FLOTTANT) ---
+// Remplace bien ton ancienne fonction renderRestos par celle-ci pour voir le changement de style !
 
 function renderRestos() {
-    // Mémorisation de l'ouverture
     const currentlyOpenElement = document.querySelector('.resto-details.open');
     let savedOpenId = null;
     if (currentlyOpenElement) savedOpenId = currentlyOpenElement.id;
@@ -1598,7 +1554,7 @@ function renderRestos() {
     
     let filtered = allRestos.filter(r => r.status === currentRestoTab);
 
-    // Tri par date
+    // Tri
     if (currentRestoTab === 'done') {
         filtered.sort((a, b) => {
             if (a.eatenDate && b.eatenDate) return b.eatenDate.localeCompare(a.eatenDate);
@@ -1616,7 +1572,6 @@ function renderRestos() {
     filtered.forEach(r => {
         let mapBtnHtml = "";
         if (r.link && r.link.trim() !== "") {
-            // J'ai réduit un peu la taille du bouton maps pour qu'il soit discret
             mapBtnHtml = `<a href="${r.link}" target="_blank" class="resto-map-btn" onclick="event.stopPropagation()" style="font-size:0.75rem; padding:3px 10px;">📍 Maps</a>`;
         }
 
@@ -1663,7 +1618,7 @@ function renderRestos() {
         const safeName = r.name.replace(/'/g, "\\'");
         const safeLink = r.link ? r.link.replace(/'/g, "\\'") : "";
 
-        // NOUVELLE STRUCTURE HTML
+        // LA STRUCTURE HTML IMPORTANTE POUR LE STYLE
         list.innerHTML += `
             <div class="resto-item">
                 <div class="resto-main-view" onclick="toggleRestoDetails('${r.id}')">
