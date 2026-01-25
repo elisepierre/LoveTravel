@@ -790,14 +790,28 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 /* --- RESTO V2 STYLES --- */
 
 /* Sélecteur Emoji Food */
+/* Correction : Padding agrandi pour éviter que le smiley sélectionné soit coupé */
 .food-picker-container {
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    scrollbar-width: none; /* Cache scrollbar Firefox */
+    padding: 10px; /* C'était padding-bottom:10px, on met partout */
+    margin-bottom: 5px;
+    scrollbar-width: none;
 }
+
+/* Bouton Modifier (petit crayon) */
+.btn-edit-resto {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 5px;
+    margin-right: 5px;
+    opacity: 0.6;
+    transition: 0.2s;
+}
+.btn-edit-resto:hover { opacity: 1; transform: scale(1.1); }
 .food-picker-container::-webkit-scrollbar { display: none; } /* Cache scrollbar Chrome */
 
 .food-option {
