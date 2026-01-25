@@ -704,26 +704,64 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 }
 
 /* --- RESTAURANTS --- */
-/* --- RESTO V5 : DESIGN ÉPURÉ --- */
-
-/* On prépare l'item pour accueillir des éléments flottants */
-.resto-item {
-    position: relative; /* Indispensable pour le positionnement absolu */
-    padding-right: 45px; /* On garde de la place à droite pour les boutons */
+/* --- LIGHTBOX (PHOTOS) --- */
+.lightbox-overlay {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    z-index: 10001; /* Au-dessus de tout (même des autres modales) */
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9); /* Fond noir transparent */
+    backdrop-filter: blur(5px);
 }
 
-/* Conteneur vertical à droite */
+.lightbox-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 85vh;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    animation: zoomIn 0.3s;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.lightbox-close:hover { color: var(--pink); }
+
+@keyframes zoomIn { from {transform:scale(0.8); opacity:0} to {transform:scale(1); opacity:1} }
+
+
+/* --- RESTO DESIGN FLOTTANT (RAPPEL) --- */
+/* Assure-toi que ce code est bien présent pour voir les boutons ronds à droite */
+
+.resto-item {
+    position: relative; 
+    padding-right: 50px !important; /* Force l'espace à droite pour les boutons */
+}
+
 .resto-floating-actions {
     position: absolute;
-    top: 12px;
+    top: 15px;
     right: 10px;
     display: flex;
-    flex-direction: column; /* On empile verticalement */
-    gap: 8px; /* Espace entre la croix et le crayon */
-    z-index: 5; /* Au-dessus du reste */
+    flex-direction: column;
+    gap: 8px;
+    z-index: 5;
 }
 
-/* Style des mini boutons ronds */
 .btn-mini-action {
     width: 32px;
     height: 32px;
@@ -734,11 +772,18 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     font-size: 0.9rem;
     padding: 0;
+    margin: 0; /* Reset */
 }
+/* Mode sombre support */
+body.dark-mode .btn-mini-action {
+    background: #2d2d2d;
+    border-color: #555;
+    color: white;
+}
+
 .btn-mini-action:active { transform: scale(0.9); }
 
 /* Couleurs spécifiques */
@@ -751,13 +796,6 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 }
 .resto-info {
     width: 100%; /* Prend toute la largeur dispo */
-}
-
-/* Dark Mode support */
-body.dark-mode .btn-mini-action {
-    background: #2d2d2d;
-    border-color: #555;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
 
