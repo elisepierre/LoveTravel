@@ -1303,21 +1303,19 @@ function scrollToBottom() {
     div.scrollTop = div.scrollHeight;
 }
 
-/* --- 14. RESTAURANTS V3 (CORRIGÉ & ÉDITABLE) --- */
+/* --- 14. RESTAURANTS V4 (DARK MODE, DELETE CONFIRM & UPLOAD FIX) --- */
 let currentRestoTab = 'wish'; 
 let allRestos = [];
 let selectedRestoType = '🍽️'; 
-let editSelectedType = '🍽️'; // Pour la modale d'édition
+let editSelectedType = '🍽️'; 
 let pendingRestoValidationId = null; 
 let currentGalleryRestoId = null; 
-let currentEditRestoId = null; // ID du resto en cours de modif
+let currentEditRestoId = null; 
+let pendingDeleteId = null; // Pour la suppression
 
-// Emojis dispos
 const foodEmojis = ["🍕","🍔","🍣","🍜","🌮","🥗","🥩","🍰","🍹","🥐","🧀","🍗","🍟","🍩","🍽️"];
 
-// Initialisation des sélecteurs (Ajout & Edit)
 function initFoodPickers() {
-    // 1. Pour l'ajout
     const container = document.getElementById('food-picker');
     if(container) {
         container.innerHTML = "";
@@ -1334,13 +1332,12 @@ function initFoodPickers() {
         });
     }
 
-    // 2. Pour l'édition (Similaire mais indépendant)
     const editContainer = document.getElementById('food-picker-edit');
     if(editContainer) {
         editContainer.innerHTML = "";
         foodEmojis.forEach(emoji => {
             const div = document.createElement('div');
-            div.id = `edit-emoji-${emoji}`; // ID unique pour le cibler
+            div.id = `edit-emoji-${emoji}`;
             div.className = `food-option`;
             div.innerText = emoji;
             div.onclick = () => {
@@ -1368,7 +1365,7 @@ window.addRestaurant = function() {
         link: link,
         status: 'wish',
         addedBy: currentUser,
-        created: serverTimestamp(), // Sert au tri "Plus récent"
+        created: serverTimestamp(),
         rating_fr: 0, rating_tw: 0,
         comment_fr: "", comment_tw: "",
         eatenDate: null
@@ -1394,18 +1391,16 @@ window.switchRestoTab = function(tab) {
     renderRestos();
 }
 
-// --- MODIFICATION RESTO (NEW) ---
+// --- MODIFICATION ---
 
 window.openEditResto = function(id, name, link, type, e) {
-    e.stopPropagation(); // Empêche l'accordéon de s'ouvrir
+    e.stopPropagation(); 
     currentEditRestoId = id;
     editSelectedType = type || '🍽️';
 
-    // Remplir les champs
     document.getElementById('edit-resto-name').value = name;
     document.getElementById('edit-resto-link').value = link || "";
     
-    // Sélectionner le bon emoji
     const editContainer = document.getElementById('food-picker-edit');
     editContainer.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
     const targetEmoji = document.getElementById(`edit-emoji-${editSelectedType}`);
@@ -1434,18 +1429,31 @@ window.saveRestoEdit = function() {
     }
 }
 
-// --- SUPPRESSION & VALIDATION ---
+// --- SUPPRESSION ESTHETIQUE ---
 
-window.deleteResto = function(id, e) {
-    e.stopPropagation(); 
-    // Suppression directe sans confirmation
-    deleteDoc(doc(db, "restaurants", id));
+window.askDeleteResto = function(id, e) {
+    e.stopPropagation();
+    pendingDeleteId = id;
+    document.getElementById('delete-confirm-modal').style.display = 'flex';
 }
 
+window.closeDeleteModal = function() {
+    document.getElementById('delete-confirm-modal').style.display = 'none';
+    pendingDeleteId = null;
+}
+
+window.confirmRestoDeletion = async function() {
+    if(pendingDeleteId) {
+        await deleteDoc(doc(db, "restaurants", pendingDeleteId));
+        closeDeleteModal();
+    }
+}
+
+// --- DATE ---
 window.openDateModal = function(id) {
     pendingRestoValidationId = id;
     const modal = document.getElementById('resto-date-modal');
-    
+    // ... (Logique de remplissage des selects identique)
     const dSelect = document.getElementById('date-day');
     const mSelect = document.getElementById('date-month');
     const ySelect = document.getElementById('date-year');
@@ -1456,12 +1464,10 @@ window.openDateModal = function(id) {
         months.forEach((m, i) => mSelect.innerHTML += `<option value="${i+1}">${m}</option>`);
         for(let i=2024; i<=2030; i++) ySelect.innerHTML += `<option value="${i}">${i}</option>`;
     }
-
     const today = new Date();
     dSelect.value = today.getDate();
     mSelect.value = today.getMonth() + 1;
     ySelect.value = today.getFullYear();
-
     modal.style.display = 'flex';
 }
 
@@ -1482,7 +1488,7 @@ window.confirmRestoDate = function() {
     closeRestoDateModal();
 }
 
-// --- GALERIE PHOTO (CORRECTIF BUG) ---
+// --- GALERIE PHOTO (CORRIGÉ & SÉCURISÉ) ---
 
 window.openRestoGallery = function(id, name, e) {
     e.stopPropagation(); 
@@ -1501,12 +1507,11 @@ function loadRestoPhotos(restoId) {
     const grid = document.getElementById('resto-gallery-grid');
     grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;'>Chargement...</div>";
     
-    // CORRECTION : On récupère TOUT et on filtre en JS car 'where' n'est pas importé
+    // On charge tout et on filtre (méthode robuste sans index)
     const qAll = query(collection(db, "resto_photos"), orderBy("timestamp", "desc"));
     
     onSnapshot(qAll, (snap) => {
         grid.innerHTML = "";
-        // Filtrage client-side pour éviter le crash
         const photos = snap.docs
             .map(d => ({id:d.id, ...d.data()}))
             .filter(p => p.restoId === restoId);
@@ -1520,33 +1525,54 @@ function loadRestoPhotos(restoId) {
             grid.innerHTML += `
                 <div style="position:relative;">
                     <img src="${p.url}" class="gallery-thumb" onclick="showLightbox('${p.url}')">
-                    <button onclick="deleteRestoPhoto('${p.id}')" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.5);color:white;border:none;width:25px;height:25px;border-radius:0 0 0 5px;cursor:pointer;">✕</button>
+                    <button onclick="deleteRestoPhoto('${p.id}')" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.5);color:white;border:none;width:25px;height:25px;cursor:pointer;">✕</button>
                 </div>`;
         });
     });
 }
 
+// Fonction d'upload vérifiée
 window.handleRestoPhotoUpload = async function(input) {
-    if(!input.files[0] || !currentGalleryRestoId) return;
-    const file = input.files[0];
-    const b64 = await compressImage(file); 
-    
-    await addDoc(collection(db, "resto_photos"), {
-        url: b64,
-        restoId: currentGalleryRestoId,
-        by: currentUser,
-        timestamp: serverTimestamp()
-    });
+    if(!input.files[0]) return;
+    if(!currentGalleryRestoId) {
+        alert("Erreur : Aucun restaurant sélectionné");
+        return;
+    }
+
+    // Petit loader visuel sur le bouton
+    const btn = input.previousElementSibling; 
+    const oldText = btn.innerText;
+    btn.innerText = "Envoi en cours...";
+    btn.disabled = true;
+
+    try {
+        const file = input.files[0];
+        // On utilise la fonction compressImage globale (définie au début du fichier script.js)
+        const b64 = await compressImage(file); 
+        
+        await addDoc(collection(db, "resto_photos"), {
+            url: b64,
+            restoId: currentGalleryRestoId,
+            by: currentUser,
+            timestamp: serverTimestamp()
+        });
+    } catch (error) {
+        console.error("Erreur upload:", error);
+        alert("Erreur lors de l'envoi de l'image.");
+    }
+
+    // Reset du bouton
     input.value = ""; 
+    btn.innerText = oldText;
+    btn.disabled = false;
 }
 
 window.deleteRestoPhoto = function(id) {
     if(confirm("Supprimer cette photo ?")) deleteDoc(doc(db, "resto_photos", id));
 }
 
-// --- AFFICHAGE & TRI ---
+// --- RENDER ---
 
-// Fonctions utilitaires
 window.rateResto = function(id, role, rating) { updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating }); }
 window.saveRestoComment = function(id, role, text) { updateDoc(doc(db, "restaurants", id), { [`comment_${role}`]: text }); }
 window.toggleRestoDetails = function(id) {
@@ -1556,23 +1582,28 @@ window.toggleRestoDetails = function(id) {
     if(!isOpen) details.classList.add('open');
 }
 
-// Listener principal avec TRI AUTOMATIQUE (orderBy created desc = Plus récent en haut)
 onSnapshot(query(collection(db, "restaurants"), orderBy("created", "desc")), (snapshot) => {
     allRestos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
     renderRestos();
 });
 
 function renderRestos() {
+    // 1. MÉMORISATION : On regarde qui est ouvert AVANT de tout effacer
+    const currentlyOpenElement = document.querySelector('.resto-details.open');
+    let savedOpenId = null;
+    if (currentlyOpenElement) {
+        savedOpenId = currentlyOpenElement.id; // ex: "details-AuBonResto123"
+    }
+
     const list = document.getElementById('resto-list');
     list.innerHTML = "";
     
-    // Filtrage
     let filtered = allRestos.filter(r => r.status === currentRestoTab);
 
-    // Si on est dans "Validés", on peut vouloir trier par date de visite (eatenDate)
+    // Tri par date de visite pour les Validés
     if (currentRestoTab === 'done') {
         filtered.sort((a, b) => {
-            if (a.eatenDate && b.eatenDate) return b.eatenDate.localeCompare(a.eatenDate); // Plus récent en premier
+            if (a.eatenDate && b.eatenDate) return b.eatenDate.localeCompare(a.eatenDate);
             return 0;
         });
     }
@@ -1601,6 +1632,7 @@ function renderRestos() {
             for(let i=1; i<=5; i++) { 
                 const filled = i <= currentRating ? 'filled' : ''; 
                 const canRate = currentRestoTab === 'done' && role === currentUser;
+                // Important : on garde onclick ici, mais grâce à la mémorisation (étape 1), ça ne se fermera plus
                 const action = canRate ? `onclick="rateResto('${r.id}', '${role}', ${i})"` : ''; 
                 const cursor = canRate ? 'pointer' : 'default';
                 html += `<span class="star ${filled}" style="font-size:1.1rem; cursor:${cursor}" ${action}>★</span>`; 
@@ -1630,7 +1662,6 @@ function renderRestos() {
             `;
         }
 
-        // Échapper les apostrophes pour le onclick
         const safeName = r.name.replace(/'/g, "\\'");
         const safeLink = r.link ? r.link.replace(/'/g, "\\'") : "";
 
@@ -1645,7 +1676,7 @@ function renderRestos() {
                         <div style="display:flex; gap:5px; align-items:center;">
                             ${mapBtnHtml}
                             <button onclick="openEditResto('${r.id}', '${safeName}', '${safeLink}', '${r.type}', event)" class="btn-edit-resto">✏️</button>
-                            <button onclick="deleteResto('${r.id}', event)" style="background:none; border:none; color:#ffadad; font-size:1rem; cursor:pointer; padding:5px;">✕</button>
+                            <button onclick="askDeleteResto('${r.id}', event)" style="background:none; border:none; color:#ffadad; font-size:1rem; cursor:pointer; padding:5px;">✕</button>
                         </div>
                     </div>
                 </div>
@@ -1653,8 +1684,15 @@ function renderRestos() {
             </div>
         `;
     });
-}
 
+    // 2. RESTAURATION : Si un resto était ouvert, on le ré-ouvre maintenant que la liste est reconstruite
+    if (savedOpenId) {
+        const elementToReopen = document.getElementById(savedOpenId);
+        if (elementToReopen) {
+            elementToReopen.classList.add('open');
+        }
+    }
+}
 /* --- GESTION CHAT (AVEC MODIF/SUPP) --- */
 
 let chatMsgIdToEdit = null; // Stocke l'ID du message ciblé
