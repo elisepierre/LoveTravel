@@ -1588,19 +1588,17 @@ onSnapshot(query(collection(db, "restaurants"), orderBy("created", "desc")), (sn
 });
 
 function renderRestos() {
-    // 1. MÉMORISATION : On regarde qui est ouvert AVANT de tout effacer
+    // Mémorisation de l'ouverture
     const currentlyOpenElement = document.querySelector('.resto-details.open');
     let savedOpenId = null;
-    if (currentlyOpenElement) {
-        savedOpenId = currentlyOpenElement.id; // ex: "details-AuBonResto123"
-    }
+    if (currentlyOpenElement) savedOpenId = currentlyOpenElement.id;
 
     const list = document.getElementById('resto-list');
     list.innerHTML = "";
     
     let filtered = allRestos.filter(r => r.status === currentRestoTab);
 
-    // Tri par date de visite pour les Validés
+    // Tri par date
     if (currentRestoTab === 'done') {
         filtered.sort((a, b) => {
             if (a.eatenDate && b.eatenDate) return b.eatenDate.localeCompare(a.eatenDate);
@@ -1618,7 +1616,8 @@ function renderRestos() {
     filtered.forEach(r => {
         let mapBtnHtml = "";
         if (r.link && r.link.trim() !== "") {
-            mapBtnHtml = `<a href="${r.link}" target="_blank" class="resto-map-btn" onclick="event.stopPropagation()">📍 Maps</a>`;
+            // J'ai réduit un peu la taille du bouton maps pour qu'il soit discret
+            mapBtnHtml = `<a href="${r.link}" target="_blank" class="resto-map-btn" onclick="event.stopPropagation()" style="font-size:0.75rem; padding:3px 10px;">📍 Maps</a>`;
         }
 
         let dateHtml = "";
@@ -1632,7 +1631,6 @@ function renderRestos() {
             for(let i=1; i<=5; i++) { 
                 const filled = i <= currentRating ? 'filled' : ''; 
                 const canRate = currentRestoTab === 'done' && role === currentUser;
-                // Important : on garde onclick ici, mais grâce à la mémorisation (étape 1), ça ne se fermera plus
                 const action = canRate ? `onclick="rateResto('${r.id}', '${role}', ${i})"` : ''; 
                 const cursor = canRate ? 'pointer' : 'default';
                 html += `<span class="star ${filled}" style="font-size:1.1rem; cursor:${cursor}" ${action}>★</span>`; 
@@ -1665,34 +1663,40 @@ function renderRestos() {
         const safeName = r.name.replace(/'/g, "\\'");
         const safeLink = r.link ? r.link.replace(/'/g, "\\'") : "";
 
+        // NOUVELLE STRUCTURE HTML
         list.innerHTML += `
             <div class="resto-item">
                 <div class="resto-main-view" onclick="toggleRestoDetails('${r.id}')">
                     <div class="resto-header">
                         <div class="resto-info">
                             <div class="resto-icon">${r.type || '🍽️'}</div>
-                            <div><div class="resto-name">${r.name}</div>${dateHtml}</div>
-                        </div>
-                        <div style="display:flex; gap:5px; align-items:center;">
-                            ${mapBtnHtml}
-                            <button onclick="openEditResto('${r.id}', '${safeName}', '${safeLink}', '${r.type}', event)" class="btn-edit-resto">✏️</button>
-                            <button onclick="askDeleteResto('${r.id}', event)" style="background:none; border:none; color:#ffadad; font-size:1rem; cursor:pointer; padding:5px;">✕</button>
+                            <div style="display:flex; flex-direction:column; align-items:flex-start; gap:4px; width:100%;">
+                                <div class="resto-name">${r.name}</div>
+                                <div style="display:flex; flex-wrap:wrap; gap:5px; align-items:center;">
+                                    ${dateHtml}
+                                    ${mapBtnHtml}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="resto-floating-actions">
+                    <button onclick="askDeleteResto('${r.id}', event)" class="btn-mini-action btn-delete-red">✕</button>
+                    <button onclick="openEditResto('${r.id}', '${safeName}', '${safeLink}', '${r.type}', event)" class="btn-mini-action btn-edit-blue">✏️</button>
+                </div>
+                
                 <div class="resto-details" id="details-${r.id}">${detailsContent}</div>
             </div>
         `;
     });
 
-    // 2. RESTAURATION : Si un resto était ouvert, on le ré-ouvre maintenant que la liste est reconstruite
     if (savedOpenId) {
         const elementToReopen = document.getElementById(savedOpenId);
-        if (elementToReopen) {
-            elementToReopen.classList.add('open');
-        }
+        if (elementToReopen) elementToReopen.classList.add('open');
     }
 }
+
 /* --- GESTION CHAT (AVEC MODIF/SUPP) --- */
 
 let chatMsgIdToEdit = null; // Stocke l'ID du message ciblé
