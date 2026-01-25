@@ -881,6 +881,47 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     border-radius: 5px;
     cursor: pointer;
 }
+
+/* --- CORRECTIFS DARK MODE & LISIBILITÉ --- */
+
+/* 1. Bouton Maps en Dark Mode */
+body.dark-mode .resto-map-btn {
+    background: #1e3a29; /* Fond vert très foncé */
+    color: #4cd137; /* Texte vert fluo lisible */
+    border: 1px solid #2ecc71;
+}
+
+/* 2. Zone Commentaires en Dark Mode */
+body.dark-mode .comment-box {
+    background: #2d2d2d;
+    border-color: #444;
+}
+body.dark-mode .comment-box h4 {
+    color: #aaa;
+}
+body.dark-mode .comment-input {
+    color: white; /* Texte blanc */
+}
+/* Placeholder plus clair en dark mode */
+body.dark-mode .comment-input::placeholder {
+    color: #777;
+}
+
+/* 3. Bouton "Voir les photos" en Dark Mode */
+body.dark-mode .resto-photo-btn {
+    background: #333;
+    color: white;
+    border-color: #555;
+}
+
+/* --- MODAL SUPPRESSION --- */
+.btn-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
 .mt-10 { margin-top: 10px; }
 .mt-20 { margin-top: 20px; }
 
