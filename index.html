@@ -299,6 +299,23 @@
                 <button onclick="closeRestoDateModal()" class="link-cancel">Annuler</button>
             </div>
         </div>
+
+        <div id="resto-edit-modal" class="modal-overlay" style="display:none;">
+            <div class="modal-content-small">
+                <h3>Modifier le resto ✏️</h3>
+                
+                <div class="food-picker-container" id="food-picker-edit" style="justify-content: center;">
+                    </div>
+        
+                <div class="input-group mb-0" style="flex-direction: column;">
+                    <input type="text" id="edit-resto-name" class="input-field full-width" placeholder="Nom du resto">
+                    <input type="text" id="edit-resto-link" class="input-field full-width" placeholder="Lien Maps (vide pour supprimer)">
+                </div>
+        
+                <button onclick="saveRestoEdit()" class="btn-action blue-bg full-width mt-20">Enregistrer</button>
+                <button onclick="closeRestoEditModal()" class="link-cancel">Annuler</button>
+            </div>
+        </div>
         
         <div id="resto-gallery-modal" class="modal-overlay" style="display:none; align-items:flex-start; padding-top:50px; overflow-y:auto;">
             <div class="modal-content" style="width:95%; max-width:400px;">
