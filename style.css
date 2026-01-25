@@ -704,11 +704,10 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 }
 
 /* --- RESTAURANTS --- */
-/* --- LIGHTBOX (PHOTOS) --- */
 .lightbox-overlay {
     display: none; /* Caché par défaut */
     position: fixed;
-    z-index: 10001; /* Au-dessus de tout (même des autres modales) */
+    z-index: 10001; /* Au-dessus de tout */
     padding-top: 50px;
     left: 0;
     top: 0;
@@ -717,6 +716,8 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.9); /* Fond noir transparent */
     backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
 }
 
 .lightbox-content {
@@ -740,6 +741,8 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     transition: 0.3s;
 }
 .lightbox-close:hover { color: var(--pink); }
+
+@keyframes zoomIn { from {transform:scale(0.8); opacity:0} to {transform:scale(1); opacity:1} }
 
 @keyframes zoomIn { from {transform:scale(0.8); opacity:0} to {transform:scale(1); opacity:1} }
 
