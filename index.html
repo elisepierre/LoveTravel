@@ -88,9 +88,9 @@
         <div class="modal-grid" id="modal-grid"></div>
     </div>
 
-    <div id="lightbox" onclick="closeLightbox()">
-        <button class="lightbox-close">✕</button>
-        <img id="lightbox-img" src="">
+    <div id="lightbox-modal" class="lightbox-overlay" onclick="closeLightbox()">
+        <button class="lightbox-close" onclick="closeLightbox()">×</button>
+        <img class="lightbox-content" id="lightbox-zoom-img">
     </div>
 
     <header>
@@ -344,10 +344,6 @@
             </div>
         </div>
         
-        <div id="lightbox-modal" class="lightbox-overlay" onclick="closeLightbox()">
-            <button class="lightbox-close">&times;</button>
-            <img class="lightbox-content" id="lightbox-img">
-        </div>
         <div class="card" id="card-games">
             <div class="card-title toggleable" onclick="toggleCard(this)">
                 <div class="card-head-wrap"><span>🎮</span> Salle de Jeux</div>
