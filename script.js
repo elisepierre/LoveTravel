@@ -1310,7 +1310,7 @@ function scrollToBottom() {
     div.scrollTop = div.scrollHeight;
 }
 
-/* --- 14. RESTAURANTS (COMPLETE & DEBUGGÉE) --- */
+/* --- 14. RESTAURANTS (COMPLETE & OPTIMISÉE) --- */
 let currentRestoTab = 'wish'; 
 let allRestos = [];
 let selectedRestoType = '🍽️'; 
@@ -1320,9 +1320,9 @@ let currentGalleryRestoId = null;
 let currentEditRestoId = null; 
 let pendingDeleteId = null; 
 
-const foodEmojis = ["🍕","🍔","🍣","🍜","🌮","🥗","🥩","🍰","🍹","🥐","🧀","🍗","🍟","🍩","🍽️"];
+const foodEmojis = ["🍕","🍔","🍣","🍜"," taco","🥗","🥩","🍰","🍹","🥐","🧀","🍗","🍟","🍩","🍽️"];
 
-// Init des sélecteurs d'emojis
+// Initialisation des sélecteurs d'emojis (Ajout et Edition)
 function initFoodPickers() {
     const container = document.getElementById('food-picker');
     if(container) {
@@ -1361,49 +1361,48 @@ initFoodPickers();
 
 // --- GESTION PRINCIPALE ---
 
-window.addRestaurant = function() {
-    const name = document.getElementById('resto-name').value.trim();
-    const link = document.getElementById('resto-link').value.trim();
+window.addRestaurant = async function() {
+    const nameInput = document.getElementById('resto-name');
+    const linkInput = document.getElementById('resto-link');
+    const name = nameInput.value.trim();
+    const link = linkInput.value.trim();
 
     if(!name) return;
 
-    addDoc(collection(db, "restaurants"), {
-        name: name,
-        type: selectedRestoType,
-        link: link,
-        status: 'wish',
-        addedBy: currentUser,
-        created: serverTimestamp(),
-        rating_fr: 0, rating_tw: 0,
-        comment_fr: "", comment_tw: "",
-        eatenDate: null
-    });
+    try {
+        await addDoc(collection(db, "restaurants"), {
+            name: name,
+            type: selectedRestoType,
+            link: link,
+            status: 'wish',
+            addedBy: currentUser,
+            created: serverTimestamp(),
+            rating_fr: 0, rating_tw: 0,
+            comment_fr: "", comment_tw: "",
+            eatenDate: null
+        });
 
-    document.getElementById('resto-name').value = "";
-    document.getElementById('resto-link').value = "";
-    sendNtfy(`🍽️ Nouveau resto ajouté : ${name} !`, "fries", "low");
+        nameInput.value = "";
+        linkInput.value = "";
+        sendNtfy(`🍽️ Nouveau resto ajouté : ${name} !`, "fries", "low");
+    } catch (e) { console.error("Erreur ajout resto:", e); }
 }
 
 window.switchRestoTab = function(tab) {
     currentRestoTab = tab;
-    const tWish = document.getElementById('tab-resto-wish');
-    const tDone = document.getElementById('tab-resto-done');
-    const addCard = document.querySelector('.resto-add-card'); 
+    document.getElementById('tab-resto-wish').classList.toggle('active', tab === 'wish');
+    document.getElementById('tab-resto-done').classList.toggle('active', tab === 'done');
     
-    if(tab === 'wish') {
-        tWish.classList.add('active');
-        if(addCard) addCard.style.display = 'block';
-    } else {
-        tDone.classList.add('active');
-        if(addCard) addCard.style.display = 'none'; // MASQUE "ON MANGE QUOI"
-    }
+    const addCard = document.querySelector('.resto-add-card'); 
+    if(addCard) addCard.style.display = (tab === 'wish') ? 'block' : 'none';
+    
     renderRestos();
 }
 
 // --- MODIFICATION ---
 
 window.openEditResto = function(id, name, link, type, e) {
-    e.stopPropagation(); 
+    if(e) e.stopPropagation(); 
     currentEditRestoId = id;
     editSelectedType = type || '🍽️';
 
@@ -1425,13 +1424,13 @@ window.closeRestoEditModal = function() {
     currentEditRestoId = null;
 }
 
-window.saveRestoEdit = function() {
+window.saveRestoEdit = async function() {
     if(!currentEditRestoId) return;
     const newName = document.getElementById('edit-resto-name').value.trim();
     const newLink = document.getElementById('edit-resto-link').value.trim();
     
     if(newName) {
-        updateDoc(doc(db, "restaurants", currentEditRestoId), {
+        await updateDoc(doc(db, "restaurants", currentEditRestoId), {
             name: newName,
             link: newLink,
             type: editSelectedType
@@ -1443,7 +1442,7 @@ window.saveRestoEdit = function() {
 // --- SUPPRESSION & VALIDATION ---
 
 window.askDeleteResto = function(id, e) {
-    e.stopPropagation();
+    if(e) e.stopPropagation();
     pendingDeleteId = id;
     document.getElementById('delete-confirm-modal').style.display = 'flex';
 }
@@ -1480,63 +1479,41 @@ window.openDateModal = function(id) {
     modal.style.display = 'flex';
 }
 
-window.closeRestoDateModal = function() {
-    document.getElementById('resto-date-modal').style.display = 'none';
-    pendingRestoValidationId = null;
-}
-
-window.confirmRestoDate = function() {
+window.confirmRestoDate = async function() {
     if(!pendingRestoValidationId) return;
     const d = document.getElementById('date-day').value.padStart(2, '0');
     const m = document.getElementById('date-month').value.padStart(2, '0');
     const y = document.getElementById('date-year').value;
     const dateStr = `${y}-${m}-${d}`;
 
-    updateDoc(doc(db, "restaurants", pendingRestoValidationId), { status: 'done', eatenDate: dateStr });
+    await updateDoc(doc(db, "restaurants", pendingRestoValidationId), { 
+        status: 'done', 
+        eatenDate: dateStr 
+    });
     confetti({ particleCount: 100, colors: ['#ff9eb5', '#8ecae6'] });
-    closeRestoDateModal();
+    document.getElementById('resto-date-modal').style.display = 'none';
+    pendingRestoValidationId = null;
 }
 
-// --- GALERIE & LIGHTBOX ---
-
-/* --- LIGHTBOX (ZOOM) --- */
-/* --- SYSTEME DE ZOOM UNIFIÉ --- */
-window.showLightbox = function(url) {
-    const modal = document.getElementById('lightbox-modal');
-    const img = document.getElementById('lightbox-zoom-img');
-    
-    if (modal && img) {
-        img.src = url;
-        modal.style.display = "flex"; 
-    }
-}
-
-window.closeLightbox = function() {
-    const modal = document.getElementById('lightbox-modal');
-    if (modal) modal.style.display = "none";
-}
+// --- GALERIE ---
 
 window.openRestoGallery = function(id, name, e) {
-    e.stopPropagation(); 
+    if(e) e.stopPropagation(); 
     currentGalleryRestoId = id;
     document.getElementById('gallery-resto-title').innerText = name;
     document.getElementById('resto-gallery-modal').style.display = 'flex';
     loadRestoPhotos(id);
 }
 
-window.closeRestoGallery = function() {
-    document.getElementById('resto-gallery-modal').style.display = 'none';
-    currentGalleryRestoId = null;
-}
-
 function loadRestoPhotos(restoId) {
     const grid = document.getElementById('resto-gallery-grid');
     grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;'>Chargement...</div>";
     
-    // On charge tout puis on filtre (évite le bug des index Firestore)
+    // On utilise un snapshot global filtré localement pour éviter les index complexes
     const qAll = query(collection(db, "resto_photos"), orderBy("timestamp", "desc"));
     
     onSnapshot(qAll, (snap) => {
+        if (currentGalleryRestoId !== restoId) return; // Sécurité si on change vite
         grid.innerHTML = "";
         const photos = snap.docs
             .map(d => ({id:d.id, ...d.data()}))
@@ -1548,12 +1525,10 @@ function loadRestoPhotos(restoId) {
         }
         
         photos.forEach(p => {
-            // Note: Le onclick sur l'image ouvre la Lightbox
-            // Note: Le bouton supprimer n'a plus de confirm()
             grid.innerHTML += `
                 <div style="position:relative;">
                     <img src="${p.url}" class="gallery-thumb" onclick="showLightbox('${p.url}')">
-                    <button onclick="deleteRestoPhoto('${p.id}')" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.6);color:white;border:none;width:24px;height:24px;border-radius:0 0 0 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+                    <button onclick="deleteRestoPhoto('${p.id}')" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.6);color:white;border:none;width:24px;height:24px;border-radius:0 0 0 8px;cursor:pointer;">✕</button>
                 </div>`;
         });
     });
@@ -1561,8 +1536,6 @@ function loadRestoPhotos(restoId) {
 
 window.handleRestoPhotoUpload = async function(input) {
     if(!input.files[0] || !currentGalleryRestoId) return;
-    
-    // Loader sur le bouton
     const btn = input.previousElementSibling; 
     const oldText = btn.innerText;
     btn.innerText = "Envoi...";
@@ -1570,7 +1543,6 @@ window.handleRestoPhotoUpload = async function(input) {
 
     try {
         const file = input.files[0];
-        // Utilise ta fonction compressImage existante
         const b64 = await compressImage(file); 
         await addDoc(collection(db, "resto_photos"), {
             url: b64,
@@ -1578,22 +1550,25 @@ window.handleRestoPhotoUpload = async function(input) {
             by: currentUser,
             timestamp: serverTimestamp()
         });
-    } catch(e) { console.error(e); alert("Erreur upload"); }
-
+    } catch(e) { console.error(e); }
     input.value = ""; 
     btn.innerText = oldText;
     btn.disabled = false;
 }
 
 window.deleteRestoPhoto = function(id) {
-    // Suppression directe sans confirmation
     deleteDoc(doc(db, "resto_photos", id));
 }
 
-// --- RENDER & ECOUTEUR (C'EST ICI QUE CA AFFICHE) ---
+// --- RENDER ---
 
-window.rateResto = function(id, role, rating) { updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating }); }
-window.saveRestoComment = function(id, role, text) { updateDoc(doc(db, "restaurants", id), { [`comment_${role}`]: text }); }
+window.rateResto = function(id, role, rating) { 
+    updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating }); 
+}
+
+window.saveRestoComment = function(id, role, text) { 
+    updateDoc(doc(db, "restaurants", id), { [`comment_${role}`]: text }); 
+}
 
 window.toggleRestoDetails = function(id) {
     const details = document.getElementById(`details-${id}`);
@@ -1602,29 +1577,23 @@ window.toggleRestoDetails = function(id) {
     if(!isOpen) details.classList.add('open');
 }
 
-// --- IMPORTANT : C'est cette partie qui charge les données ! Ne pas effacer ---
+// Listener principal
 onSnapshot(query(collection(db, "restaurants"), orderBy("created", "desc")), (snapshot) => {
     allRestos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
     renderRestos();
 });
 
 function renderRestos() {
-    // Memoriser l'ouverture pour éviter la fermeture auto
     const currentlyOpenElement = document.querySelector('.resto-details.open');
-    let savedOpenId = null;
-    if (currentlyOpenElement) savedOpenId = currentlyOpenElement.id;
+    let savedOpenId = currentlyOpenElement ? currentlyOpenElement.id : null;
 
     const list = document.getElementById('resto-list');
     list.innerHTML = "";
     
     let filtered = allRestos.filter(r => r.status === currentRestoTab);
 
-    // Tri par date de visite pour les "Validés"
     if (currentRestoTab === 'done') {
-        filtered.sort((a, b) => {
-            if (a.eatenDate && b.eatenDate) return b.eatenDate.localeCompare(a.eatenDate);
-            return 0;
-        });
+        filtered.sort((a, b) => (b.eatenDate || "").localeCompare(a.eatenDate || ""));
     }
 
     if (filtered.length === 0) {
@@ -1635,25 +1604,21 @@ function renderRestos() {
     }
 
     filtered.forEach(r => {
-        let mapBtnHtml = "";
-        if (r.link && r.link.trim() !== "") {
-            mapBtnHtml = `<a href="${r.link}" target="_blank" class="resto-map-btn" onclick="event.stopPropagation()" style="font-size:0.75rem; padding:3px 10px;">📍 Maps</a>`;
-        }
-
+        const mapBtn = r.link ? `<a href="${r.link}" target="_blank" class="resto-map-btn" onclick="event.stopPropagation()">📍 Maps</a>` : "";
         let dateHtml = "";
         if (currentRestoTab === 'done' && r.eatenDate) {
-            const parts = r.eatenDate.split('-'); 
-            dateHtml = `<div class="resto-date-badge">Le ${parts[2]}/${parts[1]}/${parts[0]}</div>`;
+            const [y, m, d] = r.eatenDate.split('-');
+            dateHtml = `<div class="resto-date-badge">Le ${d}/${m}/${y}</div>`;
         }
 
         const makeStars = (role, currentRating) => {
             let html = ''; 
             for(let i=1; i<=5; i++) { 
-                const filled = i <= currentRating ? 'filled' : ''; 
+                const isFilled = i <= currentRating;
                 const canRate = currentRestoTab === 'done' && role === currentUser;
-                const action = canRate ? `onclick="rateResto('${r.id}', '${role}', ${i})"` : ''; 
-                const cursor = canRate ? 'pointer' : 'default';
-                html += `<span class="star ${filled}" style="font-size:1.1rem; cursor:${cursor}" ${action}>★</span>`; 
+                html += `<span class="star ${isFilled ? 'filled' : ''}" 
+                        style="font-size:1.1rem; cursor:${canRate ? 'pointer' : 'default'}" 
+                        ${canRate ? `onclick="rateResto('${r.id}', '${role}', ${i})"` : ''}>★</span>`; 
             }
             return html;
         };
@@ -1662,58 +1627,47 @@ function renderRestos() {
         if (currentRestoTab === 'wish') {
             detailsContent = `<button onclick="openDateModal('${r.id}')" class="btn-validate-resto">On a mangé ici ! 😋</button>`;
         } else {
-            const commFr = r.comment_fr || ""; const commTw = r.comment_tw || "";
-            const disableFr = currentUser === 'fr' ? '' : 'readonly';
-            const disableTw = currentUser === 'tw' ? '' : 'readonly';
-
             detailsContent = `
                 <div class="resto-ratings">
-                    <div class="user-rate-col fr-col"><span class="rate-label">Théo</span><div class="star-rating">${makeStars('fr', r.rating_fr)}</div></div>
+                    <div class="user-rate-col"><span class="rate-label">Théo</span><div>${makeStars('fr', r.rating_fr)}</div></div>
                     <div style="width:1px; background:var(--border);"></div>
-                    <div class="user-rate-col tw-col"><span class="rate-label">Elise</span><div class="star-rating">${makeStars('tw', r.rating_tw)}</div></div>
+                    <div class="user-rate-col"><span class="rate-label">Elise</span><div>${makeStars('tw', r.rating_tw)}</div></div>
                 </div>
                 <button onclick="openRestoGallery('${r.id}', '${r.name.replace(/'/g, "\\'")}', event)" class="resto-photo-btn">📷 Voir les photos</button>
                 <div class="comments-section mt-10">
-                    <div class="comment-box" style="border-left: 3px solid var(--blue);"><h4>Théo 👨🏻</h4><textarea class="comment-input" placeholder="..." rows="2" ${disableFr} onchange="saveRestoComment('${r.id}', 'fr', this.value)">${commFr}</textarea></div>
-                    <div class="comment-box" style="border-left: 3px solid var(--pink);"><h4>Elise 👩🏻</h4><textarea class="comment-input" placeholder="..." rows="2" ${disableTw} onchange="saveRestoComment('${r.id}', 'tw', this.value)">${commTw}</textarea></div>
-                </div>
-            `;
+                    <div class="comment-box" style="border-left: 3px solid var(--blue);">
+                        <h4>Théo 👨🏻</h4>
+                        <textarea class="comment-input" rows="2" ${currentUser !== 'fr' ? 'readonly' : ''} onchange="saveRestoComment('${r.id}', 'fr', this.value)">${r.comment_fr || ""}</textarea>
+                    </div>
+                    <div class="comment-box" style="border-left: 3px solid var(--pink);">
+                        <h4>Elise 👩🏻</h4>
+                        <textarea class="comment-input" rows="2" ${currentUser !== 'tw' ? 'readonly' : ''} onchange="saveRestoComment('${r.id}', 'tw', this.value)">${r.comment_tw || ""}</textarea>
+                    </div>
+                </div>`;
         }
 
-        const safeName = r.name.replace(/'/g, "\\'");
-        const safeLink = r.link ? r.link.replace(/'/g, "\\'") : "";
-
-        // GENERATION HTML AVEC BOUTONS FLOTTANTS
         list.innerHTML += `
             <div class="resto-item">
                 <div class="resto-main-view" onclick="toggleRestoDetails('${r.id}')">
-                    <div class="resto-header">
-                        <div class="resto-info">
-                            <div class="resto-icon">${r.type || '🍽️'}</div>
-                            <div style="display:flex; flex-direction:column; align-items:flex-start; gap:4px; width:100%;">
-                                <div class="resto-name">${r.name}</div>
-                                <div style="display:flex; flex-wrap:wrap; gap:5px; align-items:center;">
-                                    ${dateHtml}
-                                    ${mapBtnHtml}
-                                </div>
-                            </div>
+                    <div class="resto-info">
+                        <div class="resto-icon">${r.type || '🍽️'}</div>
+                        <div style="flex:1">
+                            <div class="resto-name">${r.name}</div>
+                            <div style="display:flex; gap:5px; margin-top:4px;">${dateHtml} ${mapBtn}</div>
                         </div>
                     </div>
                 </div>
-
                 <div class="resto-floating-actions">
                     <button onclick="askDeleteResto('${r.id}', event)" class="btn-mini-action btn-delete-red">✕</button>
-                    <button onclick="openEditResto('${r.id}', '${safeName}', '${safeLink}', '${r.type}', event)" class="btn-mini-action btn-edit-blue">✏️</button>
+                    <button onclick="openEditResto('${r.id}', '${r.name.replace(/'/g, "\\'")}', '${(r.link || "").replace(/'/g, "\\'")}', '${r.type}', event)" class="btn-mini-action btn-edit-blue">✏️</button>
                 </div>
-                
                 <div class="resto-details" id="details-${r.id}">${detailsContent}</div>
-            </div>
-        `;
+            </div>`;
     });
 
     if (savedOpenId) {
-        const elementToReopen = document.getElementById(savedOpenId);
-        if (elementToReopen) elementToReopen.classList.add('open');
+        const toReopen = document.getElementById(savedOpenId);
+        if (toReopen) toReopen.classList.add('open');
     }
 }
 
