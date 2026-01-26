@@ -1014,16 +1014,23 @@ window.openGallery = function(role) {
     m.style.display = "block"; 
 }
 
+// Pour la galerie CLASSIQUE (Albums)
 window.showLightbox = function(url) {
-    const modal = document.getElementById('lightbox'); // Utilise l'ID existant dans ton HTML
-    const img = document.getElementById('lightbox-img');
-    if (modal && img) {
+    const lb = document.getElementById('lightbox');
+    const img = lb.querySelector('img');
+    if(lb && img) {
         img.src = url;
-        modal.style.display = "flex";
+        lb.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Bloque le scroll
     }
-}
+};
+
+window.closeLightbox = function() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.body.style.overflow = 'auto';
+};
+
 window.closeGallery = () => document.getElementById('gallery-modal').style.display='none';
-window.closeLightbox = () => document.getElementById('lightbox').style.display='none';
 window.deletePhoto = async function(id) { if(confirm("Supprimer ?")) { document.getElementById(`photo-${id}`)?.remove(); await deleteDoc(doc(db,"photos",id)); } }
 
 window.startScratch = function(id, url) {
@@ -1452,6 +1459,7 @@ window.showRestoZoom = function(url) {
     if(lb && img) {
         img.src = url;
         lb.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     }
 };
 
