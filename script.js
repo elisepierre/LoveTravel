@@ -15,7 +15,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-/* --- 2. VARIABLES GLOBALES & ETATS --- */
+/* --- 2. VARIABLES GLOBALES & ETATS -- */
 let currentUser = localStorage.getItem('userRole') || 'tw';
 let activeEvent = null;
 let candlesBlown = 0;
