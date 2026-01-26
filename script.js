@@ -1439,6 +1439,56 @@ window.saveRestoEdit = async function() {
     }
 }
 
+// --- FONCTIONS DE LA GALERIE RESTO ---
+
+window.closeRestoGallery = function() {
+    document.getElementById('resto-gallery-modal').style.display = 'none';
+    currentGalleryRestoId = null;
+}
+
+// Zoom sur la photo
+window.showRestoZoom = function(url) {
+    const lb = document.getElementById('resto-lightbox');
+    const img = document.getElementById('resto-lightbox-img');
+    img.src = url;
+    lb.style.display = 'flex';
+}
+
+window.closeRestoLightbox = function() {
+    document.getElementById('resto-lightbox').style.display = 'none';
+}
+
+// Rendu de la grille
+function loadRestoPhotos(restoId) {
+    const grid = document.getElementById('resto-gallery-grid');
+    grid.innerHTML = "";
+    
+    const q = query(collection(db, "resto_photos"), orderBy("timestamp", "desc"));
+    
+    onSnapshot(q, (snap) => {
+        if (currentGalleryRestoId !== restoId) return;
+        grid.innerHTML = "";
+        const photos = snap.docs
+            .map(d => ({id:d.id, ...d.data()}))
+            .filter(p => p.restoId === restoId);
+        
+        if(photos.length === 0) {
+            grid.innerHTML = "<div style='grid-column:1/-1; padding:40px; color:var(--text-sub); font-style:italic;'>Aucune photo souvenir... 📸</div>";
+            return;
+        }
+        
+        photos.forEach(p => {
+            const container = document.createElement('div');
+            container.className = "gallery-thumb-container";
+            container.innerHTML = `
+                <img src="${p.url}" onclick="showRestoZoom('${p.url}')">
+                <button class="btn-delete-photo" onclick="deleteRestoPhoto('${p.id}')">✕</button>
+            `;
+            grid.appendChild(container);
+        });
+    });
+}
+
 // --- SUPPRESSION & VALIDATION ---
 
 window.askDeleteResto = function(id, e) {
