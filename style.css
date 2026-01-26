@@ -712,16 +712,11 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     background: var(--bg-card);
     border-radius: 20px;
     margin-bottom: 20px;
-    
-    /* Effet d'ombre pour bien détacher la carte du fond */
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(0,0,0,0.02);
-    
     position: relative;
-    /* Important : laisse de la place à droite pour les boutons flottants */
-    padding-right: 50px !important; 
+    padding-right: 0 !important; /* On retire le padding qui décentrait tout */
     overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .resto-item:active {
@@ -730,10 +725,9 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 
 /* --- HEADER (PARTIE VISIBLE) --- */
 .resto-main-view {
-    padding: 18px;
+    padding: 18px 55px 18px 18px; /* Espace à droite uniquement pour les boutons */
     cursor: pointer;
 }
-
 .resto-header {
     display: flex;
     align-items: center;
@@ -825,30 +819,32 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 .btn-edit-blue { background: #e3f2fd; color: #2196f3; }
 
 
-/* --- DÉTAILS DÉROULANTS --- */
+/* --- CENTRAGE ET LARGEUR DES DÉTAILS --- */
 .resto-details {
     display: none;
-    padding: 0 20px 20px 20px;
+    padding: 25px 15px; /* Plus d'espace interne */
     border-top: 1px dashed var(--border);
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.02));
-    animation: slideDown 0.3s ease;
+    text-align: center;
 }
+
 .resto-details.open { display: block; }
 
 
 /* --- NOTES & AVIS (CENTRÉS) --- */
 .resto-ratings {
     display: flex;
-    justify-content: center; /* CENTRAGE HORIZONTAL */
-    gap: 40px; /* Espace entre les deux colonnes */
-    margin: 25px 0;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 25px;
     width: 100%;
 }
 
 .user-rate-col {
     display: flex;
     flex-direction: column;
-    align-items: center; /* CENTRAGE VERTICAL */
+    align-items: center;
+    min-width: 110px; /* Stabilise le centrage */
 }
 
 .user-rate-col span {
@@ -877,17 +873,28 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 
 /* --- COMMENTAIRES --- */
 .comments-section {
-    display: flex; 
-    flex-direction: column; 
-    gap: 12px; 
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-top: 20px;
 }
 
 .comment-box {
-    background: white;
-    padding: 12px;
-    border-radius: 12px;
+    width: 100%;
+    background: var(--input-bg);
+    padding: 15px;
+    border-radius: 15px;
     border: 1px solid var(--border);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    text-align: left; /* Texte aligné à gauche dans un bloc centré */
+}
+
+.comment-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    font-size: 1rem;
+    line-height: 1.5;
 }
 
 .comment-box h4 {
@@ -898,36 +905,18 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     letter-spacing: 0.5px;
 }
 
-.comment-input {
-    width: 100%;
-    border: none;
-    font-family: 'Outfit', sans-serif;
-    resize: none;
-    background: transparent;
-    outline: none;
-    color: var(--text-main);
-    font-size: 0.95rem;
-    line-height: 1.4;
-}
-
 /* Bouton Photos */
 .resto-photo-btn {
-    background: white;
-    border: 1px solid var(--border);
-    color: var(--text-main);
-    padding: 10px 20px;
-    border-radius: 25px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
     width: 100%;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    transition: 0.2s;
+    max-width: 400px; /* Plus large sur PC, full sur mobile */
+    margin: 0 auto 20px auto;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 .resto-photo-btn:active { transform: scale(0.98); }
 
