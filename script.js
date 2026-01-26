@@ -1495,10 +1495,11 @@ function loadRestoPhotos(restoId) {
 window.openRestoGallery = function(id, name, e) {
     if(e) e.stopPropagation(); 
     currentGalleryRestoId = id;
-    document.getElementById('gallery-resto-title').innerText = name;
+    // On peut écrire "Nos souvenirs - Nom du Resto" pour plus de clarté
+    document.getElementById('gallery-resto-title').innerText = "Nos souvenirs - " + name; 
     document.getElementById('resto-gallery-modal').style.display = 'flex';
     loadRestoPhotos(id);
-};
+}
 
 // --- SUPPRESSION & VALIDATION ---
 
@@ -1657,7 +1658,7 @@ function renderRestos() {
                     <div style="width:1px; background:var(--border);"></div>
                     <div class="user-rate-col"><span class="rate-label">Elise</span><div>${makeStars('tw', r.rating_tw)}</div></div>
                 </div>
-                <button onclick="openRestoGallery('${r.id}', '${r.name.replace(/'/g, "\\'")}', event)" class="resto-photo-btn">📷 Voir les photos</button>
+                <button onclick="openRestoGallery('${r.id}', '${r.name.replace(/'/g, "\\'")}', event)" class="resto-photo-btn">📷 Voir nos souvenirs</button>
                 <div class="comments-section mt-10">
                     <div class="comment-box" style="border-left: 3px solid var(--blue);">
                         <h4>Théo 👨🏻</h4>
