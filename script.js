@@ -1504,7 +1504,7 @@ window.openRestoGallery = function(id, name, e) {
     if(e) e.stopPropagation(); 
     currentGalleryRestoId = id;
     // On peut écrire "Nos souvenirs - Nom du Resto" pour plus de clarté
-    document.getElementById('gallery-resto-title').innerText = "Nos souvenirs - " + name; 
+    document.getElementById('gallery-resto-title').innerText = name; 
     document.getElementById('resto-gallery-modal').style.display = 'flex';
     loadRestoPhotos(id);
 }
