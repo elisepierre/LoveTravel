@@ -702,12 +702,16 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     font-weight: bold;
     cursor: pointer;
 }
-
 /* ========================================= */
-/* SECTION RESTAURANTS & SOUVENIRS      */
+/* SECTION RESTAURANTS - VERSION FINALE      */
 /* ========================================= */
 
-/* --- LE CONTENEUR PRINCIPAL (CARTE) --- */
+/* --- LE FORMULAIRE D'AJOUT --- */
+.resto-add-card {
+    /* Ce bloc sera masqué par le JS via .style.display */
+}
+
+/* --- LE CONTENEUR DE LA CARTE --- */
 .resto-item {
     background: var(--bg-card);
     border-radius: 20px;
@@ -715,14 +719,13 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(0,0,0,0.02);
     position: relative;
-    padding-right: 0 !important; /* Force le centrage du contenu interne */
+    padding-right: 0 !important; /* Pour garantir le centrage parfait */
     overflow: hidden;
-    transition: transform 0.2s ease;
 }
 
-/* --- EN-TÊTE (BARRE DE TITRE) --- */
+/* --- BARRE DE TITRE (HEADER) --- */
 .resto-main-view {
-    padding: 12px 60px 12px 18px; /* Hauteur réduite et espace pour les boutons à droite */
+    padding: 12px 60px 12px 18px; /* Hauteur réduite */
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -731,7 +734,7 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 .resto-info {
     display: flex;
     align-items: center;
-    gap: 15px; /* Espace entre l'icône nourriture et le texte */
+    gap: 15px; /* ESPACEMENT ICONE/TITRE */
     width: 100%;
 }
 
@@ -754,7 +757,7 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     line-height: 1.2;
 }
 
-/* --- BOUTONS D'ACTION FLOTTANTS (MODIFIER/SUPPRIMER) --- */
+/* --- BOUTONS FLOTTANTS (CROIX / CRAYON) --- */
 .resto-floating-actions {
     position: absolute;
     top: 15px;
@@ -774,14 +777,12 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     align-items: center; 
     justify-content: center;
     cursor: pointer;
-    transition: transform 0.1s;
 }
 
-.btn-mini-action:active { transform: scale(0.9); }
 .btn-delete-red { background: #ffebee; color: #ff4757; }
 .btn-edit-blue { background: #e3f2fd; color: #2196f3; }
 
-/* --- DÉTAILS DÉROULANTS ET NOTATIONS --- */
+/* --- ZONE DE DÉTAILS DÉROULANTE --- */
 .resto-details {
     display: none;
     padding: 20px 15px;
@@ -792,6 +793,7 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 
 .resto-details.open { display: block; }
 
+/* --- NOTATIONS (ÉTOILES) --- */
 .resto-ratings {
     display: flex;
     justify-content: center;
@@ -807,36 +809,26 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     min-width: 100px;
 }
 
-.rate-label {
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-bottom: 5px;
-    opacity: 0.6;
-}
-
 .star {
     font-size: 1.3rem;
     color: #e0e0e0;
     cursor: pointer;
-    padding: 0 2px;
 }
 .star.filled { 
     color: #ffca28; 
     filter: drop-shadow(0 2px 3px rgba(255, 202, 40, 0.3));
 }
 
-/* --- COMMENTAIRES STYLE "CARNET DE VOYAGE" --- */
+/* --- COMMENTAIRES STYLE "NOTE" --- */
 .comments-section {
     display: flex; 
     flex-direction: column; 
     gap: 12px; 
     width: 100%;
-    margin-top: 15px;
 }
 
 .comment-box {
-    background: #fffdf5; /* Couleur papier crème léger */
+    background: #fffdf5; /* Papier crème */
     padding: 12px;
     border-radius: 12px;
     border: 1px solid #eee0c5;
@@ -844,18 +836,11 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     box-shadow: 2px 2px 5px rgba(0,0,0,0.02);
 }
 
-.comment-box h4 {
-    margin: 0 0 5px 0;
-    font-size: 0.7rem;
-    color: var(--text-sub);
-    text-transform: uppercase;
-}
-
 .comment-input {
     width: 100%;
     border: none;
     background: transparent;
-    font-family: 'Dancing Script', cursive; /* Police manuscrite */
+    font-family: 'Dancing Script', cursive; /* POLICE MANUSCRITE */
     font-size: 1.1rem;
     color: #4a4a4a;
     line-height: 1.4;
@@ -863,87 +848,65 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     outline: none;
 }
 
-/* --- BOUTON PHOTOS & GALERIE NOSTALGIE (POLAROID) --- */
+/* --- BOUTON ET GALERIE NOSTALGIE --- */
 .resto-photo-btn {
     background: white;
     border: 1px solid var(--border);
     padding: 10px 20px;
     border-radius: 25px;
     font-size: 0.9rem;
-    font-weight: 500;
     width: 100%;
     margin-bottom: 15px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+/* Grille Galerie */
+#resto-gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 colonnes pour des images lisibles */
+    gap: 15px;
+    padding: 10px;
 }
 
 .gallery-thumb {
     width: 100%;
     aspect-ratio: 1/1;
     object-fit: cover;
-    border: 6px solid white; /* Effet bordure photo physique */
+    border: 6px solid white; /* EFFET POLAROID */
     border-radius: 2px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transform: rotate(var(--rotation, -2deg)); /* Rotation pour l'aspect "posé" */
+    transform: rotate(var(--rotation, -2deg));
     transition: 0.3s;
-    cursor: zoom-in;
 }
 
 .gallery-thumb:nth-child(even) { --rotation: 2deg; }
-.gallery-thumb:hover { 
-    transform: scale(1.05) rotate(0deg); 
-    z-index: 10;
-}
+.gallery-thumb:hover { transform: scale(1.05) rotate(0deg); }
 
-/* --- LE ZOOM PHOTO (LIGHTBOX UNIFIÉ) --- */
+/* --- LIGHTBOX (ZOOM) --- */
 .lightbox-overlay {
-    display: none; /* Piloté par JS (flex) */
+    display: none;
     position: fixed;
-    z-index: 20000;
+    z-index: 30000;
     left: 0; top: 0;
     width: 100vw; height: 100vh;
     background-color: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(5px);
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    justify-content: center; align-items: center;
 }
 
 .lightbox-content {
-    max-width: 95%;
+    max-width: 90%;
     max-height: 80vh;
-    border-radius: 4px;
-    border: 8px solid white; /* Cadre photo en plein écran */
-    box-shadow: 0 0 50px rgba(0,0,0,0.5);
-    object-fit: contain;
-    animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 8px solid white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
 }
 
-.lightbox-close {
-    position: absolute;
-    top: 20px; right: 20px;
-    color: white;
-    font-size: 3rem;
-    cursor: pointer;
-    background: none;
-    border: none;
-}
-
-@keyframes zoomIn { from {transform:scale(0.8); opacity:0} to {transform:scale(1); opacity:1} }
-
-/* --- AJOUTS FINAUX (MODE SOMBRE & FORMULAIRE) --- */
-.resto-add-card {
-    /* Utilisé pour masquer/afficher le bloc via JS */
-}
-
+/* --- DARK MODE --- */
 body.dark-mode .resto-item { background: #1e1e1e; border-color: #333; }
 body.dark-mode .resto-icon { background: #2d2d2d; color: #eee; }
 body.dark-mode .comment-box { background: #2d2d2d; border-color: #444; }
 body.dark-mode .comment-input { color: #eee; }
-body.dark-mode .resto-photo-btn { background: #333; border-color: #555; color: #ddd; }
+body.dark-mode .resto-photo-btn { background: #333; color: #ddd; }
 
 
 /* --- ANIMATIONS GLOBALES --- */
