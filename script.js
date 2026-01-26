@@ -1388,21 +1388,16 @@ window.switchRestoTab = function(tab) {
     currentRestoTab = tab;
     const tWish = document.getElementById('tab-resto-wish');
     const tDone = document.getElementById('tab-resto-done');
+    const addCard = document.querySelector('.resto-add-card'); 
     
     if(tab === 'wish') {
-        tWish.classList.add('active'); tWish.style.background = 'var(--blue)'; tWish.style.color = 'white';
-        tDone.classList.remove('active'); tDone.style.background = 'var(--input-bg)'; tDone.style.color = 'var(--text-sub)';
+        tWish.classList.add('active');
+        if(addCard) addCard.style.display = 'block';
     } else {
-        tDone.classList.add('active'); tDone.style.background = 'var(--pink)'; tDone.style.color = 'white';
-        tWish.classList.remove('active'); tWish.style.background = 'var(--input-bg)'; tWish.style.color = 'var(--text-sub)';
+        tDone.classList.add('active');
+        if(addCard) addCard.style.display = 'none'; // MASQUE "ON MANGE QUOI"
     }
     renderRestos();
-    const restoForm = document.querySelector('.resto-add-card'); // Assure-toi que c'est la classe de ton bloc "On mange quoi ?"
-    if (tabName === 'fait') {
-        restoForm.style.display = 'none';
-    } else {
-        restoForm.style.display = 'block';
-    }
 }
 
 // --- MODIFICATION ---
