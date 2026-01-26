@@ -740,10 +740,11 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 }
 
 .resto-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    padding-right: 45px; /* Crée une zone de sécurité pour les boutons à droite */
     width: 100%;
+}
+.resto-name {
+    word-break: break-word; /* Évite que le nom ne sorte de la carte */
 }
 
 /* L'icône ronde avec l'emoji */
