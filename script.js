@@ -1491,19 +1491,23 @@ window.confirmRestoDate = function() {
 
 // --- GALERIE & LIGHTBOX ---
 
+/* --- LIGHTBOX (ZOOM) --- */
 window.showLightbox = function(url) {
     const modal = document.getElementById('lightbox-modal');
     const img = document.getElementById('lightbox-img');
-    if(modal && img) {
+    
+    if (modal && img) {
         img.src = url;
-        modal.style.display = "flex";
-        modal.style.justifyContent = "center";
-        modal.style.alignItems = "center";
+        // On force le flex ici pour écraser le display:none CSS
+        modal.style.display = "flex"; 
+    } else {
+        console.error("Erreur: Lightbox HTML introuvable ! Vérifie index.html");
     }
 }
 
 window.closeLightbox = function() {
-    document.getElementById('lightbox-modal').style.display = "none";
+    const modal = document.getElementById('lightbox-modal');
+    if (modal) modal.style.display = "none";
 }
 
 window.openRestoGallery = function(id, name, e) {
