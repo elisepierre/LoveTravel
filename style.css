@@ -1208,6 +1208,20 @@ body.dark-mode .modal-header .close-icon {
     color: white;
 }
 
+/* Style du titre en mode clair (Fond blanc) */
+#gallery-resto-title {
+    font-family: 'Outfit', sans-serif; /* Style classique */
+    color: #000000; /* Écriture noire */
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+/* Style du titre en mode sombre (Fond obscur) */
+body.dark-mode #gallery-resto-title {
+    color: #ffffff; /* Écriture blanche */
+}
+
 /* --- ANIMATIONS GLOBALES --- */
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
