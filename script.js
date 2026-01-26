@@ -1499,16 +1499,14 @@ window.confirmRestoDate = function() {
 // --- GALERIE & LIGHTBOX ---
 
 /* --- LIGHTBOX (ZOOM) --- */
+/* --- SYSTEME DE ZOOM UNIFIÉ --- */
 window.showLightbox = function(url) {
     const modal = document.getElementById('lightbox-modal');
-    const img = document.getElementById('lightbox-img');
+    const img = document.getElementById('lightbox-zoom-img');
     
     if (modal && img) {
         img.src = url;
-        // On force le flex ici pour écraser le display:none CSS
         modal.style.display = "flex"; 
-    } else {
-        console.error("Erreur: Lightbox HTML introuvable ! Vérifie index.html");
     }
 }
 
