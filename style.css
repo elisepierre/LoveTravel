@@ -1002,8 +1002,6 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     transform: scale(1.1);
 }
 
-#gallery-resto-title { font-family: 'Pacifico', cursive; color: var(--pink-dark); font-size: 1.4rem; margin: 0; text-align: center; flex: 1; }
-
 /* Bouton supprimer discret sur l'image */
 .btn-delete-photo {
     position: absolute;
