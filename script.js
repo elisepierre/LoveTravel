@@ -1327,7 +1327,7 @@ let currentGalleryRestoId = null;
 let currentEditRestoId = null; 
 let pendingDeleteId = null; 
 
-const foodEmojis = ["🍕","🍔","🍣","🍜"," taco","🥗","🥩","🍰","🍹","🥐","🧀","🍗","🍟","🍩","🍽️"];
+const foodEmojis = ["🍕","🍔","🍣","🍜"," 🌮","🥗","🥩","🍰","🍹","🥐","🧀","🍗","🍟","🍩","🍽️"];
 
 // Initialisation des sélecteurs d'emojis
 function initFoodPickers() {
