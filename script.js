@@ -1397,6 +1397,12 @@ window.switchRestoTab = function(tab) {
         tWish.classList.remove('active'); tWish.style.background = 'var(--input-bg)'; tWish.style.color = 'var(--text-sub)';
     }
     renderRestos();
+    const restoForm = document.querySelector('.resto-add-card'); // Assure-toi que c'est la classe de ton bloc "On mange quoi ?"
+    if (tabName === 'fait') {
+        restoForm.style.display = 'none';
+    } else {
+        restoForm.style.display = 'block';
+    }
 }
 
 // --- MODIFICATION ---
