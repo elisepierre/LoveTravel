@@ -1310,7 +1310,7 @@ function scrollToBottom() {
     div.scrollTop = div.scrollHeight;
 }
 
-/* --- 14. RESTAURANTS (COMPLETE & OPTIMISÉE) --- */
+/* --- 14. RESTAURANTS (VERSION CORRIGÉE & OPTIMISÉE) --- */
 let currentRestoTab = 'wish'; 
 let allRestos = [];
 let selectedRestoType = '🍽️'; 
@@ -1322,7 +1322,6 @@ let pendingDeleteId = null;
 
 const foodEmojis = ["🍕","🍔","🍣","🍜"," taco","🥗","🥩","🍰","🍹","🥐","🧀","🍗","🍟","🍩","🍽️"];
 
-// Initialisation des sélecteurs d'emojis (Ajout et Edition)
 function initFoodPickers() {
     const container = document.getElementById('food-picker');
     if(container) {
@@ -1339,144 +1338,65 @@ function initFoodPickers() {
             container.appendChild(div);
         });
     }
-
-    const editContainer = document.getElementById('food-picker-edit');
-    if(editContainer) {
-        editContainer.innerHTML = "";
-        foodEmojis.forEach(emoji => {
-            const div = document.createElement('div');
-            div.id = `edit-emoji-${emoji}`;
-            div.className = `food-option`;
-            div.innerText = emoji;
-            div.onclick = () => {
-                editSelectedType = emoji;
-                editContainer.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
-                div.classList.add('selected');
-            };
-            editContainer.appendChild(div);
-        });
-    }
 }
 initFoodPickers(); 
-
-// --- GESTION PRINCIPALE ---
 
 window.addRestaurant = async function() {
     const nameInput = document.getElementById('resto-name');
     const linkInput = document.getElementById('resto-link');
     const name = nameInput.value.trim();
-    const link = linkInput.value.trim();
-
     if(!name) return;
-
     try {
         await addDoc(collection(db, "restaurants"), {
-            name: name,
-            type: selectedRestoType,
-            link: link,
-            status: 'wish',
-            addedBy: currentUser,
-            created: serverTimestamp(),
-            rating_fr: 0, rating_tw: 0,
-            comment_fr: "", comment_tw: "",
-            eatenDate: null
+            name: name, type: selectedRestoType, link: linkInput.value.trim(),
+            status: 'wish', addedBy: currentUser, created: serverTimestamp(),
+            rating_fr: 0, rating_tw: 0, comment_fr: "", comment_tw: "", eatenDate: null
         });
-
-        nameInput.value = "";
-        linkInput.value = "";
-        sendNtfy(`🍽️ Nouveau resto ajouté : ${name} !`, "fries", "low");
-    } catch (e) { console.error("Erreur ajout resto:", e); }
+        nameInput.value = ""; linkInput.value = "";
+        sendNtfy(`🍽️ Nouveau resto : ${name} !`, "fries", "low");
+    } catch (e) { console.error(e); }
 }
 
 window.switchRestoTab = function(tab) {
     currentRestoTab = tab;
     document.getElementById('tab-resto-wish').classList.toggle('active', tab === 'wish');
     document.getElementById('tab-resto-done').classList.toggle('active', tab === 'done');
-    
     const addCard = document.querySelector('.resto-add-card'); 
     if(addCard) addCard.style.display = (tab === 'wish') ? 'block' : 'none';
-    
     renderRestos();
 }
 
-// --- MODIFICATION ---
-
-window.openEditResto = function(id, name, link, type, e) {
-    if(e) e.stopPropagation(); 
-    currentEditRestoId = id;
-    editSelectedType = type || '🍽️';
-
-    document.getElementById('edit-resto-name').value = name;
-    document.getElementById('edit-resto-link').value = link || "";
-    
-    const editContainer = document.getElementById('food-picker-edit');
-    if(editContainer) {
-        editContainer.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
-        const targetEmoji = document.getElementById(`edit-emoji-${editSelectedType}`);
-        if(targetEmoji) targetEmoji.classList.add('selected');
-    }
-
-    document.getElementById('resto-edit-modal').style.display = 'flex';
-}
-
-window.closeRestoEditModal = function() {
-    document.getElementById('resto-edit-modal').style.display = 'none';
-    currentEditRestoId = null;
-}
-
-window.saveRestoEdit = async function() {
-    if(!currentEditRestoId) return;
-    const newName = document.getElementById('edit-resto-name').value.trim();
-    const newLink = document.getElementById('edit-resto-link').value.trim();
-    
-    if(newName) {
-        await updateDoc(doc(db, "restaurants", currentEditRestoId), {
-            name: newName,
-            link: newLink,
-            type: editSelectedType
-        });
-        closeRestoEditModal();
-    }
-}
-
-// --- FONCTIONS DE LA GALERIE RESTO ---
-
-window.closeRestoGallery = function() {
-    document.getElementById('resto-gallery-modal').style.display = 'none';
-    currentGalleryRestoId = null;
-}
-
-// Zoom sur la photo
+// --- ZOOM ET GALERIE ---
 window.showRestoZoom = function(url) {
     const lb = document.getElementById('resto-lightbox');
     const img = document.getElementById('resto-lightbox-img');
-    img.src = url;
-    lb.style.display = 'flex';
+    if(lb && img) { img.src = url; lb.style.display = 'flex'; }
 }
 
 window.closeRestoLightbox = function() {
     document.getElementById('resto-lightbox').style.display = 'none';
 }
 
-// Rendu de la grille
+window.closeRestoGallery = function() {
+    document.getElementById('resto-gallery-modal').style.display = 'none';
+    currentGalleryRestoId = null;
+}
+
 function loadRestoPhotos(restoId) {
     const grid = document.getElementById('resto-gallery-grid');
-    grid.innerHTML = "";
+    if(!grid) return;
+    grid.innerHTML = "Chargement...";
     
     const q = query(collection(db, "resto_photos"), orderBy("timestamp", "desc"));
-    
     onSnapshot(q, (snap) => {
         if (currentGalleryRestoId !== restoId) return;
         grid.innerHTML = "";
-        const photos = snap.docs
-            .map(d => ({id:d.id, ...d.data()}))
-            .filter(p => p.restoId === restoId);
+        const photos = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(p => p.restoId === restoId);
         
         if(photos.length === 0) {
-            grid.innerHTML = "<div style='grid-column:1/-1; padding:40px; color:var(--text-sub); font-style:italic;'>Aucune photo souvenir... 📸</div>";
+            grid.innerHTML = "<div style='grid-column:1/-1;padding:20px;color:gray;'>Aucune photo... 📸</div>";
             return;
         }
-        
         photos.forEach(p => {
             const container = document.createElement('div');
             container.className = "gallery-thumb-container";
@@ -1489,64 +1409,6 @@ function loadRestoPhotos(restoId) {
     });
 }
 
-// --- SUPPRESSION & VALIDATION ---
-
-window.askDeleteResto = function(id, e) {
-    if(e) e.stopPropagation();
-    pendingDeleteId = id;
-    document.getElementById('delete-confirm-modal').style.display = 'flex';
-}
-
-window.closeDeleteModal = function() {
-    document.getElementById('delete-confirm-modal').style.display = 'none';
-    pendingDeleteId = null;
-}
-
-window.confirmRestoDeletion = async function() {
-    if(pendingDeleteId) {
-        await deleteDoc(doc(db, "restaurants", pendingDeleteId));
-        closeDeleteModal();
-    }
-}
-
-window.openDateModal = function(id) {
-    pendingRestoValidationId = id;
-    const modal = document.getElementById('resto-date-modal');
-    const dSelect = document.getElementById('date-day');
-    const mSelect = document.getElementById('date-month');
-    const ySelect = document.getElementById('date-year');
-
-    if(dSelect.children.length === 0) {
-        for(let i=1; i<=31; i++) dSelect.innerHTML += `<option value="${i}">${i}</option>`;
-        const months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
-        months.forEach((m, i) => mSelect.innerHTML += `<option value="${i+1}">${m}</option>`);
-        for(let i=2024; i<=2030; i++) ySelect.innerHTML += `<option value="${i}">${i}</option>`;
-    }
-    const today = new Date();
-    dSelect.value = today.getDate();
-    mSelect.value = today.getMonth() + 1;
-    ySelect.value = today.getFullYear();
-    modal.style.display = 'flex';
-}
-
-window.confirmRestoDate = async function() {
-    if(!pendingRestoValidationId) return;
-    const d = document.getElementById('date-day').value.padStart(2, '0');
-    const m = document.getElementById('date-month').value.padStart(2, '0');
-    const y = document.getElementById('date-year').value;
-    const dateStr = `${y}-${m}-${d}`;
-
-    await updateDoc(doc(db, "restaurants", pendingRestoValidationId), { 
-        status: 'done', 
-        eatenDate: dateStr 
-    });
-    confetti({ particleCount: 100, colors: ['#ff9eb5', '#8ecae6'] });
-    document.getElementById('resto-date-modal').style.display = 'none';
-    pendingRestoValidationId = null;
-}
-
-// --- GALERIE ---
-
 window.openRestoGallery = function(id, name, e) {
     if(e) e.stopPropagation(); 
     currentGalleryRestoId = id;
@@ -1555,63 +1417,7 @@ window.openRestoGallery = function(id, name, e) {
     loadRestoPhotos(id);
 }
 
-function loadRestoPhotos(restoId) {
-    const grid = document.getElementById('resto-gallery-grid');
-    grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;'>Chargement...</div>";
-    
-    // On utilise un snapshot global filtré localement pour éviter les index complexes
-    const qAll = query(collection(db, "resto_photos"), orderBy("timestamp", "desc"));
-    
-    onSnapshot(qAll, (snap) => {
-        if (currentGalleryRestoId !== restoId) return; // Sécurité si on change vite
-        grid.innerHTML = "";
-        const photos = snap.docs
-            .map(d => ({id:d.id, ...d.data()}))
-            .filter(p => p.restoId === restoId);
-        
-        if(photos.length === 0) {
-            grid.innerHTML = "<div style='grid-column:1/-1;text-align:center;color:#888;font-style:italic;'>Pas encore de photo... 📸</div>";
-            return;
-        }
-        
-        photos.forEach(p => {
-            grid.innerHTML += `
-                <div style="position:relative;">
-                    <img src="${p.url}" class="gallery-thumb" onclick="showLightbox('${p.url}')">
-                    <button onclick="deleteRestoPhoto('${p.id}')" style="position:absolute;top:0;right:0;background:rgba(0,0,0,0.6);color:white;border:none;width:24px;height:24px;border-radius:0 0 0 8px;cursor:pointer;">✕</button>
-                </div>`;
-        });
-    });
-}
-
-window.handleRestoPhotoUpload = async function(input) {
-    if(!input.files[0] || !currentGalleryRestoId) return;
-    const btn = input.previousElementSibling; 
-    const oldText = btn.innerText;
-    btn.innerText = "Envoi...";
-    btn.disabled = true;
-
-    try {
-        const file = input.files[0];
-        const b64 = await compressImage(file); 
-        await addDoc(collection(db, "resto_photos"), {
-            url: b64,
-            restoId: currentGalleryRestoId,
-            by: currentUser,
-            timestamp: serverTimestamp()
-        });
-    } catch(e) { console.error(e); }
-    input.value = ""; 
-    btn.innerText = oldText;
-    btn.disabled = false;
-}
-
-window.deleteRestoPhoto = function(id) {
-    deleteDoc(doc(db, "resto_photos", id));
-}
-
-// --- RENDER ---
-
+// --- AUTRES ACTIONS ---
 window.rateResto = function(id, role, rating) { 
     updateDoc(doc(db, "restaurants", id), { [`rating_${role}`]: rating }); 
 }
@@ -1627,75 +1433,20 @@ window.toggleRestoDetails = function(id) {
     if(!isOpen) details.classList.add('open');
 }
 
-// Listener principal
 onSnapshot(query(collection(db, "restaurants"), orderBy("created", "desc")), (snapshot) => {
     allRestos = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
     renderRestos();
 });
 
 function renderRestos() {
-    const currentlyOpenElement = document.querySelector('.resto-details.open');
-    let savedOpenId = currentlyOpenElement ? currentlyOpenElement.id : null;
-
     const list = document.getElementById('resto-list');
+    if(!list) return;
     list.innerHTML = "";
-    
     let filtered = allRestos.filter(r => r.status === currentRestoTab);
-
-    if (currentRestoTab === 'done') {
-        filtered.sort((a, b) => (b.eatenDate || "").localeCompare(a.eatenDate || ""));
-    }
-
-    if (filtered.length === 0) {
-        list.innerHTML = `<div style="text-align:center; color:var(--text-sub); font-style:italic; padding:20px;">
-            ${currentRestoTab === 'wish' ? "Ajoute une adresse ! 🍕" : "Aucun festin mémorable..."}
-        </div>`;
-        return;
-    }
-
+    
     filtered.forEach(r => {
-        const mapBtn = r.link ? `<a href="${r.link}" target="_blank" class="resto-map-btn" onclick="event.stopPropagation()">📍 Maps</a>` : "";
-        let dateHtml = "";
-        if (currentRestoTab === 'done' && r.eatenDate) {
-            const [y, m, d] = r.eatenDate.split('-');
-            dateHtml = `<div class="resto-date-badge">Le ${d}/${m}/${y}</div>`;
-        }
-
-        const makeStars = (role, currentRating) => {
-            let html = ''; 
-            for(let i=1; i<=5; i++) { 
-                const isFilled = i <= currentRating;
-                const canRate = currentRestoTab === 'done' && role === currentUser;
-                html += `<span class="star ${isFilled ? 'filled' : ''}" 
-                        style="font-size:1.1rem; cursor:${canRate ? 'pointer' : 'default'}" 
-                        ${canRate ? `onclick="rateResto('${r.id}', '${role}', ${i})"` : ''}>★</span>`; 
-            }
-            return html;
-        };
-
-        let detailsContent = "";
-        if (currentRestoTab === 'wish') {
-            detailsContent = `<button onclick="openDateModal('${r.id}')" class="btn-validate-resto">On a mangé ici ! 😋</button>`;
-        } else {
-            detailsContent = `
-                <div class="resto-ratings">
-                    <div class="user-rate-col"><span class="rate-label">Théo</span><div>${makeStars('fr', r.rating_fr)}</div></div>
-                    <div style="width:1px; background:var(--border);"></div>
-                    <div class="user-rate-col"><span class="rate-label">Elise</span><div>${makeStars('tw', r.rating_tw)}</div></div>
-                </div>
-                <button onclick="openRestoGallery('${r.id}', '${r.name.replace(/'/g, "\\'")}', event)" class="resto-photo-btn">📷 Voir les photos</button>
-                <div class="comments-section mt-10">
-                    <div class="comment-box" style="border-left: 3px solid var(--blue);">
-                        <h4>Théo 👨🏻</h4>
-                        <textarea class="comment-input" rows="2" ${currentUser !== 'fr' ? 'readonly' : ''} onchange="saveRestoComment('${r.id}', 'fr', this.value)">${r.comment_fr || ""}</textarea>
-                    </div>
-                    <div class="comment-box" style="border-left: 3px solid var(--pink);">
-                        <h4>Elise 👩🏻</h4>
-                        <textarea class="comment-input" rows="2" ${currentUser !== 'tw' ? 'readonly' : ''} onchange="saveRestoComment('${r.id}', 'tw', this.value)">${r.comment_tw || ""}</textarea>
-                    </div>
-                </div>`;
-        }
-
+        const dateHtml = (currentRestoTab === 'done' && r.eatenDate) ? `<div class="resto-date-badge">Le ${r.eatenDate.split('-').reverse().join('/')}</div>` : "";
+        
         list.innerHTML += `
             <div class="resto-item">
                 <div class="resto-main-view" onclick="toggleRestoDetails('${r.id}')">
@@ -1703,22 +1454,15 @@ function renderRestos() {
                         <div class="resto-icon">${r.type || '🍽️'}</div>
                         <div style="flex:1">
                             <div class="resto-name">${r.name}</div>
-                            <div style="display:flex; gap:5px; margin-top:4px;">${dateHtml} ${mapBtn}</div>
+                            <div style="display:flex; gap:5px; margin-top:4px;">${dateHtml}</div>
                         </div>
                     </div>
                 </div>
-                <div class="resto-floating-actions">
-                    <button onclick="askDeleteResto('${r.id}', event)" class="btn-mini-action btn-delete-red">✕</button>
-                    <button onclick="openEditResto('${r.id}', '${r.name.replace(/'/g, "\\'")}', '${(r.link || "").replace(/'/g, "\\'")}', '${r.type}', event)" class="btn-mini-action btn-edit-blue">✏️</button>
+                <div class="resto-details" id="details-${r.id}">
+                    ${currentRestoTab === 'done' ? `<button onclick="openRestoGallery('${r.id}', '${r.name.replace(/'/g, "\\'")}', event)" class="resto-photo-btn">📷 Voir les photos</button>` : ''}
                 </div>
-                <div class="resto-details" id="details-${r.id}">${detailsContent}</div>
             </div>`;
     });
-
-    if (savedOpenId) {
-        const toReopen = document.getElementById(savedOpenId);
-        if (toReopen) toReopen.classList.add('open');
-    }
 }
 
 /* --- GESTION CHAT (AVEC MODIF/SUPP) --- */
