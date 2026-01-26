@@ -1016,17 +1016,17 @@ window.openGallery = function(role) {
 
 // Pour la galerie CLASSIQUE (Albums)
 window.showLightbox = function(url) {
-    const lb = document.getElementById('lightbox');
-    const img = lb.querySelector('img');
+    const lb = document.getElementById('lightbox-modal'); // Correction de l'ID
+    const img = document.getElementById('lightbox-zoom-img'); // Correction de l'ID
     if(lb && img) {
         img.src = url;
         lb.style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // Bloque le scroll
+        document.body.style.overflow = 'hidden'; 
     }
 };
 
 window.closeLightbox = function() {
-    document.getElementById('lightbox').style.display = 'none';
+    document.getElementById('lightbox-modal').style.display = 'none';
     document.body.style.overflow = 'auto';
 };
 
