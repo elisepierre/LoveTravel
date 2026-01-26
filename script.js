@@ -1014,7 +1014,14 @@ window.openGallery = function(role) {
     m.style.display = "block"; 
 }
 
-window.showLightbox = function(url) { document.getElementById('lightbox').style.display='flex'; document.getElementById('lightbox-img').src = url; }
+window.showLightbox = function(url) {
+    const modal = document.getElementById('lightbox'); // Utilise l'ID existant dans ton HTML
+    const img = document.getElementById('lightbox-img');
+    if (modal && img) {
+        img.src = url;
+        modal.style.display = "flex";
+    }
+}
 window.closeGallery = () => document.getElementById('gallery-modal').style.display='none';
 window.closeLightbox = () => document.getElementById('lightbox').style.display='none';
 window.deletePhoto = async function(id) { if(confirm("Supprimer ?")) { document.getElementById(`photo-${id}`)?.remove(); await deleteDoc(doc(db,"photos",id)); } }
