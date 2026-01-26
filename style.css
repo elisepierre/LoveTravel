@@ -704,7 +704,7 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 }
 
 /* ========================================= */
-/* 14. RESTAURANTS - DESIGN "CARDS" PRO      */
+/* SECTION RESTAURANTS & SOUVENIRS      */
 /* ========================================= */
 
 /* --- LE CONTENEUR PRINCIPAL (CARTE) --- */
@@ -715,37 +715,29 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(0,0,0,0.02);
     position: relative;
-    padding-right: 0 !important; /* On retire le padding qui décentrait tout */
+    padding-right: 0 !important; /* Force le centrage du contenu interne */
     overflow: hidden;
+    transition: transform 0.2s ease;
 }
 
-.resto-item:active {
-    transform: scale(0.99);
-}
-
-/* --- HEADER (PARTIE VISIBLE) --- */
+/* --- EN-TÊTE (BARRE DE TITRE) --- */
 .resto-main-view {
-    padding: 18px 55px 18px 18px; /* Espace à droite uniquement pour les boutons */
-    cursor: pointer;
-}
-.resto-header {
+    padding: 12px 60px 12px 18px; /* Hauteur réduite et espace pour les boutons à droite */
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .resto-info {
-    padding-right: 45px; /* Crée une zone de sécurité pour les boutons à droite */
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espace entre l'icône nourriture et le texte */
     width: 100%;
 }
-.resto-name {
-    word-break: break-word; /* Évite que le nom ne sorte de la carte */
-}
 
-/* L'icône ronde avec l'emoji */
 .resto-icon {
     font-size: 1.8rem;
-    background: #f8f9fa; /* Gris très clair */
-    color: #333;
+    background: #f8f9fa;
     width: 55px; 
     height: 55px;
     border-radius: 18px;
@@ -753,90 +745,58 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     align-items: center; 
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.03);
 }
 
 .resto-name {
-    font-weight: 800;
+    font-weight: 700;
     color: var(--text-main);
-    font-size: 1.1rem;
-    margin-bottom: 5px;
+    font-size: 1.05rem;
     line-height: 1.2;
 }
 
-/* Badge de date et bouton Maps */
-.resto-date-badge {
-    font-size: 0.75rem;
-    color: var(--text-sub);
-    background: rgba(0,0,0,0.05);
-    padding: 3px 10px;
-    border-radius: 10px;
-    font-weight: 500;
-}
-
-.resto-map-btn {
-    background: #e8f5e9;
-    color: #2ecc71;
-    border: 1px solid #c8e6c9;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: bold;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-/* --- BOUTONS D'ACTION FLOTTANTS (DROITE) --- */
+/* --- BOUTONS D'ACTION FLOTTANTS (MODIFIER/SUPPRIMER) --- */
 .resto-floating-actions {
     position: absolute;
-    top: 20px;
+    top: 15px;
     right: 12px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     z-index: 5;
 }
 
 .btn-mini-action {
-    width: 36px; 
-    height: 36px;
-    border-radius: 12px;
+    width: 32px; 
+    height: 32px;
+    border-radius: 10px;
     border: none;
-    background: #f4f4f4;
     display: flex; 
     align-items: center; 
     justify-content: center;
     cursor: pointer;
-    font-size: 1rem;
-    transition: 0.2s;
-    color: #555;
+    transition: transform 0.1s;
 }
-.btn-mini-action:active { transform: scale(0.9); }
 
+.btn-mini-action:active { transform: scale(0.9); }
 .btn-delete-red { background: #ffebee; color: #ff4757; }
 .btn-edit-blue { background: #e3f2fd; color: #2196f3; }
 
-
-/* --- CENTRAGE ET LARGEUR DES DÉTAILS --- */
+/* --- DÉTAILS DÉROULANTS ET NOTATIONS --- */
 .resto-details {
     display: none;
-    padding: 25px 15px; /* Plus d'espace interne */
+    padding: 20px 15px;
     border-top: 1px dashed var(--border);
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.02));
     text-align: center;
 }
 
 .resto-details.open { display: block; }
 
-
-/* --- NOTES & AVIS (CENTRÉS) --- */
 .resto-ratings {
     display: flex;
     justify-content: center;
-    align-items: center;
     gap: 30px;
-    margin-bottom: 25px;
+    margin: 20px 0;
     width: 100%;
 }
 
@@ -844,178 +804,108 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 110px; /* Stabilise le centrage */
+    min-width: 100px;
 }
 
-.user-rate-col span {
-    font-size: 0.75rem;
-    font-weight: bold;
+.rate-label {
+    font-size: 0.7rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     opacity: 0.6;
 }
-.fr-col span { color: var(--blue-dark); }
-.tw-col span { color: var(--pink-dark); }
 
 .star {
-    font-size: 1.4rem; /* Étoiles plus grosses */
+    font-size: 1.3rem;
     color: #e0e0e0;
-    transition: 0.2s;
     cursor: pointer;
     padding: 0 2px;
 }
-.star.filled {
-    color: #ffca28;
-    filter: drop-shadow(0 2px 3px rgba(255, 202, 40, 0.4));
+.star.filled { 
+    color: #ffca28; 
+    filter: drop-shadow(0 2px 3px rgba(255, 202, 40, 0.3));
 }
 
-
-/* --- COMMENTAIRES --- */
+/* --- COMMENTAIRES STYLE "CARNET DE VOYAGE" --- */
 .comments-section {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
     width: 100%;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .comment-box {
-    width: 100%;
-    background: var(--input-bg);
-    padding: 15px;
-    border-radius: 15px;
-    border: 1px solid var(--border);
-    text-align: left; /* Texte aligné à gauche dans un bloc centré */
+    background: #fffdf5; /* Couleur papier crème léger */
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #eee0c5;
+    text-align: left;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.02);
+}
+
+.comment-box h4 {
+    margin: 0 0 5px 0;
+    font-size: 0.7rem;
+    color: var(--text-sub);
+    text-transform: uppercase;
 }
 
 .comment-input {
     width: 100%;
-    background: transparent;
     border: none;
-    font-size: 1rem;
-    line-height: 1.5;
-}
-
-.comment-box h4 {
-    margin: 0 0 6px 0;
-    font-size: 0.7rem;
-    color: var(--text-sub);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Bouton Photos */
-.resto-photo-btn {
-    width: 100%;
-    max-width: 400px; /* Plus large sur PC, full sur mobile */
-    margin: 0 auto 20px auto;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    padding: 12px;
-    border-radius: 25px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-.resto-photo-btn:active { transform: scale(0.98); }
-
-
-/* --- SÉLECTEURS (EMOJIS & DATE) --- */
-.food-picker-container {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 10px 5px;
-    margin-bottom: 15px;
-    scrollbar-width: none; /* Firefox */
-}
-.food-picker-container::-webkit-scrollbar { display: none; } /* Chrome */
-
-.food-option {
-    flex-shrink: 0;
-    width: 50px;
-    height: 50px;
-    background: white;
-    border-radius: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.8rem;
-    border: 2px solid transparent;
-    cursor: pointer;
-    opacity: 0.5;
-    filter: grayscale(1);
-    transition: 0.2s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-.food-option.selected {
-    opacity: 1;
-    filter: grayscale(0);
-    border-color: var(--blue);
-    background: var(--input-bg);
-    transform: scale(1.1);
-    box-shadow: 0 5px 15px rgba(33, 150, 243, 0.2);
-}
-
-/* Roulettes Date */
-.date-picker-wheel {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    margin: 20px 0;
-}
-.date-picker-wheel select {
-    padding: 12px;
-    font-size: 1rem;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--input-bg);
-    color: var(--text-main);
-    font-weight: bold;
-    text-align: center;
+    background: transparent;
+    font-family: 'Dancing Script', cursive; /* Police manuscrite */
+    font-size: 1.1rem;
+    color: #4a4a4a;
+    line-height: 1.4;
+    resize: none;
     outline: none;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
+/* --- BOUTON PHOTOS & GALERIE NOSTALGIE (POLAROID) --- */
+.resto-photo-btn {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    width: 100%;
+    margin-bottom: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
 
-/* --- GALERIE & LIGHTBOX (ZOOM) --- */
-
-/* Vignettes dans la galerie */
 .gallery-thumb {
     width: 100%;
     aspect-ratio: 1/1;
     object-fit: cover;
-    border-radius: 12px;
+    border: 6px solid white; /* Effet bordure photo physique */
+    border-radius: 2px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transform: rotate(var(--rotation, -2deg)); /* Rotation pour l'aspect "posé" */
+    transition: 0.3s;
     cursor: zoom-in;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
-}
-.gallery-thumb:hover { transform: scale(1.02); }
-
-/* Bouton fermer de la galerie (Croix) */
-.modal-header .close-icon {
-    background: #f0f0f0;
-    color: #555;
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    border: none;
-    font-weight: bold;
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
 }
 
-/* LE ZOOM PHOTO (PLEIN ÉCRAN) */
+.gallery-thumb:nth-child(even) { --rotation: 2deg; }
+.gallery-thumb:hover { 
+    transform: scale(1.05) rotate(0deg); 
+    z-index: 10;
+}
+
+/* --- LE ZOOM PHOTO (LIGHTBOX UNIFIÉ) --- */
 .lightbox-overlay {
-    display: none; /* Géré par JS (flex) */
+    display: none; /* Piloté par JS (flex) */
     position: fixed;
-    z-index: 20000; /* Très haut pour être au-dessus de tout */
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.95); /* Fond noir quasi opaque */
+    z-index: 20000;
+    left: 0; top: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(5px);
     justify-content: center;
     align-items: center;
@@ -1025,98 +915,36 @@ body.dark-mode .r-btn { background-color: #383838; color: #aaa; border-color: #5
 .lightbox-content {
     max-width: 95%;
     max-height: 80vh;
-    border-radius: 8px;
+    border-radius: 4px;
+    border: 8px solid white; /* Cadre photo en plein écran */
     box-shadow: 0 0 50px rgba(0,0,0,0.5);
-    animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     object-fit: contain;
+    animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .lightbox-close {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 20px; right: 20px;
     color: white;
     font-size: 3rem;
-    font-weight: 300;
     cursor: pointer;
-    z-index: 20001;
     background: none;
     border: none;
-    line-height: 1;
-    padding: 10px;
 }
-.lightbox-close:hover { color: var(--pink); transform: scale(1.1); }
 
 @keyframes zoomIn { from {transform:scale(0.8); opacity:0} to {transform:scale(1); opacity:1} }
 
-
-/* ========================================= */
-/* MODE SOMBRE (DARK MODE)                   */
-/* ========================================= */
-
-body.dark-mode .resto-item {
-    background: #1e1e1e;
-    border: 1px solid #333;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+/* --- AJOUTS FINAUX (MODE SOMBRE & FORMULAIRE) --- */
+.resto-add-card {
+    /* Utilisé pour masquer/afficher le bloc via JS */
 }
 
-body.dark-mode .resto-icon {
-    background: #2d2d2d;
-    color: #eee;
-    box-shadow: none;
-}
-
-body.dark-mode .resto-name { color: #f0f0f0; }
-
-body.dark-mode .resto-details {
-    background: rgba(0,0,0,0.2);
-    border-top-color: #444;
-}
-
-body.dark-mode .btn-mini-action {
-    background: #2d2d2d;
-    color: #ccc;
-}
-body.dark-mode .btn-delete-red { background: #3a1d1d; color: #ff6b6b; }
-body.dark-mode .btn-edit-blue { background: #1a3a4a; color: #4fc3f7; }
-
-body.dark-mode .resto-map-btn {
-    background: #1b3320;
-    color: #4cd137;
-    border-color: #2ecc71;
-}
-
-body.dark-mode .comment-box {
-    background: #2d2d2d;
-    border-color: #444;
-}
+body.dark-mode .resto-item { background: #1e1e1e; border-color: #333; }
+body.dark-mode .resto-icon { background: #2d2d2d; color: #eee; }
+body.dark-mode .comment-box { background: #2d2d2d; border-color: #444; }
 body.dark-mode .comment-input { color: #eee; }
+body.dark-mode .resto-photo-btn { background: #333; border-color: #555; color: #ddd; }
 
-body.dark-mode .resto-photo-btn {
-    background: #333;
-    border-color: #555;
-    color: #ddd;
-}
-
-body.dark-mode .food-option {
-    background: #2d2d2d;
-    border-color: #333;
-}
-body.dark-mode .food-option.selected {
-    background: #333;
-    border-color: var(--blue);
-}
-
-body.dark-mode .date-picker-wheel select {
-    background: #333;
-    border-color: #555;
-    color: #eee;
-}
-
-body.dark-mode .modal-header .close-icon {
-    background: #333;
-    color: white;
-}
 
 /* --- ANIMATIONS GLOBALES --- */
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
