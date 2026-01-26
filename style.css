@@ -18,7 +18,7 @@
     --uno-red: #ffadad; --uno-blue: #a0c4ff; --uno-green: #caffbf; --uno-yellow: #fdffb6; --uno-black: #555;
 }
 
-/* --- BASE & DARK MODE --- */
+/* --- BASE & DARK MODE -- */
 body.dark-mode {
     --bg-body: #121212; --bg-card: #1e1e1e;
     --text-main: #e0e0e0; --text-sub: #aaaaaa;
