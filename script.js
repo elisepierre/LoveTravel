@@ -1134,16 +1134,19 @@ function renderTodoList() {
 
 // --- LIVRES ---
 window.addBook=function(){const t=document.getElementById('book-title').value;if(!t)return;addDoc(collection(db,"books"),{title:t,pages_total:parseInt(document.getElementById('book-pages').value)||200,created:serverTimestamp(),page_fr:0,rating_fr:0,page_tw:0,rating_tw:0});document.getElementById('book-title').value="";}
-window.updatePage = function(id, role, val, max, title) { 
-    const newPage = parseInt(val) || 0; // Force la valeur en nombre
-    const totalPages = parseInt(max) || 1; // Évite la division par zéro
-    
-    updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); 
-    
-    if(newPage >= totalPages) {
-        sendNtfy(`🎉 ${title} terminé ! (${getCurrentTime(currentUser)})`, "tada", "low"); 
-    }
-}
+window.updatePage = function(id, role, val) { 
+    const newPage = parseInt(val);
+    if (isNaN(newPage)) return; // Sécurité si l'input est vide
+
+    // On met à jour uniquement la page, sans se soucier du titre ici
+    updateDoc(doc(db, "books", id), { 
+        ["page_" + role]: newPage 
+    }).then(() => {
+        console.log("Pages enregistrées !");
+    }).catch((error) => {
+        console.error("Erreur d'enregistrement :", error);
+    });
+};
 
        
 window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
@@ -1170,9 +1173,9 @@ onSnapshot(query(collection(db,"books"),orderBy("created","desc")), s => {
             <div class="book-title"><span>${book.title}</span><button style="border:none;background:none;color:var(--text-sub);font-size:0.8rem;cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div>
             <div class="book-total-pages">${totalPages} pages</div>
             <div class="user-row"><div class="row-header"><span style="color:var(--blue);font-weight:bold;font-size:0.8rem;">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div>
-            <div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div>
+            <div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value)" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div>
             <div class="user-row" style="border:none;"><div class="row-header"><span style="color:var(--pink);font-weight:bold;font-size:0.8rem;">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div>
-            <div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value, ${totalPages}, '${book.title}')" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div>
+            <div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value)" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div>
         </div>`;
     });
 });
