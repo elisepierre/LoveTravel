@@ -1136,50 +1136,92 @@ function renderTodoList() {
 window.addBook=function(){const t=document.getElementById('book-title').value;if(!t)return;addDoc(collection(db,"books"),{title:t,pages_total:parseInt(document.getElementById('book-pages').value)||200,created:serverTimestamp(),page_fr:0,rating_fr:0,page_tw:0,rating_tw:0});document.getElementById('book-title').value="";}
 window.updatePage = function(id, role, val) { 
     const newPage = parseInt(val);
-    if (isNaN(newPage)) return; // Sécurité si l'input est vide
+    if (isNaN(newPage)) return; 
 
-    // On met à jour uniquement la page, sans se soucier du titre ici
     updateDoc(doc(db, "books", id), { 
         ["page_" + role]: newPage 
-    }).then(() => {
-        console.log("Pages enregistrées !");
     }).catch((error) => {
         console.error("Erreur d'enregistrement :", error);
     });
-};
+};;
 
        
 window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
 window.deleteBook = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db,"books",id)); }
 
 onSnapshot(query(collection(db,"books"),orderBy("created","desc")), s => {
-    const l = document.getElementById('book-list'); l.innerHTML = "";
+    const l = document.getElementById('book-list'); 
+    if(!l) return;
+    l.innerHTML = "";
+    
     s.forEach(docSnap => {
-        const book = docSnap.data(); const id = docSnap.id; 
-        // Dans ton onSnapshot(query(collection(db,"books")...))
+        const book = docSnap.data(); 
+        const id = docSnap.id; 
+        
+        // Sécurité : on s'assure que tout est bien un nombre pour la barre
         const totalPages = parseInt(book.pages_total) || 1;
         const frPage = parseInt(book.page_fr) || 0;
         const twPage = parseInt(book.page_tw) || 0;
+        const frRating = book.rating_fr || 0;
+        const twRating = book.rating_tw || 0;
         
-        // Calcul du pourcentage
+        // Calcul des pourcentages pour le CSS
         const frPercent = Math.min((frPage / totalPages) * 100, 100);
         const twPercent = Math.min((twPage / totalPages) * 100, 100);
+
+        // Fonction pour générer les étoiles
         const makeStars = (role, currentRating) => {
-            let html = ''; for(let i=1; i<=5; i++) { const filled = i <= currentRating ? 'filled' : ''; const action = role === currentUser ? `onclick="rateBook('${id}', '${role}', ${i})"` : ''; const cursor = role === currentUser ? 'pointer' : 'default'; html += `<span class="star ${filled}" style="cursor:${cursor}" ${action}>★</span>`; }
-            const visibility = role === currentUser ? 'visible' : 'hidden'; html += `<span class="star-reset" style="visibility:${visibility};" onclick="rateBook('${id}', '${role}', 0)">Ø</span>`; return html;
+            let html = ''; 
+            for(let i=1; i<=5; i++) { 
+                const filled = i <= currentRating ? 'filled' : ''; 
+                const action = role === currentUser ? `onclick="rateBook('${id}', '${role}', ${i})"` : ''; 
+                const cursor = role === currentUser ? 'pointer' : 'default'; 
+                html += `<span class="star ${filled}" style="cursor:${cursor}" ${action}>★</span>`; 
+            }
+            const visibility = role === currentUser ? 'visible' : 'hidden'; 
+            html += `<span class="star-reset" style="visibility:${visibility};" onclick="rateBook('${id}', '${role}', 0)">Ø</span>`; 
+            return html;
         };
-        const canEditFr = currentUser === 'fr' ? '' : 'disabled'; const canEditTw = currentUser === 'tw' ? '' : 'disabled';
-        l.innerHTML += `<div class="book-item">
-            <div class="book-title"><span>${book.title}</span><button style="border:none;background:none;color:var(--text-sub);font-size:0.8rem;cursor:pointer;" onclick="deleteBook('${id}')">✕</button></div>
+
+        const canEditFr = currentUser === 'fr' ? '' : 'disabled'; 
+        const canEditTw = currentUser === 'tw' ? '' : 'disabled';
+
+        l.innerHTML += `
+        <div class="book-item">
+            <div class="book-title">
+                <span>${book.title}</span>
+                <button style="border:none;background:none;color:var(--text-sub);font-size:0.8rem;cursor:pointer;" onclick="deleteBook('${id}')">✕</button>
+            </div>
             <div class="book-total-pages">${totalPages} pages</div>
-            <div class="user-row"><div class="row-header"><span style="color:var(--blue);font-weight:bold;font-size:0.8rem;">THÉO</span><div class="star-rating">${makeStars('fr', frRating)}</div></div>
-            <div class="user-inputs"><input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value)" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div></div></div></div>
-            <div class="user-row" style="border:none;"><div class="row-header"><span style="color:var(--pink);font-weight:bold;font-size:0.8rem;">ELISE</span><div class="star-rating">${makeStars('tw', twRating)}</div></div>
-            <div class="user-inputs"><input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value)" placeholder="0"><div class="book-progress-track"><div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div></div></div></div>
+            
+            <div class="user-row">
+                <div class="row-header">
+                    <span style="color:var(--blue);font-weight:bold;font-size:0.8rem;">THÉO</span>
+                    <div class="star-rating">${makeStars('fr', frRating)}</div>
+                </div>
+                <div class="user-inputs">
+                    <input type="number" class="page-input" value="${frPage}" ${canEditFr} onchange="updatePage('${id}', 'fr', this.value)" placeholder="0">
+                    <div class="book-progress-track">
+                        <div class="book-progress-bar" style="width:${frPercent}%; background:var(--blue);"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-row" style="border:none;">
+                <div class="row-header">
+                    <span style="color:var(--pink);font-weight:bold;font-size:0.8rem;">ELISE</span>
+                    <div class="star-rating">${makeStars('tw', twRating)}</div>
+                </div>
+                <div class="user-inputs">
+                    <input type="number" class="page-input" value="${twPage}" ${canEditTw} onchange="updatePage('${id}', 'tw', this.value)" placeholder="0">
+                    <div class="book-progress-track">
+                        <div class="book-progress-bar" style="width:${twPercent}%; background:var(--pink);"></div>
+                    </div>
+                </div>
+            </div>
         </div>`;
     });
 });
-
 /* --- 10. NOTIFICATIONS & UTILITAIRES --- */
 function sendNtfy(msg, tag, prio) { 
     const iconUrl = new URL("icon.jpg", window.location.href).href; 
