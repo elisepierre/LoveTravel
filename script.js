@@ -1134,7 +1134,18 @@ function renderTodoList() {
 
 // --- LIVRES ---
 window.addBook=function(){const t=document.getElementById('book-title').value;if(!t)return;addDoc(collection(db,"books"),{title:t,pages_total:parseInt(document.getElementById('book-pages').value)||200,created:serverTimestamp(),page_fr:0,rating_fr:0,page_tw:0,rating_tw:0});document.getElementById('book-title').value="";}
-window.updatePage = function(id, role, val, max, title) { const newPage = parseInt(val); updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); if(newPage >= max) sendNtfy(`🎉 ${title} terminé ! (${getCurrentTime(currentUser)})`, "tada", "low"); }
+window.updatePage = function(id, role, val, max, title) { 
+    const newPage = parseInt(val) || 0; // Force la valeur en nombre
+    const totalPages = parseInt(max) || 1; // Évite la division par zéro
+    
+    updateDoc(doc(db, "books", id), { ["page_"+role]: newPage }); 
+    
+    if(newPage >= totalPages) {
+        sendNtfy(`🎉 ${title} terminé ! (${getCurrentTime(currentUser)})`, "tada", "low"); 
+    }
+}
+
+       
 window.rateBook = function(id, role, rating) { updateDoc(doc(db, "books", id), { ["rating_"+role]: rating }); }
 window.deleteBook = function(id) { if(confirm("Supprimer ?")) deleteDoc(doc(db,"books",id)); }
 
@@ -1142,10 +1153,14 @@ onSnapshot(query(collection(db,"books"),orderBy("created","desc")), s => {
     const l = document.getElementById('book-list'); l.innerHTML = "";
     s.forEach(docSnap => {
         const book = docSnap.data(); const id = docSnap.id; 
-        const totalPages = book.pages_total || 200;
-        const frPage = book.page_fr || 0; const frRating = book.rating_fr || 0;
-        const twPage = book.page_tw || 0; const twRating = book.rating_tw || 0;
-        const frPercent = Math.min((frPage / totalPages) * 100, 100); const twPercent = Math.min((twPage / totalPages) * 100, 100);
+        // Dans ton onSnapshot(query(collection(db,"books")...))
+        const totalPages = parseInt(book.pages_total) || 1;
+        const frPage = parseInt(book.page_fr) || 0;
+        const twPage = parseInt(book.page_tw) || 0;
+        
+        // Calcul du pourcentage
+        const frPercent = Math.min((frPage / totalPages) * 100, 100);
+        const twPercent = Math.min((twPage / totalPages) * 100, 100);
         const makeStars = (role, currentRating) => {
             let html = ''; for(let i=1; i<=5; i++) { const filled = i <= currentRating ? 'filled' : ''; const action = role === currentUser ? `onclick="rateBook('${id}', '${role}', ${i})"` : ''; const cursor = role === currentUser ? 'pointer' : 'default'; html += `<span class="star ${filled}" style="cursor:${cursor}" ${action}>★</span>`; }
             const visibility = role === currentUser ? 'visible' : 'hidden'; html += `<span class="star-reset" style="visibility:${visibility};" onclick="rateBook('${id}', '${role}', 0)">Ø</span>`; return html;
